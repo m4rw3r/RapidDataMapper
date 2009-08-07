@@ -45,6 +45,13 @@ abstract class Db
 	protected static $conn_default = 'default';
 	
 	/**
+	 * Associative array of loaded mappers.
+	 * 
+	 * @var array	class_name => Db_Mapper object
+	 */
+	protected static $mapper_list = array();
+	
+	/**
 	 * Associative array of descriptors.
 	 * 
 	 * Value can be either an object or a class name.
@@ -196,7 +203,10 @@ abstract class Db
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Sets a directory which contains the mapper descriptors.
+	 * Sets a directory which contains the mapper descriptors, they are loaded upon request.
+	 * 
+	 * The descriptor file names must be named like this: ClassName.php
+	 * And the classes must be named like this: ClassNameDescriptor
 	 * 
 	 * @param  string
 	 * @return void
@@ -209,15 +219,59 @@ abstract class Db
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Sets a certain descriptor for a specified class
+	 * Adds a certain descriptor.
 	 * 
-	 * @param  string
 	 * @param  Db_Descriptor
 	 * @return void
 	 */
-	public static function setDescriptor($class, Db_Descriptor $descriptor)
+	public static function addDescriptor(Db_Descriptor $descriptor)
 	{
-		self::$mapper_descriptors[strtolower($class)] = $descriptor;
+		self::$mapper_descriptors[$descriptor->getClass()] = $descriptor;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the descriptor for a certain class.
+	 * 
+	 * - First checks if there already is a loaded
+	 *   (or manually loaded, via addDescriptor()).
+	 * - Then it checks if ClassNameDescriptor.php exists
+	 *   (it uses the autoloader, so Record_UserDescriptor will be placed in Record/UserDescriptor.php).
+	 * - Finally it tries the descriptor directory for any files with the name
+	 *   ClassName.php, which will contain a ClassNameDescriptor class.
+	 * 
+	 * @param  string
+	 * @throws Db_Exception_MissingDescriptor
+	 * @return Db_Descriptor
+	 */
+	public static function getDescriptor($class)
+	{
+		if(isset(self::$mapper_descriptors[$class]))
+		{
+			return self::$mapper_descriptors[$class];
+		}
+		
+		// default class name
+		$klass = $class.'Descriptor';
+		
+		// do we have a descriptor class? (it also tries to autoload it with class_exists())
+		if( ! class_exists($klass))
+		{
+			// do we have a certain descriptor file?
+			if(file_exists(self::$mapper_desc_dir.'/'.$class.'.php'))
+			{
+				require self::$mapper_desc_dir.'/'.$class.'.php';
+			}
+			else
+			{
+				throw new Db_Exception_MissingDescriptor($class);
+			}
+		}
+		else
+		{
+			return self::$mapper_descriptors[$class] = new $klass();
+		}
 	}
 	
 	// ------------------------------------------------------------------------
@@ -230,7 +284,26 @@ abstract class Db
 	 */
 	public static function getMapper($class)
 	{
-		
+		if(isset(self::$mapper_list[$class]))
+		{
+			return self::$mapper_list[$class];
+		}
+		else
+		{
+			if(file_exists(self::$mapper_cache_dir.'/'.$class.'.php'))
+			{
+				// cached mapper
+				require self::$mapper_cache_dir.'/'.$class.'.php';
+			}
+			else
+			{
+				// TODO: Create a mapper
+			}
+			
+			$class = 'Db_Mapper_Compiled_'.$class;
+			
+			return self::$mapper_list[$class] = new $class();
+		}
 	}
 	
 	// ------------------------------------------------------------------------
