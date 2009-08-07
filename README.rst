@@ -8,8 +8,8 @@ Requirements
 ============
 
 * PHP > 5.2
-* PHPUnit 4.0 dev (for running the test suite)
-  can be found at here_
+* PHPUnit 4.0 dev (for running the test suite),
+  can be found here_
 
 .. _here: http://www.phpunit.de/wiki/SubversionRepository
 
