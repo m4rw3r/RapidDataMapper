@@ -10,6 +10,12 @@
  */
 abstract class Db
 {
+	const ERROR = 1;
+	const WARNING = 2;
+	const NOTICE = 4;
+	const DEBUG = 8;
+	const ALL = 15;
+	
 	/**
 	 * The path to this file, so the autoloader loads the file properly.
 	 * 
@@ -61,6 +67,13 @@ abstract class Db
 	 */
 	protected static $mapper_cache_dir = '';
 	
+	/**
+	 * A list of attached loggers.
+	 * 
+	 * @var array
+	 */
+	protected static $loggers = array();
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -85,7 +98,7 @@ abstract class Db
 	 */
 	public static function autoload($class)
 	{
-		$file = $lib_base . str_replace(array('_', '/'), DIRECTORY_SEPARATOR, $class).'.php';
+		$file = self::$lib_base . str_replace(array('_', '/'), DIRECTORY_SEPARATOR, $class).'.php';
 		
 		if(file_exists($file))
 		{
@@ -150,7 +163,7 @@ abstract class Db
 			
 			$class = 'Db_Driver_'.ucfirst(strtolower(self::$conn_configs[$name]['dbdriver'])).'_Connection';
 			
-			self::$conn_list[$name] = new $class(self::$conn_configs[$name]);
+			self::$conn_list[$name] = new $class($name, self::$conn_configs[$name]);
 		}
 		
 		return self::$conn_list;
@@ -218,6 +231,36 @@ abstract class Db
 	public static function getMapper($class)
 	{
 		
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Logs an event.
+	 * 
+	 * @param  int		Error level
+	 * @param  string
+	 * @return void
+	 */
+	public static function log($level, $message)
+	{
+		foreach(self::$loggers as $logger)
+		{
+			call_user_func($logger, $level, $message);
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Adds a callable which will receive the log messages ($level, $message).
+	 * 
+	 * @param  callable
+	 * @return void
+	 */
+	public function attach_logger($callable)
+	{
+		self::$loggers[] = $callable;
 	}
 }
 
