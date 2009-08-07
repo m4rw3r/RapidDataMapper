@@ -149,7 +149,8 @@ abstract class Db_Connection
 	/**
 	 * 
 	 * 
-	 * @return 
+	 * @param string
+	 * @param array
 	 */
 	public function __construct($conn_name, array $config)
 	{
@@ -159,6 +160,36 @@ abstract class Db_Connection
 		}
 	}
 	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Initializes the database handle.
+	 * 
+	 * @throws Db_Exception_ConnectionError
+	 * 
+	 * @return bool
+	 */
+	public function init_dbh()
+	{
+		if(is_null($this->dbh))
+		{
+			// not set, connect
+			$this->dbh = $this->connect();
+			
+			if( ! $this->dbh)
+			{	
+				// failed connection, report
+				Db::log(Ot_base::ERROR, 'Database connection error: "'.$this->error().'".');
+				
+				// yell at the coder
+				throw new Ot_exception_ConnectError($this->error());
+			}
+			
+			$this->set_charset($this->char_set, $this->dbcollat);
+		}
+		
+		return true;
+	}
 	
 	// --------------------------------------------------------------------
 	// --  ABSTRACT METHODS                                              --
