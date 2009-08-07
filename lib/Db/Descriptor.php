@@ -157,7 +157,11 @@ class Db_Descriptor
 	/**
 	 * Set the factory to create instances of the described object.
 	 * 
-	 * @return 
+	 * NOTE:
+	 * The factory must be a one-liner to be fitted between "=" and ";".
+	 * 
+	 * @param  string
+	 * @return self
 	 */
 	public function setFactory($factory)
 	{
