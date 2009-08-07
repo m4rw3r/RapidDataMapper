@@ -144,6 +144,13 @@ abstract class Db_Connection
 	 */
 	protected $cache_obj;
 	
+	/**
+	 * The class name of the result objects.
+	 * 
+	 * @var string
+	 */
+	protected $result_object_class;
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -158,6 +165,8 @@ abstract class Db_Connection
 		{
 			$this->$k = $v;
 		}
+		
+		$this->result_object_class = str_replace('_Connection', '', get_class($this)).'_Result';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -169,7 +178,7 @@ abstract class Db_Connection
 	 * 
 	 * @return bool
 	 */
-	public function init_dbh()
+	public function initDbh()
 	{
 		if(is_null($this->dbh))
 		{
@@ -179,16 +188,339 @@ abstract class Db_Connection
 			if( ! $this->dbh)
 			{	
 				// failed connection, report
-				Db::log(Ot_base::ERROR, 'Database connection error: "'.$this->error().'".');
+				Db::log(Db::ERROR, 'Database connection error: "'.$this->error().'".');
 				
-				// yell at the coder
-				throw new Ot_exception_ConnectError($this->error());
+				// yell at the coder :P
+				throw new Db_Exception_ConnectionError($this->error());
 			}
 			
-			$this->set_charset($this->char_set, $this->dbcollat);
+			$this->setCharset($this->char_set, $this->dbcollat);
 		}
 		
 		return true;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Runs the query and returns the result object.
+	 * 
+	 * @see Db_Connection::replace_binds()
+	 * @throws Db_Exception_MissingBindParameter|Db_Exception_ConnectionError
+	 * 
+	 * @param  string
+	 * @param  array
+	 * @return Db_Result
+	 */
+	public function query($sql, $binds = array())
+	{
+		if(empty($sql))
+		{
+			Db::log(Db::ERROR, 'Invalid query, the query is empty');
+			
+			if($this->db_debug)
+			{
+				throw new Db_Exception('Invalid query, the query is empty');
+			}
+			
+			return false;
+		}
+		
+		if( ! empty($binds))
+		{
+			$sql = $this->replaceBinds($sql, $binds);
+		}
+		
+		$is_write = $this->isWriteQuery($sql);
+		
+		// write query redirection
+		if($this->redirect_write && $is_write)
+		{
+			return Db::getConnection($this->redirect_write)->query($sql);
+		}
+		
+		// is cache on, and is it a read query?
+		if($this->cache_on && ! $is_write)
+		{
+			// start cache
+			$c = $this->getCache();
+			
+			try // ...getting data from cache
+			{
+				$ret = $c->fetch($sql);
+				
+				return $ret;
+			}
+			catch(Db_Exception_Cache_NoValue $e)
+			{
+				// just continue
+			}
+		}
+		
+		if( ! $this->initDbh())
+		{
+			return false;
+		}
+		
+		// log
+		$this->queries[] = $sql;
+		$start = microtime(true);
+		
+		if( ! $resource = $this->executeSql($sql))
+		{
+			// failed query, log
+			$query_times[] = false;
+			Db::log(Db::ERROR, 'Query error: SQL: "' . $sql . '", error: ' . $this->error());
+			
+			if($this->db_debug)
+			{
+				throw new Db_Exception_QueryError('SQL: "' . $sql . '", ERROR: ' . $this->error());
+			}
+			
+			return false;
+		}
+		
+		if($this->cache_on && $is_write)
+		{
+			// TODO: push changes to the cache
+		}
+		
+		$this->query_times[] = microtime(true) - $start;
+		
+		// is it a write query?
+		if($is_write)
+		{
+			return $this->affectedRows();
+		}
+		
+		// create result to return
+		$class = $this->result_object_class;
+		$result = new $class($this->dbh, $resource);
+		
+		if($this->cache_on && ! $is_write)
+		{
+			// write to the cache
+			$this->getCache()->store($sql, $result->dump());
+		}
+		
+		return $result;
+	}
+	
+	// --------------------------------------------------------------------
+	// --  SQL UTILITY METHODS                                           --
+	// --------------------------------------------------------------------
+
+	/**
+	 * Escapes the supplied value for usage in SQL queries.
+	 * 
+	 * @param  mixed
+	 * @return string
+	 */
+	public function escape($value)
+	{
+		switch(gettype($value))
+		{
+			case 'NULL':
+				$value = 'NULL';
+				break;
+				
+			case 'boolean':
+				$value = $value ? $this->BOOLEAN_CHARS[0] : $this->BOOLEAN_CHARS[1];
+				break;
+			
+			case 'integer':
+			case 'double':
+				break;
+			
+			default:
+				$value = '\''.$this->escape_str($value).'\'';
+				break;
+		}
+		
+		return $value;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Protects all identifiers (ie. all words) in the supplied string.
+	 * 
+	 * @param  string
+	 * @return string
+	 */
+	public function protectIdentifiers($item)
+	{
+		return trim(preg_replace('/([\w-\$]+)/', $this->IDENT_CHAR.'$1'.$this->IDENT_CHAR, $item));
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Prefixes the received string with the database prefix.
+	 * 
+	 * @param  string
+	 * @return string
+	 */
+	public function prefix($str = '')
+	{
+		return $this->dbprefix . $str;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Determines if the query is a write query.
+	 * 
+	 * @param  string
+	 * @return bool
+	 */
+	public function isWriteQuery($sql)
+	{
+		if( ! preg_match('/^\s*"?(INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD DATA|SET|COPY|ALTER|GRANT|REVOKE|LOCK|UNLOCK)\s+/i', $sql))
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Replaces all the bound parameters with the values in the bind array.
+	 * 
+	 * !ATTENTION!:
+	 * Identifiers will not be protected in bound statement!
+	 * Only the bound data will be escaped!
+	 * Escaping of values for LIKE condition does not escape % and _ !
+	 *
+	 * @throws Db_Exception_MissingBindParameter
+	 *
+	 * @param  string
+	 * @param  array
+	 * @return string
+	 */
+	public function replaceBinds($sql, $binds = array())
+	{
+		$binds = (Array) $binds;
+		
+		// named binds
+		if(preg_match_all('/:([\w]+)(?=\s|$)/', $sql, $matches))
+		{
+			$result = '';
+			
+			// replace the named binds
+			foreach($matches[1] as $id)
+			{
+				if( ! isset($binds[$id]))
+				{
+					throw new Db_exception_MissingBindParameter($id);
+				}
+				
+				// add the part before the name and then the escaped data
+				$result .= strstr($sql, ':' . $id, true) . $this->escape($binds[$id]);
+				// make $sql contain the next to match, this to prevent matching in the previously escaped data
+				$sql = substr($sql, strpos($sql, ':' . $id) + strlen($id) + 1);
+			}
+			
+			// assemble
+			$res = $result . $sql;
+		}
+		// unnamed binds
+		else
+		{
+			// split the condition
+			$parts = explode('?', $sql);
+			$c = count($parts) - 1;
+			
+			if($c > count($binds))
+			{
+				throw new Db_Exception_MissingBindParameter($c);
+			}
+			
+			$res = '';
+			
+			// insert the binds
+			for($i = 0; $i < $c; $i++)
+			{
+				$res .= $parts[$i] . $this->escape($binds[$i]);
+			}
+			
+			// add the last part
+			$res .= $parts[$i];
+		}
+		
+		return $res;
+	}
+	
+	// --------------------------------------------------------------------
+	// --  CACHING METHODS                                               --
+	// --------------------------------------------------------------------
+
+	/**
+	 * Activates caching.
+	 * 
+	 * @return self
+	 */
+	public function cacheOn()
+	{
+		$this->cache_on = true;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Deactivates caching.
+	 * 
+	 * @return self
+	 */
+	public function cacheOff()
+	{
+		$this->cache_on = false;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Returns the cache object.
+	 * 
+	 * @return Db_Cache
+	 */
+	public function getCache()
+	{
+		if( ! $this->cache_on)
+		{
+			return false;
+		}
+		
+		if(isset($this->cache_obj))
+		{
+			return $this->cache_obj;
+		}
+		
+		$class = 'Db_Cache_'.$this->cachedrv;
+		
+		$this->cache_obj = new $class($this->cacheopt);
+		
+		return $this->cache_obj;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets a caching object to use.
+	 * 
+	 * @return self
+	 */
+	public function setCache(Db_Cache $cache_object)
+	{
+		$this->cache_obj = $cache_object;
+		
+		return $this;
 	}
 	
 	// --------------------------------------------------------------------
@@ -225,7 +557,7 @@ abstract class Db_Connection
 	 * @param  string
 	 * @return bool
 	 */
-	abstract protected function set_charset($charset, $collation);
+	abstract protected function setCharset($charset, $collation);
 	/**
 	 * Returns the database version.
 	 * 
@@ -242,7 +574,7 @@ abstract class Db_Connection
 	 * @param  string
 	 * @return resource
 	 */
-	abstract protected function execute_sql($sql);
+	abstract protected function executeSql($sql);
 	/**
 	 * Returns the error number and error message from the latest error.
 	 *
@@ -261,7 +593,7 @@ abstract class Db_Connection
 	 * 
 	 * @return int
 	 */
-	abstract public function insert_id();
+	abstract public function insertId();
 	/**
 	 * Returns the number of rows affected by the last query.
 	 *
@@ -269,7 +601,7 @@ abstract class Db_Connection
 	 * 
 	 * @return int
 	 */
-	abstract public function affected_rows();
+	abstract public function affectedRows();
 	/**
 	 * Escapes a string for value usage in SQL.
 	 * 
@@ -279,7 +611,7 @@ abstract class Db_Connection
 	 * @param  bool     If LIKE wildcards should be escaped (% and _)
 	 * @return string
 	 */
-	abstract public function escape_str($str, $like = false);
+	abstract public function escapeStr($str, $like = false);
 	/**
 	 * Returns a query which fetches the tables in the database.
 	 *
@@ -288,7 +620,7 @@ abstract class Db_Connection
 	 * 
 	 * @return string
 	 */
-	abstract protected function _list_tables();
+	abstract protected function _listTables();
 	/**
 	 * Creates the unique limit string for this driver.
 	 *
