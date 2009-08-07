@@ -38,6 +38,27 @@ class Db_Descriptor
 	 */
 	protected $factory;
 	
+	/**
+	 * Contains a list of the primary keys described by this object.
+	 * 
+	 * @var array
+	 */
+	protected $primary_keys = array();
+	
+	/**
+	 * Contains a list of the properties described by this object.
+	 * 
+	 * @var array
+	 */
+	protected $properties = array();
+	
+	/**
+	 * Contains a list of the relations described by this object.
+	 * 
+	 * @var array
+	 */
+	protected $relations = array();
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -168,6 +189,122 @@ class Db_Descriptor
 		$this->factory = $factory;
 		
 		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Adds a descriptor object to this descriptor.
+	 * 
+	 * @param  Db_Descriptor_Column|Db_Descriptor_PrimaryKey|Db_Descriptor_Relation
+	 * @return self
+	 */
+	public function add($object)
+	{
+		// is it of allowed type?
+		foreach(array(
+				'relations' => 'Db_Descriptor_Relation',
+				'primary_keys' => 'Db_Descriptor_PrimaryKey',
+				'properties' => 'Db_Descriptor_Column'
+				) as $k => $cls)
+		{
+			if($object instanceof $cls)
+			{
+				// assign it to proper property
+				$this->{$k}[$object->getProperty()] = $object;
+				
+				return $this;
+			}
+		}
+		
+		throw new Db_Exception_IncompatibleObject($object);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns an array of primary keys described in this descriptor.
+	 * 
+	 * @return array
+	 */
+	public function getPrimaryKeys()
+	{
+		return $this->primary_keys;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns an array of columns described in this descriptor.
+	 * 
+	 * @return array
+	 */
+	public function getColumns()
+	{
+		return $this->properties;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns an array of relations described in this descriptor.
+	 * 
+	 * @return 
+	 */
+	public function getRelations()
+	{
+		return $this->relations;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates a new column descriptor to be used by this descriptor.
+	 * 
+	 * @return Db_Descriptor_Column
+	 */
+	public function newColumn($name)
+	{
+		// TODO: More options directly in this method
+		
+		$c = new Db_Descriptor_Column();
+		$c->setColumn($name);
+		
+		return $c;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates a new primary key descriptor to be used by this descriptor.
+	 * 
+	 * @return Db_Descriptor_PrimaryKey
+	 */
+	public function newPrimaryKey($name)
+	{
+		// TODO: More options directly in this method
+		
+		$pk = new Db_Descriptor_PrimaryKey();
+		$pk->setColumn($name);
+		
+		return $pk;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates a new relation descriptor to be used by this descriptor.
+	 * 
+	 * @return Db_Descriptor_Relation
+	 */
+	public function newRelation($name)
+	{
+		// TODO: More options directly in this method
+		
+		$r = new Db_Descriptor_Relation($this);
+		$r->setName($name);
+		
+		return $r;
 	}
 }
 
