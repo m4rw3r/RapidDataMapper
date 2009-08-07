@@ -131,7 +131,7 @@ abstract class Db
 	 * Getter for the database connections, semi-singleton.
 	 * 
 	 * @param  string
-	 * @return Db
+	 * @return Db_Connection
 	 */
 	public static function getConnection($name = false)
 	{
@@ -153,6 +153,18 @@ abstract class Db
 			self::$conn_list[$name] = new $class(self::$conn_configs[$name]);
 		}
 		
+		return self::$conn_list;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns all initialized connections.
+	 * 
+	 * @return array
+	 */
+	public static function getLoadedConnection()
+	{
 		return self::$conn_list;
 	}
 	
