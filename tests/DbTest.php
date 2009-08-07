@@ -9,6 +9,8 @@ require_once 'PHPUnit/Framework.php';
 
 require_once dirname(__FILE__).'/../lib/Db.php';
 
+Db::initAutoload();
+
 /**
  * Tests the main Db object.
  */
@@ -21,6 +23,38 @@ class DbTest extends PHPUnit_Framework_TestCase
 	public $runTestInSeparateProcess = true;
 	
 	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Instantiation of Db class is not allowed.
+	 */
+	public function testClassInstantiation()
+	{
+		$reflection = new ReflectionClass('Db');
+		
+		$this->assertTrue($reflection->isAbstract());
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Test if exception is thrown on no configuration.
+	 * 
+	 * @expectedException Db_Exception_MissingConfig
+	 */
+	public function testNoConnection()
+	{
+		Db::getConnection();
+	}
+	/**
+	 * @expectedException Db_Exception_MissingConfig
+	 */
+	public function testNoConnection2()
+	{
+		Db::setConnectionConfig('foobar', array('something' => 'to satisfy test'));
+		
+		Db::getConnection();
+	}
 }
 
 
