@@ -14,7 +14,7 @@ class Db_Driver_Mysql_Result extends Db_Result
 	
 	public function seek($n)
 	{
-		return ($n >= $this->num_rows()) ? false : mysql_data_seek($this->resource, $n);
+		return ($n >= $this->count()) ? false : mysql_data_seek($this->resource, $n);
 	}
 	
 	public function freeResult()

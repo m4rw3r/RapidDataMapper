@@ -166,7 +166,7 @@ abstract class Db
 			self::$conn_list[$name] = new $class($name, self::$conn_configs[$name]);
 		}
 		
-		return self::$conn_list;
+		return self::$conn_list[$name];
 	}
 	
 	// ------------------------------------------------------------------------

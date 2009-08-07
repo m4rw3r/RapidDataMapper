@@ -40,7 +40,7 @@ class Db_Driver_Mysql_Connection extends Db_Connection
 		mysql_set_charset($charset, $this->dbh);
 		
 		// set charset server side
-		return mysql_query("SET NAMES '".$this->escape_str($charset)."' COLLATE '".$this->escape_str($collation)."'", $this->dbh);
+		return mysql_query("SET NAMES '".$this->escapeStr($charset)."' COLLATE '".$this->escapeStr($collation)."'", $this->dbh);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -141,7 +141,7 @@ class Db_Driver_Mysql_Connection extends Db_Connection
 	
 	function _listTables()
 	{
-		return 'SHOW TABLES FROM '.$this->protect_identifiers($this->database);
+		return 'SHOW TABLES FROM '.$this->protectIdentifiers($this->database);
 	}
 	
 	// ------------------------------------------------------------------------
