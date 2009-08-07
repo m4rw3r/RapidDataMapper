@@ -161,6 +161,8 @@ abstract class Db_Connection
 	 */
 	public function __construct($conn_name, array $config)
 	{
+		$this->name = $conn_name;
+		
 		foreach($config as $k => $v)
 		{
 			$this->$k = $v;
