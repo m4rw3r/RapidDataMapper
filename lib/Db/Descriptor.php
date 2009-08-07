@@ -46,7 +46,7 @@ class Db_Descriptor
 	 * @throws Db_Exception_Descriptor_MissingClassName
 	 * @return string
 	 */
-	final public function getClass()
+	public function getClass()
 	{
 		if(empty($this->class))
 		{
