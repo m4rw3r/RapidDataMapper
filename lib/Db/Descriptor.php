@@ -210,14 +210,14 @@ class Db_Descriptor
 		{
 			if($object instanceof $cls)
 			{
-				// assign it to proper property
+				// assign it to the proper property
 				$this->{$k}[$object->getProperty()] = $object;
 				
 				return $this;
 			}
 		}
 		
-		throw new Db_Exception_IncompatibleObject($object);
+		throw new InvalidArgumentException(is_object($object) ? get_class($object) : gettype($object));
 	}
 	
 	// ------------------------------------------------------------------------
@@ -305,6 +305,18 @@ class Db_Descriptor
 		$r->setName($name);
 		
 		return $r;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a new instance of a mapper builder.
+	 * 
+	 * @return Db_Mapper_Builder
+	 */
+	public function getBuilder()
+	{
+		return new Db_Mapper_Builder($this);
 	}
 }
 
