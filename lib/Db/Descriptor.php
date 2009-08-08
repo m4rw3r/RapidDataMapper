@@ -149,7 +149,7 @@ class Db_Descriptor
 	 * @param  string
 	 * @return self
 	 */
-	public function setTable()
+	public function setTable($table)
 	{
 		$this->table = $table;
 		
