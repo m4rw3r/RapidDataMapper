@@ -111,7 +111,8 @@ abstract class Db
 		{
 			require $file;
 			
-			if(class_exists($class, false))
+			// did we get a class or interface? (do not try to autoload)
+			if(class_exists($class, false) OR interface_exists($class, false))
 			{
 				return true;
 			}
