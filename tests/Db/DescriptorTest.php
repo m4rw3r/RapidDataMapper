@@ -180,6 +180,73 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($desc->getTable(), 'tests');
 		$this->assertEquals($desc->getFactory(), 'new Test');
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testAdd()
+	{
+		$desc = new Db_Descriptor();
+		
+		$desc->add(new stdClass);
+	}
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testAdd2()
+	{
+		$desc = new Db_Descriptor();
+		
+		$desc->add('foo');
+	}
+	public function testAdd3()
+	{
+		$desc = new Db_Descriptor();
+		$c = new Db_Descriptor_Column();
+		$pk = new Db_Descriptor_PrimaryKey();
+		$rel = new Db_Descriptor_Relation();
+		
+		$c->setProperty('foo');
+		$pk->setProperty('bar');
+		$rel->setProperty('baz');
+		
+		$desc->add($c);
+		$desc->add($pk);
+		$desc->add($rel);
+		
+		$this->assertContainsOnly($c, $desc->getColumns());
+		$this->assertContainsOnly($pk, $desc->getPrimaryKeys());
+		$this->assertContainsOnly($rel, $desc->getRelations());
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testNewColumn()
+	{
+		$desc = new Db_Descriptor();
+		
+		$this->assertTrue($desc->newColumn('title') instanceof Db_Descriptor_Column);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testNewPrimaryKey()
+	{
+		$desc = new Db_Descriptor();
+		
+		$this->assertTrue($desc->newPrimaryKey('id') instanceof Db_Descriptor_PrimaryKey);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testNewRelation()
+	{
+		$desc = new Db_Descriptor();
+		
+		$this->assertTrue($desc->newRelation('image') instanceof Db_Descriptor_Relation);
+	}
 }
 
 
