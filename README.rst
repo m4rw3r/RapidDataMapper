@@ -8,10 +8,12 @@ Requirements
 ============
 
 RapidDataMapper:
+
 * PHP > 5.2
 * Appropriate database extension
 
 Tests:
+
 * PHPUnit 4.0 dev, can be found here_
 * PHP > 5.3
 
