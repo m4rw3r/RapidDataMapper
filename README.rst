@@ -7,8 +7,13 @@ A DataMapper and database abstraction for PHP.
 Requirements
 ============
 
+RapidDataMapper:
 * PHP > 5.2
-* PHPUnit 4.0 dev (for running the test suite), can be found here_
+* Appropriate database extension
+
+Tests:
+* PHPUnit 4.0 dev, can be found here_
+* PHP > 5.3
 
 .. _here: http://www.phpunit.de/wiki/SubversionRepository
 
