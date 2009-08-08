@@ -105,7 +105,7 @@ abstract class Db
 	 */
 	public static function autoload($class)
 	{
-		$file = self::$lib_base . str_replace(array('_', '/'), DIRECTORY_SEPARATOR, $class).'.php';
+		$file = self::$lib_base . str_replace(array('_', '\\'), DIRECTORY_SEPARATOR, $class).'.php';
 		
 		if(file_exists($file))
 		{
