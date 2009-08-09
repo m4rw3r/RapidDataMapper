@@ -238,7 +238,7 @@ class Db_Descriptor_Relation
 			catch(ReflectionException $e)
 			{
 				// Did not find a property
-				return Db_Descriptor::OWNED_BY;
+				return Db_Descriptor::BELONGS_TO;
 			}
 			
 			// Found property
