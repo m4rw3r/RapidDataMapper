@@ -40,7 +40,7 @@ class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 	/**
 	 * Adds the required properties to the mapper.
 	 * 
-	 * @return 
+	 * @return void
 	 */
 	protected function addProperties()
 	{
@@ -72,13 +72,13 @@ class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Adds the methods to the generated class.
 	 * 
-	 * 
-	 * @return 
+	 * @return void
 	 */
 	public function addMethods()
 	{
-		$this->addPart(new Db_Mapper_Parts_Objectify($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_Objectify($this->descriptor));
 	}
 	
 	// ------------------------------------------------------------------------
