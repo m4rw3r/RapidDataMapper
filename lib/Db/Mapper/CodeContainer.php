@@ -168,7 +168,7 @@ abstract class Db_Mapper_CodeContainer
 			
 			foreach($c->generateGraph() as $g)
 			{
-				$arr[] = $c->getName().'.'.$p;
+				$arr[] = $c->getName().'.'.$g;
 			}
 		}
 		
