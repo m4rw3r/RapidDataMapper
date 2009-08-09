@@ -243,14 +243,40 @@ class Db_Descriptor_Column
 	 * 
 	 * Usually the data always exists on the result object.
 	 * 
+	 * Example of generated code:
+	 * <code>
+	 * // params: $object_var = '$obj', $data_var = '$row', $data_prefix_var = '$alias'
+	 * $obj->id = (Int) $row->{$alias.'__id'};
+	 * </code>
+	 * 
 	 * @param  string	The name of the variable holding an instance of the described object.
-	 * @param  string	The name of the variable holding an instance of StdClass, containing the data.
+	 * @param  string	The name of the variable holding an instance of StdClass, containing the row data.
 	 * @param  string	The name of the variable holding a prefix for the column name
 	 * @return string
 	 */
 	public function getFromDataToObjectCode($object_var, $data_var, $data_prefix_var)
 	{
-		return $object_var.'->'.$this->getProperty().' = '.$this->getCastToPhpCode($data_var.'->{'.$data_prefix_var.'.\'__'.$this->getProperty().'\'}').';';
+		return $object_var.'->'.$this->getProperty().' = '.$this->getCastToPhpCode($this->getFromDataCode($data_var, $data_prefix_var)).';';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a short piece of a statement which references the column value in the $data_var.
+	 * 
+	 * Example of generated code:
+	 * <code>
+	 * // params: $data_var = '$row', $data_prefix_var = '$alias'
+	 * $row->{$alias.'__id'}
+	 * </code>
+	 * 
+	 * @param  string	The name of the variable holding an instance of StdClass, containing the row data.
+	 * @param  string	The name of the variable holding a prefix for the column name
+	 * @return string
+	 */
+	public function getFromDataCode($data_var, $data_prefix_var)
+	{
+		return $data_var.'->{'.$data_prefix_var.'.\'__'.$this->getProperty().'\'}';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -262,8 +288,14 @@ class Db_Descriptor_Column
 	 * Only assign data if the value exists on the described object, otherwise
 	 * do not assign anything to the $dest_var.
 	 * 
+	 * Example of generated code:
+	 * <code>
+	 * // params: $object_var = '$obj', $dest_var = '$data'
+	 * isset($obj->id) && $data['PK_id'] = (Int) $obj->id;
+	 * </code>
+	 * 
 	 * @param  string	The name of the variable holding an instance of the described object.
-	 * @param  string	The name of the variable holding an array to assign the data to.
+	 * @param  string	The name of the variable holding an associative array to assign the data to.
 	 * @return string
 	 */
 	public function getFromObjectToDataCode($object_var, $dest_var)
