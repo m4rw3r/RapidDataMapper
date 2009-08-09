@@ -58,5 +58,5 @@ class DbTest extends PHPUnit_Framework_TestCase
 }
 
 
-/* End of file Db.php */
-/* Location: ./tests/DbTest.php */
+/* End of file DbTest.php */
+/* Location: ./tests */
