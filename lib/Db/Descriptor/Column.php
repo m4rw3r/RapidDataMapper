@@ -300,7 +300,26 @@ class Db_Descriptor_Column
 	 */
 	public function getFromObjectToDataCode($object_var, $dest_var)
 	{
-		return 'isset('.$object_var.'->'.$this->getProperty().') && '.$dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($object_var.'->'.$this->getProperty()).';';
+		return 'isset('.$object_var.'->'.$this->getProperty().') && '.$dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFromObjectCode($object_var)).';';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a short piece of a statement which references the property value in $object_var.
+	 * 
+	 * Example of generated code:
+	 * <code>
+	 * // params: $object_var = '$obj'
+	 * $obj->foo
+	 * </code>
+	 * 
+	 * @param  string
+	 * @return string
+	 */
+	public function getFromObjectCode($object_var)
+	{
+		return $object_var.'->'.$this->getProperty();
 	}
 	
 	// ------------------------------------------------------------------------
