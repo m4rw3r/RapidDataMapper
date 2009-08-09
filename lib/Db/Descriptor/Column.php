@@ -52,6 +52,20 @@ class Db_Descriptor_Column
 	 */
 	protected $data_length_default = 255;
 	
+	/**
+	 * Tells if this column can be inserted.
+	 * 
+	 * @var bool
+	 */
+	protected $insrtable = true;
+	
+	/**
+	 * Tells if this column can be updated.
+	 * 
+	 * @var bool
+	 */
+	protected $updatable = true;
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -94,7 +108,7 @@ class Db_Descriptor_Column
 	 */
 	public function getProperty()
 	{
-		return empty($this->property) ? $this->column : $this->property;
+		return empty($this->property) ? $this->getColumn() : $this->property;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -153,6 +167,108 @@ class Db_Descriptor_Column
 	public function getDataLength()
 	{
 		return empty($this->data_length) ? $this->data_length_default : $this->data_length;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns true if this column can be used in an INSERT query.
+	 * 
+	 * @return bool
+	 */
+	public function isInsertable()
+	{
+		return $this->updatable;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets if this column can be used in an INSERT query.
+	 * 
+	 * @param  bool
+	 * @return self
+	 */
+	public function setInsertable($value)
+	{
+		$this->insertable = $value;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns true if this column can be used in an UPDATE query.
+	 * 
+	 * @return bool
+	 */
+	public function isUpdatable()
+	{
+		return $this->updatable;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets if this column can be used in an UPDATE query.
+	 * 
+	 * @param  bool
+	 * @return self
+	 */
+	public function setUpdatable($value)
+	{
+		$this->updatable = $value;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a fragment which selects the column and aliases it properly.
+	 * 
+	 * @return string
+	 */
+	public function getSelectCode($table, $alias)
+	{
+		return $table.'.'.$this->getColumn().' AS '.$alias.'__'.$this->getProperty();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a piece of code which fetches the data from a result row and inserts it
+	 * into an instance of the described object.
+	 * 
+	 * Usually the data always exists on the result object.
+	 * 
+	 * @param  string	The name of the variable holding an instance of the described object.
+	 * @param  string	The name of the variable holding an instance of StdClass, containing the data.
+	 * @param  string	The name of the variable holding a prefix for the column name
+	 * @return string
+	 */
+	public function getFromDataToObjectCode($object_var, $data_var, $data_prefix_var)
+	{
+		return $object_var.'->'.$this->getProperty().' = '.$this->getCastToPhpCode($data_var.'->{'.$data_prefix_var.'.\'__'.$this->getProperty().'\'}').';';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a piece of code which fetches the data from an instance of the described
+	 * object and inserts it into an array, with the column name as key.
+	 * 
+	 * Only assign data if the value exists on the described object, otherwise
+	 * do not assign anything to the $dest_var.
+	 * 
+	 * @param  string	The name of the variable holding an instance of the described object.
+	 * @param  string	The name of the variable holding an array to assign the data to.
+	 * @return string
+	 */
+	public function getFromObjectToDataCode($object_var, $dest_var)
+	{
+		return 'isset('.$object_var.'->'.$this->getProperty().') && '.$dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($object_var.'->'.$this->getProperty()).';';
 	}
 	
 	// ------------------------------------------------------------------------
