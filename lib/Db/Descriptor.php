@@ -68,6 +68,20 @@ class Db_Descriptor
 	protected $factory;
 	
 	/**
+	 * The name of the database connection instance the described class maps to.
+	 * 
+	 * @var string|false
+	 */
+	protected $db_conn_name = false;
+	
+	/**
+	 * The database connection instance the described class maps to.
+	 * 
+	 * @var Db_Connection
+	 */
+	protected $db_conn;
+	
+	/**
 	 * Contains a list of the primary keys described by this object.
 	 * 
 	 * @var array
@@ -216,6 +230,60 @@ class Db_Descriptor
 	public function setFactory($factory)
 	{
 		$this->factory = $factory;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name of the database connection which this object's described class maps to.
+	 * 
+	 * @return string
+	 */
+	public function getDatabaseConnectionName()
+	{
+		return $this->db_conn_name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets the name of the database connection this which object's described class maps to.
+	 * 
+	 * @param  string
+	 * @return self
+	 */
+	public function setDatabaseConnectionName($name)
+	{
+		$this->db_conn_name = $name;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the database connection object which the described object maps to.
+	 * 
+	 * @return Db_Connection
+	 */
+	public function getDatabaseConnection()
+	{
+		return empty($this->db_conn) ? Db::getConnection($this->getDatabaseConnectionName()) : $this->db_conn;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets the database connection object which the described object maps to.
+	 * 
+	 * @param  Db_Connection
+	 * @return self
+	 */
+	public function setDatabaseConnection(Db_Connection $conn)
+	{
+		$this->db_conn = $conn;
 		
 		return $this;
 	}
