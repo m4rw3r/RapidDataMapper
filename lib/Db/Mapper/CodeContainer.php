@@ -43,6 +43,11 @@ abstract class Db_Mapper_CodeContainer
 			throw new InvalidArgumentException(is_object($part) ? get_class($part) : gettype($part));
 		}
 		
+		if(empty($part))
+		{
+			return true;
+		}
+		
 		if(empty($path))
 		{
 			if($replace && $part instanceof Db_Mapper_CodeContainer)
