@@ -78,6 +78,8 @@ class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 	 */
 	public function addMethods()
 	{
+		$this->addPart(new Db_Mapper_Part_PopulateFindQuery($this->descriptor));
+		
 		$this->addPart(new Db_Mapper_Part_Objectify($this->descriptor));
 	}
 	

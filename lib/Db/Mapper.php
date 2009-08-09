@@ -67,6 +67,7 @@ abstract class Db_Mapper
 						throw new Db_Exception_Mapper_WrongNumberOfPks('Wrong number of primary keys specified when trying to find a '.$this->class.' object.');
 					}
 					
+					// TODO: prefix primary key(s) with singular?
 					$query->where(array_combine($this->primary_keys, (Array) $conditions));
 					
 					// limit to one
