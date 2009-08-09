@@ -39,13 +39,14 @@ class Db_Mapper_Part_PopulateFindQuery extends Db_Mapper_Code_Method
 		}
 		
 		// TODO: Add protectIdentifiers() and addcslashes($s, "'") to this code
-		$this->addPart('$q->columns[] = \''.implode(', ', $col_arr).'\';');
-		
-		$this->addPart('$q->from[] = \''.$this->descriptor->getTable().' AS '.$this->descriptor->getSingular().'\';');
+		$this->addPart('$q->columns[] = \''.implode(', ', $col_arr).'\';
+$q->from[] = \''.$this->descriptor->getTable().' AS '.$this->descriptor->getSingular().'\';');
 		
 		// TODO: Add on_find hook here
 		
 		// TODO: Add autoloaded join-related handling code
+		
+		$this->addPart('return $q;');
 	}
 }
 
