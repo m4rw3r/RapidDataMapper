@@ -30,8 +30,20 @@ abstract class Db_Mapper
 		$this->db = $connection;
 	}
 	
+	/**
+	 * Creates a Db_Query_MapperSelect object to fetch the mapped objects from the database.
+	 * 
+	 * @return Db_Query_MapperSelect
+	 */
 	abstract protected function populateFindQuery();
 	
+	/**
+	 * Creates a basic SELCT query for class this mapper maps to, can also find by PK or other conditions.
+	 * 
+	 * @param  string|array
+	 * @param  string|array
+	 * @return Db_Query_MapperSelect
+	 */
 	public function find($conditions = false, $values = false)
 	{
 		$query = $this->populateFindQuery();
@@ -79,7 +91,6 @@ abstract class Db_Mapper
 	 * Loops the database result and sends each row to be objectified.
 	 * 
 	 * @param  Db_Result
-	 * @param  array
 	 * @param  array		A list of the aliases and their corresponding class
 	 * @param  array		An associative array arranged as a tree with the aliases telling where a certain aliased object fits
 	 * @param  string		The name of the alias to start building the path with
@@ -107,7 +118,24 @@ abstract class Db_Mapper
 		return $res;
 	}
 	
-	abstract public function save()
+	/**
+	 * Converts a row to an object.
+	 * 
+	 * @param array		A reference to the associative array containing the related records of this type
+	 * @param stdClass	The row data from the database
+	 * @param string	The alias path (eg. "user" for the user.posts, and "user-posts" for the user.posts.user)
+	 * @param array		An array of loaded mappers, key is the alias which is using the mapper
+	 * @param array		An associative array tree containing names of loaded relations
+	 */
+	abstract public function objectify(&$res, $row, $alias, &$mappers, $alias_paths);
+	
+	/**
+	 * Saves the object and the relations it has.
+	 * 
+	 * @param  object
+	 * @return bool
+	 */
+	abstract public function save($object);
 }
 
 
