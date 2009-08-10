@@ -296,7 +296,7 @@ abstract class Db
 		{
 			return self::$mapper_list[$class];
 		}
-		else
+		elseif( ! class_exists($klass = 'Db_Compiled_'.$class.'Mapper', false))
 		{
 			if(file_exists(self::$mapper_cache_dir.'/'.$class.'.php'))
 			{
@@ -341,11 +341,9 @@ abstract class Db
 					eval((String) $code);
 				}
 			}
-			
-			$class = 'Db_Compiled_'.$class.'Mapper';
-			
-			return self::$mapper_list[$class] = new $class();
 		}
+		
+		return self::$mapper_list[$class] = new $klass();
 	}
 	
 	// ------------------------------------------------------------------------
