@@ -31,12 +31,12 @@ class Db_Mapper_Part_Objectify extends Db_Mapper_Code_Method
 	 */
 	public function addContents()
 	{
-		$this->addPart('if('.$this->descriptor->getNotContainsObjectCode('$res', '$alias').')
+		$this->addPart('if('.$this->descriptor->getNotContainsObjectCode('$row', '$alias').')
 {
 	return null;
 }');
 		
-		$this->addPart('$uid = '.$this->descriptor->getUidCode('$res', '$alias').';');
+		$this->addPart('$uid = '.$this->descriptor->getUidCode('$row', '$alias').';');
 		
 		$this->addPart(new Db_Mapper_Part_Objectify_NewObj($this->descriptor));
 		
