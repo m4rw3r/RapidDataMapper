@@ -8,7 +8,7 @@
 /**
  * Specialized select query which can keep track of loaded classes.
  */
-class Db_Query_MapperQuery extends Db_Query_Select
+class Db_Query_MapperSelect extends Db_Query_Select
 {
 	/**
 	 * The linked mapper.
@@ -48,7 +48,7 @@ class Db_Query_MapperQuery extends Db_Query_Select
 	 */
 	public function __construct($mapper, $main_object)
 	{
-		$this->_instance = $mapper->getDatabase();
+		$this->_instance = $mapper->getConnection();
 		$this->mapper = $mapper;
 		$this->main_object = $main_object;
 	}
