@@ -30,6 +30,18 @@ abstract class Db_Mapper
 		$this->db = $connection;
 	}
 	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the database connection.
+	 * 
+	 * @return Db_Connection
+	 */
+	public function getConnection()
+	{
+		return $this->db;
+	}
+	
 	/**
 	 * Creates a Db_Query_MapperSelect object to fetch the mapped objects from the database.
 	 * 
