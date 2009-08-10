@@ -39,11 +39,32 @@ class Db_Descriptor_Relation
 	protected $type;
 	
 	/**
+	 * If to load this relation eagerly.
+	 * 
+	 * @var bool
+	 */
+	protected $eager_loading = false;
+	
+	/**
+	 * What to do ON DELETE.
+	 * 
+	 * @var int
+	 */
+	protected $on_delete = 0;
+	
+	/**
 	 * The parent descriptor.
 	 * 
 	 * @var Db_Descriptor
 	 */
 	protected $desc_parent;
+	
+	/**
+	 * The object handling the relation-unique things.
+	 * 
+	 * @var Db_Descriptor_RelationInterface
+	 */
+	protected $handler;
 	
 	// ------------------------------------------------------------------------
 
@@ -207,9 +228,142 @@ class Db_Descriptor_Relation
 	 */
 	public function setType($type)
 	{
+		// TODO: Validate the action?
 		$this->type = $type;
 		
 		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns true if this relation should be loaded eagerly
+	 * 
+	 * @return bool
+	 */
+	public function getEagerLoading()
+	{
+		return $this->eager_loading;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets if this relation should be loaded eagerly.
+	 * 
+	 * @param  bool
+	 * @return self
+	 */
+	public function setEagerLoading($value)
+	{
+		$this->eager_loading = $value;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the action to perform ON DELETE.
+	 * 
+	 * @return int
+	 */
+	public function getOnDeleteAction()
+	{
+		return $this->on_delete;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets which action to perform ON DELETE.
+	 * 
+	 * @param  int
+	 * @return self
+	 */
+	public function setOnDeleteAction($action)
+	{
+		// TODO: Validate the action?
+		$this->on_delete = $action;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the object which is handling the grunt work.
+	 * 
+	 * TODO: Does it need to be public?
+	 * 
+	 * @return Db_Descriptor_RelationInterface
+	 */
+	public function getRelationHandler()
+	{
+		$klass = $this->getRelationHandlerClass();
+		
+		if(empty($this->handler) OR ! $this->handler instanceof $klass)
+		{
+			$this->handler = new $klass($this);
+		}
+		
+		return $this->handler;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Dispatches unknown methods to the relation handling object.
+	 * 
+	 * @param  string
+	 * @param  array
+	 * @return mixed
+	 */
+	public function __call($method, $params)
+	{
+		$handler = $this->getRelationHandler();
+		
+		$ref = new ReflectionObject($handler);
+		
+		if($ref->hasMethod($method) && $ref->getMethod($method)->isPublic())
+		{
+			return call_user_func(array($handler, $method), $params);
+		}
+		else
+		{
+			throw new BadMethodCallException($method);
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the class name of the object which will handle the relation specific things.
+	 * 
+	 * @throws UnexpectedValueException
+	 * @return string
+	 */
+	protected function getRelationHandlerClass()
+	{
+		$t = $this->getType();
+		
+		switch($t)
+		{
+			case Db_Descriptor::HAS_MANY:
+				return 'Db_Descriptor_Relation_HasMany';
+				break;
+				
+			case Db_Descriptor::HAS_ONE:
+				return 'Db_Descriptor_Relation_HasOne';
+				break;
+				
+			case Db_Descriptor::BELONGS_TO:
+				return 'Db_Descriptor_Relation_BelongsTo';
+				break;
+				
+			default:
+				throw new UnexpectedValueException($t);
+		}
 	}
 	
 	// ------------------------------------------------------------------------
