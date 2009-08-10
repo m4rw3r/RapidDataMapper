@@ -35,7 +35,7 @@ class Db_Mapper_Part_PopulateFindQuery extends Db_Mapper_Code_Method
 		$col_arr = array();
 		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $col)
 		{
-			$col_arr[] = $col->getSelectCode($this->descriptor->getTable(), $this->descriptor->getSingular());
+			$col_arr[] = $col->getSelectCode($this->descriptor->getSingular(), $this->descriptor->getSingular());
 		}
 		
 		// TODO: Add protectIdentifiers() and addcslashes($s, "'") to this code
