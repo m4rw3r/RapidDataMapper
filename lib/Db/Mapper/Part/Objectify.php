@@ -15,7 +15,7 @@ class Db_Mapper_Part_Objectify extends Db_Mapper_Code_Method
 	function __construct(Db_Descriptor $desc)
 	{
 		$this->name = 'objectify';
-		$this->param_list = '&$res, $row, $alias, array &$mappers, array $alias_paths';
+		$this->param_list = '&$res, $row, $alias, &$mappers, $alias_paths';
 		
 		$this->descriptor = $desc;
 		
