@@ -37,7 +37,7 @@ class Db_Mapper_Part_Constructor extends Db_Mapper_Code_Method
 			$conn_name = "'".addcslashes($conn_name, "'")."'";
 		}
 		
-		$this->addPart('$this->connection = Db::getConnection('.$conn_name.');');
+		$this->addPart('parent::__construct(Db::getConnection('.$conn_name.'));');
 	}
 }
 
