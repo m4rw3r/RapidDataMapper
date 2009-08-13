@@ -13,6 +13,9 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 	// Do not allow the primary key(s) to be updatable by default
 	protected $updatable = false;
 	
+	// let the default type be unsigned int
+	protected $data_type_default = 'unsigned int';
+	
 	/**
 	 * Holds the type of Primary Key this is.
 	 * 
@@ -34,19 +37,23 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 	 */
 	public function getDataType()
 	{
-		if($this->pk_type == Db_Descriptor::AUTO_INCREMENT && stripos($this->data_type, 'int') === false)
+		if($this->getPkType() == Db_Descriptor::AUTO_INCREMENT && stripos(strtolower($this->data_type), 'int') === false)
 		{
 			// TODO: Warning about an int column needed for auto increment
-			
+			return 'unsigned int';
+		}
+		else
+		{
+			return parent::getDataType();
 		}
 	}
 	
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the primary key type.
 	 * 
-	 * 
-	 * @return 
+	 * @return int
 	 */
 	public function getPkType()
 	{
@@ -56,14 +63,25 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 	// ------------------------------------------------------------------------
 
 	/**
-	 * 
+	 * Sets the primary key type.
 	 * 
 	 * @return 
 	 */
 	public function setPkType($type, $param = false)
 	{
-		# code...
+		// TODO: Filter input
+		$this->pk_type = $type;
+		
+		if($type == Db_Descriptor::CALL)
+		{
+			// TODO: Validate callable
+			$this->gen_callable = $param;
+		}
+		
+		return $this;
 	}
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Special variant which also assigns to the "hidden" __id property.
@@ -71,6 +89,32 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 	public function getFromDataToObjectCode($object_var, $data_var, $data_prefix_var)
 	{
 		return $object_var.'->'.$this->getProperty().' = '.$object_var.'->__id[\''.$this->getColumn().'\'] = '.$this->getCastToPhpCode($this->getFromDataCode($data_var, $data_prefix_var)).';';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the code which inserts the primary keys in the data variable before the insert is performed.
+	 * 
+	 * @param  string
+	 * @param  string
+	 * @return string
+	 */
+	public function getInsertPopulateColumnCode($data_var, $object_var)
+	{
+		switch($this->getPkType())
+		{
+			case Db_Descriptor::MANUAL:
+				// Make sure that the column is set
+				return 'if( ! isset('.$data_var.'[\''.$this->getColumn().'\']))
+{
+	throw new Db_Exception(\'Missing value in primary key property \'.get_class('.$object_var.').\'::'.$this->getProperty().'\');
+}';
+				break;
+				
+			default:
+				return parent::getInsertPopulateColumnCode($data_var, $object_var);
+		}
 	}
 }
 
