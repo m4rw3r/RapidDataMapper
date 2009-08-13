@@ -116,6 +116,27 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 				return parent::getInsertPopulateColumnCode($data_var, $object_var);
 		}
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Adds the auto increment value if auto increment is used.
+	 * 
+	 * @param  string
+	 * @param  string
+	 * @return string
+	 */
+	public function getInsertReadColumnCode($data_var, $object_var)
+	{
+		if($this->getPkType() == Db_Descriptor::AUTO_INCREMENT)
+		{
+			return $object_var.'->'.$this->getProperty().' = '.$data_var.'[\''.$this->getColumn().'\'] = $object->__id[\''.$this->getColumn().'\'] = $this->db->insert_id();';
+		}
+		elseif($this->getPkType() == Db_Descriptor::MANUAL)
+		{
+			return $object_var.'->'.$this->getProperty().' = '.$object_var.'->__id[\''.$this->getColumn().'\'] = '.$data_var.'[\''.$this->getColumn().'\'];';
+		}
+	}
 }
 
 

@@ -340,6 +340,21 @@ class Db_Descriptor_Column
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the code which does assignments to columns after insert.
+	 * 
+	 * @param  string
+	 * @param  string
+	 * @return string
+	 */
+	public function getInsertReadColumnCode($data_var, $object_var)
+	{
+		// TODO: Add the generated option
+		return '';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the one-liner to convert the database value to a PHP value.
 	 * 
 	 * Source is a string referring to a PHP variable in the generated code.
