@@ -392,11 +392,11 @@ class Db_Descriptor_Relation
 			catch(ReflectionException $e)
 			{
 				// Did not find a property
-				return Db_Descriptor::BELONGS_TO;
+				return Db_Descriptor::HAS_ONE;
 			}
 			
 			// Found property
-			return Db_Descriptor::HAS_ONE;
+			return Db_Descriptor::BELONGS_TO;
 		}
 	}
 }
