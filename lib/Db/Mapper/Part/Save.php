@@ -14,7 +14,7 @@ class Db_Mapper_Part_Save extends Db_Mapper_Code_Method
 	
 	function __construct(Db_Descriptor $desc)
 	{
-		$this->name = 'populateFindQuery';
+		$this->name = 'save';
 		$this->param_list = '$object';
 		
 		$this->descriptor = $desc;
