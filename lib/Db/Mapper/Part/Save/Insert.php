@@ -30,13 +30,23 @@ class Db_Mapper_Part_Save_Insert extends Db_Mapper_CodeContainer
 	{
 		// assign the data to $data
 		$arr = array('//collect data', '$data = array();');
-		foreach($this->descriptor->getColumns() as $prop)
+		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
 		{
-			$arr[] = $prop->getFromObjectToDataCode('$object', '$data');
+			$v = $prop->getFromObjectToDataCode('$object', '$data');
+			
+			// The if( ! empty()) is there to make the code more beautiful
+			if( ! empty($v))
+			{
+				$arr[] = $v;
+			}
 		}
 		$this->addPart(implode("\n", $arr));
 		
-		// TODO: Add primary key code
+		// assign the generated values and add the preprocessing and/or validation
+		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
+		{
+			$this->addPart($prop->getInsertPopulateColumnCode('$data', '$object'));
+		}
 		
 		// TODO: Add on_insert hook here
 		
@@ -46,6 +56,12 @@ class Db_Mapper_Part_Save_Insert extends Db_Mapper_CodeContainer
 		
 		// on failed save skip saving relations
 		$this->addPart("if( ! \$status)\n{\n\treturn false;\n}");
+		
+		// assign the database generated values
+		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
+		{
+			$this->addPart($prop->getInsertReadColumnCode('$data', '$object'));
+		}
 		
 		// save for future comparison
 		$this->addPart("// save the data to be able to only update the modified data\n\$object->__data = \$data;");
