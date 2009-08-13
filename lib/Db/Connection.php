@@ -451,7 +451,7 @@ abstract class Db_Connection
 				break;
 			
 			default:
-				$value = '\''.$this->escape_str($value).'\'';
+				$value = '\''.$this->escapeStr($value).'\'';
 				break;
 		}
 		
