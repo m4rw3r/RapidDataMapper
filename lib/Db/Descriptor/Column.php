@@ -325,6 +325,21 @@ class Db_Descriptor_Column
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the code which does assignments to columns before insert and/or performs validation.
+	 * 
+	 * @param  string
+	 * @param  string
+	 * @return string
+	 */
+	public function getInsertPopulateColumnCode($data_var, $object_var)
+	{
+		// TODO: Add an option to generate columns with a callable (eg. dates)
+		return '';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the one-liner to convert the database value to a PHP value.
 	 * 
 	 * Source is a string referring to a PHP variable in the generated code.
@@ -337,6 +352,8 @@ class Db_Descriptor_Column
 	 */
 	public function getCastToPhpCode($source)
 	{
+		// TODO: Add datatype objects to allow easier additions?
+		
 		switch($this->getDataType())
 		{
 			case 'integer':
