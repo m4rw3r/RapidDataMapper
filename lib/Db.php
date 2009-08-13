@@ -362,6 +362,70 @@ abstract class Db
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Creates a query for finding a special type of object.
+	 * 
+	 * Create a fetch query:
+	 * 
+	 * If condition is false, then a populated Db_Query_MapperSelect object will be returned.
+	 * This object can then be modified to apply custom filters, ordering etc.
+	 * <code>
+	 * $query = Db::find('user');
+	 * $query->where('foo', 'bar'); // filter etc.
+	 * $users = $query->get();
+	 * </code>
+	 * 
+	 * Find by Primary Key:
+	 * 
+	 * If you search for a record from which you have the primary key, put that as the
+	 * condition (if it is a multi-key, just put it as an array without keys).
+	 * In this case, an object will be returned.
+	 * <code>
+	 * $user = Db::find('user', 3);
+	 * </code>
+	 * 
+	 * Find by filter:
+	 *
+	 * If you want to apply filters directly, the conditions and values parameters
+	 * function like the Db_Query::where() method (provided either
+	 * conditions and values are populated, or that conditions is an associative
+	 * array).
+	 * In this case an array will be returned.
+	 * <code>
+	 * $users = Db::find('user', 'name', 'foobar');
+	 * $users = Db::find('user', array('name' => 'foobar'));
+	 * </code>
+	 * 
+	 * @param  string
+	 * @param  mixed
+	 * @param  mixed
+	 * @return array|object|Db_Query_MapperSelect
+	 */
+	public static function find($class_name, $conditions = false, $values = false)
+	{
+		$m = self::getMapper($class_name);
+		
+		return $m->find($conditions, $values);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Saves the object and all loaded related objects.
+	 * 
+	 * @param  object
+	 * @param  bool
+	 * @return bool
+	 */
+	static public function save($object, $force = false)
+	{
+		$m = self::getMapper(get_class($object));
+		
+		return $m->save($object, $force);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Logs an event.
 	 * 
 	 * @param  int		Error level
