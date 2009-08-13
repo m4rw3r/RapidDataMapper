@@ -309,6 +309,122 @@ abstract class Db_Connection
 	}
 	
 	// --------------------------------------------------------------------
+	// --  SQL-BUILDER INTERFACING METHODS                               --
+	// --------------------------------------------------------------------
+	
+	/**
+	 * Creates a SELECT query object.
+	 *
+	 * @see Db_Query_Select 
+	 *
+	 * @param  string|array
+	 * @return Db_Query_Select
+	 */
+	public function select($columns = false)
+	{
+		$q = new Db_Query_Select($this, false);
+		
+		if($columns)
+		{
+			$q->column($columns);
+		}
+		
+		return $q;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Inserts data into the database, returns a query object if no data is supplied.
+	 * 
+	 * @see Ot_query_Insert
+	 * @see Ot_query_Insert::set()
+	 * 
+	 * @param  string
+	 * @param  array   Associative array with column => value, executes the query if present
+	 * @return Db_Query_Insert|int|false
+	 */
+	public function insert($table, $data = false)
+	{
+		$ret = new Db_Query_Insert($this, $table);
+		
+		// if we have data, perform the insert
+		if($data)
+		{
+			$ret->set($data);
+			
+			return $ret->execute();
+		}
+		else
+		{
+			return $ret;
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Updates data in the database, returns a query object if no conditions are supplied.
+	 *
+	 * @see Db_Query_Update
+	 * @see Db_Query_Update::set()
+	 * @see Db_Query::where()
+	 *
+	 * @param  string|array 	Multiple tables can be updated with the same query
+	 * @param  array    		Associative array with new data (sent to set())
+	 * @param  mixed			Sent to ot_query_update::where()
+	 * @return Db_Query_Update|int|false
+	 */
+	public function update($table, $data = false, $conditions = false)
+	{
+		$ret = new Db_Query_Update($this, $table);
+		
+		if($data)
+		{
+			$ret->set($data);
+		}
+		
+		if($conditions)
+		{
+			$ret->where($conditions);
+			
+			return $ret->execute();
+		}
+		else
+		{
+			return $ret;
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Deletes data in the database, returns a query object if no conditions are supplied.
+	 *
+	 * @see Db_Query_Delete
+	 * @see Db_Query::where()
+	 * 
+	 * @param  string|array
+	 * @param  mixed		Sent to Db_Query::where()
+	 * @return Db_Query_Delete|int|false
+	 */
+	public function delete($table, $conditions = false)
+	{
+		$ret = new Db_Query_Delete($this, $table);
+		
+		if($conditions)
+		{
+			$ret->where($conditions);
+			
+			return $ret->execute();
+		}
+		else
+		{
+			return $ret;
+		}
+	}
+	
+	// --------------------------------------------------------------------
 	// --  SQL UTILITY METHODS                                           --
 	// --------------------------------------------------------------------
 
