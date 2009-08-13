@@ -417,11 +417,21 @@ class Db_Descriptor
 	/**
 	 * Returns a new instance of a mapper builder.
 	 * 
+	 * @throws Db_Exception_MissingPrimaryKey
 	 * @return Db_Mapper_Builder
 	 */
-	public function getBuilder()
+	public final function getBuilder()
 	{
-		return new Db_Mapper_Builder($this);
+		// By now everything should be set
+		
+		// ensure that we have at least one primary key
+		$pks = $this->getPrimaryKeys();
+		if(empty($pks))
+		{
+			throw new Db_Exception_MissingPrimaryKey($this->getClass());
+		}
+		
+		return $this->createBuilder();
 	}
 	
 	// ------------------------------------------------------------------------
@@ -476,6 +486,18 @@ class Db_Descriptor
 		}
 		
 		return implode(' OR ', $arr);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates a code builder for this descriptor.
+	 * 
+	 * @return Db_Mapper_Builder
+	 */
+	protected function createBuilder()
+	{
+		return new Db_Mapper_Builder($this);
 	}
 }
 
