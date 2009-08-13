@@ -298,9 +298,17 @@ class Db_Descriptor_Column
 	 * @param  string	The name of the variable holding an associative array to assign the data to.
 	 * @return string
 	 */
-	public function getFromObjectToDataCode($object_var, $dest_var)
+	public function getFromObjectToDataCode($object_var, $dest_var, $is_update = false)
 	{
-		return 'isset('.$object_var.'->'.$this->getProperty().') && '.$dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFromObjectCode($object_var)).';';
+		// only assign the columns which are allowed to be updated
+		if(( ! $is_update && $this->isInsertable()) OR $is_update && $this->isUpdatable())
+		{
+			return 'isset('.$object_var.'->'.$this->getProperty().') && '.$dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFromObjectCode($object_var)).';';
+		}
+		else
+		{
+			return '';
+		}
 	}
 	
 	// ------------------------------------------------------------------------
