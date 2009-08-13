@@ -296,6 +296,7 @@ class Db_Descriptor_Column
 	 * 
 	 * @param  string	The name of the variable holding an instance of the described object.
 	 * @param  string	The name of the variable holding an associative array to assign the data to.
+	 * @param  bool		If it is an update which the code is fetching data for
 	 * @return string
 	 */
 	public function getFromObjectToDataCode($object_var, $dest_var, $is_update = false)
