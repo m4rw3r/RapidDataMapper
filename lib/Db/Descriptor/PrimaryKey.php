@@ -140,7 +140,7 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 	{
 		if($this->getPkType() == Db_Descriptor::AUTO_INCREMENT)
 		{
-			return $object_var.'->'.$this->getProperty().' = '.$data_var.'[\''.$this->getColumn().'\'] = $object->__id[\''.$this->getColumn().'\'] = $this->db->insert_id();';
+			return $object_var.'->'.$this->getProperty().' = '.$data_var.'[\''.$this->getColumn().'\'] = $object->__id[\''.$this->getColumn().'\'] = $this->db->insertId();';
 		}
 		elseif($this->getPkType() == Db_Descriptor::MANUAL)
 		{
