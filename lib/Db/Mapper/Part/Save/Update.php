@@ -28,7 +28,30 @@ class Db_Mapper_Part_Save_Update extends Db_Mapper_CodeContainer
 	 */
 	public function addContent()
 	{
+		// assign the data to $data
+		$arr = array('//collect data', '$data = array();');
+		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
+		{
+			$v = $prop->getFromObjectToDataCode('$object', '$data', true);
+			
+			// The if( ! empty()) is there to make the code more beautiful
+			if( ! empty($v))
+			{
+				$arr[] = $v;
+			}
+		}
+		$this->addPart(implode("\n", $arr));
 		
+		$this->addPart("// just update the data which have been changed\n\$save_data = array_diff_assoc(\$data, \$object->__data);");
+		
+		// TODO: Add relation saving
+		
+		$this->addPart('if(empty($save_data) OR $this->db->update(\''.$this->descriptor->getTable().'\', $save_data, $object->__id) === false)
+{
+	return false;
+}');
+		
+		$this->addPart('$object->__data = $data;');
 	}
 	
 	// ------------------------------------------------------------------------
