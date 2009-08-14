@@ -395,7 +395,7 @@ class Db_Descriptor_Relation
 		
 		if($ref->hasMethod($method) && $ref->getMethod($method)->isPublic())
 		{
-			return call_user_func(array($handler, $method), $params);
+			return call_user_func_array(array($handler, $method), $params);
 		}
 		else
 		{
