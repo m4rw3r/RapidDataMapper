@@ -44,15 +44,15 @@ class Db_Mapper_Part_Save_Update extends Db_Mapper_CodeContainer
 		
 		$this->addPart("// just update the data which have been changed\n\$save_data = array_diff_assoc(\$data, \$object->__data);");
 		
-		$this->addPart('if(empty($save_data) OR $this->db->update(\''.$this->descriptor->getTable().'\', $save_data, $object->__id) === false)
-{
-	return false;
-}');
-		
 		foreach($this->descriptor->getRelations() as $rel)
 		{
 			$this->addPart($rel->getSaveUpdateRelationCode('$object'));
 		}
+		
+		$this->addPart('if(empty($save_data) OR $this->db->update(\''.$this->descriptor->getTable().'\', $save_data, $object->__id) === false)
+{
+	return false;
+}');
 		
 		$this->addPart('$object->__data = $data;');
 	}
