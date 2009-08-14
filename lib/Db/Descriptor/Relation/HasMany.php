@@ -203,7 +203,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		
 		list($local_keys, $foreign_keys) = $this->getKeys();
 		
-		$str = '//  relates to_many '.$related->getClass()."\n";
+		$str = '//  relates To Many '.$related->getClass()."\n";
 		
 		$str .= 'if(isset('.$object_var.'->'.$this->relation->getName().'))
 {
