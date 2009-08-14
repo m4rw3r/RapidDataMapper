@@ -149,13 +149,13 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		$str = 'if( ! empty('.$object_var.'->'.$this->relation->getName().'))
 {
 	// prevent PHP from casting objects to arrays
-	if(is_object($object->'.$this->relation->getName().'))
+	if(is_object('.$object_var.'->'.$this->relation->getName().'))
 	{
-		$object->'.$this->relation->getName().' = array($object->'.$this->relation->getName().');
+		'.$object_var.'->'.$this->relation->getName().' = array('.$object_var.'->'.$this->relation->getName().');
 	}
 	
 	// loop all the related objects
-	foreach($object->'.$this->relation->getName().' as $key => $related)
+	foreach('.$object_var.'->'.$this->relation->getName().' as $key => $related)
 	{
 		// check so they are of the correct type
 		if($related instanceof '.$related->getClass().')
@@ -170,7 +170,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 			$lprop = $local_keys[$i];
 			$fprop = $foreign_keys[$i];
 			
-			$arr[] = '$related->'.$fprop->getProperty().' = $object->'.$lprop->getProperty().';';
+			$arr[] = '$related->'.$fprop->getProperty().' = '.$object_var.'->'.$lprop->getProperty().';';
 		}
 		$str .= implode("\n\t\t\t", $arr);
 		
@@ -181,12 +181,12 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		else
 		{
 			// unrelated, remove
-			unset($object->'.$this->relation->getName().'[$key]);
+			unset('.$object_var.'->'.$this->relation->getName().'[$key]);
 		}
 	}
 	
 	// save a reference, so we can compare on later updates
-	$object->__loaded_rels['.$this->relation->getName().'] = $object->'.$this->relation->getName().';
+	'.$object_var.'->__loaded_rels['.$this->relation->getName().'] = '.$object_var.'->'.$this->relation->getName().';
 }';
 		
 		return $str;
@@ -205,21 +205,21 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		
 		$str = '//  relates to_many '.$related->getClass()."\n";
 		
-		$str .= 'if(isset($object->'.$this->relation->getName().'))
+		$str .= 'if(isset('.$object_var.'->'.$this->relation->getName().'))
 {
-	if(is_object($object->'.$this->relation->getName().'))
+	if(is_object('.$object_var.'->'.$this->relation->getName().'))
 	{
-		$object->'.$this->relation->getName().' = array($object->'.$this->relation->getName().');
+		'.$object_var.'->'.$this->relation->getName().' = array('.$object_var.'->'.$this->relation->getName().');
 	}
 	
 	// set comparable to default
-	if( ! isset($object->__loaded_rels[\''.$this->relation->getName().'\']))
+	if( ! isset('.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\']))
 	{
-		$object->__loaded_rels[\''.$this->relation->getName().'\'] = array();
+		'.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\'] = array();
 	}
 	
 	// calculate what to remove (ie. check if the user has unset() anything)
-	$to_del = Db_Util::array_odiff($object->__loaded_rels[\''.$this->relation->getName().'\'], $object->'.$this->relation->getName().');
+	$to_del = Db_Util::array_odiff('.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\'], '.$object_var.'->'.$this->relation->getName().');
 	
 	if( ! empty($to_del))
 	{
@@ -259,7 +259,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		
 		$str .= '
 	
-	foreach(Db_Util::array_odiff($object->'.$this->relation->getName().', $object->__loaded_rels[\''.$this->relation->getName().'\']) as $key => $related)
+	foreach(Db_Util::array_odiff('.$object_var.'->'.$this->relation->getName().', $object->__loaded_rels[\''.$this->relation->getName().'\']) as $key => $related)
 	{
 		// check so they are of the correct type
 		if($related instanceof '.$related->getClass().')
@@ -274,7 +274,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 			$lprop = $local_keys[$i];
 			$fprop = $foreign_keys[$i];
 			
-			$arr[] = '$related->'.$fprop->getProperty().' = $object->'.$lprop->getProperty().';';
+			$arr[] = '$related->'.$fprop->getProperty().' = '.$object_var.'->'.$lprop->getProperty().';';
 		}
 		$str .= implode("\n\t\t\t", $arr);
 		
@@ -285,12 +285,12 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		else
 		{
 			// unrelated, remove
-			unset($object->'.$this->relation->getName().'[$key]);
+			unset('.$object_var.'->'.$this->relation->getName().'[$key]);
 		}
 	}
 	
 	// save a reference, so we can compare on later updates
-	$object->__loaded_rels['.$this->relation->getName().'] = $object->'.$this->relation->getName().';
+	'.$object_var.'->__loaded_rels['.$this->relation->getName().'] = '.$object_var.'->'.$this->relation->getName().';
 }';
 		
 		return $str;
