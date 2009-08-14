@@ -313,6 +313,74 @@ class Db_Descriptor_Relation
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Creates a list of foreign key associations.
+	 * 
+	 * Receives the object which contains the primary keys of the relation,
+	 * it should be used to create a list of names for the foreign keys to use
+	 * in the related object.
+	 * 
+	 * Return example:
+	 * <code>
+	 * array(
+	 *     'id' => 'user_id'
+	 *     );
+	 * </code>
+	 * 
+	 * NOTE:
+	 * Everything is returned in property names!
+	 * 
+	 * @param  Db_Descriptor
+	 * @return array
+	 */
+	public function guessForeignKeyMappings(Db_Descriptor $descriptor)
+	{
+		$ret = array();
+		
+		foreach($descriptor->getPrimaryKeys() as $pk)
+		{
+			$ret[$pk->getProperty()] = $descriptor->getSingular().'_'.$pk->getProperty();
+		}
+		
+		return $ret;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a list of Db_Descriptor_Column objects from the passed descriptor.
+	 * 
+	 * @param  array
+	 * @param  Db_Descriptor
+	 * @return array
+	 */
+	public function getKeyObjects(array $key_list, Db_Descriptor $descriptor)
+	{
+		$properties = array_merge($descriptor->getColumns(), $descriptor->getPrimaryKeys());
+		$keys = array();
+		
+		foreach($key_list as $key)
+		{
+			if( ! isset($properties[$key]))
+			{
+				// TODO: Set some default values, based on the linked keys?
+				$c = $descriptor->newColumn($key);
+				
+				$descriptor->add();
+				
+				$keys[] = $c;
+			}
+			else
+			{
+				$keys[] = $properties[$key];
+			}
+		}
+		
+		return $keys;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Dispatches unknown methods to the relation handling object.
 	 * 
 	 * @param  string
@@ -387,6 +455,7 @@ class Db_Descriptor_Relation
 			
 			try
 			{
+				// TODO: Add multi-pk support, not just '_id'
 				$prop = $cls->getProperty($this->getRelatedDescriptor()->getSingular().'_id');
 			}
 			catch(ReflectionException $e)
