@@ -69,6 +69,23 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 	
 	// ------------------------------------------------------------------------
 	
+	public function setExtraConditions($property_name, $value = null)
+	{
+		// TODO: More validation
+		if(is_array($property_name))
+		{
+			$this->extra_conds = array_merge($extra_conds, $property_name);
+		}
+		else
+		{
+			$this->extra_conds[$property_name] = $value;
+		}
+		
+		return $this->relation;
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function getJoinRelatedCode($query_obj_var, $alias_of_linked_var)
 	{
 		$db = $this->relation->getParentDescriptor()->getDatabaseConnection();
@@ -114,25 +131,16 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 	
 	// ------------------------------------------------------------------------
 	
-	public function setExtraConditions($property_name, $value = null)
+	public function getPreSaveRelationCode($object_var)
 	{
-		// TODO: More validation
-		if(is_array($property_name))
-		{
-			$this->extra_conds = array_merge($extra_conds, $property_name);
-		}
-		else
-		{
-			$this->extra_conds[$property_name] = $value;
-		}
-		
-		return $this->relation;
+		return '';
 	}
 	
 	// ------------------------------------------------------------------------
 	
 	public function getSaveInsertRelationCode($object_var)
 	{
+		// TODO: Maybe use some Db_Mapper_CodeContainer here?
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();
 		
@@ -186,9 +194,106 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 	
 	// ------------------------------------------------------------------------
 	
-	public function getPreSaveRelationCode($object_var)
+	public function getSaveUpdateRelationCode($object_var)
 	{
-		return '';
+		// TODO: Maybe use some Db_Mapper_CodeContainer here?
+		$db = $this->relation->getParentDescriptor()->getDatabaseConnection();
+		$local = $this->relation->getParentDescriptor();
+		$related = $this->relation->getRelatedDescriptor();
+		
+		list($local_keys, $foreign_keys) = $this->getKeys();
+		
+		$str = '//  relates to_many '.$related->getClass()."\n";
+		
+		$str .= 'if(isset($object->'.$this->relation->getName().'))
+{
+	if(is_object($object->'.$this->relation->getName().'))
+	{
+		$object->'.$this->relation->getName().' = array($object->'.$this->relation->getName().');
+	}
+	
+	// set comparable to default
+	if( ! isset($object->__loaded_rels[\''.$this->relation->getName().'\']))
+	{
+		$object->__loaded_rels[\''.$this->relation->getName().'\'] = array();
+	}
+	
+	// calculate what to remove (ie. check if the user has unset() anything)
+	$to_del = Db_Util::array_odiff($object->__loaded_rels[\''.$this->relation->getName().'\'], $object->'.$this->relation->getName().');
+	
+	if( ! empty($to_del))
+	{
+		// construct a WHERE to only delete what we need to
+		$where = array();
+		
+		foreach($to_del as $row)
+		{
+			';
+		
+		// create a filter for the primary keys
+		$cols = array();
+		foreach($related->getPrimaryKeys() as $key)
+		{
+			$cols[] = addcslashes($db->protectIdentifiers($key->getColumn()), "'") . ' = \'.$this->db->escape($row->__id[\''.$key->getColumn().'\'])';
+		}
+		
+		$str .= '// group it to prevent the database to make faulty matches when using multiple primary keys
+			$where[] = \'('.implode('.\' AND ', $cols).'.\')\';
+		}
+		
+		';
+		
+		// null the foreign keys
+		$set = array();
+		$c = count($local_keys);
+		for($i = 0; $i < $c; $i++)
+		{
+			$lprop = $local_keys[$i];
+			$fprop = $foreign_keys[$i];
+			
+			$set[] = $db->protectIdentifiers($fprop->getColumn()) . ' = NULL';
+		}
+		
+		$str .= '$this->db->query(\'UPDATE ' . addcslashes($db->protectIdentifiers($related->getTable()), "'") . ' SET ' . addcslashes(implode(', ', $set), "'") . ' WHERE \'.implode(\' OR \', $where));
+	}';
+		
+		$str .= '
+	
+	foreach(Db_Util::array_odiff($object->'.$this->relation->getName().', $object->__loaded_rels[\''.$this->relation->getName().'\']) as $key => $related)
+	{
+		// check so they are of the correct type
+		if($related instanceof '.$related->getClass().')
+		{
+			';
+				
+		// assign properties for children
+		$arr = array('// set the propert'.(count($foreign_keys) > 1 ? 'ies' : 'y'));
+		$c = count($local_keys);
+		for($i = 0; $i < $c; $i++)
+		{
+			$lprop = $local_keys[$i];
+			$fprop = $foreign_keys[$i];
+			
+			$arr[] = '$related->'.$fprop->getProperty().' = $object->'.$lprop->getProperty().';';
+		}
+		$str .= implode("\n\t\t\t", $arr);
+		
+		$str .= '
+			
+			Db::save($related);
+		}
+		else
+		{
+			// unrelated, remove
+			unset($object->'.$this->relation->getName().'[$key]);
+		}
+	}
+	
+	// save a reference, so we can compare on later updates
+	$object->__loaded_rels['.$this->relation->getName().'] = $object->'.$this->relation->getName().';
+}';
+		
+		return $str;
 	}
 	
 	// ------------------------------------------------------------------------
