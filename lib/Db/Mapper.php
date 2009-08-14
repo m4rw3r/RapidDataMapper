@@ -42,12 +42,16 @@ abstract class Db_Mapper
 		return $this->db;
 	}
 	
+	// ------------------------------------------------------------------------
+	
 	/**
 	 * Creates a Db_Query_MapperSelect object to fetch the mapped objects from the database.
 	 * 
 	 * @return Db_Query_MapperSelect
 	 */
 	abstract protected function populateFindQuery();
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Creates a basic SELCT query for class this mapper maps to, can also find by PK or other conditions.
@@ -99,6 +103,20 @@ abstract class Db_Mapper
 			return $query;
 		}
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Joins the related objects attached to the relation with the name $relation_name.
+	 * 
+	 * @param  Db_Query_MapperSelect
+	 * @param  string
+	 * @param  string
+	 * @return void
+	 */
+	abstract public function joinRelated($query, $relation_name, $alias_of_linked);
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Loops the database result and sends each row to be objectified.
