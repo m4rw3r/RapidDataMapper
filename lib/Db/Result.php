@@ -313,5 +313,5 @@ abstract class Db_Result implements IteratorAggregate, Countable
 }
 
 
-/* End of file result.php */
-/* Location: ./lib */
+/* End of file Result.php */
+/* Location: ./lib/Db */
