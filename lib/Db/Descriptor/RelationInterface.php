@@ -37,7 +37,7 @@ interface Db_Descriptor_RelationInterface
 	 * 
 	 * These conditions will be added to the ON clause of the JOIN.
 	 * 
-	 * @param  string|array
+	 * @param  string|array				The column name to filter by
 	 * @param  string|int|double
 	 * @return Db_Descriptor_Relation	The parent descriptor which was passed to the constructor
 	 */

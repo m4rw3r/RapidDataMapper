@@ -71,7 +71,45 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 	
 	public function getJoinRelatedCode($query_obj_var, $alias_of_linked_var)
 	{
-		# code...
+		$db = $this->relation->getParentDescriptor()->getDatabaseConnection();
+		$local = $this->relation->getParentDescriptor();
+		$related = $this->relation->getRelatedDescriptor();
+		
+		list($local_keys, $foreign_keys) = $this->getKeys();
+		
+		// build foreign key conditions
+		$cols = array();
+		$c = count($local_keys);
+		for($i = 0; $i < $c; $i++)
+		{
+			$lprop = $local_keys[$i];
+			$fprop = $foreign_keys[$i];
+			
+			$cols[] = $db->protectIdentifiers($alias_of_linked_var.'.'.$lprop->getColumn()).' = '.
+				$db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'.'.$fprop->getColumn());
+		}
+		
+		// add extra conditions
+		foreach($this->extra_conds as $k => $v)
+		{
+			$cols[] = $db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'.'.$k).' = '.$db->escape($v);
+		}
+		
+		// build column list
+		$columns = array();
+		foreach($related->getColumns() as $prop)
+		{
+			$columns[] = $db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'.'.$prop->getColumn()).' AS '.
+				$db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'__'.$prop->getProperty());
+		}
+		
+		// select
+		$columns = $query_obj_var.'->columns[] = "'.addcslashes(implode(', ', $columns), '"').'";';
+		
+		return $query_obj_var.'->join[] = "LEFT JOIN ' . 
+			addcslashes($db->protectIdentifiers($db->dbprefix . $related->getTable()), '"') . 
+			' AS ' . addcslashes($db->protectIdentifiers($alias_of_linked_var.'-' . $this->relation->getName()), '"') . '
+	ON ' . addcslashes(implode(' AND ', $cols), '"')."\";\n".$columns;
 	}
 	
 	// ------------------------------------------------------------------------
