@@ -37,19 +37,27 @@ interface Db_Descriptor_RelationInterface
 	 * 
 	 * These conditions will be added to the ON clause of the JOIN.
 	 * 
-	 * @param string|array
-	 * @param string|int
+	 * @param  string|array
+	 * @param  string|int|double
+	 * @return Db_Descriptor_Relation	The parent descriptor which was passed to the constructor
 	 */
-	public function setExtraConditions($property_name, $value = false);
+	public function setExtraConditions($property_name, $value = null);
 	
 	/**
 	 * Returns the code which will establish a relationship between an object which is being inserted and the others.
 	 * 
-	 * TODO: Add needed parameters
-	 * 
+	 * @param  string
 	 * @return object|string
 	 */
-	public function getSaveInsertRelationCode();
+	public function getSaveInsertRelationCode($object_var);
+	
+	/**
+	 * Returns the code which will establish a relationship between an object which will be saved and others.
+	 * 
+	 * @param  string
+	 * @return object|string
+	 */
+	public function getPreSaveRelationCode($object_var);
 }
 
 /* End of file RelationInterface.php */
