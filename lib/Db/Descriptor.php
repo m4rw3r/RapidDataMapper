@@ -301,6 +301,7 @@ class Db_Descriptor
 	/**
 	 * Adds a descriptor object to this descriptor.
 	 * 
+	 * @throws InvalidArgumentException
 	 * @param  Db_Descriptor_Column|Db_Descriptor_PrimaryKey|Db_Descriptor_Relation
 	 * @return self
 	 */
@@ -408,6 +409,7 @@ class Db_Descriptor
 		
 		$r = new Db_Descriptor_Relation($this);
 		$r->setName($name);
+		$r->setParentDescriptor($this);
 		
 		return $r;
 	}
