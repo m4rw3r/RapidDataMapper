@@ -186,7 +186,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 	}
 	
 	// save a reference, so we can compare on later updates
-	'.$object_var.'->__loaded_rels['.$this->relation->getName().'] = '.$object_var.'->'.$this->relation->getName().';
+	'.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\'] = '.$object_var.'->'.$this->relation->getName().';
 }';
 		
 		return $str;
@@ -290,7 +290,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 	}
 	
 	// save a reference, so we can compare on later updates
-	'.$object_var.'->__loaded_rels['.$this->relation->getName().'] = '.$object_var.'->'.$this->relation->getName().';
+	'.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\'] = '.$object_var.'->'.$this->relation->getName().';
 }';
 		
 		return $str;
