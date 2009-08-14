@@ -63,7 +63,10 @@ class Db_Mapper_Part_Save_Insert extends Db_Mapper_CodeContainer
 			$this->addPart($prop->getInsertReadColumnCode('$data', '$object'));
 		}
 		
-		// TODO: Add relation code
+		foreach($this->descriptor->getRelations() as $rel)
+		{
+			$this->addPart($rel->getSaveInsertRelationCode('$object'));
+		}
 		
 		// save for future comparison
 		$this->addPart("// save the data to be able to only update the modified data\n\$object->__data = \$data;");
