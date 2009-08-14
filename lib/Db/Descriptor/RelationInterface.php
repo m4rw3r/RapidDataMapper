@@ -18,6 +18,17 @@ interface Db_Descriptor_RelationInterface
 	public function __construct(Db_Descriptor_Relation $rel);
 	
 	/**
+	 * Adds extra conditions for this relation, ie. conditions which must be satisfied to allow a join.
+	 * 
+	 * These conditions will be added to the ON clause of the JOIN.
+	 * 
+	 * @param  string|array				The column name to filter by
+	 * @param  string|int|double
+	 * @return Db_Descriptor_Relation	The parent descriptor which was passed to the constructor
+	 */
+	public function setExtraConditions($property_name, $value = null);
+	
+	/**
 	 * Returns the code which will add the join code to the designated query object.
 	 * 
 	 * Example code:
@@ -33,15 +44,12 @@ interface Db_Descriptor_RelationInterface
 	public function getJoinRelatedCode($query_obj_var, $alias_of_linked_var);
 	
 	/**
-	 * Adds extra conditions for this relation, ie. conditions which must be satisfied to allow a join.
+	 * Returns the code which will establish a relationship between an object which will be saved and others.
 	 * 
-	 * These conditions will be added to the ON clause of the JOIN.
-	 * 
-	 * @param  string|array				The column name to filter by
-	 * @param  string|int|double
-	 * @return Db_Descriptor_Relation	The parent descriptor which was passed to the constructor
+	 * @param  string
+	 * @return object|string
 	 */
-	public function setExtraConditions($property_name, $value = null);
+	public function getPreSaveRelationCode($object_var);
 	
 	/**
 	 * Returns the code which will establish a relationship between an object which is being inserted and the others.
@@ -52,12 +60,12 @@ interface Db_Descriptor_RelationInterface
 	public function getSaveInsertRelationCode($object_var);
 	
 	/**
-	 * Returns the code which will establish a relationship between an object which will be saved and others.
+	 * Returns the code which will establish a relationship between an object which is being updated and the others.
 	 * 
 	 * @param  string
 	 * @return object|string
 	 */
-	public function getPreSaveRelationCode($object_var);
+	public function getSaveUpdateRelationCode($object_var);
 }
 
 /* End of file RelationInterface.php */
