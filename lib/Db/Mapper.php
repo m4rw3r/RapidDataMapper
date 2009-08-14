@@ -167,6 +167,14 @@ abstract class Db_Mapper
 	 * @return bool
 	 */
 	abstract public function save($object);
+	
+	/**
+	 * Deletes the object, and calls the cascades is applicable.
+	 * 
+	 * @param  object
+	 * @return bool
+	 */
+	abstract public function delete($object);
 }
 
 
