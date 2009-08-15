@@ -30,17 +30,18 @@ class Db_Mapper_Part_PopulateFindQuery extends Db_Mapper_Code_Method
 	 */
 	public function addContents()
 	{
+		$db = $this->descriptor->getDatabaseConnection();
+		
 		$this->addPart('$q = new Db_Query_MapperSelect($this, \''.$this->descriptor->getSingular().'\');');
 		
 		$col_arr = array();
 		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $col)
 		{
-			$col_arr[] = $col->getSelectCode($this->descriptor->getSingular(), $this->descriptor->getSingular());
+			$col_arr[] = $col->getSelectCode($this->descriptor->getSingular(), $this->descriptor->getSingular(), $db);
 		}
 		
-		// TODO: Add protectIdentifiers() and addcslashes($s, "'") to this code
-		$this->addPart('$q->columns[] = \''.implode(', ', $col_arr).'\';
-$q->from[] = \''.$this->descriptor->getTable().' AS '.$this->descriptor->getSingular().'\';');
+		$this->addPart('$q->columns[] = \''.addcslashes(implode(', ', $col_arr), "'").'\';
+$q->from[] = \''.addcslashes($db->protectIdentifiers($this->descriptor->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($this->descriptor->getSingular()), "'").'\';');
 		
 		// TODO: Add on_find hook here
 		

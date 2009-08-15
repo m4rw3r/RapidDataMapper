@@ -228,11 +228,14 @@ class Db_Descriptor_Column
 	/**
 	 * Returns a fragment which selects the column and aliases it properly.
 	 * 
+	 * @param  string
+	 * @param  string
+	 * @param  Db_Connection
 	 * @return string
 	 */
-	public function getSelectCode($table, $alias)
+	public function getSelectCode($table, $alias, Db_Connection $db)
 	{
-		return $table.'.'.$this->getColumn().' AS '.$alias.'__'.$this->getProperty();
+		return $db->protectIdentifiers($table.'.'.$this->getColumn()).' AS '.$db->protectIdentifiers($alias.'__'.$this->getProperty());
 	}
 	
 	// ------------------------------------------------------------------------
