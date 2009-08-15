@@ -21,7 +21,7 @@ class Db_Descriptor_Relation_BelongsTo extends Db_Descriptor_Relation_HasOne
 		
 		list($local_keys, $foreign_keys) = $this->getKeys();
 		
-		$str = 'if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'->'.$this->relation->getProperty().' instanceof '.$this->relation->getClass().')
+		$str = 'if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'->'.$this->relation->getProperty().' instanceof '.$related->getClass().')
 {
 	// we have a related parent, try to save it
 	// to assure that we have an ok primary key
@@ -30,7 +30,7 @@ class Db_Descriptor_Relation_BelongsTo extends Db_Descriptor_Relation_HasOne
 	';
 		
 		// establish relation
-		$arr = array('// set the propert' . ($rel->num_fks > 1 ? 'ies' : 'y'));
+		$arr = array('// set the propert' . (count($local_keys) > 1 ? 'ies' : 'y'));
 		$c = count($local_keys);
 		for($i = 0; $i < $c; $i++)
 		{
