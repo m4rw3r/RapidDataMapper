@@ -146,16 +146,17 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		
 		list($local_keys, $foreign_keys) = $this->getKeys();
 		
-		$str = 'if( ! empty('.$object_var.'->'.$this->relation->getName().'))
+		$str = '// The Has Many relation '.$this->relation->getName().', relates to '.$related->getClass().'
+if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 {
 	// prevent PHP from casting objects to arrays
-	if(is_object('.$object_var.'->'.$this->relation->getName().'))
+	if(is_object('.$object_var.'->'.$this->relation->getProperty().'))
 	{
-		'.$object_var.'->'.$this->relation->getName().' = array('.$object_var.'->'.$this->relation->getName().');
+		'.$object_var.'->'.$this->relation->getProperty().' = array('.$object_var.'->'.$this->relation->getProperty().');
 	}
 	
 	// loop all the related objects
-	foreach('.$object_var.'->'.$this->relation->getName().' as $key => $related)
+	foreach('.$object_var.'->'.$this->relation->getProperty().' as $key => $related)
 	{
 		// check so they are of the correct type
 		if($related instanceof '.$related->getClass().')
@@ -181,12 +182,12 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		else
 		{
 			// unrelated, remove
-			unset('.$object_var.'->'.$this->relation->getName().'[$key]);
+			unset('.$object_var.'->'.$this->relation->getProperty().'[$key]);
 		}
 	}
 	
 	// save a reference, so we can compare on later updates
-	'.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\'] = '.$object_var.'->'.$this->relation->getName().';
+	'.$object_var.'->__loaded_rels[\''.$this->relation->getProperty().'\'] = '.$object_var.'->'.$this->relation->getProperty().';
 }';
 		
 		return $str;
@@ -203,23 +204,23 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		
 		list($local_keys, $foreign_keys) = $this->getKeys();
 		
-		$str = '//  relates To Many '.$related->getClass()."\n";
+		$str = '// The Has Many relation '.$this->relation->getName().', relates to '.$related->getClass()."\n";
 		
-		$str .= 'if(isset('.$object_var.'->'.$this->relation->getName().'))
+		$str .= 'if(isset('.$object_var.'->'.$this->relation->getProperty().'))
 {
-	if(is_object('.$object_var.'->'.$this->relation->getName().'))
+	if(is_object('.$object_var.'->'.$this->relation->getProperty().'))
 	{
-		'.$object_var.'->'.$this->relation->getName().' = array('.$object_var.'->'.$this->relation->getName().');
+		'.$object_var.'->'.$this->relation->getProperty().' = array('.$object_var.'->'.$this->relation->getProperty().');
 	}
 	
 	// set comparable to default
-	if( ! isset('.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\']))
+	if( ! isset('.$object_var.'->__loaded_rels[\''.$this->relation->getProperty().'\']))
 	{
-		'.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\'] = array();
+		'.$object_var.'->__loaded_rels[\''.$this->relation->getProperty().'\'] = array();
 	}
 	
 	// calculate what to remove (ie. check if the user has unset() anything)
-	$to_del = Db_Util::array_odiff('.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\'], '.$object_var.'->'.$this->relation->getName().');
+	$to_del = Db_Util::array_odiff('.$object_var.'->__loaded_rels[\''.$this->relation->getProperty().'\'], '.$object_var.'->'.$this->relation->getProperty().');
 	
 	if( ! empty($to_del))
 	{
@@ -259,7 +260,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		
 		$str .= '
 	
-	foreach(Db_Util::array_odiff('.$object_var.'->'.$this->relation->getName().', $object->__loaded_rels[\''.$this->relation->getName().'\']) as $key => $related)
+	foreach(Db_Util::array_odiff('.$object_var.'->'.$this->relation->getProperty().', $object->__loaded_rels[\''.$this->relation->getProperty().'\']) as $key => $related)
 	{
 		// check so they are of the correct type
 		if($related instanceof '.$related->getClass().')
@@ -285,12 +286,12 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		else
 		{
 			// unrelated, remove
-			unset('.$object_var.'->'.$this->relation->getName().'[$key]);
+			unset('.$object_var.'->'.$this->relation->getProperty().'[$key]);
 		}
 	}
 	
 	// save a reference, so we can compare on later updates
-	'.$object_var.'->__loaded_rels[\''.$this->relation->getName().'\'] = '.$object_var.'->'.$this->relation->getName().';
+	'.$object_var.'->__loaded_rels[\''.$this->relation->getProperty().'\'] = '.$object_var.'->'.$this->relation->getProperty().';
 }';
 		
 		return $str;

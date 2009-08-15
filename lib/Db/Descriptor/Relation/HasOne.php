@@ -19,7 +19,8 @@ class Db_Descriptor_Relation_HasOne extends Db_Descriptor_Relation_HasMany
 		list($local_keys, $foreign_keys) = $this->getKeys();
 		
 		// check if we have a correct related object
-		$str = 'if(isset('.$object_var.'->'.$this->relation->getName().') && '.$object_var.' instanceof '.$related->getClass().')
+		$str = '// The Has One relation '.$this->relation->getName().', relates to '.$related->getClass().'
+if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.' instanceof '.$related->getClass().')
 {
 	';
 		
@@ -54,9 +55,8 @@ class Db_Descriptor_Relation_HasOne extends Db_Descriptor_Relation_HasMany
 		
 		list($local_keys, $foreign_keys) = $this->getKeys();
 		
-		$str = '//  relates To One '.$related->getClass()."\n";
-		
-		$str .= 'if(isset('.$object_var.'->'.$this->relation->getName().') && '.$object_var.' instanceof '.$related->getClass().')
+		$str = '// The Has One relation '.$this->relation->getName().', relates to '.$related->getClass().'
+if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.' instanceof '.$related->getProperty().')
 {
 	';
 		
@@ -76,22 +76,22 @@ class Db_Descriptor_Relation_HasOne extends Db_Descriptor_Relation_HasMany
 			// filter to only related objects
 			$where[] = addcslashes($db->protectIdentifiers($fprop->getColumn()), "'").' = \' . $this->db->escape($object->'.$lprop->getProperty().')';
 			
-			$if_conds[] = $object_var.'->'.$this->relation->getName().'->'.$fprop->getProperty().' != $object->'.$lprop->getProperty();
+			$if_conds[] = $object_var.'->'.$this->relation->getProperty().'->'.$fprop->getProperty().' != $object->'.$lprop->getProperty();
 			
 			// assignments to set the related object as a child object
-			$assignments[] = $object_var.'->'.$this->relation->getName().'->'.$fprop->getProperty().' = $object->'.$lprop->getProperty().';';
+			$assignments[] = $object_var.'->'.$this->relation->getProperty().'->'.$fprop->getProperty().' = $object->'.$lprop->getProperty().';';
 		}
 		
 		$sql = '\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").' SET ' . addcslashes(implode(', ', $set), "'") . ' WHERE ' . implode('.\' AND ', $where);
 		
-		$str .= 'if(empty('.$object_var.'->'.$this->relation->getName().') OR '.implode(' OR ', $if_conds).')
+		$str .= 'if(empty('.$object_var.'->'.$this->relation->getProperty().') OR '.implode(' OR ', $if_conds).')
 	{
 		$this->db->query('.$sql.');
 	}
 	
 	'.implode("\n", $assignments).'
 	
-	Db::save('.$object_var.'->'.$this->relation->getName().');
+	Db::save('.$object_var.'->'.$this->relation->getProperty().');
 }';
 		
 		return $str;
@@ -99,5 +99,5 @@ class Db_Descriptor_Relation_HasOne extends Db_Descriptor_Relation_HasMany
 }
 
 
-/* End of file HasMany.php */
+/* End of file HasOne.php */
 /* Location: ./lib/Db/Descriptor/Relation */

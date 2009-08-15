@@ -1,5 +1,5 @@
 ====================================
-RapidDataMapper  License  Agreement
+RapidDataMapper    License Agreement
 ====================================
 
 Copyright (c) 2009, Martin Wernståhl
