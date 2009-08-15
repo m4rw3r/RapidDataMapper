@@ -365,7 +365,7 @@ class Db_Descriptor_Relation
 				// TODO: Set some default values, based on the linked keys?
 				$c = $descriptor->newColumn($key);
 				
-				$descriptor->add();
+				$descriptor->add($c);
 				
 				$keys[] = $c;
 			}
