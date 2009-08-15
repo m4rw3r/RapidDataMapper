@@ -114,7 +114,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		
 		// build column list
 		$columns = array();
-		foreach($related->getColumns() as $prop)
+		foreach(array_merge($related->getColumns(), $related->getPrimaryKeys()) as $prop)
 		{
 			$columns[] = $db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'.'.$prop->getColumn()).' AS '.
 				$db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'__'.$prop->getProperty());

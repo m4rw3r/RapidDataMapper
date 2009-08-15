@@ -162,7 +162,7 @@ class Db_Descriptor_Relation_ManyToMany implements Db_Descriptor_RelationInterfa
 		// build column list
 		// TODO: Maybe put this in the main descriptor? to make it able to modify it if plugins uses eg. multiple tables?
 		$columns = array();
-		foreach($related->getColumns() as $prop)
+		foreach(array_merge($related->getColumns(), $related->getPrimaryKeys()) as $prop)
 		{
 			$columns[] = $db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'.'.$prop->getColumn()).' AS '.
 				$db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'__'.$prop->getProperty());
