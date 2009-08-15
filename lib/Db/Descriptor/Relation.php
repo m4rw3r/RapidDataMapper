@@ -419,15 +419,15 @@ class Db_Descriptor_Relation
 		{
 			case Db_Descriptor::HAS_MANY:
 				return 'Db_Descriptor_Relation_HasMany';
-				break;
 				
 			case Db_Descriptor::HAS_ONE:
 				return 'Db_Descriptor_Relation_HasOne';
-				break;
 				
 			case Db_Descriptor::BELONGS_TO:
 				return 'Db_Descriptor_Relation_BelongsTo';
-				break;
+			
+			case Db_Descriptor::MANY_TO_MANY:
+				return 'Db_Descriptor_Relation_ManyToMany';
 				
 			default:
 				throw new UnexpectedValueException($t);
