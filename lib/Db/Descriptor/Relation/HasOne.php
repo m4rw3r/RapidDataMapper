@@ -56,7 +56,7 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'
 		list($local_keys, $foreign_keys) = $this->getKeys();
 		
 		$str = '// The Has One relation '.$this->relation->getName().', relates to '.$related->getClass().'
-if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.' instanceof '.$related->getProperty().')
+if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.' instanceof '.$related->getClass().')
 {
 	';
 		
