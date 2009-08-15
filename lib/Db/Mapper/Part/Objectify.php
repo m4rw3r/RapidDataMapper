@@ -40,7 +40,7 @@ class Db_Mapper_Part_Objectify extends Db_Mapper_Code_Method
 		
 		$this->addPart(new Db_Mapper_Part_Objectify_NewObj($this->descriptor));
 		
-		// TODO: Add relation handling code
+		$this->addPart(new Db_Mapper_part_Objectify_LoadRelated($this->descriptor));
 	}
 }
 
