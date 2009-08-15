@@ -33,7 +33,10 @@ class Db_Mapper_Part_Save extends Db_Mapper_Code_Method
 	{
 		// TODO: Add on_save hook
 		
-		// TODO: Add Belongs To relation code
+		foreach($this->descriptor->getRelations() as $rel)
+		{
+			$this->addPart($rel->getPreSaveRelationCode('$object'));
+		}
 		
 		$this->addPart(new Db_Mapper_Part_Save_Insert($this->descriptor));
 		
