@@ -156,6 +156,19 @@ abstract class Db
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Sets the name of the default database connection.
+	 * 
+	 * @param  string
+	 * @return void
+	 */
+	public function setDefaultConnectionName($name)
+	{
+		self::$conn_default = $name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Getter for the database connections, semi-singleton.
 	 * 
 	 * @param  string
@@ -163,7 +176,7 @@ abstract class Db
 	 */
 	public static function getConnection($name = false)
 	{
-		if($name === false)
+		if(empty($name))
 		{
 			// use the default connection
 			$name = self::$conn_default;
@@ -191,7 +204,7 @@ abstract class Db
 	 * 
 	 * @return array
 	 */
-	public static function getLoadedConnection()
+	public static function getLoadedConnections()
 	{
 		return self::$conn_list;
 	}
@@ -448,7 +461,7 @@ abstract class Db
 	 * @param  callable
 	 * @return void
 	 */
-	public function attach_logger($callable)
+	public function attachLogger($callable)
 	{
 		self::$loggers[] = $callable;
 	}
