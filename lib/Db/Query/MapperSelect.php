@@ -122,7 +122,7 @@ class Db_Query_MapperSelect extends Db_Query_Select
 	 * 
 	 * @return object|false
 	 */
-	public function get_one()
+	public function getOne()
 	{
 		// TODO: Limit to one object from the db
 		$ret = $this->_get();
