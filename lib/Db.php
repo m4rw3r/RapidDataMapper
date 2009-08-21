@@ -61,6 +61,13 @@ abstract class Db
 	protected static $mapper_descriptors = array();
 	
 	/**
+	 * The callable to use to load descriptors in a customized way.
+	 * 
+	 * @var callable 
+	 */
+	protected static $mapper_descriptor_loader = null;
+	
+	/**
 	 * Directory for containing the descriptors.
 	 * 
 	 * @var string
@@ -240,6 +247,33 @@ abstract class Db
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Sets a callable which will load a descriptor for the supplied class.
+	 * 
+	 * Method signature of the callable:
+	 * <code>
+	 * Db_Descriptor function(string $class_name);
+	 * </code>
+	 * 
+	 * If anything but a Db_Descriptor (or a child class) is returned, it will
+	 * be considered a failure, and RapidDataMapper will search elsewhere for
+	 * a descriptor.
+	 * 
+	 * @param  callable
+	 * @return void 
+	 */
+	public function setDescriptorLoader($callable)
+	{
+		if( ! is_callable($callable, true))
+		{
+			throw new InvalidArgumentException('Faulty syntax in supplied callable.');
+		}
+		
+		self::$mapper_descriptor_loader = $callable;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Adds a certain descriptor.
 	 * 
 	 * @param  Db_Descriptor
@@ -255,12 +289,14 @@ abstract class Db
 	/**
 	 * Returns the descriptor for a certain class.
 	 * 
-	 * - First checks if there already is a loaded
+	 * - First checks if there already is a loaded descriptor
 	 *   (or manually loaded, via addDescriptor()).
+	 * - After that it checks if there is a registered descriptor
+	 *   loader, which would return a descriptor instance describing the class.
 	 * - Then it checks if ClassNameDescriptor.php exists
-	 *   (it uses the autoloader, so Record_UserDescriptor will be placed in Record/UserDescriptor.php).
+	 *   (it uses the autoloader(s), so Record_UserDescriptor will be placed in Record/UserDescriptor.php).
 	 * - Finally it tries the descriptor directory for any files with the name
-	 *   ClassName.php, which will contain a ClassNameDescriptor class.
+	 *   ClassName.php, which will contain a ClassNameDescriptor class (no autoloader).
 	 * 
 	 * @param  string
 	 * @throws Db_Exception_MissingDescriptor
@@ -271,6 +307,16 @@ abstract class Db
 		if(isset(self::$mapper_descriptors[$class]))
 		{
 			return self::$mapper_descriptors[$class];
+		}
+		
+		// check if we can call the mapper descriptor loader (also autoload it, and see if it can be called)
+		if(is_callable(self::$mapper_descriptor_loader))
+		{
+			// check that we get a Db_Descriptor object
+			if(($d = call_user_func(self::$mapper_descriptor_loader, $class)) instanceof Db_Descriptor)
+			{
+				return self::$mapper_descriptors[$class] = $d;
+			}
 		}
 		
 		// default class name
@@ -284,15 +330,15 @@ abstract class Db
 			{
 				require self::$mapper_desc_dir.'/'.$class.'.php';
 			}
-			else
+			
+			// check if any class was loaded, do not use autoload this time
+			if( ! class_exists($klass, false))
 			{
 				throw new Db_Exception_MissingDescriptor($class);
 			}
 		}
-		else
-		{
-			return self::$mapper_descriptors[$class] = new $klass();
-		}
+		
+		return self::$mapper_descriptors[$class] = new $klass();
 	}
 	
 	// ------------------------------------------------------------------------
