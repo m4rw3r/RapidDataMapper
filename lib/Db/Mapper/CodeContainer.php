@@ -130,7 +130,9 @@ abstract class Db_Mapper_CodeContainer
 				
 				if( ! empty($path))
 				{
-					$part_removed = $part_removed OR $part->removePart($path);
+					$r = $part->removePart($path);
+					
+					$part_removed = ($part_removed OR $r);
 				}
 				else
 				{
