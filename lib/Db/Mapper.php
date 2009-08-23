@@ -87,7 +87,7 @@ abstract class Db_Mapper
 					$query->where(array_combine($this->primary_keys, (Array) $conditions));
 					
 					// limit to one
-					return $query->get_one();
+					return $query->getOne();
 				}
 			}
 			else
