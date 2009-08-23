@@ -11,6 +11,16 @@ require_once dirname(__FILE__).'/../../lib/Db.php';
 
 Db::initAutoload();
 
+// Dummy configuration
+Db::setConnectionConfig(
+    array(
+        'default' => array(
+            'hostname' => 'localhost',
+            'dbdriver' => 'mysql'
+        )
+    )
+);
+
 /**
  * Tests the main Db object.
  */
@@ -220,6 +230,54 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertContainsOnly($pk, $desc->getPrimaryKeys());
 		$this->assertContainsOnly($rel, $desc->getRelations());
 	}
+	public function testAdd4()
+	{
+		$desc = new Db_Descriptor();
+		$c = new Db_Descriptor_Column();
+		$c2 = new Db_Descriptor_Column();
+		
+		$c->setProperty('a');
+		$c2->setProperty('a');
+		
+		$desc->add($c);
+		$this->assertContainsOnly($c, $desc->getColumns());
+		
+		// replaces c2, as the property is the same
+		$desc->add($c2);
+		$this->assertContainsOnly($c2, $desc->getColumns());
+	}
+	public function testAdd5()
+	{
+		$desc = new Db_Descriptor();
+		$pk = new Db_Descriptor_PrimaryKey();
+		$pk2 = new Db_Descriptor_PrimaryKey();
+		
+		$pk->setProperty('a');
+		$pk2->setProperty('a');
+		
+		$desc->add($pk);
+		$this->assertContainsOnly($pk, $desc->getPrimaryKeys());
+		
+		// replaces pk2, as the property is the same
+		$desc->add($pk2);
+		$this->assertContainsOnly($pk2, $desc->getPrimaryKeys());
+	}
+	public function testAdd6()
+	{
+		$desc = new Db_Descriptor();
+		$r = new Db_Descriptor_Relation();
+		$r2 = new Db_Descriptor_Relation();
+		
+		$r->setProperty('a');
+		$r2->setProperty('a');
+		
+		$desc->add($r);
+		$this->assertContainsOnly($r, $desc->getRelations());
+		
+		// replaces r2, as the property is the same
+		$desc->add($r2);
+		$this->assertContainsOnly($r2, $desc->getRelations());
+	}
 	
 	// ------------------------------------------------------------------------
 	
@@ -246,6 +304,221 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc = new Db_Descriptor();
 		
 		$this->assertTrue($desc->newRelation('image') instanceof Db_Descriptor_Relation);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testGetConnectionName()
+	{
+		$desc = new Db_Descriptor();
+		
+		$this->assertFalse($desc->getConnectionName(), 'Default value of getConnectionName() is false');
+		
+		$desc->setConnectionName('default');
+		
+		$this->assertSame('default', $desc->getConnectionName());
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testGetConnection()
+	{
+		$desc = new Db_Descriptor();
+		
+		$this->assertTrue($desc->getConnection() instanceof Db_Connection, 'Assert that we get a connection object');
+		$this->assertEquals('default', $desc->getConnection()->getName());
+		$this->assertSame(Db::getConnection(), $desc->getConnection());
+		
+		$c = $this->getMock('Db_Driver_Mysql_Connection', null, array('mock', array()));
+		$desc->setConnection($c);
+		
+		$this->assertSame($c, $desc->getConnection());
+	}
+	public function testGetConnection2()
+	{
+		$desc = new Db_Descriptor();
+		
+		Db::setConnectionConfig(
+			array(
+				'Mock' => array(
+					'dbdriver' => 'mysql'
+					)
+				)
+			);
+		
+		$desc->setConnectionName('Mock');
+		
+		$this->assertEquals('Mock', $desc->getConnection()->getName());
+		$this->assertSame(Db::getConnection('Mock'), $desc->getConnection());
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @covers Db_Descriptor::getBuilder()
+	 */
+	public function testGetBuilder()
+	{
+		$desc = new Db_Descriptor();
+		
+		$desc->getBuilder();
+	}
+	/**
+	 * @expectedException Db_Exception_MissingPrimaryKey
+	 * @covers Db_Descriptor::getBuilder()
+	 */
+	public function testGetBuilder2()
+	{
+		$desc = new Db_Descriptor();
+		$desc->setClass('Foobar');
+		
+		$desc->getBuilder();
+	}
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testGetBuilder3()
+	{
+		// Dummy class
+		eval('class Db_Mapper_Builder
+		{
+			protected $desc;
+			public function __construct($desc)
+				{ $this->desc = $desc; }
+			public function getDesc()
+				{ return $this->desc; }
+		}');
+		
+		$desc = new Db_Descriptor();
+		$desc->setClass('Foobar');
+		$desc->add($desc->newPrimaryKey('id'));
+		
+		$b = $desc->getBuilder();
+		
+		$this->assertTrue($b instanceof Db_Mapper_Builder);
+		$this->assertSame($desc, $b->getDesc());
+		
+		$b2 = $desc->getBuilder();
+		
+		$this->assertThat(
+				$b,
+				$this->logicalNot(
+					$this->identicalTo($b2)
+				)
+			);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testCreateBuilder()
+	{
+		eval('class TestDescriptor extends Db_Descriptor
+		{
+			protected $b;
+			public function setBuilder($b)
+				{ $this->builder = $b; }
+			public function createBuilder()
+				{ return $this->builder; }
+		}');
+		
+		$desc = new TestDescriptor();
+		$desc->setBuilder($dummy = new stdClass);
+		$desc->setClass('Foobar');
+		
+		try
+		{
+			$desc->getBuilder();
+			
+			$this->fail('An expected Db_Exception_MissingPrimaryKey exception has not been raised.');
+		}
+		catch(Db_Exception_MissingPrimaryKey $e)
+		{
+			// just continue
+		}
+		
+		$desc->add($desc->newPrimaryKey('id'));
+		
+		$this->assertSame($dummy, $desc->getBuilder());
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testGetUidCode()
+	{
+		$desc = new Db_Descriptor();
+		$pk = $this->getMock('Db_Descriptor_PrimaryKey');
+		$pk2 = $this->getMock('Db_Descriptor_PrimaryKey');
+		
+		
+		$pk ->expects($this->exactly(2))
+			->method('getFromDataCode')
+			->with($this->equalTo('$data'), $this->equalTo('$alias'))
+			->will($this->returnValue('pk1code'));
+		
+		$pk ->expects($this->any())
+			->method('getProperty')
+			->will($this->returnValue('a'));
+		
+		
+		$pk2->expects($this->once())
+			->method('getFromDataCode')
+			->with($this->equalTo('$data'), $this->equalTo('$alias'))
+			->will($this->returnValue('pk2code'));
+		
+		$pk2->expects($this->any())
+			->method('getProperty')
+			->will($this->returnValue('b'));
+		
+		
+		$desc->add($pk);
+		
+		$this->assertEquals('pk1code', $desc->getUidCode('$data', '$alias'));
+		
+		$desc->add($pk2);
+		
+		$this->assertEquals('pk1code.\'*\'.pk2code', $desc->getUidCode('$data', '$alias'));
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testGetNotContainsObjectCode()
+	{
+		$desc = new Db_Descriptor();
+		$pk = $this->getMock('Db_Descriptor_PrimaryKey');
+		$pk2 = $this->getMock('Db_Descriptor_PrimaryKey');
+		
+		
+		$pk ->expects($this->exactly(2))
+			->method('getFromDataCode')
+			->with($this->equalTo('$data'), $this->equalTo('$alias'))
+			->will($this->returnValue('pk1code'));
+		
+		$pk ->expects($this->any())
+			->method('getProperty')
+			->will($this->returnValue('a'));
+		
+		
+		$pk2->expects($this->once())
+			->method('getFromDataCode')
+			->with($this->equalTo('$data'), $this->equalTo('$alias'))
+			->will($this->returnValue('pk2code'));
+		
+		$pk2->expects($this->any())
+			->method('getProperty')
+			->will($this->returnValue('b'));
+		
+		
+		$desc->add($pk);
+		
+		$this->assertEquals('is_null(pk1code)', $desc->getNotContainsObjectCode('$data', '$alias'));
+		
+		$desc->add($pk2);
+		
+		$this->assertEquals('is_null(pk1code) OR is_null(pk2code)', $desc->getNotContainsObjectCode('$data', '$alias'));
 	}
 }
 
