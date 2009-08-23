@@ -12,85 +12,232 @@ require_once dirname(__FILE__).'/../../../lib/Db.php';
 Db::initAutoload();
 
 /**
- * Tests the main Db object.
+ * @covers Db_Mapper_CodeContainer
  */
 class Db_Mapper_CodeContainerTest extends PHPUnit_Framework_TestCase
 {
+	public function setUp()
+	{
+		if( ! class_exists('TestContainer'))
+		{
+			eval('class TestContainer extends Db_Mapper_CodeContainer
+			{
+				public function __construct($name = null)
+					{ $this->setName($name); }
+				protected $name;
+				public function getName()
+					{ return $this->name; }
+				public function setName($name)
+					{ $this->name = $name; }
+			}');
+		}
+	}
+	
 	// ------------------------------------------------------------------------
 	
 	public function testIsAbstract()
 	{
 		$ref = new ReflectionClass('Db_Mapper_CodeContainer');
 		
-		$this->assertTrue($ref->isAbstract());
-		$this->assertTrue($ref->getMethod('getName') instanceof ReflectionMethod);
-		$this->assertTrue($ref->getMethod('getName')->isAbstract());
+		$this->assertTrue($ref->isAbstract(), 'Class is abstract');
+		$this->assertTrue($ref->getMethod('getName') instanceof ReflectionMethod, 'Class has a method called getName()');
+		$this->assertTrue($ref->getMethod('getName')->isAbstract(), 'The getName() method is abstract');
 	}
 	
 	// ------------------------------------------------------------------------
 	
 	public function testSubclass()
 	{
-		eval('class AddContainer extends Db_Mapper_CodeContainer
-		{
-			protected $name;
-			public function getName()
-				{ return $this->name; }
-			public function setName()
-				{ $this->name = $name; }
-		}');
-		
-		$c = new AddContainer();
+		$c = new TestContainer();
 	}
 	
 	// ------------------------------------------------------------------------
 	
 	/**
 	 * @expectedException InvalidArgumentException
-	 * @depends testSubclass
 	 */
-	public function testAddPart()
+	public function testAddPartArray()
 	{
-		$c = new AddContainer();
+		$c = new TestContainer();
 		
 		$c->addPart(array());
 	}
-	/**
-	 * @expectedException InvalidArgumentException
-	 * @depends testSubclass
-	 */
-	public function testAddPart2()
-	{
-		$c = new AddContainer();
-		
-		$c->addPart(new stdClass);
-	}
-	/**
-	 * @depends testSubclass
-	 */
-	public function testAddPart3()
-	{
-		$c = new AddContainer();
-		
-		$c->addPart('');
-		
-		$this->assertSame($c->__toString(), '');
-		
-		$c->addPart('');
-		
-		$this->assertSame($c->__toString(), '');
-		
-		$this->markTestIncomplete('Add tests with paths and populated objects');
-	}
 	
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * @depends testSubclass
+	 * @expectedException InvalidArgumentException
 	 */
+	public function testAddPartInvalidClass()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart(new stdClass);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testAddPartEmpty()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart('');
+		
+		$this->assertSame('', $c->__toString());
+		
+		$c->addPart('');
+		
+		$this->assertSame('', $c->__toString());
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testAddPart()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart($n = new TestContainer());
+		
+		$this->assertSame(array($n), $c->getContent());
+		
+		$c->addPart($n2 = new TestContainer());
+		
+		$this->assertSame(array($n, $n2), $c->getContent());
+		
+		$c->addPart('foobar');
+		
+		$this->assertSame(array($n, $n2, 'foobar'), $c->getContent());
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testAddPartReplace()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart($n = new TestContainer('Foobar'));
+		
+		$this->assertSame(array($n), $c->getContent());
+		
+		$c->addPart($p = new TestContainer('Foobar'), '', true);
+		
+		$this->assertSame(array(1 => $p), $c->getContent());
+		
+		$c->addPart($k = new TestContainer('foo'), '', true);
+		
+		$this->assertSame(array(1 => $p, 2 => $k), $c->getContent());
+		
+		$c->addPart($l = new TestContainer('Foobar'), '', true);
+		
+		$this->assertSame(array(2 => $k, 3 => $l), $c->getContent());
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testAddPartPath()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart($d = new TestContainer('Foobar'));
+		
+		$this->assertTrue($c->addPart($e = new TestContainer('bar'), 'Foobar'));
+		
+		$this->assertContainsOnly($e, $d->getContent());
+		
+		$c->addPart($f = new TestContainer('baz'));
+		
+		$this->assertTrue($c->addPart($g = new TestContainer('bar'), 'baz'));
+		
+		$this->assertContainsOnly($g, $f->getContent());
+		
+		$this->assertSame(array($d, $f), $c->getContent());
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testAddPartPathReplace()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart($d = new TestContainer('Foobar'));
+		
+		$this->assertTrue($c->addPart($e = new TestContainer('bar'), 'Foobar'));
+		
+		$this->assertContainsOnly($e, $d->getContent());
+		
+		
+		$this->assertTrue($c->addPart($g = new TestContainer('bar'), 'Foobar', true));
+		
+		$this->assertContainsOnly($g, $d->getContent());
+		
+		$this->assertContainsOnly($d, $c->getContent());
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function testRemovePart()
 	{
-		$this->markTestIncomplete('Add tests with paths and populated objects');
+		$c = new TestContainer();
+		
+		$c->addPart($d = new TestContainer('Foobar'));
+		
+		$d->addPart($e = new TestContainer('bar'));
+		
+		$d->addPart($f = new TestContainer('foo'));
+		
+		$c->addPart($g = new TestContainer('baz'));
+		
+		$g->addPart($h = new TestContainer('bar'));
+		
+		$this->assertTrue($c->removePart('Foobar.bar'));
+		
+		$this->assertContainsOnly($f, $d->getContent());
+		
+		$this->assertFalse($c->removePart('Foobar.bar'));
+		$this->assertTrue($c->removePart('Foobar.foo'));
+		
+		$this->assertSame(array(), $d->getContent());
+		
+		$this->assertTrue($c->removePart('baz'));
+		$this->assertSame(array($d), $c->getContent());
+		
+		$this->assertFalse($c->removePart('baz.bar'));
+		$this->assertFalse($c->removePart('baz'));
+		
+		$this->assertTrue($c->removePart('Foobar'));
+		$this->assertSame(array(), $c->getContent());
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testGenerateGraph()
+	{
+		$c = new TestContainer();
+		
+		$this->assertEquals($c->generateGraph(), array());
+		
+		$c->addPart(new TestContainer());
+		
+		$this->assertEquals(array(''), $c->generateGraph());
+		
+		$p = new TestContainer();
+		$p->setName('test');
+		
+		$c->addPart($p);
+		
+		$this->assertEquals(array('', 'test'), $c->generateGraph());
+		
+		$p->addPart(new TestContainer('foo'));
+		
+		$this->assertEquals(array('', 'test', 'test.foo'), $c->generateGraph());
+		
+		$c->addPart(new TestContainer('a'));
+		
+		$this->assertEquals(array('', 'test', 'test.foo', 'a'), $c->generateGraph());
+		
+		$c->addPart('Foobar');
+		
+		$this->assertEquals(array('', 'test', 'test.foo', 'a'), $c->generateGraph());
 	}
 	
 	// ------------------------------------------------------------------------
