@@ -89,7 +89,9 @@ abstract class Db_Mapper_CodeContainer
 						continue;
 					}
 					
-					$part_added = $part_added OR $container->addPart($part, $path);
+					$r = $container->addPart($part, $path, $replace);
+					
+					$part_added = ($part_added OR $r);
 				}
 			}
 			
