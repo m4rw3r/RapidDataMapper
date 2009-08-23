@@ -13,6 +13,7 @@ Db::initAutoload();
 
 /**
  * @covers Db
+ * @runTestInSeparateProcess
  */
 class DbTest extends PHPUnit_Framework_TestCase
 {
@@ -32,7 +33,22 @@ class DbTest extends PHPUnit_Framework_TestCase
 	{
 		$reflection = new ReflectionClass('Db');
 		
-		$this->assertTrue($reflection->isAbstract());
+		$sum = false;
+		
+		$sum = ($sum OR $reflection->isAbstract());
+		
+		try
+		{
+			$c = $reflection->getConstructor();
+			
+			$sum = ($sum OR $c->isPrivate() OR $c->isProtected());
+		}
+		catch(RelfectionException $e)
+		{
+			var_dump($e);
+		}
+		
+		$this->assertTrue($sum);
 	}
 	
 	// ------------------------------------------------------------------------
