@@ -8,7 +8,7 @@
 /**
  * The main class to interact with when doing database queries.
  */
-abstract class Db
+final class Db
 {
 	const ERROR = 1;
 	const WARNING = 2;
@@ -98,6 +98,13 @@ abstract class Db
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Private constructor to prevent anyone from instantiating an instance of the Db class.
+	 */
+	private function __construct(){}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Initializes the autoloader.
 	 * 
 	 * @return void
@@ -168,7 +175,7 @@ abstract class Db
 	 * @param  string
 	 * @return void
 	 */
-	public function setDefaultConnectionName($name)
+	public static function setDefaultConnectionName($name)
 	{
 		self::$conn_default = $name;
 	}
@@ -261,7 +268,7 @@ abstract class Db
 	 * @param  callable
 	 * @return void 
 	 */
-	public function setDescriptorLoader($callable)
+	public static function setDescriptorLoader($callable)
 	{
 		if( ! is_callable($callable, true))
 		{
@@ -475,7 +482,7 @@ abstract class Db
 	 * @param  bool
 	 * @return bool
 	 */
-	static public function save($object, $force = false)
+	public static function save($object, $force = false)
 	{
 		$m = self::getMapper(get_class($object));
 		
@@ -507,7 +514,7 @@ abstract class Db
 	 * @param  callable
 	 * @return void
 	 */
-	public function attachLogger($callable)
+	public static function attachLogger($callable)
 	{
 		self::$loggers[] = $callable;
 	}
