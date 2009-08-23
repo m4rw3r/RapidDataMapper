@@ -30,7 +30,7 @@ class Db_Mapper_Part_PopulateFindQuery extends Db_Mapper_Code_Method
 	 */
 	public function addContents()
 	{
-		$db = $this->descriptor->getDatabaseConnection();
+		$db = $this->descriptor->getConnection();
 		
 		$this->addPart('$q = new Db_Query_MapperSelect($this, \''.$this->descriptor->getSingular().'\');');
 		

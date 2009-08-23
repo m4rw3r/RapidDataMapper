@@ -30,7 +30,7 @@ class Db_Mapper_Part_Constructor extends Db_Mapper_Code_Method
 	 */
 	public function addContents()
 	{
-		$conn_name = $this->descriptor->getDatabaseConnectionName();
+		$conn_name = $this->descriptor->getConnectionName();
 		
 		if( ! empty($conn_name))
 		{
