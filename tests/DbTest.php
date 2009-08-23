@@ -12,7 +12,7 @@ require_once dirname(__FILE__).'/../lib/Db.php';
 Db::initAutoload();
 
 /**
- * Tests the main Db object.
+ * @covers Db
  */
 class DbTest extends PHPUnit_Framework_TestCase
 {

@@ -22,7 +22,7 @@ Db::setConnectionConfig(
 );
 
 /**
- * Tests the main Db object.
+ * @covers Db_Descriptor
  */
 class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 {
