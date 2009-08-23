@@ -145,6 +145,18 @@ abstract class Db_Mapper_CodeContainer
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns a list of the objects contained in this CodeContainer.
+	 * 
+	 * @return array
+	 */
+	public function getContent()
+	{
+		return $this->content;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Renders a list of all the nodes in this container, useful for debug.
 	 * 
 	 * Format:
