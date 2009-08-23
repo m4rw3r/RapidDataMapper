@@ -249,7 +249,7 @@ class Db_Descriptor
 	 * 
 	 * @return string
 	 */
-	public function getDatabaseConnectionName()
+	public function getConnectionName()
 	{
 		return $this->db_conn_name;
 	}
@@ -262,7 +262,7 @@ class Db_Descriptor
 	 * @param  string
 	 * @return self
 	 */
-	public function setDatabaseConnectionName($name)
+	public function setConnectionName($name)
 	{
 		$this->db_conn_name = $name;
 		
@@ -276,9 +276,9 @@ class Db_Descriptor
 	 * 
 	 * @return Db_Connection
 	 */
-	public function getDatabaseConnection()
+	public function getConnection()
 	{
-		return empty($this->db_conn) ? Db::getConnection($this->getDatabaseConnectionName()) : $this->db_conn;
+		return empty($this->db_conn) ? Db::getConnection($this->getConnectionName()) : $this->db_conn;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -289,7 +289,7 @@ class Db_Descriptor
 	 * @param  Db_Connection
 	 * @return self
 	 */
-	public function setDatabaseConnection(Db_Connection $conn)
+	public function setConnection(Db_Connection $conn)
 	{
 		$this->db_conn = $conn;
 		

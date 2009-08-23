@@ -49,7 +49,7 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'
 	public function getSaveUpdateRelationCode($object_var)
 	{
 		// TODO: Maybe use some Db_Mapper_CodeContainer here?
-		$db = $this->relation->getParentDescriptor()->getDatabaseConnection();
+		$db = $this->relation->getParentDescriptor()->getConnection();
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();
 		

@@ -88,7 +88,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 	
 	public function getJoinRelatedCode($query_obj_var, $alias_of_linked_var)
 	{
-		$db = $this->relation->getParentDescriptor()->getDatabaseConnection();
+		$db = $this->relation->getParentDescriptor()->getConnection();
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();
 		
@@ -198,7 +198,7 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 	public function getSaveUpdateRelationCode($object_var)
 	{
 		// TODO: Maybe use some Db_Mapper_CodeContainer here?
-		$db = $this->relation->getParentDescriptor()->getDatabaseConnection();
+		$db = $this->relation->getParentDescriptor()->getConnection();
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();
 		

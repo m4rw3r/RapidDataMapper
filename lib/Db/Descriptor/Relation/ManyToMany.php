@@ -122,7 +122,7 @@ class Db_Descriptor_Relation_ManyToMany implements Db_Descriptor_RelationInterfa
 	
 	public function getJoinRelatedCode($query_obj_var, $alias_of_linked_var)
 	{
-		$db = $this->relation->getParentDescriptor()->getDatabaseConnection();
+		$db = $this->relation->getParentDescriptor()->getConnection();
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();
 		
@@ -192,7 +192,7 @@ LEFT JOIN ' . addcslashes($db->protectIdentifiers($db->dbprefix . $related->getT
 	
 	public function getSaveInsertRelationCode($object_var)
 	{
-		$db = $this->relation->getParentDescriptor()->getDatabaseConnection();
+		$db = $this->relation->getParentDescriptor()->getConnection();
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();
 		
@@ -263,7 +263,7 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 	
 	public function getSaveUpdateRelationCode($object_var)
 	{
-		$db = $this->relation->getParentDescriptor()->getDatabaseConnection();
+		$db = $this->relation->getParentDescriptor()->getConnection();
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();
 		
