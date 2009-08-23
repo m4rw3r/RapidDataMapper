@@ -30,12 +30,18 @@ class Db_Mapper_Part_Objectify_LoadRelated extends Db_Mapper_CodeContainer
 	{
 		foreach($this->descriptor->getRelations() as $rel)
 		{
-			// TODO: Make something more generic
-			switch($rel->getType())
+			if($rel->isPlural())
 			{
-				case Db_Descriptor::HAS_ONE:
-				case Db_Descriptor::BELONGS_TO:
-					$this->addPart('
+				$this->addPart('
+case \''.$rel->getName().'\':
+$rel = $mappers[$alias.\'-'.$rel->getName().'\']->objectify($res[$uid]->'.$rel->getName().', $row, $alias.\'-'.$rel->getName().'\', $mappers, $alias_paths[\''.$rel->getName().'\']);
+
+$res[$uid]->__loaded_rels[\''.$rel->getName().'\'] = $res[$uid]->'.$rel->getName().';
+break;');
+			}
+			else
+			{
+				$this->addPart('
 case \''.$rel->getName().'\':
 	$mappers[$alias.\'-' . $rel->getName() . '\']->objectify($res[$uid]->__loaded_rels[\'' . $rel->getName() . '\'], $row, $alias.\'-' . $rel->getName() . '\', $mappers, $alias_paths[\''.$rel->getName().'\']);
 
@@ -44,14 +50,6 @@ case \''.$rel->getName().'\':
 	{
 		$res[$uid]->'.$rel->getName().' = current($res[$uid]->__loaded_rels[\''.$rel->getName().'\']);
 	}
-	break;');
-					break;
-				default:
-					$this->addPart('
-case \''.$rel->getName().'\':
-	$rel = $mappers[$alias.\'-'.$rel->getName().'\']->objectify($res[$uid]->'.$rel->getName().', $row, $alias.\'-'.$rel->getName().'\', $mappers, $alias_paths[\''.$rel->getName().'\']);
-
-	$res[$uid]->__loaded_rels[\''.$rel->getName().'\'] = $res[$uid]->'.$rel->getName().';
 	break;');
 			}
 		}

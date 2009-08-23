@@ -10,7 +10,6 @@
  */
 class Db_Descriptor_Relation_BelongsTo extends Db_Descriptor_Relation_HasOne
 {
-	
 	// ------------------------------------------------------------------------
 	
 	public function getPreSaveRelationCode($object_var)

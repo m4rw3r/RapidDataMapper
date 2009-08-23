@@ -69,6 +69,13 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 	
 	// ------------------------------------------------------------------------
 	
+	public function isPlural()
+	{
+		return true;
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function setExtraConditions($property_name, $value = null)
 	{
 		// TODO: More validation

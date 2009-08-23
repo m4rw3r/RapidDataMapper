@@ -10,6 +10,13 @@
  */
 class Db_Descriptor_Relation_HasOne extends Db_Descriptor_Relation_HasMany
 {
+	public function isPlural()
+	{
+		return false;
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function getSaveInsertRelationCode($object_var)
 	{
 		// TODO: Maybe use some Db_Mapper_CodeContainer here?

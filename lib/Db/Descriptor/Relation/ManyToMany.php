@@ -120,6 +120,13 @@ class Db_Descriptor_Relation_ManyToMany implements Db_Descriptor_RelationInterfa
 	
 	// ------------------------------------------------------------------------
 	
+	public function isPlural()
+	{
+		return true;
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function getJoinRelatedCode($query_obj_var, $alias_of_linked_var)
 	{
 		$db = $this->relation->getParentDescriptor()->getConnection();

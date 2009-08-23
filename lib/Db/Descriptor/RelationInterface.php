@@ -29,6 +29,13 @@ interface Db_Descriptor_RelationInterface
 	public function setExtraConditions($property_name, $value = null);
 	
 	/**
+	 * Returns true if this relation type is a plural relation.
+	 * 
+	 * @return bool
+	 */
+	public function isPlural();
+	
+	/**
 	 * Returns the code which will add the join code to the designated query object.
 	 * 
 	 * Example code:
