@@ -16,7 +16,7 @@ abstract class Db_Connection
 	 * 
 	 * @var string
 	 */
-	public $name;
+	protected $name;
 	
 	/**
 	 * The database hostname.
@@ -169,6 +169,18 @@ abstract class Db_Connection
 		}
 		
 		$this->result_object_class = str_replace('_Connection', '', get_class($this)).'_Result';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name of the configuration used to configure this connection object.
+	 * 
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
 	}
 	
 	// ------------------------------------------------------------------------
