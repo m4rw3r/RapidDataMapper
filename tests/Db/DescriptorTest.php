@@ -11,21 +11,23 @@ require_once dirname(__FILE__).'/../../lib/Db.php';
 
 Db::initAutoload();
 
-// Dummy configuration
-Db::setConnectionConfig(
-    array(
-        'default' => array(
-            'hostname' => 'localhost',
-            'dbdriver' => 'mysql'
-        )
-    )
-);
-
 /**
  * @covers Db_Descriptor
  */
 class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 {
+	public function setUp()
+	{
+		// Dummy configuration
+		Db::setConnectionConfig(
+		    array(
+		        'default' => array(
+		            'hostname' => 'localhost',
+		            'dbdriver' => 'mysql'
+		        )
+		    )
+		);
+	}
 	
 	// ------------------------------------------------------------------------
 
@@ -356,7 +358,6 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	
 	/**
 	 * @expectedException Db_Exception_Descriptor_MissingClassName
-	 * @covers Db_Descriptor::getBuilder()
 	 */
 	public function testGetBuilder()
 	{
@@ -366,7 +367,6 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	}
 	/**
 	 * @expectedException Db_Exception_MissingPrimaryKey
-	 * @covers Db_Descriptor::getBuilder()
 	 */
 	public function testGetBuilder2()
 	{
