@@ -235,7 +235,7 @@ class Db_Descriptor_Column
 	 */
 	public function getSelectCode($table, $alias, Db_Connection $db)
 	{
-		return $db->protectIdentifiers($table.'.'.$this->getColumn()).' AS '.$db->protectIdentifiers($alias.'__'.$this->getProperty());
+		return $db->protectIdentifiers($table.'.'.$this->getColumn()).' AS '.$db->protectIdentifiers($alias.'_'.$this->getProperty());
 	}
 	
 	// ------------------------------------------------------------------------
@@ -279,7 +279,7 @@ class Db_Descriptor_Column
 	 */
 	public function getFromDataCode($data_var, $data_prefix_var)
 	{
-		return $data_var.'->{'.$data_prefix_var.'.\'__'.$this->getProperty().'\'}';
+		return $data_var.'->{'.$data_prefix_var.'.\'_'.$this->getProperty().'\'}';
 	}
 	
 	// ------------------------------------------------------------------------
