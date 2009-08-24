@@ -531,7 +531,7 @@ class Db_Descriptor
 				// check if it is a static method or a function
 				elseif(is_callable($hook))
 				{
-					return implode('::', $hook).'('.$param_list.');';
+					return implode('::', (Array)$hook).'('.$param_list.');';
 				}
 				else
 				{
