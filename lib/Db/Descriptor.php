@@ -90,6 +90,13 @@ class Db_Descriptor
 	protected $db_conn;
 	
 	/**
+	 * A list of the registered hooks.
+	 * 
+	 * @var array
+	 */
+	protected $hooks = array();
+	
+	/**
 	 * Contains a list of the primary keys described by this object.
 	 * 
 	 * @var array
@@ -299,6 +306,22 @@ class Db_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Sets a callable to call on a specific hook in the generated code.
+	 * 
+	 * @param  string
+	 * @param  string|array
+	 * @return self
+	 */
+	public function setHook($name, $callable)
+	{
+		$this->hooks[$name] = $callable;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Adds a descriptor object to this descriptor.
 	 * 
 	 * @throws InvalidArgumentException
@@ -434,6 +457,135 @@ class Db_Descriptor
 		}
 		
 		return $this->createBuilder();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the code invoking a specified hook.
+	 * 
+	 * Examples:
+	 * <code>
+	 * getHookCode('foo', '$obj', '$lol');
+	 * // $obj->foo_method($lol);
+	 * 
+	 * getHookCode('bar', false, '$obj');
+	 * // Foo::Bar_method($obj);
+	 * </code>
+	 * 
+	 * @param  string			The name of the hook
+	 * @param  string|false		The object variable to invoke the hooked method
+	 * 							(ie. the hooked method is situated ON the object 
+	 * 							contained in the $object_var variable)
+	 * 							If it is false, a static call is expected'
+	 * @param  string			A list of the parameters, just concatenate it between the parenthesis
+	 * @return string
+	 */
+	public function getHookCode($name, $object_var = false, $param_list = '')
+	{
+		if(isset($this->hooks[$name]))
+		{
+			if(is_array($this->hooks[$name]))
+			{
+				if(count($this->hooks[$name]) > 2)
+				{
+					throw new Db_Exception_InvalidCallable('Hook: "'.$name.'", the array has too many values.');
+				}
+				
+				if( ! (isset($this->hooks[$name][0]) && is_string($this->hooks[$name][0])))
+				{
+					throw new Db_Exception_InvalidCallable('Hook: "'.$name.'", the first value in the array is not a string.');
+				}
+				
+				if(isset($this->hooks[$name][1]) && ! is_string($this->hooks[$name][1]))
+				{
+					throw new Db_Exception_InvalidCallable('Hook: "'.$name.'", the first value in the array is not a string.');
+				}
+			}
+			elseif( ! is_string($this->hooks[$name]))
+			{
+				throw new Db_Exception_InvalidCallable('Hook: "'.$name.'", the callable must be either a string or an array containing one or two strings.');
+			}
+			
+			$hook = array();
+			foreach((Array) $this->hooks[$name] as $c)
+			{
+				// remove potential troublemakers
+				$hook[] = trim((String) $c, " ();=\t\n\r");
+			}
+			
+			if($object_var === false)
+			{
+				// check if the hooks is a static method on the attached object
+				// also take the __callStatic into account
+				if(is_string($hook) && (is_callable(array($this->getClass(), $hook)) OR
+					method_exists($this->getClass(), '__callStatic')))
+				{
+					return $this->getClass().'::'.$hook.'('.$param_list.');';
+				}
+				// check if it is a static method or a function
+				elseif(is_callable($hook))
+				{
+					return implode('::', $hook).'('.$param_list.');';
+				}
+				else
+				{
+					throw new Db_Exception_InvalidCallable('Callable for hook "'.$name.'", callable "'.$hook.'".');
+				}
+			}
+			else
+			{
+				// we need a string
+				if(is_array($hook))
+				{
+					throw new Db_Exception_InvalidCallable('The hook "'.$name.'" requires a method placed on the described class, not a static method placed on some other class.');
+				}
+				
+				// check if it is a method on the object
+				try
+				{
+					// fetch a reflection
+					$ref = new ReflectionClass($this->getClass());
+					
+					if($ref->hasMethod($hook))
+					{
+						$m = $ref->getMethod($hook);
+						
+						// we need to be able to invoke it outside the class
+						if( ! $m->isPublic())
+						{
+							throw new Db_Exception_InvalidCallable('The "'.$this->getClass().'::'.$hook.'" method is not public, it cannot be used as a hook.');
+						}
+						elseif($m->isStatic())
+						{
+							throw new Db_Exception_InvalidCallable('The "'.$this->getClass().'::'.$hook.'" method is static but a non-static method is required.');
+						}
+						else
+						{
+							return $object_var.'->'.$hook.'('.$param_list.');';
+						}
+					}
+					// __call works too
+					elseif($ref->hasMethod('__call'))
+					{
+						return $object_var.'->'.$hook.'('.$param_list.');';
+					}
+					else
+					{
+						throw new Db_Exception_InvalidCallable('A method with the name "'.$hook.'" is required by a hook to be placed in the class "'.$this->getClass().'".');
+					}
+				}
+				catch(ReflectonException $e)
+				{
+					// TODO: Proper error handling code, convert to a Db_Exception
+					throw $e;
+				}
+			}
+		}
+		else
+		{
+			return '';
+		}
 	}
 	
 	// ------------------------------------------------------------------------
