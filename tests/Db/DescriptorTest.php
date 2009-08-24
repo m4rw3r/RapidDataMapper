@@ -520,6 +520,275 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertEquals('is_null(pk1code) OR is_null(pk2code)', $desc->getNotContainsObjectCode('$data', '$alias'));
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksInvalidArray()
+	{
+		$desc = new Db_Descriptor();
+		
+		$desc->setHook('test', array('a', 'b', 'c'));
+		$desc->getHookCode('test');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksInvalidArray2()
+	{
+		$desc = new Db_Descriptor();
+		
+		$desc->setHook('test', array('a', array()));
+		$desc->getHookCode('test');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksInvalidArray3()
+	{
+		$desc = new Db_Descriptor();
+		
+		$desc->setHook('test', array(array()));
+		$desc->getHookCode('test');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksInvalidArray4()
+	{
+		$desc = new Db_Descriptor();
+		
+		$desc->setHook('test', array());
+		$desc->getHookCode('test');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksInvalidArray5()
+	{
+		$desc = $this->initHooks();
+		
+		$desc->getHookCode('oatest_static', '$obj');
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testHooksEmpty()
+	{
+		$desc = new Db_Descriptor();
+		
+		$this->assertSame('', $desc->getHookCode('test'));
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksStaticWhenNonIsRequired()
+	{
+		$desc = $this->initHooks();
+		
+		$desc->setHook('test', 'test_static');
+		$desc->getHookCode('test', '$obj');
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksMissingMethod()
+	{
+		$desc = $this->initHooks();
+		
+		$desc->getHookCode('missing_func', '$obj');
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * @expectedException ReflectionException
+	 */
+	public function testHooksMissingClass()
+	{
+		// TODO: Correct when a proper excepton replaces ReflectionException
+		$desc = new Db_Descriptor();
+		$desc->setClass('Some_strange_missing_class');
+		
+		$desc->setHook('foo', 'foo');
+		$desc->getHookCode('foo', '$obj');
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testHooks()
+	{
+		$desc = $this->initHooks();
+		
+		$this->assertEquals('$obj->test();', $desc->getHookCode('test', '$obj'));
+		$this->assertEquals('$obj->test($param);', $desc->getHookCode('test', '$obj', '$param'));
+	}
+	public function testHooks2()
+	{
+		$desc = $this->initHooks();
+		
+		$this->assertEquals('test_hooks_on_obj::test_static();', $desc->getHookCode('test_static'));
+		$this->assertEquals('test_hooks_on_obj::test_static($param);', $desc->getHookCode('test_static', false, '$param'));
+	}
+	public function testHooks3()
+	{
+		$desc = $this->initHooks();
+		
+		$this->assertEquals('Other_class::test_static();', $desc->getHookCode('otest_static'));
+		$this->assertEquals('Other_class::test_static($param);', $desc->getHookCode('otest_static', false, '$param'));
+		$this->assertEquals('Other_class::test_static();', $desc->getHookCode('oatest_static'));
+		$this->assertEquals('Other_class::test_static($param);', $desc->getHookCode('oatest_static', false, '$param'));
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksProtected()
+	{
+		$desc = $this->initHooks();
+		
+		$desc->getHookCode('ptest', '$obj');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksProtected2()
+	{
+		$desc = $this->initHooks();
+		
+		$desc->getHookCode('test_pstatic');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksProtected3()
+	{
+		$desc = $this->initHooks();
+		
+		$desc->getHookCode('private_test', '$obj');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksProtected4()
+	{
+		$desc = $this->initHooks();
+		
+		$desc->getHookCode('test_private_static');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksProtected5()
+	{
+		$desc = $this->initHooks();
+		
+		$desc->getHookCode('otest_pstatic');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidCallable
+	 */
+	public function testHooksProtected6()
+	{
+		$desc = $this->initHooks();
+		
+		$desc->getHookCode('otest_private_static');
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testHooksCall()
+	{
+		$desc = new Db_Descriptor();
+		
+		eval('class Some_foo
+		{
+			public function __call($m, $p){}
+		}');
+		
+		$desc->setHook('t', 'test');
+		$desc->setClass('Some_foo');
+		
+		$this->assertEquals('$obj->test();', $desc->getHookCode('t', '$obj'));
+		$this->assertEquals('$obj->test($foo);', $desc->getHookCode('t', '$obj', '$foo'));
+	}
+	
+	public function testHooksCallStatic()
+	{
+		$desc = new Db_Descriptor();
+		
+		eval('class Some_fooS
+		{
+			public static function __callStatic($m, $p){}
+		}');
+		
+		$desc->setHook('t', 'test');
+		$desc->setClass('Some_fooS');
+		
+		$this->assertEquals('Some_fooS::test();', $desc->getHookCode('t'));
+		$this->assertEquals('Some_fooS::test($foo);', $desc->getHookCode('t', false, '$foo'));
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Initializes a set of hooks in a descriptor.
+	 * 
+	 * @return Db_Descriptor
+	 */
+	protected function initHooks()
+	{
+		if( ! class_exists('test_hooks_on_obj'))
+		{
+			eval('class test_hooks_on_obj
+			{
+				public function test(){}
+				protected function ptest(){}
+				protected function private_test(){}
+				public static function test_static(){}
+				protected static function test_pstatic(){}
+				protected static function test_private_static(){}
+			}
+			class Other_class
+			{	
+				public static function test_static(){}
+				protected static function test_pstatic(){}
+				protected static function test_private_static(){}
+			}');
+		}
+		
+		$desc = new Db_Descriptor();
+		$desc->setClass('test_hooks_on_obj');
+		
+		$desc->setHook('test', 'test');
+		$desc->setHook('ptest', 'ptest');
+		$desc->setHook('private_test', 'private_test');
+		$desc->setHook('test_static', 'test_static');
+		$desc->setHook('test_pstatic', 'test_pstatic');
+		$desc->setHook('test_private_static', 'test_private_static');
+		
+		$desc->setHook('otest_static', 'Other_class::test_static');
+		$desc->setHook('otest_pstatic', 'Other_class::test_pstatic');
+		$desc->setHook('otest_private_static', 'Other_class::test_private_static');
+		
+		$desc->setHook('oatest_static', array('Other_class', 'test_static'));
+		$desc->setHook('oatest_pstatic', array('Other_class', 'test_pstatic'));
+		$desc->setHook('oatest_private_static', array('Other_class', 'test_private_static'));
+		
+		$desc->setHook('missing_func', 'missing_func');
+		
+		return $desc;
+	}
 }
 
 
