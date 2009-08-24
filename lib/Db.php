@@ -492,6 +492,21 @@ final class Db
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Deletes the supplied object and triggers registered cascades.
+	 * 
+	 * @param  object
+	 * @return bool
+	 */
+	public static function delete($object)
+	{
+		$m = self::getMapper(get_class($object));
+		
+		return $m->delete($object);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Logs an event.
 	 * 
 	 * @param  int		Error level
