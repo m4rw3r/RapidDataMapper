@@ -171,8 +171,9 @@ class Db_Descriptor_Relation_ManyToMany implements Db_Descriptor_RelationInterfa
 		$columns = array();
 		foreach(array_merge($related->getColumns(), $related->getPrimaryKeys()) as $prop)
 		{
+			// TODO: Integrate this with the Db_Descriptor_Column::getSelectCode() (specifically the '_' part, as it affects other parts of the code)
 			$columns[] = $db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'.'.$prop->getColumn()).' AS '.
-				$db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'__'.$prop->getProperty());
+				$db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'_'.$prop->getProperty());
 		}
 		
 		// select
