@@ -514,6 +514,11 @@ class Db_Descriptor
 				$hook[] = trim((String) $c, " ();=\t\n\r");
 			}
 			
+			if(count($hook) == 1)
+			{
+				$hook = array_shift($hook);
+			}
+			
 			if($object_var === false)
 			{
 				// check if the hooks is a static method on the attached object
@@ -536,13 +541,9 @@ class Db_Descriptor
 			else
 			{
 				// we need a string
-				if(count($hook) > 1)
+				if(is_array($hook))
 				{
 					throw new Db_Exception_InvalidCallable('The hook "'.$name.'" requires a method placed on the described class, not a static method placed on some other class.');
-				}
-				else
-				{
-					$hook = array_shift($hook);
 				}
 				
 				// check if it is a method on the object
