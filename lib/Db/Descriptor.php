@@ -580,7 +580,7 @@ class Db_Descriptor
 						throw new Db_Exception_InvalidCallable('A method with the name "'.$hook.'" is required by a hook to be placed in the class "'.$this->getClass().'".');
 					}
 				}
-				catch(ReflectonException $e)
+				catch(ReflectionException $e)
 				{
 					// TODO: Proper error handling code, convert to a Db_Exception
 					throw $e;
