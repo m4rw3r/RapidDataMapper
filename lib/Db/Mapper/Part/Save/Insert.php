@@ -28,6 +28,9 @@ class Db_Mapper_Part_Save_Insert extends Db_Mapper_CodeContainer
 	 */
 	public function addContent()
 	{
+		// HOOK: on_insert
+		$this->addPart($this->descriptor->getHookCode('on_insert', '$object'));
+		
 		// assign the data to $data
 		$arr = array('//collect data', '$data = array();');
 		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
@@ -48,7 +51,8 @@ class Db_Mapper_Part_Save_Insert extends Db_Mapper_CodeContainer
 			$this->addPart($prop->getInsertPopulateColumnCode('$data', '$object'));
 		}
 		
-		// TODO: Add on_insert hook here
+		// HOOK: pre_insert
+		$this->addPart($this->descriptor->getHookCode('pre_insert', '$object', '$data'));
 		
 		$this->addPart("if(empty(\$data))\n{\n\treturn false;\n}");
 		
@@ -70,6 +74,9 @@ class Db_Mapper_Part_Save_Insert extends Db_Mapper_CodeContainer
 		
 		// save for future comparison
 		$this->addPart("// save the data to be able to only update the modified data\n\$object->__data = \$data;");
+		
+		// HOOK: post_insert
+		$this->addPart($this->descriptor->getHookCode('post_insert', '$object'));
 	}
 	
 	// ------------------------------------------------------------------------

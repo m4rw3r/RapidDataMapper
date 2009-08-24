@@ -31,7 +31,14 @@ class Db_Mapper_Part_Delete extends Db_Mapper_Code_Method
 	 */
 	public function addContents()
 	{
-		// TODO: Add on_delete hook
+		// HOOK: on_delete
+		$this->addPart($this->descriptor->getHookCode('on_delete', '$object'));
+		
+		// is it already deleted?
+		$this->addPart('if(empty($object->__id))
+{
+	return false;
+}');
 		
 		// TODO: Add calls to cascades
 		
@@ -39,7 +46,8 @@ class Db_Mapper_Part_Delete extends Db_Mapper_Code_Method
 		
 		$this->addPart('$ret = $this->db->delete(\''.$this->descriptor->getTable().'\', $object->__id);');
 		
-		// TODO: Add post_delete hook
+		// HOOK: on_delete
+		$this->addPart($this->descriptor->getHookCode('post_delete', '$object'));
 		
 		$this->addPart('return $ret;');
 	}

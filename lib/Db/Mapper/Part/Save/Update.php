@@ -28,6 +28,9 @@ class Db_Mapper_Part_Save_Update extends Db_Mapper_CodeContainer
 	 */
 	public function addContent()
 	{
+		// HOOK: on_update
+		$this->addPart($this->descriptor->getHookCode('on_update', '$object'));
+		
 		// assign the data to $data
 		$arr = array('//collect data', '$data = array();');
 		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
@@ -42,6 +45,9 @@ class Db_Mapper_Part_Save_Update extends Db_Mapper_CodeContainer
 		}
 		$this->addPart(implode("\n", $arr));
 		
+		// HOOK: pre_update
+		$this->addPart($this->descriptor->getHookCode('pre_update', '$object', '$data'));
+		
 		$this->addPart("// just update the data which have been changed\n\$save_data = array_diff_assoc(\$data, \$object->__data);");
 		
 		foreach($this->descriptor->getRelations() as $rel)
@@ -55,6 +61,9 @@ class Db_Mapper_Part_Save_Update extends Db_Mapper_CodeContainer
 }');
 		
 		$this->addPart('$object->__data = $data;');
+		
+		// HOOK: post_update
+		$this->addPart($this->descriptor->getHookCode('post_update', '$object'));
 	}
 	
 	// ------------------------------------------------------------------------

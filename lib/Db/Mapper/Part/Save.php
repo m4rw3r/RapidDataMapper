@@ -31,7 +31,8 @@ class Db_Mapper_Part_Save extends Db_Mapper_Code_Method
 	 */
 	public function addContents()
 	{
-		// TODO: Add on_save hook
+		// HOOK: on_save
+		$this->addPart($this->descriptor->getHookCode('on_save', '$object'));
 		
 		foreach($this->descriptor->getRelations() as $rel)
 		{
@@ -42,7 +43,10 @@ class Db_Mapper_Part_Save extends Db_Mapper_Code_Method
 		
 		$this->addPart(new Db_Mapper_Part_Save_Update($this->descriptor));
 		
-		// TODO: Add post_save hook
+		// TODO: Maybe force all to exit and call post save? Then we have a common exit point, now we exit anywhere in the code added above
+		
+		// HOOK: post_save
+		$this->addPart($this->descriptor->getHookCode('post_save', '$object'));
 		
 		$this->addPart('return true;');
 	}
