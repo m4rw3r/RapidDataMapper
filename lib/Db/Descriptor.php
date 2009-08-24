@@ -485,7 +485,7 @@ class Db_Descriptor
 	{
 		if(isset($this->hooks[$name]))
 		{
-			if(is_array($this->hooks[$name]))
+			if(is_array($this->hooks[$name]) && ! empty($this->hooks[$name]))
 			{
 				if(count($this->hooks[$name]) > 2)
 				{
@@ -536,9 +536,13 @@ class Db_Descriptor
 			else
 			{
 				// we need a string
-				if(is_array($hook))
+				if(count($hook) > 1)
 				{
 					throw new Db_Exception_InvalidCallable('The hook "'.$name.'" requires a method placed on the described class, not a static method placed on some other class.');
+				}
+				else
+				{
+					$hook = array_shift($hook);
 				}
 				
 				// check if it is a method on the object
