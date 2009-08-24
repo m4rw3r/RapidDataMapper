@@ -71,6 +71,32 @@ class DbTest extends PHPUnit_Framework_TestCase
 		
 		Db::getConnection();
 	}
+	/**
+	 * @expectedException Db_Exception_InvalidConfiguration
+	 */
+	public function testSetConnectionConfigInvalid()
+	{
+		Db::setConnectionConfig('testing');
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidConfiguration
+	 */
+	public function testSetConnectionConfigInvalid2()
+	{
+		Db::setConnectionConfig(null);
+	}
+	/**
+	 * @expectedException Db_Exception_InvalidConfiguration
+	 */
+	public function testSetConnectionConfigInvalid3()
+	{
+		Db::setConnectionConfig('test', array());
+	}
+	
+	public function testSetConnectionConfig()
+	{
+		Db::setConnectionConfig(array());
+	}
 }
 
 
