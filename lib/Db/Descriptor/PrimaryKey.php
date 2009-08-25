@@ -29,6 +29,13 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 	protected $gen_callable;
 	
 	// ------------------------------------------------------------------------
+	
+	public function isInsertable()
+	{
+		return $this->getPkType() == Db_Descriptor::AUTO_INCREMENT ? false : true;
+	}
+	
+	// ------------------------------------------------------------------------
 
 	/**
 	 * 
