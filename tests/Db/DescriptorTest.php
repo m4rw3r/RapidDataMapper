@@ -650,6 +650,33 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
+	public function testHooksDefaultCallable4()
+	{
+		$this->createDummyClasses();
+		
+		$desc = new Db_Descriptor();
+		
+		$desc->setClass('test_hooks_on_obj');
+		$desc->setHook('test');
+		
+		$this->assertEquals('$obj->test();', $desc->getHookCode('test', '$obj'));
+		$this->assertEquals('$obj->test($param);', $desc->getHookCode('test', '$obj', '$param'));
+	}
+	public function testHooksDefaultCallable2()
+	{
+		$this->createDummyClasses();
+		
+		$desc = new Db_Descriptor();
+		
+		$desc->setClass('test_hooks_on_obj');
+		$desc->setHook('test_static');
+		
+		$this->assertEquals('test_hooks_on_obj::test_static();', $desc->getHookCode('test_static'));
+		$this->assertEquals('test_hooks_on_obj::test_static($param);', $desc->getHookCode('test_static', false, '$param'));
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	/**
 	 * @expectedException Db_Exception_InvalidCallable
 	 */
@@ -748,24 +775,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	 */
 	protected function initHooks()
 	{
-		if( ! class_exists('test_hooks_on_obj'))
-		{
-			eval('class test_hooks_on_obj
-			{
-				public function test(){}
-				protected function ptest(){}
-				protected function private_test(){}
-				public static function test_static(){}
-				protected static function test_pstatic(){}
-				protected static function test_private_static(){}
-			}
-			class Other_class
-			{	
-				public static function test_static(){}
-				protected static function test_pstatic(){}
-				protected static function test_private_static(){}
-			}');
-		}
+		$this->createDummyClasses();
 		
 		$desc = new Db_Descriptor();
 		$desc->setClass('test_hooks_on_obj');
@@ -788,6 +798,35 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->setHook('missing_func', 'missing_func');
 		
 		return $desc;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates dummy classes which can be used to test the hooks on
+	 * 
+	 * @return void
+	 */
+	protected function createDummyClasses()
+	{
+		if( ! class_exists('test_hooks_on_obj'))
+		{
+			eval('class test_hooks_on_obj
+			{
+				public function test(){}
+				protected function ptest(){}
+				protected function private_test(){}
+				public static function test_static(){}
+				protected static function test_pstatic(){}
+				protected static function test_private_static(){}
+			}
+			class Other_class
+			{	
+				public static function test_static(){}
+				protected static function test_pstatic(){}
+				protected static function test_private_static(){}
+			}');
+		}
 	}
 }
 

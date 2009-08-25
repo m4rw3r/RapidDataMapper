@@ -309,11 +309,16 @@ class Db_Descriptor
 	 * Sets a callable to call on a specific hook in the generated code.
 	 * 
 	 * @param  string
-	 * @param  string|array
+	 * @param  string|array		If the callable is missing, the hook name will be used
 	 * @return self
 	 */
-	public function setHook($name, $callable)
+	public function setHook($name, $callable = false)
 	{
+		if($callable === false)
+		{
+			$callable = $name;
+		}
+		
 		$this->hooks[$name] = $callable;
 		
 		return $this;
