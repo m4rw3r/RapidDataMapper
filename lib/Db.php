@@ -507,6 +507,52 @@ final class Db
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Checks if a property has been edited.
+	 * 
+	 * @param  object
+	 * @param  string
+	 * @return bool
+	 */
+	public static function isChanged($object, $property = false)
+	{
+		if(empty($object->__id))
+		{
+			return true;
+		}
+		
+		$m = self::getMapper(get_class($object));
+		
+		if($property === false)
+		{
+			$ret = false;
+			
+			foreach($m->properties as $property => $column)
+			{
+				$r = isset($object->__data[$column]) && ( ! isset($object->$property) OR $object->$property != $object->__data[$column]);
+				
+				$ret = ($ret OR $r);
+			}
+			
+			return $ret;
+		}
+		else
+		{
+			if(isset($m->properties[$property]))
+			{
+				$column = $m->properties[$property];
+				
+				return isset($object->__data[$column]) && ( ! isset($object->$property) OR $object->$property != $object->__data[$column]);
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Logs an event.
 	 * 
 	 * @param  int		Error level

@@ -97,6 +97,120 @@ class DbTest extends PHPUnit_Framework_TestCase
 	{
 		Db::setConnectionConfig(array());
 	}
+	
+	public function testIsChanged()
+	{
+		$this->initIsChangedTest();
+		
+		$obj = new stdClass();
+		
+		// empty __id returns true
+		$this->assertTrue(Db::isChanged($obj));
+		
+		// id makes it return false if __data cannot be found
+		$obj->__id = array('id' => 3);
+		$this->assertFalse(Db::isChanged($obj));
+		
+		$obj->__data = array('ctitle' => 'Foo', 'cslug' => 'Bar');
+		
+		// we have a reference, so it should be modified
+		$this->assertTrue(Db::isChanged($obj));
+		
+		// still modified after we've added one of the columns
+		$obj->title = 'Foo';
+		$this->assertTrue(Db::isChanged($obj));
+		
+		// we're back to full
+		$obj->slug = 'Bar';
+		$this->assertFalse(Db::isChanged($obj));
+		
+		// add additional
+		$obj->someother = 'Something';
+		$this->assertFalse(Db::isChanged($obj));
+		
+		$obj->title = 'foo';
+		$this->assertTrue(Db::isChanged($obj));
+		
+		$obj->slug = 'Bar2';
+		$this->assertTrue(Db::isChanged($obj));
+	}
+	/**
+	 * @group Foo
+	 */
+	public function testIsChangedProperty()
+	{
+		$this->initIsChangedTest();
+		
+		$obj = new stdClass();
+		
+		// empty __id returns true
+		$this->assertTrue(Db::isChanged($obj, 'title'));
+		
+		// id makes it return false if __data cannot be found
+		$obj->__id = array('id' => 3);
+		$this->assertFalse(Db::isChanged($obj, 'title'));
+		
+		$obj->__data = array('ctitle' => 'Foo', 'cslug' => 'Bar');
+		
+		// we have a reference, so it should be modified
+		$this->assertTrue(Db::isChanged($obj, 'title'));
+		
+		// still modified after we've added one of the columns
+		$obj->title = 'Foo';
+		$this->assertFalse(Db::isChanged($obj, 'title'));
+		
+		// we're back to full
+		$obj->slug = 'Bar';
+		$this->assertFalse(Db::isChanged($obj, 'title'));
+		
+		// add additional
+		$obj->someother = 'Something';
+		$this->assertFalse(Db::isChanged($obj, 'title'));
+		
+		$obj->title = 'foo';
+		$this->assertTrue(Db::isChanged($obj, 'title'));
+		
+		$obj->slug = 'Bar2';
+		$this->assertTrue(Db::isChanged($obj, 'title'));
+		
+		$this->assertFalse(Db::isChanged($obj, 'someother'));
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Initializes a descriptor for use with the isChanged tests.
+	 * 
+	 * @return void
+	 */
+	public function initIsChangedTest()
+	{
+		if( ! class_exists('User_Descriptor'))
+		{
+			eval('class User_Descriptor extends Db_Descriptor
+			{
+				protected $builder;
+				public function setBuilder($builder)
+					{ $this->builder = $builder; }
+				public function createBuilder()
+					{ return $this->builder; }
+			}');
+		}
+		
+		$desc = new User_Descriptor();
+		$desc->add($desc->newPrimaryKey('id'));
+		$desc->setClass('stdClass');
+		
+		$desc->setBuilder("class Db_Compiled_stdClassMapper
+		{
+			public \$properties = array(
+				'title' => 'ctitle',
+				'slug' => 'cslug'
+				);
+		}");
+		
+		Db::addDescriptor($desc);
+	}
 }
 
 
