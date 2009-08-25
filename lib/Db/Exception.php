@@ -10,9 +10,9 @@
  */
 class Db_Exception extends Exception
 {
-	function __construct($message, $error_no = 0, $previous = null)
+	function __construct($message, $error_no = 0)
 	{
-		parent::__construct('RapidDataMapper: ' . $message . '', $error_no, $previous);
+		parent::__construct('RapidDataMapper: ' . $message . '', $error_no);
 	}
 }
 

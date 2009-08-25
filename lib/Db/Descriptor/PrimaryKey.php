@@ -96,9 +96,9 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 	/**
 	 * Special variant which skips it if this is an auto incremental column.
 	 */
-	public function getFromObjectToDataCode($object_var, $dest_var)
+	public function getFromObjectToDataCode($object_var, $dest_var, $is_update = false)
 	{
-		return $this->getPkType() == Db_Descriptor::AUTO_INCREMENT ? '' : parent::getFromObjectToDataCode($object_var, $dest_var);
+		return $this->getPkType() == Db_Descriptor::AUTO_INCREMENT ? '' : parent::getFromObjectToDataCode($object_var, $dest_var, $is_update);
 	}
 	
 	// ------------------------------------------------------------------------
