@@ -61,13 +61,6 @@ abstract class Db_Connection
 	protected $pconnect;
 	
 	/**
-	 * If to show error messages.
-	 *
-	 * @var bool
-	 */
-	public $db_debug = true;
-	
-	/**
 	 * If to use caching.
 	 *
 	 * @var bool
@@ -121,7 +114,6 @@ abstract class Db_Connection
 	
 	/**
 	 * Stores the time for each query.
-	 * If db_debug = true;
 	 * 
 	 * Links with the key to the queries array.
 	 * 
@@ -131,7 +123,6 @@ abstract class Db_Connection
 	
 	/**
 	 * Stores all the queries which has been run.
-	 * If db_debug = true. 
 	 *
 	 * @var array
 	 */
@@ -232,10 +223,7 @@ abstract class Db_Connection
 		{
 			Db::log(Db::ERROR, 'Invalid query, the query is empty');
 			
-			if($this->db_debug)
-			{
-				throw new Db_Exception('Invalid query, the query is empty');
-			}
+			throw new Db_Exception_QueryError('Invalid query, the query is empty');
 			
 			return false;
 		}
@@ -286,10 +274,7 @@ abstract class Db_Connection
 			$query_times[] = false;
 			Db::log(Db::ERROR, 'Query error: SQL: "' . $sql . '", error: ' . $this->error());
 			
-			if($this->db_debug)
-			{
-				throw new Db_Exception_QueryError('SQL: "' . $sql . '", ERROR: ' . $this->error());
-			}
+			throw new Db_Exception_QueryError('ERROR: '.$this->error().', SQL: "'.$sql.'"');
 			
 			return false;
 		}
