@@ -216,7 +216,7 @@ abstract class Db_Result implements IteratorAggregate, Countable
 	 */
 	public function val($num = 0, $row = 0)
 	{
-		$row = array_values($this->row($row, 'array'));
+		$row = array_values((Array) $this->row($row, 'array'));
 		
 		return array_key_exists($num, $row) ? $row[$num] : false;
 	}
