@@ -48,3 +48,12 @@ Running the tests
 1. Make sure that the tests directory is placed in the same directory as
    the lib folder.
 2. Run the tests by executing "PHPUnit tests" in that directory
+
+Building the API documentation
+==============================
+
+Default template is the `EXT JS template`_ by Zym.
+
+.. _`EXT JS template`: http://www.zymengine.com/dev/news/30-phpdoc-extjs-converter-template
+
+the ./phpdoc file contains defualt settings

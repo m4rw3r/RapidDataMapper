@@ -1,0 +1,2 @@
+#!/bin/bash
+phpdoc -d ./lib,./tests,./compat -j -o HTML:frames/Extjs:default -s -t ./api -ti "RapidDataMapper API Documentation"
