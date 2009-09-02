@@ -507,6 +507,20 @@ final class Db
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Populates a query which will fetch the objects related to the first parameter.
+	 * 
+	 * @param  object
+	 * @param  string
+	 * @return Db_Query_MapperSelect
+	 */
+	public static function related($object, $relation)
+	{
+		// TODO: code...
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Checks if a property has been edited.
 	 * 
 	 * @param  object
@@ -515,6 +529,7 @@ final class Db
 	 */
 	public static function isChanged($object, $property = false)
 	{
+		// TODO: Maybe add support for relations?
 		if(empty($object->__id))
 		{
 			return true;
