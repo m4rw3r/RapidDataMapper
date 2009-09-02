@@ -417,6 +417,62 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testAddDecorator()
+	{
+		eval('class ConcreteDb_Decorator extends Db_Decorator {}');
+		
+		$desc = new Db_Descriptor();
+		
+		$c = $desc->newColumn('col');
+		$r = $desc->newRelation('rel');
+		$k = $desc->newPrimaryKey('pk');
+		
+		$desc->add($c)->add($r)->add($k);
+		
+		$d = new ConcreteDb_Decorator();
+		$d->setDecoratedObject($c);
+		
+		$this->assertTrue($desc->addDecorator($d));
+		
+		$this->assertContainsOnly($d, $desc->getColumns());
+		$this->assertContainsOnly($r, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		$d2 = new ConcreteDb_Decorator();
+		$d2->setDecoratedObject($r);
+		
+		$this->assertTrue($desc->addDecorator($d2));
+		
+		$this->assertContainsOnly($d, $desc->getColumns());
+		$this->assertContainsOnly($d2, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		$d3 = new ConcreteDb_Decorator();
+		$d3->setDecoratedObject($k);
+		
+		$this->assertTrue($desc->addDecorator($d3));
+		
+		$this->assertContainsOnly($d, $desc->getColumns());
+		$this->assertContainsOnly($d2, $desc->getRelations());
+		$this->assertContainsOnly($d3, $desc->getPrimaryKeys());
+		
+		$s = new stdClass();
+		
+		$d4 = new ConcreteDb_Decorator();
+		$d4->setDecoratedObject($s);
+		
+		$this->assertFalse($desc->addDecorator($d4));
+		
+		$this->assertContainsOnly($d, $desc->getColumns());
+		$this->assertContainsOnly($d2, $desc->getRelations());
+		$this->assertContainsOnly($d3, $desc->getPrimaryKeys());
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * @expectedException Db_Exception_Descriptor_MissingClassName
