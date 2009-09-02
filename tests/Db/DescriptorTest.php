@@ -473,6 +473,43 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testRemoveDecorator()
+	{
+		eval('class ConcreteDb_Decorator extends Db_Decorator {}');
+		
+		$desc = new Db_Descriptor();
+		
+		$c = $desc->newColumn('col');
+		$r = $desc->newRelation('rel');
+		$k = $desc->newPrimaryKey('pk');
+		
+		$desc->add($c)->add($r)->add($k);
+		
+		$d = new ConcreteDb_Decorator();
+		$d->setDecoratedObject($c);
+		
+		$desc->addDecorator($d);
+		
+		$this->assertContainsOnly($d, $desc->getColumns());
+		$this->assertContainsOnly($r, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		$this->assertTrue($desc->removeDecorator($d));
+		
+		$this->assertContainsOnly($c, $desc->getColumns());
+		$this->assertContainsOnly($r, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		$this->assertFalse($desc->removeDecorator($d));
+		
+		// TODO: Add tests for relations and primary keys, needed? (not for the moment, AFAIK)
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * @expectedException Db_Exception_Descriptor_MissingClassName
