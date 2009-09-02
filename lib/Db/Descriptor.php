@@ -496,6 +496,64 @@ class Db_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Replaces an object with its decorator (ie. the object with the same instance
+	 * as the object in the decorator).
+	 * 
+	 * @param  Db_Decorator		A decorator decorating the object to replace
+	 * @return bool
+	 */
+	public function addDecorator(Db_Decorator $decorator)
+	{
+		$o = $decorator->getDecoratedObject();
+		
+		foreach(array('properties', 'relations', 'primary_keys') as $property)
+		{
+			foreach($this->$property as $k => $p)
+			{
+				if($p === $o)
+				{
+					$this->{$property}[$k] = $decorator;
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Removes the decorator passed as the second parameter, replaces it with
+	 * the original (ie. decorated) object.
+	 * 
+	 * @param  Db_Decorator
+	 * @return bool
+	 */
+	public function removeDecorator($property, Db_Decorator $decorator)
+	{
+		$o = $decorator->getDecoratedObject();
+		
+		foreach(array('properties', 'relations', 'primary_keys') as $property)
+		{
+			foreach($this->$property as $k => $p)
+			{
+				if($p === $decorator)
+				{
+					$this->{$property}[$k] = $o;
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns a new instance of a mapper builder.
 	 * 
 	 * @throws Db_Exception_MissingPrimaryKey
