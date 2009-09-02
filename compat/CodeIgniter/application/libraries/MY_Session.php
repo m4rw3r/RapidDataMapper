@@ -4,17 +4,9 @@
  * Copyright (c) 2009 Martin Wernståhl.
  * All rights reserved.
  */
-/**
- * This file contains adapter code for CodeIgniter.
- * 
- * @package ORM_Tools
- * @subpackage Compat
- * @author  Martin Wernstahl
- * @copyright Copyright (c) 2009, Martin Wernstahl
- */
 
 /**
- * Modified Session class for CodeIgniter, uses ORM Tools compatible database syntax.
+ * Modified Session class for CodeIgniter, uses RapidDataMapper compatible database syntax.
  */
 class MY_Session extends CI_Session
 {
@@ -94,7 +86,7 @@ class MY_Session extends CI_Session
 		if($this->sess_use_database === TRUE)
 		{
 			//////////////////////////////////////////
-			// MODDED TO USE ORM Tools
+			// MODDED TO USE RapidDataMapper
 			//////////////////////////////////////////
 			
 			// get the active database object ($CI->db is not always the same as db())
@@ -115,17 +107,17 @@ class MY_Session extends CI_Session
 			}
 
 			$query = $q->get();
-			
-			/////////////////////////////////////////////
-			// END MOD
-			/////////////////////////////////////////////
 
 			// No result?  Kill it!
-			if($query->num_rows() == 0)
+			if($query->count() == 0)
 			{
 				$this->sess_destroy();
 				return FALSE;
 			}
+			
+			/////////////////////////////////////////////
+			// END MOD
+			/////////////////////////////////////////////
 
 			// Is there custom data?  If so, add it to the main session array
 			$row = $query->row();
