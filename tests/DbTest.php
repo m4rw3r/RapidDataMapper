@@ -7,10 +7,6 @@
 
 require_once 'PHPUnit/Framework.php';
 
-require_once dirname(__FILE__).'/../lib/Db.php';
-
-Db::initAutoload();
-
 /**
  * @covers Db
  * @runTestInSeparateProcess
@@ -23,6 +19,12 @@ class DbTest extends PHPUnit_Framework_TestCase
 	 */
 	public $runTestInSeparateProcess = true;
 	
+	public function setUp()
+	{
+		require_once dirname(__FILE__).'/../lib/Db.php';
+		
+		Db::initAutoload();
+	}
 	
 	// ------------------------------------------------------------------------
 

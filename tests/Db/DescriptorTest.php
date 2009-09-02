@@ -7,10 +7,6 @@
 
 require_once 'PHPUnit/Framework.php';
 
-require_once dirname(__FILE__).'/../../lib/Db.php';
-
-Db::initAutoload();
-
 /**
  * @covers Db_Descriptor
  */
@@ -18,6 +14,10 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
+		require_once dirname(__FILE__).'/../../lib/Db.php';
+		
+		Db::initAutoload();
+		
 		// Dummy configuration
 		Db::setConnectionConfig(
 		    array(

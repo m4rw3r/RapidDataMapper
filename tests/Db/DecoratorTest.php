@@ -7,10 +7,6 @@
 
 require_once 'PHPUnit/Framework.php';
 
-require_once dirname(__FILE__).'/../../lib/Db.php';
-
-Db::initAutoload();
-
 /**
  * @covers Db_Decorator
  * @runInSeparateProcess
@@ -19,6 +15,10 @@ class Db_DecoratorTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
+		require_once dirname(__FILE__).'/../../lib/Db.php';
+		
+		Db::initAutoload();
+		
 		if( ! class_exists('ConcreteDecorator'))
 		{
 			eval('class ConcreteDecorator extends Db_Decorator{ }');

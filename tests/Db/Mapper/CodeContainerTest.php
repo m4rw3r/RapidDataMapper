@@ -7,10 +7,6 @@
 
 require_once 'PHPUnit/Framework.php';
 
-require_once dirname(__FILE__).'/../../../lib/Db.php';
-
-Db::initAutoload();
-
 /**
  * @covers Db_Mapper_CodeContainer
  */
@@ -18,7 +14,11 @@ class Db_Mapper_CodeContainerTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
-		if( ! class_exists('TestContainer'))
+		require_once dirname(__FILE__).'/../../../lib/Db.php';
+		
+		Db::initAutoload();
+		
+		if( ! class_exists('TestContainer', false))
 		{
 			eval('class TestContainer extends Db_Mapper_CodeContainer
 			{
