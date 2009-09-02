@@ -97,6 +97,13 @@ class Db_Descriptor
 	protected $hooks = array();
 	
 	/**
+	 * A list containing all the loaded plugins. 
+	 * 
+	 * @var array
+	 */
+	protected $plugins = array();
+	
+	/**
 	 * Contains a list of the primary keys described by this object.
 	 * 
 	 * @var array
@@ -445,6 +452,50 @@ class Db_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Applies a plugin to this object.
+	 * 
+	 * If the same plugin type is registered again, the earlier will be removed.
+	 * 
+	 * @param  Db_PluginInterface
+	 * @return self
+	 */
+	public function applyPlugin(Db_Plugin $plugin_instance)
+	{
+		$class = get_class($plugin_instance);
+		
+		// remove an existing plugin with the same class
+		foreach($this->plugins as $k => $p)
+		{
+			if(get_class($p) == $class)
+			{
+				$this->plugins[$p]->remove();
+				unset($k);
+			}
+		}
+		
+		$plugin_instance->setDescriptor();
+		$plugin_instance->init();
+		
+		$this->plugins[] = $plugin_instance;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a list of the plugin instances currently associated with this descriptor.
+	 * 
+	 * @return array
+	 */
+	public function getPlugins()
+	{
+		return $this->plugins;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns a new instance of a mapper builder.
 	 * 
 	 * @throws Db_Exception_MissingPrimaryKey
@@ -461,7 +512,15 @@ class Db_Descriptor
 			throw new Db_Exception_MissingPrimaryKey($this->getClass());
 		}
 		
-		return $this->createBuilder();
+		$b = $this->createBuilder();
+		
+		// let all the plugins have their way with the builder
+		foreach($this->plugins as $p)
+		{
+			$p->editBuilder($b);
+		}
+		
+		return $b;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -477,6 +536,9 @@ class Db_Descriptor
 	 * getHookCode('bar', false, '$obj');
 	 * // Foo::Bar_method($obj);
 	 * </code>
+	 * 
+	 * Also performs validation before returning the generated code,
+	 * see it as a compile-time error detection.
 	 * 
 	 * @param  string			The name of the hook
 	 * @param  string|false		The object variable to invoke the hooked method
@@ -594,6 +656,7 @@ class Db_Descriptor
 		}
 		else
 		{
+			// No hook for this point
 			return '';
 		}
 	}
