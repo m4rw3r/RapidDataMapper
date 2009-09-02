@@ -537,7 +537,7 @@ class Db_Descriptor
 	 * @param  Db_Decorator
 	 * @return bool
 	 */
-	public function removeDecorator($property, Db_Decorator $decorator)
+	public function removeDecorator(Db_Decorator $decorator)
 	{
 		$o = $decorator->getDecoratedObject();
 		
