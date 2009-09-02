@@ -473,7 +473,7 @@ class Db_Descriptor
 			}
 		}
 		
-		$plugin_instance->setDescriptor();
+		$plugin_instance->setDescriptor($this);
 		$plugin_instance->init();
 		
 		$this->plugins[] = $plugin_instance;
@@ -602,7 +602,7 @@ class Db_Descriptor
 				}
 				else
 				{
-					throw new Db_Exception_InvalidCallable('Callable for hook "'.$name.'", callable "'.$hook.'".');
+					throw new Db_Exception_InvalidCallable('Callable supplied for hook "'.$name.'", callable "'.$hook.'".');
 				}
 			}
 			else
