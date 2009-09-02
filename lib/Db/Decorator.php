@@ -40,7 +40,7 @@ abstract class Db_Decorator
 	 */
 	final public function getDecoratedObject()
 	{
-		if(empty($this->decorated_object))
+		if( ! is_object($this->decorated_object))
 		{
 			throw new UnexpectedValueException();
 		}
