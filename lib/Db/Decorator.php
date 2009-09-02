@@ -42,7 +42,7 @@ abstract class Db_Decorator
 	{
 		if( ! is_object($this->decorated_object))
 		{
-			throw new UnexpectedValueException();
+			throw new RuntimeException('No Object to decorate.');
 		}
 		
 		return $this->decorated_object;
@@ -59,7 +59,7 @@ abstract class Db_Decorator
 	 */
 	public function __call($method, $params)
 	{
-		if(method_exists($this->decorated_object, $method))
+		if(method_exists($this->decorated_object, $method) OR method_exists($this->decorated_object, '__call'))
 		{
 			return call_user_func_array(array($this->decorated_object, $method), $params);
 		}
