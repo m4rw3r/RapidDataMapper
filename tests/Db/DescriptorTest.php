@@ -415,6 +415,28 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertContainsOnly($p2, $desc->getPlugins());
 	}
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testPluginCallEditBuilder()
+	{
+		$desc = new Db_Descriptor();
+		
+		// primary key and class name are needed for the getBuilder() method
+		$desc->add($desc->newPrimaryKey('id'));
+		$desc->setClass('stdClass');
+		
+		// create a mock without extending the existing class
+		$p  = $this->getMock('Db_Plugin', array('setDescriptor', 'init', 'remove', 'editBuilder'), array(), 'Db_Plugin2', false, false, false);
+		
+		$p->expects($this->once())->method('setDescriptor')->with($this->isInstanceOf('Db_Descriptor'));
+		$p->expects($this->once())->method('init');
+		$p->expects($this->once())->method('editBuilder')->with($this->isInstanceOf('Db_Mapper_Builder'));
+		
+		$desc->applyPlugin($p);
+		
+		$this->assertThat($desc->getBuilder(), $this->isInstanceOf('Db_Mapper_Builder'));
+	}
 	
 	// ------------------------------------------------------------------------
 
