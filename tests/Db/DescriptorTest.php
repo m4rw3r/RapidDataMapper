@@ -355,6 +355,68 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testApplyPlugin()
+	{
+		$desc = new Db_Descriptor();
+		
+		// create a mock without extending the existing class
+		$p = $this->getMock('Db_Plugin', array('setDescriptor', 'init'), array(), 'Db_Plugin2', false, false, false);
+		
+		$p->expects($this->once())->method('setDescriptor')->with($this->isInstanceOf('Db_Descriptor'));
+		$p->expects($this->once())->method('init');
+		
+		$this->assertSame($desc, $desc->applyPlugin($p));
+		
+		$this->assertContainsOnly($p, $desc->getPlugins());
+	}
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testApplyPlugin2()
+	{
+		$desc = new Db_Descriptor();
+		
+		// create a mock without extending the existing class
+		$p = $this->getMock('Db_Plugin', array('setDescriptor', 'init'), array(), 'Db_Plugin2', false, false, false);
+		
+		$p->expects($this->once())->method('setDescriptor')->with($this->isInstanceOf('Db_Descriptor'));
+		$p->expects($this->once())->method('init');
+		
+		$this->assertSame($desc, $desc->applyPlugin($p));
+		$this->assertSame($desc, $desc->applyPlugin($p));
+		
+		$this->assertContainsOnly($p, $desc->getPlugins());
+	}
+	/**
+	 * @runInSeparateProcess
+	 */
+	public function testApplyPlugin3()
+	{
+		$desc = new Db_Descriptor();
+		
+		// create a mock without extending the existing class
+		$p  = $this->getMock('Db_Plugin', array('setDescriptor', 'init', 'remove'), array(), 'Db_Plugin2', false, false, false);
+		$p2 = new Db_Plugin2();
+		
+		$p->expects($this->once())->method('setDescriptor')->with($this->isInstanceOf('Db_Descriptor'));
+		$p->expects($this->once())->method('init');
+		$p->expects($this->once())->method('remove');
+		
+		$p2->expects($this->once())->method('setDescriptor')->with($this->isInstanceOf('Db_Descriptor'));
+		$p2->expects($this->once())->method('init');
+		$p2->expects($this->never())->method('remove');
+		
+		$this->assertSame($desc, $desc->applyPlugin($p));
+		$this->assertSame($desc, $desc->applyPlugin($p2));
+		
+		$this->assertContainsOnly($p2, $desc->getPlugins());
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * @expectedException Db_Exception_Descriptor_MissingClassName
