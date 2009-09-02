@@ -10,7 +10,6 @@
  */
 abstract class Db_Connection
 {
-	
 	/**
 	 * The name of the configuration key used for the configuration.
 	 * 
@@ -191,11 +190,8 @@ abstract class Db_Connection
 			$this->dbh = $this->connect();
 			
 			if( ! $this->dbh)
-			{	
+			{
 				// failed connection, report
-				Db::log(Db::ERROR, 'Database connection error: "'.$this->error().'".');
-				
-				// yell at the coder :P
 				throw new Db_Exception_ConnectionError($this->error());
 			}
 			
@@ -210,8 +206,8 @@ abstract class Db_Connection
 	/**
 	 * Runs the query and returns the result object.
 	 * 
-	 * @see Db_Connection::replace_binds()
-	 * @throws Db_Exception_MissingBindParameter|Db_Exception_ConnectionError
+	 * @see Db_Connection::replaceBinds()
+	 * @throws Db_Exception_QueryError
 	 * 
 	 * @param  string
 	 * @param  array
@@ -221,11 +217,7 @@ abstract class Db_Connection
 	{
 		if(empty($sql))
 		{
-			Db::log(Db::ERROR, 'Invalid query, the query is empty');
-			
 			throw new Db_Exception_QueryError('Invalid query, the query is empty');
-			
-			return false;
 		}
 		
 		if( ! empty($binds))
@@ -272,11 +264,8 @@ abstract class Db_Connection
 		{
 			// failed query, log
 			$query_times[] = false;
-			Db::log(Db::ERROR, 'Query error: SQL: "' . $sql . '", error: ' . $this->error());
 			
 			throw new Db_Exception_QueryError('ERROR: '.$this->error().', SQL: "'.$sql.'"');
-			
-			return false;
 		}
 		
 		if($this->cache_on && $is_write)
@@ -369,7 +358,7 @@ abstract class Db_Connection
 	 *
 	 * @param  string|array 	Multiple tables can be updated with the same query
 	 * @param  array    		Associative array with new data (sent to set())
-	 * @param  mixed			Sent to ot_query_update::where()
+	 * @param  mixed			Sent to Db_Query::where()
 	 * @return Db_Query_Update|int|false
 	 */
 	public function update($table, $data = false, $conditions = false)
@@ -504,10 +493,10 @@ abstract class Db_Connection
 	/**
 	 * Replaces all the bound parameters with the values in the bind array.
 	 * 
-	 * !ATTENTION!:
-	 * Identifiers will not be protected in bound statement!
-	 * Only the bound data will be escaped!
-	 * Escaping of values for LIKE condition does not escape % and _ !
+	 * ! ATTENTION !:
+	 * - Identifiers will not be protected in bound statement!
+	 * - Only the bound data will be escaped!
+	 * - Escaping of values for LIKE condition does not escape % and _ !
 	 *
 	 * @throws Db_Exception_MissingBindParameter
 	 *
