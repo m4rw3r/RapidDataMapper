@@ -466,9 +466,15 @@ class Db_Descriptor
 		// remove an existing plugin with the same class
 		foreach($this->plugins as $k => $p)
 		{
+			if($p === $plugin_instance)
+			{
+				// plugin already loaded
+				return $this;
+			}
+			
 			if(get_class($p) == $class)
 			{
-				$this->plugins[$p]->remove();
+				$this->plugins[$k]->remove();
 				unset($k);
 			}
 		}
