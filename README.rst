@@ -49,6 +49,10 @@ Running the tests
    the lib folder.
 2. Run the tests by executing "PHPUnit tests" in that directory
 
+Currently some of the tests (around 20) does not work because the PHPUnit option
+@runInSeparateProcess includes all files that were included in the parent thread when
+running the new thread, working on how to solve that.
+
 Building the API documentation
 ==============================
 
