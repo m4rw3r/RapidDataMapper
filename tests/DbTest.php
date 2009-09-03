@@ -9,15 +9,13 @@ require_once 'PHPUnit/Framework.php';
 
 /**
  * @covers Db
- * @runTestInSeparateProcess
+ * @runTestInSeparateProcess enabled
+ * @preserveGlobalState disabled
  */
 class DbTest extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * The Db class is a singleton, hence we need to restart PHP
-	 * every time to make sure that it is reset
-	 */
-	public $runTestInSeparateProcess = true;
+	
+	public $preserveGlobalState = false;
 	
 	public function setUp()
 	{

@@ -357,7 +357,8 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @runInSeparateProcess
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
 	 */
 	public function testApplyPlugin()
 	{
@@ -374,7 +375,8 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertContainsOnly($p, $desc->getPlugins());
 	}
 	/**
-	 * @runInSeparateProcess
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
 	 */
 	public function testApplyPlugin2()
 	{
@@ -392,7 +394,8 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertContainsOnly($p, $desc->getPlugins());
 	}
 	/**
-	 * @runInSeparateProcess
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
 	 */
 	public function testApplyPlugin3()
 	{
@@ -416,7 +419,8 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertContainsOnly($p2, $desc->getPlugins());
 	}
 	/**
-	 * @runInSeparateProcess
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
 	 */
 	public function testPluginCallEditBuilder()
 	{
@@ -441,7 +445,8 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @runInSeparateProcess
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
 	 */
 	public function testAddDecorator()
 	{
@@ -497,7 +502,8 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @runInSeparateProcess
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
 	 */
 	public function testRemoveDecorator()
 	{
@@ -553,7 +559,8 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getBuilder();
 	}
 	/**
-	 * @runInSeparateProcess
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
 	 */
 	public function testGetBuilder3()
 	{
@@ -589,7 +596,8 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * @runInSeparateProcess
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
 	 */
 	public function testCreateBuilder()
 	{

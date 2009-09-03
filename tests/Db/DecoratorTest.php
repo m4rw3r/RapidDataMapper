@@ -9,7 +9,6 @@ require_once 'PHPUnit/Framework.php';
 
 /**
  * @covers Db_Decorator
- * @runInSeparateProcess
  */
 class Db_DecoratorTest extends PHPUnit_Framework_TestCase
 {
