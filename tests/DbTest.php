@@ -9,7 +9,7 @@ require_once 'PHPUnit/Framework.php';
 
 /**
  * @covers Db
- * @runTestInSeparateProcess enabled
+ * @runTestsInSeparateProcesses enabled
  * @preserveGlobalState disabled
  */
 class DbTest extends PHPUnit_Framework_TestCase
@@ -37,16 +37,9 @@ class DbTest extends PHPUnit_Framework_TestCase
 		
 		$sum = ($sum OR $reflection->isAbstract());
 		
-		try
-		{
-			$c = $reflection->getConstructor();
-			
-			$sum = ($sum OR $c->isPrivate() OR $c->isProtected());
-		}
-		catch(RelfectionException $e)
-		{
-			var_dump($e);
-		}
+		$c = $reflection->getConstructor();
+		
+		$sum = ($sum OR $c->isPrivate() OR $c->isProtected());
 		
 		$this->assertTrue($sum);
 	}
@@ -54,8 +47,6 @@ class DbTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Test if exception is thrown on no configuration.
-	 * 
 	 * @expectedException Db_Exception_MissingConfig
 	 */
 	public function testNoConnection()
@@ -93,11 +84,55 @@ class DbTest extends PHPUnit_Framework_TestCase
 		Db::setConnectionConfig('test', array());
 	}
 	
+	public function testGetDefaultConnection()
+	{
+		Db::setConnectionConfig('default', array('dbdriver' => 'mock'));
+		
+		eval('class Db_Driver_Mock_Connection {}');
+		
+		$this->assertTrue(Db::getConnection() instanceof Db_Driver_Mock_Connection);
+	}
+	/**
+	 * @expectedException Db_Exception_MissingConfig
+	 */
+	public function testSetDefaultConnectionName()
+	{
+		Db::setConnectionConfig('default', array('something' => 'to satisfy test'));
+		
+		Db::setDefaultConnectionName('foobar');
+		
+		Db::getConnection();
+	}
+	
 	public function testSetConnectionConfig()
 	{
 		Db::setConnectionConfig(array());
 	}
 	
+	public function testGetConnection()
+	{
+		Db::setConnectionConfig(array('foobar' => array('dbdriver' => 'mock')));
+		
+		// mock class to fetch the options passed to the constructor
+		eval('class Db_Driver_Mock_Connection
+		{
+			protected $params;
+			public function __construct()
+				{ $this->params = func_get_args(); }
+			public function getParams()
+				{ return $this->params; }
+		}');
+		
+		$c = Db::getConnection('foobar');
+		
+		$this->assertEquals(array('foobar', array('dbdriver' => 'mock')), $c->getParams());
+		
+		$this->assertSame($c, Db::getConnection('foobar'));
+	}
+	
+	/**
+	 * @covers Db::isChanged
+	 */
 	public function testIsChanged()
 	{
 		$this->initIsChangedTest();
@@ -135,7 +170,7 @@ class DbTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue(Db::isChanged($obj));
 	}
 	/**
-	 * @group Foo
+	 * @covers Db::isChanged
 	 */
 	public function testIsChangedProperty()
 	{
@@ -179,37 +214,19 @@ class DbTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Initializes a descriptor for use with the isChanged tests.
+	 * Initializes a mocked mapper class for use with the isChanged() tests.
 	 * 
 	 * @return void
 	 */
 	public function initIsChangedTest()
 	{
-		if( ! class_exists('User_Descriptor'))
-		{
-			eval('class User_Descriptor extends Db_Descriptor
-			{
-				protected $builder;
-				public function setBuilder($builder)
-					{ $this->builder = $builder; }
-				public function createBuilder()
-					{ return $this->builder; }
-			}');
-		}
-		
-		$desc = new User_Descriptor();
-		$desc->add($desc->newPrimaryKey('id'));
-		$desc->setClass('stdClass');
-		
-		$desc->setBuilder("class Db_Compiled_stdClassMapper
+		eval("class Db_Compiled_stdClassMapper
 		{
 			public \$properties = array(
 				'title' => 'ctitle',
 				'slug' => 'cslug'
 				);
 		}");
-		
-		Db::addDescriptor($desc);
 	}
 }
 
