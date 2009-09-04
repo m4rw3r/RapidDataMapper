@@ -23,9 +23,6 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
-	/**
-	 * 
-	 */
 	public function testEmpty()
 	{
 		$q = new Db_Query($this->getMock('Db_Connection'));
@@ -35,9 +32,6 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
-	/**
-	 * @runInSeparateProcess
-	 */
 	public function testParent()
 	{
 		$q = new Db_Query(new stdClass, $p = new stdClass());
@@ -439,6 +433,105 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertSame($q, $q->bindWhere('or b = ?', array('bar', 'lol')));
 		
 		$this->assertEquals('(foobar_result OR bar_lol)', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereIn()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		$mock->expects($this->never())->method('escape');
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->whereIn('a', array()));
+		$this->assertEquals('("a" IN ())', (String) $q);
+	}
+	public function testWhereIn2()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('aa'))->will($this->returnValue('"aa"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->whereIn('a', array('aa')));
+		$this->assertEquals('("a" IN ("aa"))', (String) $q);
+	}
+	public function testWhereIn3()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('aa'))->will($this->returnValue('"aa"'));
+		$mock->expects($this->at(2))->method('escape')->with($this->equalTo('ab'))->will($this->returnValue('"ab"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->whereIn('a', array('aa', 'ab')));
+		$this->assertEquals('("a" IN ("aa", "ab"))', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereInNoEscape()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->never())->method('protectIdentifiers');
+		$mock->expects($this->at(0))->method('escape')->with($this->equalTo('aa'))->will($this->returnValue('"aa"'));
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('ab'))->will($this->returnValue('"ab"'));
+		
+		$q = new Db_Query($mock);
+		$q->escape(false);
+		
+		$this->assertSame($q, $q->whereIn('a', array('aa', 'ab')));
+		$this->assertEquals('(a IN ("aa", "ab"))', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereInOr()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('aa'))->will($this->returnValue('"aa"'));
+		$mock->expects($this->at(2))->method('escape')->with($this->equalTo('ab'))->will($this->returnValue('"ab"'));
+		$mock->expects($this->at(3))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"b"'));
+		$mock->expects($this->at(4))->method('escape')->with($this->equalTo('ba'))->will($this->returnValue('"ba"'));
+		$mock->expects($this->at(5))->method('escape')->with($this->equalTo('bb'))->will($this->returnValue('"bb"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->whereIn('or a', array('aa', 'ab')));
+		$this->assertEquals('("a" IN ("aa", "ab"))', (String) $q);
+		$this->assertSame($q, $q->whereIn('or b', array('ba', 'bb')));
+		$this->assertEquals('("a" IN ("aa", "ab") OR "b" IN ("ba", "bb"))', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereInOrNoEscape()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->never())->method('protectIdentifiers');
+		$mock->expects($this->at(0))->method('escape')->with($this->equalTo('aa'))->will($this->returnValue('"aa"'));
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('ab'))->will($this->returnValue('"ab"'));
+		$mock->expects($this->at(2))->method('escape')->with($this->equalTo('ba'))->will($this->returnValue('"ba"'));
+		$mock->expects($this->at(3))->method('escape')->with($this->equalTo('bb'))->will($this->returnValue('"bb"'));
+		
+		$q = new Db_Query($mock);
+		$q->escape(false);
+		
+		$this->assertSame($q, $q->whereIn('or a', array('aa', 'ab')));
+		$this->assertEquals('(a IN ("aa", "ab"))', (String) $q);
+		$this->assertSame($q, $q->whereIn('or b', array('ba', 'bb')));
+		$this->assertEquals('(a IN ("aa", "ab") OR b IN ("ba", "bb"))', (String) $q);
 	}
 }
 
