@@ -57,6 +57,36 @@ abstract class Db_Plugin
 	 * @return 
 	 */
 	public function remove(){ }
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Determines if a particular decorator has been wrapped around the $object.
+	 * 
+	 * @param  object
+	 * @param  string		Name of a subclass to Db_Decorator
+	 * @return bool
+	 */
+	public static function hasDecorator($object, $decorator_class)
+	{
+		if( ! is_object($object))
+		{
+			throw new InvalidArgumentException(gettype($object));
+		}
+		
+		if($object instanceof $decorator_class)
+		{
+			return true;
+		}
+		elseif($object instanceof Db_Decorator)
+		{
+			return self::hasDecorator($object->getDecoratedObject(), $decorator_class);
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
 
 
