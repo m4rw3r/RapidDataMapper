@@ -632,6 +632,109 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertSame($q, $q->whereNotIn('or b', array('ba', 'bb')));
 		$this->assertEquals('(a NOT IN ("aa", "ab") OR b NOT IN ("ba", "bb"))', (String) $q);
 	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testLike()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escapeStr'));
+		
+		$mock->expects($this->once())->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		$mock->expects($this->once())->method('escapeStr')->with($this->equalTo('aa'))->will($this->returnValue('aaaa'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->like('a', 'aa'));
+		$this->assertEquals('("a" LIKE \'%aaaa%\')', (String) $q);
+	}
+	public function testLike2()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escapeStr'));
+		
+		$mock->expects($this->at(0))->method('escapeStr')->with($this->equalTo('aa'))->will($this->returnValue('aaaa'));
+		$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		$mock->expects($this->at(2))->method('escapeStr')->with($this->equalTo('ba'))->will($this->returnValue('baba'));
+		$mock->expects($this->at(3))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"b"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->like('a', 'aa'));
+		$this->assertEquals('("a" LIKE \'%aaaa%\')', (String) $q);
+		$this->assertSame($q, $q->like('b', 'ba'));
+		$this->assertEquals('("a" LIKE \'%aaaa%\' AND "b" LIKE \'%baba%\')', (String) $q);
+	}
+	
+	public function testLikeSides()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escapeStr'));
+		
+		$mock->expects($this->at(0))->method('escapeStr')->with($this->equalTo('aa'))->will($this->returnValue('aaaa'));
+		$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		$mock->expects($this->at(2))->method('escapeStr')->with($this->equalTo('ba'))->will($this->returnValue('baba'));
+		$mock->expects($this->at(3))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"b"'));
+		$mock->expects($this->at(4))->method('escapeStr')->with($this->equalTo('ca'))->will($this->returnValue('cccc'));
+		$mock->expects($this->at(5))->method('protectIdentifiers')->with($this->equalTo('c'))->will($this->returnValue('"c"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->like('a', 'aa', 'both'));
+		$this->assertEquals('("a" LIKE \'%aaaa%\')', (String) $q);
+		$this->assertSame($q, $q->like('b', 'ba', 'left'));
+		$this->assertEquals('("a" LIKE \'%aaaa%\' AND "b" LIKE \'%baba\')', (String) $q);
+		$this->assertSame($q, $q->like('c', 'ca', 'right'));
+		$this->assertEquals('("a" LIKE \'%aaaa%\' AND "b" LIKE \'%baba\' AND "c" LIKE \'cccc%\')', (String) $q);
+	}
+	
+	public function testLikeNoEscape()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escapeStr'));
+		
+		$mock->expects($this->never())->method('protectIdentifiers');
+		$mock->expects($this->at(0))->method('escapeStr')->with($this->equalTo('aa'))->will($this->returnValue('aaaa'));
+		$mock->expects($this->at(1))->method('escapeStr')->with($this->equalTo('ba'))->will($this->returnValue('baba'));
+		
+		$q = new Db_Query($mock);
+		$q->escape(false);
+		
+		$this->assertSame($q, $q->like('a', 'aa'));
+		$this->assertEquals('(a LIKE \'%aaaa%\')', (String) $q);
+		$this->assertSame($q, $q->like('b', 'ba'));
+		$this->assertEquals('(a LIKE \'%aaaa%\' AND b LIKE \'%baba%\')', (String) $q);
+	}
+	
+	public function testOrLike()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escapeStr'));
+		
+		$mock->expects($this->at(0))->method('escapeStr')->with($this->equalTo('aa'))->will($this->returnValue('aaaa'));
+		$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		$mock->expects($this->at(2))->method('escapeStr')->with($this->equalTo('ba'))->will($this->returnValue('baba'));
+		$mock->expects($this->at(3))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"b"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->like('or a', 'aa'));
+		$this->assertEquals('("a" LIKE \'%aaaa%\')', (String) $q);
+		$this->assertSame($q, $q->like('or b', 'ba'));
+		$this->assertEquals('("a" LIKE \'%aaaa%\' OR "b" LIKE \'%baba%\')', (String) $q);
+	}
+	
+	public function testOrLikeNoEscape()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escapeStr'));
+		
+		$mock->expects($this->never())->method('protectIdentifiers');
+		$mock->expects($this->at(0))->method('escapeStr')->with($this->equalTo('aa'))->will($this->returnValue('aaaa'));
+		$mock->expects($this->at(1))->method('escapeStr')->with($this->equalTo('ba'))->will($this->returnValue('baba'));
+		
+		$q = new Db_Query($mock);
+		$q->escape(false);
+		
+		$this->assertSame($q, $q->like('or a', 'aa'));
+		$this->assertEquals('(a LIKE \'%aaaa%\')', (String) $q);
+		$this->assertSame($q, $q->like('or b', 'ba'));
+		$this->assertEquals('(a LIKE \'%aaaa%\' OR b LIKE \'%baba%\')', (String) $q);
+	}
 }
 
 
