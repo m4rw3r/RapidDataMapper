@@ -502,14 +502,40 @@ class Db_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Replaces an object with its decorator (ie. the object with the same instance
+	 * Replaces an object with its decorator (ie. replacing the object with the same instance
 	 * as the object in the decorator).
+	 * 
+	 * It is possible to add a decorate an existing decorator which is decorating a decorator
+	 * which is decorating a ... a "normmal" object (to infinity, almost).
+	 * <code>
+	 * decorator -> decorator -> ... -> decorator -> object
+	 * </code>
+	 * 
+	 * The thing you have to do is to always call addDecorator($decorator) after
+	 * you have decorated an object which is going to be wrapped in another decorator:
+	 * <code>
+	 * $cols = $descriptor->getColumns();
+	 * 
+	 * $column = $cols['foobar']; // get the column associated with the foobar property
+	 * 
+	 * $d = Some_Decorator();
+	 * $d->setDecoratedObject($column);
+	 * 
+	 * $descriptor->addDecorator($d);
+	 * 
+	 * $d2 = Some_other_decorator();
+	 * $d2->setDecoratedObject($d);
+	 * 
+	 * $descriptor->addDecorator($d2);   // d2 replaces $d in the $decorator,
+	 * // but $d2 decorates $d which in turn decorates $column
+	 * </code>
 	 * 
 	 * @param  Db_Decorator		A decorator decorating the object to replace
 	 * @return bool
 	 */
 	public function addDecorator(Db_Decorator $decorator)
 	{
+		// TODO: Support adding a chain of decorators without having to call addDecorator() for each decorator in the chain?
 		$o = $decorator->getDecoratedObject();
 		
 		foreach(array('properties', 'relations', 'primary_keys') as $property)
@@ -534,6 +560,17 @@ class Db_Descriptor
 	 * Removes the decorator passed as the second parameter, replaces it with
 	 * the original (ie. decorated) object.
 	 * 
+	 * Can also remove decorators which are part of a decorator chain without
+	 * disturbing the other decorators:
+	 * <code>
+	 * // decorator chain:
+	 * // $a -> $b -> $c -> $column
+	 * 
+	 * $descriptor->removeDecorator($b);
+	 * // result:
+	 * // $a -> $c -> $column
+	 * </code>
+	 * 
 	 * @param  Db_Decorator
 	 * @return bool
 	 */
@@ -545,9 +582,26 @@ class Db_Descriptor
 		{
 			foreach($this->$property as $k => $p)
 			{
+				// store the parent decorator here
+				$old = null;
+				
+				// iterate the decorator chain
+				while($p instanceof Db_Decorator && $p !== $decorator)
+				{
+					$old = $p;
+					$p = $p->getDecoratedObject();
+				}
+				
 				if($p === $decorator)
 				{
-					$this->{$property}[$k] = $o;
+					if(is_null($old))
+					{
+						$this->{$property}[$k] = $o;
+					}
+					else
+					{
+						$old->setDecoratedObject($o);
+					}
 					
 					return true;
 				}

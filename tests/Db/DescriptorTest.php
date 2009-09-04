@@ -538,6 +538,108 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
+	 */
+	public function testRemoveDecoratorFromChain()
+	{
+		eval('class ConcreteDb_Decorator extends Db_Decorator {}');
+		
+		$desc = new Db_Descriptor();
+		
+		$c = $desc->newColumn('col');
+		$r = $desc->newRelation('rel');
+		$k = $desc->newPrimaryKey('pk');
+		
+		$desc->add($c)->add($r)->add($k);
+		
+		$d = new ConcreteDb_Decorator();
+		$d->setDecoratedObject($c);
+		
+		$desc->addDecorator($d);
+		
+		$d2 = new ConcreteDb_Decorator();
+		$d2->setDecoratedObject($d);
+		
+		$desc->addDecorator($d2);
+		
+		$this->assertContainsOnly($d2, $desc->getColumns());
+		$this->assertContainsOnly($r, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		$this->assertTrue($desc->removeDecorator($d2));
+		
+		$this->assertContainsOnly($d, $desc->getColumns());
+		$this->assertContainsOnly($r, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		$this->assertFalse($desc->removeDecorator($d2));
+		
+		$this->assertTrue($desc->removeDecorator($d));
+		
+		$this->assertContainsOnly($c, $desc->getColumns());
+		$this->assertContainsOnly($r, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		$this->assertFalse($desc->removeDecorator($d));
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @runInSeparateProcess enabled
+	 * @preserveGlobalState disabled
+	 */
+	public function testRemoveDecoratorFromChain2()
+	{
+		eval('class ConcreteDb_Decorator extends Db_Decorator {}');
+		
+		$desc = new Db_Descriptor();
+		
+		$c = $desc->newColumn('col');
+		$r = $desc->newRelation('rel');
+		$k = $desc->newPrimaryKey('pk');
+		
+		$desc->add($c)->add($r)->add($k);
+		
+		$d = new ConcreteDb_Decorator();
+		$d->setDecoratedObject($c);
+		
+		$desc->addDecorator($d);
+		
+		$d2 = new ConcreteDb_Decorator();
+		$d2->setDecoratedObject($d);
+		
+		$desc->addDecorator($d2);
+		
+		$this->assertContainsOnly($d2, $desc->getColumns());
+		$this->assertContainsOnly($r, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		// remove the middle decorator
+		$this->assertTrue($desc->removeDecorator($d));
+		
+		$this->assertContainsOnly($d2, $desc->getColumns());
+		$this->assertContainsOnly($r, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		// check if the column has been moved from $d to $d2
+		$this->assertSame($c, $d2->getDecoratedObject());
+		
+		$this->assertFalse($desc->removeDecorator($d));
+		
+		$this->assertTrue($desc->removeDecorator($d2));
+		
+		$this->assertContainsOnly($c, $desc->getColumns());
+		$this->assertContainsOnly($r, $desc->getRelations());
+		$this->assertContainsOnly($k, $desc->getPrimaryKeys());
+		
+		$this->assertFalse($desc->removeDecorator($d2));
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * @expectedException Db_Exception_Descriptor_MissingClassName
