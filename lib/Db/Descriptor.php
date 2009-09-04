@@ -456,7 +456,7 @@ class Db_Descriptor
 	 * 
 	 * If the same plugin type is registered again, the earlier will be removed.
 	 * 
-	 * @param  Db_PluginInterface
+	 * @param  Db_Plugin
 	 * @return self
 	 */
 	public function applyPlugin(Db_Plugin $plugin_instance)

@@ -61,4 +61,4 @@ abstract class Db_Plugin
 
 
 /* End of file Plugin.php */
-/* Location: ./lib/Db/Descriptor.php */
+/* Location: ./lib/Db */
