@@ -114,11 +114,11 @@ class Db_Query
 		// nested where part
 		if($condition === false OR is_string($condition) && $or_part = preg_match('/^or\s*$/i', $condition))
 		{
-			if(isset($or_part) && $or_part)
+			if(isset($or_part) && $or_part && ! empty($this->where))
 			{
 				$this->where[] = 'OR';
 			}
-			else
+			elseif( ! empty($this->where))
 			{
 				$this->where[] = 'AND';
 			}
