@@ -13,6 +13,20 @@
 class Db_Query
 {
 	/**
+	 * Contains the leading delimiter for the embedded error messages.
+	 * 
+	 * @var string
+	 */
+	const ERROR_START = "\0\0\n\0";
+	
+	/**
+	 * Contains the trailing delimiter for the embedded error messages.
+	 * 
+	 * @var string
+	 */
+	const ERROR_END = "\0\n\0\0";
+	
+	/**
 	 * WHERE data.
 	 * 
 	 * @var array
@@ -361,6 +375,24 @@ class Db_Query
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Wrapper around __toString() to be used as "external" accessor for the SQL.
+	 * 
+	 * __toString() should only be used by Db_Query* classes
+	 * 
+	 * @return string
+	 */
+	public function getSql()
+	{
+		$sql = $this->__toString();
+		
+		self::detectError($sql);
+		
+		return $sql;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the operator to use when separating WHERE conditions.
 	 *
 	 * Removes the operator (only OR) from $str if present.
@@ -396,6 +428,42 @@ class Db_Query
 	protected function hasCmpOperator($str)
 	{
 		return preg_match('/[!=<>]\s*$/i', $str);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Prepares an error string to be embedded in SQL.
+	 * 
+	 * @param  string
+	 * @return string
+	 */
+	public static function returnError($error_message)
+	{
+		return self::ERROR_START.$error_message.self::ERROR_END;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Checks if there are any embedded error messages in the SQL strings,
+	 * throws them as a Db_Exception_QueryIncomplete exception if present.
+	 * 
+	 * This is needed because __toString() cannot throw errors when used in
+	 * a string context (eg. echo(), implode() etc.).
+	 * 
+	 * @throws Db_Exception_QueryIncomplete
+	 * @param  string
+	 * @return void
+	 */
+	public static function detectError($sql)
+	{
+		if(($p = strpos($sql, self::ERROR_START)) !== false)
+		{
+			$message = substr($sql, $p + strlen(self::ERROR_START), strpos($sql, self::ERROR_END));
+			
+			throw new Db_Exception_QueryIncomplete($message);
+		}
 	}
 }
 

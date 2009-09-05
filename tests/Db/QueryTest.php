@@ -19,6 +19,8 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 		require_once dirname(__FILE__).'/../../lib/Db/Query.php';
+		require_once dirname(__FILE__).'/../../lib/Db/Exception.php';
+		require_once dirname(__FILE__).'/../../lib/Db/Exception/QueryIncomplete.php';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -985,6 +987,75 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertSame($q, $q->orderBy(array('foobar', 'bar', 'baz'), 'desc'));
 		$this->assertEquals(array('"foobar" DESC', '"bar" DESC', '"baz" DESC'), $q->order_by);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * @expectedException Db_Exception_QueryIncomplete
+	 */
+	public function testErrorDetection()
+	{
+		$str = Db_Query::returnError('Some error message');
+		
+		Db_Query::detectError($str);
+	}
+	/**
+	 * @expectedException Db_Exception_QueryIncomplete
+	 */
+	public function testErrorDetection2()
+	{
+		$str = "sIF OGFGFO \0\n\"w 32 ".Db_Query::returnError('Some error message')."\0\n 3w3 rsg";
+		
+		Db_Query::detectError($str);
+	}
+	public function testErrorDetection3()
+	{
+		$str = "sIF OGFGFO \0\n\"w 32 \0\n 3w3 rsg\0\n 3w3 rsg";
+		
+		Db_Query::detectError($str);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testGetSQL()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->never())->method('protectIdentifiers');
+		$mock->expects($this->at(0))->method('escape')->with($this->equalTo('aa'))->will($this->returnValue('"aa"'));
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('ab'))->will($this->returnValue('"ab"'));
+		$mock->expects($this->at(2))->method('escape')->with($this->equalTo('ba'))->will($this->returnValue('"ba"'));
+		$mock->expects($this->at(3))->method('escape')->with($this->equalTo('bb'))->will($this->returnValue('"bb"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertEquals((String) $q, $q->getSQL());
+		
+		$q->escape(false);
+		
+		$q->whereNotIn('or a', array('aa', 'ab'));
+		$this->assertEquals((String) $q, $q->getSQL());
+		$q->whereNotIn('or b', array('ba', 'bb'));
+		$this->assertEquals((String) $q, $q->getSQL());
+	}
+	/**
+	 * @expectedException Db_Exception_QueryIncomplete
+	 */
+	public function testGetSQL2()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->never())->method('protectIdentifiers');
+		$mock->expects($this->at(0))->method('escape')->with($this->equalTo('aa'))->will($this->returnValue('"aa"'));
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('ab'))->will($this->returnValue(Db_Query::returnError('Some error here')));
+		
+		$q = new Db_Query($mock);
+		
+		$q->escape(false);
+		
+		$q->whereNotIn('or a', array('aa', 'ab'));
+		$q->getSQL();
 	}
 }
 

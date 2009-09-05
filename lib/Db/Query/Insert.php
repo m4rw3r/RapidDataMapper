@@ -132,7 +132,25 @@ class Db_Query_Insert
 	 */
 	public function execute()
 	{
-		return $this->_instance->query($this->__toString());
+		return $this->_instance->query($this->getSQL());
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Wrapper around __toString() to be used as "external" accessor for the SQL.
+	 * 
+	 * __toString() should only be used by Db_Query* classes
+	 * 
+	 * @return string
+	 */
+	public function getSQL()
+	{
+		$sql = $this->__toString();
+		
+		Db_Query::detectError($sql);
+		
+		return $sql;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -146,7 +164,7 @@ class Db_Query_Insert
 	{
 		if(empty($this->columns))
 		{
-			throw new Db_Exception_QueryIncomplete('Columns missing in INSERT statement');
+			return Db_Query::returnError('Columns missing in INSERT statement');
 		}
 		
 		$columns = $this->_instance->protectIdentifiers(implode(', ', array_keys($this->columns)));
