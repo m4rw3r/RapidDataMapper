@@ -36,12 +36,7 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 	}
 	
 	// ------------------------------------------------------------------------
-
-	/**
-	 * 
-	 * 
-	 * @return 
-	 */
+	
 	public function getDataType()
 	{
 		if($this->getPkType() == Db_Descriptor::AUTO_INCREMENT && stripos(strtolower($this->data_type), 'int') === false)
@@ -72,7 +67,9 @@ class Db_Descriptor_PrimaryKey extends Db_Descriptor_Column
 	/**
 	 * Sets the primary key type.
 	 * 
-	 * @return 
+	 * @param  int		From a Db_Descriptor constant
+	 * @param  mixed	Parameter(s) to the key type
+	 * @return self
 	 */
 	public function setPkType($type, $param = false)
 	{
