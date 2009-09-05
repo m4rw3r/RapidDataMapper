@@ -11,10 +11,25 @@
  */
 class Db_Plugin_Sluggable_Decorator extends Db_Decorator
 {
+	/**
+	 * The source column.
+	 * 
+	 * @var Db_Descriptor_Column
+	 */
 	protected $source;
 	
+	/**
+	 * The callable which converts the title-ish column data to an url-friendly string.
+	 * 
+	 * @var string
+	 */
 	protected $callable;
 	
+	/**
+	 * @param  Db_Descriptor_Column
+	 * @param  Db_Descriptor_Column
+	 * @param  string
+	 */
 	function __construct(Db_Descriptor_Column $destination, Db_Descriptor_Column $source, $callable)
 	{
 		$this->setDecoratedObject($destination);
@@ -22,6 +37,18 @@ class Db_Plugin_Sluggable_Decorator extends Db_Decorator
 		$this->callable = $callable;
 	}
 	
+	/**
+	 * Overridden method of Db_Descriptor_Column::getFromObjectToDataCode().
+	 * 
+	 * It will add specific logic which converts the source column value to an
+	 * url-friendly value.
+	 * 
+	 * @see Db_Descriptor_Column::getFromObjectToDataCode()
+	 * @param  string
+	 * @param  string
+	 * @param  bool
+	 * @return string
+	 */
 	public function getFromObjectToDataCode($object_var, $dest_var, $is_update = false)
 	{
 		// only assign the columns which are allowed to be updated
