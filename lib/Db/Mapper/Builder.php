@@ -6,7 +6,7 @@
  */
 
 /**
- * 
+ * The main class builder for Db_Mapper descendants.
  */
 class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 {
@@ -20,9 +20,9 @@ class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Starts the initialization of the structure for the whole composite.
 	 * 
-	 * 
-	 * @return 
+	 * @param Db_Descriptor
 	 */
 	public function __construct(Db_Descriptor $desc)
 	{
