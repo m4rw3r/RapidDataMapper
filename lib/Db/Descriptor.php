@@ -505,7 +505,7 @@ class Db_Descriptor
 	 * Replaces an object with its decorator (ie. replacing the object with the same instance
 	 * as the object in the decorator).
 	 * 
-	 * It is possible to add a decorate an existing decorator which is decorating a decorator
+	 * It is possible to decorate an existing decorator which is decorating a decorator
 	 * which is decorating a ... a "normmal" object (to infinity, almost).
 	 * <code>
 	 * decorator -> decorator -> ... -> decorator -> object
