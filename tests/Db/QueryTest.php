@@ -367,6 +367,134 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
+	public function testWhereArray()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));	
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('b'))->will($this->returnValue('b_result'));
+		$mock->expects($this->at(2))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"b"'));	
+		$mock->expects($this->at(3))->method('escape')->with($this->equalTo('c'))->will($this->returnValue('c_result'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->where(array('a' => 'b')));
+		$this->assertEquals('("a" = b_result)', (String) $q);
+		$this->assertSame($q, $q->where(array('b' => 'c')));
+		$this->assertEquals('("a" = b_result AND "b" = c_result)', (String) $q);
+	}
+	public function testWhereArray2()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));	
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('b'))->will($this->returnValue('b_result'));
+		$mock->expects($this->at(2))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"b"'));	
+		$mock->expects($this->at(3))->method('escape')->with($this->equalTo('c'))->will($this->returnValue('c_result'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->where(array('a' => 'b', 'b' => 'c')));
+		$this->assertEquals('("a" = b_result AND "b" = c_result)', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereArrayNoKey()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('ab'))->will($this->returnValue('"ab"'));	
+		$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('bc'))->will($this->returnValue('"bc"'));
+		$mock->expects($this->never())->method('escape');
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->where(array('ab')));
+		$this->assertEquals('("ab")', (String) $q);
+		$this->assertSame($q, $q->where(array('bc')));
+		$this->assertEquals('("ab" AND "bc")', (String) $q);
+	}
+	public function testWhereArrayNoKey2()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('ab'))->will($this->returnValue('"ab"'));	
+		$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('bc'))->will($this->returnValue('"bc"'));
+		$mock->expects($this->never())->method('escape');
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->where(array('ab', 'bc')));
+		$this->assertEquals('("ab" AND "bc")', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testOrWhereArray()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));	
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('b'))->will($this->returnValue('b_result'));
+		$mock->expects($this->at(2))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"b"'));	
+		$mock->expects($this->at(3))->method('escape')->with($this->equalTo('c'))->will($this->returnValue('c_result'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->where(array('or a' => 'b')));
+		$this->assertEquals('("a" = b_result)', (String) $q);
+		$this->assertSame($q, $q->where(array('or b' => 'c')));
+		$this->assertEquals('("a" = b_result OR "b" = c_result)', (String) $q);
+	}
+	public function testOrWhereArray2()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));	
+		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('b'))->will($this->returnValue('b_result'));
+		$mock->expects($this->at(2))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"b"'));	
+		$mock->expects($this->at(3))->method('escape')->with($this->equalTo('c'))->will($this->returnValue('c_result'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->where(array('or a' => 'b', 'or b' => 'c')));
+		$this->assertEquals('("a" = b_result OR "b" = c_result)', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testOrWhereArrayNoKey()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('ab'))->will($this->returnValue('"ab"'));	
+		$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('bc'))->will($this->returnValue('"bc"'));
+		$mock->expects($this->never())->method('escape');
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->where(array('or ab')));
+		$this->assertEquals('("ab")', (String) $q);
+		$this->assertSame($q, $q->where(array('or bc')));
+		$this->assertEquals('("ab" OR "bc")', (String) $q);
+	}
+	public function testOrWhereArrayNoKey2()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('ab'))->will($this->returnValue('"ab"'));	
+		$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('bc'))->will($this->returnValue('"bc"'));
+		$mock->expects($this->never())->method('escape');
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->where(array('or ab', 'or bc')));
+		$this->assertEquals('("ab" OR "bc")', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function testBindWhere()
 	{
 		$mock = $this->getMock('Db_Connection', array('replaceBinds'));
@@ -664,6 +792,8 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('("a" LIKE \'%aaaa%\' AND "b" LIKE \'%baba%\')', (String) $q);
 	}
 	
+	// ------------------------------------------------------------------------
+	
 	public function testLikeSides()
 	{
 		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escapeStr'));
@@ -685,6 +815,8 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('("a" LIKE \'%aaaa%\' AND "b" LIKE \'%baba\' AND "c" LIKE \'cccc%\')', (String) $q);
 	}
 	
+	// ------------------------------------------------------------------------
+	
 	public function testLikeNoEscape()
 	{
 		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escapeStr'));
@@ -702,6 +834,8 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('(a LIKE \'%aaaa%\' AND b LIKE \'%baba%\')', (String) $q);
 	}
 	
+	// ------------------------------------------------------------------------
+	
 	public function testOrLike()
 	{
 		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escapeStr'));
@@ -718,6 +852,8 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertSame($q, $q->like('or b', 'ba'));
 		$this->assertEquals('("a" LIKE \'%aaaa%\' OR "b" LIKE \'%baba%\')', (String) $q);
 	}
+	
+	// ------------------------------------------------------------------------
 	
 	public function testOrLikeNoEscape()
 	{
