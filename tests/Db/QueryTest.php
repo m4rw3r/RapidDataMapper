@@ -871,6 +871,121 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertSame($q, $q->like('or b', 'ba'));
 		$this->assertEquals('(a LIKE \'%aaaa%\' OR b LIKE \'%baba%\')', (String) $q);
 	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testOrderByNoCall()
+	{
+		$q = new Db_Query(new stdClass);
+		
+		$this->assertEquals(array(), $q->order_by);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testOrderBy()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$mock->expects($this->once())->method('protectIdentifiers')->with($this->equalTo('foobar'))->will($this->returnValue('"foobar"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->orderBy('foobar'));
+		$this->assertEquals(array('"foobar"'), $q->order_by);
+	}
+	public function testOrderBy2()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$mock->expects($this->once())->method('protectIdentifiers')->with($this->equalTo('foobar'))->will($this->returnValue('"foobar"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->orderBy('foobar', 'desc'));
+		$this->assertEquals(array('"foobar" DESC'), $q->order_by);
+	}
+	public function testOrderBy3()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$mock->expects($this->once())->method('protectIdentifiers')->with($this->equalTo('foobar'))->will($this->returnValue('"foobar"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->orderBy('foobar', 'asc'));
+		$this->assertEquals(array('"foobar" ASC'), $q->order_by);
+	}
+	public function testOrderBy4()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$mock->expects($this->once())->method('protectIdentifiers')->with($this->equalTo('foobar'))->will($this->returnValue('"foobar"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->orderBy('foobar', 'fjgfa'));
+		$this->assertEquals(array('"foobar" ASC'), $q->order_by);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testOrderByRandom()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$mock->expects($this->never())->method('protectIdentifiers');
+		
+		$mock->RANDOM_KEYWORD = 'RANDOM_KEY';
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->orderBy('random'));
+		$this->assertEquals(array('RANDOM_KEY'), $q->order_by);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testOrderByNoEscape()
+	{
+		$q = new Db_Query(new stdClass);
+		$q->escape(false);
+		
+		$this->assertSame($q, $q->orderBy('SOMETHING TO NOT ESCAPE()'));
+		$this->assertEquals(array('SOMETHING TO NOT ESCAPE()'), $q->order_by);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testOrderByList()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('foobar'))->will($this->returnValue('"foobar"'));
+		$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('bar'))->will($this->returnValue('"bar"'));
+		$mock->expects($this->at(2))->method('protectIdentifiers')->with($this->equalTo('baz'))->will($this->returnValue('"baz"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->orderBy('foobar, bar, baz', 'desc'));
+		$this->assertEquals(array('"foobar" DESC', '"bar" DESC', '"baz" DESC'), $q->order_by);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testOrderByArray()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('foobar'))->will($this->returnValue('"foobar"'));
+		$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('bar'))->will($this->returnValue('"bar"'));
+		$mock->expects($this->at(2))->method('protectIdentifiers')->with($this->equalTo('baz'))->will($this->returnValue('"baz"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->orderBy(array('foobar', 'bar', 'baz'), 'desc'));
+		$this->assertEquals(array('"foobar" DESC', '"bar" DESC', '"baz" DESC'), $q->order_by);
+	}
 }
 
 
