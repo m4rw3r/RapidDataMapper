@@ -1,6 +1,6 @@
 <?php
 /*
- * Created by Martin Wernståhl on 2009-09-04.
+ * Created by Martin Wernståhl on 2009-09-05.
  * Copyright (c) 2009 Martin Wernståhl.
  * All rights reserved.
  */
@@ -116,5 +116,5 @@ class Db_InflectorTest extends PHPUnit_Framework_TestCase
 	}
 }
 
-/* End of file PluginTest.php */
+/* End of file InflectorTest.php */
 /* Location: ./tests/Db */
