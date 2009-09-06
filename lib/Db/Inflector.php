@@ -263,7 +263,8 @@ class Db_Inflector
 		{
 			if(preg_match($rule, $word))
 			{
-				return preg_replace($rule, $replacement, $word);
+				$word = preg_replace($rule, $replacement, $word);
+				break;
 			}
 		}
 		
