@@ -68,7 +68,7 @@ class Db_Query_Update extends Db_Query
 				// need to limit to one row
 				$v->limit(1);
 				
-				$this->data[$k] = '(' . $v . ')';
+				$this->data[$k] = '(' . $v->__toString() . ')';
 			}
 			elseif( ! $this->escape)
 			{
@@ -123,7 +123,7 @@ class Db_Query_Update extends Db_Query
 	{
 		if(empty($this->data))
 		{
-			return self::returnError('Missing data for update');
+			throw new Db_Exception_QueryIncomplete('Missing data for update');
 		}
 		
 		$str = 'UPDATE ' . $this->_instance->protectIdentifiers(implode(', ', array_map(array($this->_instance, 'prefix'), (Array)$this->table))) . "\nSET ";

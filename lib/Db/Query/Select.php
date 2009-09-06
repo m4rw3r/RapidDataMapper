@@ -134,11 +134,11 @@ class Db_Query_Select extends Db_Query
 			{
 				if(is_numeric($alias))
 				{
-					$this->columns[] = '(' . $col . ')';
+					$this->columns[] = '(' . $col->__toString() . ')';
 				}
 				else
 				{
-					$this->columns[] = '(' . $col . ')' . ' AS ' . $this->_instance->protectIdentifiers($alias);
+					$this->columns[] = '(' . $col->__toString() . ')' . ' AS ' . $this->_instance->protectIdentifiers($alias);
 				}
 			}
 			// nonescaped columns
@@ -200,7 +200,7 @@ class Db_Query_Select extends Db_Query
 			// subquery?
 			if($table instanceof Db_Query_Select)
 			{
-				$this->from[] = '(' . $table . ') AS ' . $this->_instance->protectIdentifiers($alias);
+				$this->from[] = '(' . $table->__toString() . ') AS ' . $this->_instance->protectIdentifiers($alias);
 			}
 			else
 			{
@@ -266,54 +266,13 @@ class Db_Query_Select extends Db_Query
 				$v = null;
 			}
 			
-			// local variant of the get_logical_operator()
-			// (getLogicalOperator() only goes on $this->where)
-			$k = preg_replace('/^\s*or\s/i', '', $k, 1, $c);
-
-			$pre = empty($cond) ? '' : ($c ? 'OR ' : 'AND ');
-			
-			// no escape
-			if( ! $this->escape && is_null($v))
-			{
-				// add the raw sql
-				$cond[] = $pre . $k;
-			}
-			// no escape with value
-			elseif( ! $this->escape)
-			{
-				// add the raw sql + operator + raw parameter
-				$cond[] = $pre . $k . ($this->hasCmpOperator($k) ? '' : ' =') . $v;
-			}
-			// bound statement
-			elseif(is_array($v))
-			{
-				$cond[] = $pre . $this->_instance->replaceBinds($k, $v);
-			}
-			// subquery
-			elseif($v instanceof Db_Query_Select)
-			{
-				$cond[] = $pre . $k .
-					($this->hasCmpOperator($k) ? '' : ' =') .' (' . $v . ')';
-			}
-			// just a condition to filter
-			elseif(is_null($v))
-			{
-				$cond[] = $pre . $this->_instance->protectIdentifiers($k);
-			}
-			// normal match
-			else
-			{
-				$k = $this->_instance->protectIdentifiers($k);
-
-				$cond[] = $pre . $k .
-					($this->hasCmpOperator($k) ? '' : ' =') .' ' . $this->_instance->escape($v);
-			}
+			$this->createCondition($k, $v, $cond);
 		}
 		
 		// subquery
 		if($table instanceof Db_Query_Select)
 		{
-			$table = '(' . $table . ')';
+			$table = '(' . $table->__toString() . ')';
 		}
 		else
 		{
@@ -352,11 +311,7 @@ class Db_Query_Select extends Db_Query
 	 */
 	public function having($condition, $value = null)
 	{
-		// local variant of the get_logical_operator()
-		// (getLogicalOperator() only goes on $this->where)
-		$condition = preg_replace('/^\s*or\s/i', '', $condition, 1, $c);
-
-		$pre = empty($this->having) ? '' : ($c ? 'OR ' : 'AND ');
+		$pre = self::getLogicalOperator($condition, $this->having);
 		
 		if( ! $this->escape)
 		{
@@ -364,7 +319,7 @@ class Db_Query_Select extends Db_Query
 		}
 		elseif( ! is_null($value))
 		{
-			if( ! $this->hasCmpOperator($condition))
+			if( ! self::hasCmpOperator($condition))
 			{
 				$condition .= ' =';
 			}
@@ -515,7 +470,7 @@ class Db_Query_Select extends Db_Query
 	{
 		if(empty($this->from))
 		{
-			return self::returnError('Missing FROM part');
+			throw new Db_Exception_QueryIncomplete('Missing FROM part');
 		}
 		
 		$str = 'SELECT ' . ($this->distinct ? 'DISTINCT ' : '') . implode(', ', $this->columns) . "\nFROM " . implode(', ', $this->from);

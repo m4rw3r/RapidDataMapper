@@ -94,7 +94,7 @@ class Db_Query_Delete extends Db_Query
 					$alias = 't' . $this->alias_counter++;
 				}
 				
-				$this->from[] = '(' . $table . ') AS ' . $this->_instance->protectIdentifiers($alias);
+				$this->from[] = '(' . $table->__toString() . ') AS ' . $this->_instance->protectIdentifiers($alias);
 			}
 			else
 			{
@@ -168,48 +168,7 @@ class Db_Query_Delete extends Db_Query
 				$v = null;
 			}
 			
-			// local variant of the get_logical_operator()
-			// (getLogicalOperator() only goes on $this->where)
-			$k = preg_replace('/^\s*or\s/i', '', $k, 1, $c);
-
-			$pre = empty($cond) ? '' : ($c ? 'OR ' : 'AND ');
-			
-			// no escape
-			if( ! $this->escape && is_null($v))
-			{
-				// add the raw sql
-				$cond[] = $pre . $k;
-			}
-			// no escape with value
-			elseif( ! $this->escape)
-			{
-				// add the raw sql + operator + raw parameter
-				$cond[] = $pre . $k . ($this->hasCmpOperator($k) ? '' : ' =') . $v;
-			}
-			// bound statement
-			elseif(is_array($v))
-			{
-				$cond[] = $pre . $this->_instance->replaceBinds($k, $v);
-			}
-			// subquery
-			elseif($v instanceof Db_Query_Select)
-			{
-				$cond[] = $pre . $k .
-					($this->hasCmpOperator($k) ? '' : ' =') .' (' . $v . ')';
-			}
-			// just a condition to filter
-			elseif(is_null($v))
-			{
-				$cond[] = $pre . $this->_instance->protectIdentifiers($k);
-			}
-			// normal match
-			else
-			{
-				$k = $this->_instance->protectIdentifiers($k);
-
-				$cond[] = $pre . $k .
-					($this->hasCmpOperator($k) ? '' : ' =') .' ' . $this->_instance->escape($v);
-			}
+			$this->createCondition($k, $v, $cond);
 		}
 		
 		// subquery
@@ -221,7 +180,7 @@ class Db_Query_Delete extends Db_Query
 				$alias = 't' . $this->alias_counter++;
 			}
 			
-			$table = '(' . $table . ')';
+			$table = '(' . $table->__toString() . ')';
 		}
 		else
 		{

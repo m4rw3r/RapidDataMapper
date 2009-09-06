@@ -88,7 +88,7 @@ class Db_Query_Insert
 				// need to limit to one row
 				$v->limit(1);
 				
-				$current[$k] = '(' . $v . ')';
+				$current[$k] = '(' . $v->__toString() . ')';
 			}
 			elseif( ! $this->escape)
 			{
@@ -146,11 +146,7 @@ class Db_Query_Insert
 	 */
 	public function getSQL()
 	{
-		$sql = $this->__toString();
-		
-		Db_Query::detectError($sql);
-		
-		return $sql;
+		return $this->__toString();
 	}
 	
 	// ------------------------------------------------------------------------
@@ -164,7 +160,7 @@ class Db_Query_Insert
 	{
 		if(empty($this->columns))
 		{
-			return Db_Query::returnError('Columns missing in INSERT statement');
+			throw new Db_Exception_QueryIncomplete('Columns missing in INSERT statement');
 		}
 		
 		$columns = $this->_instance->protectIdentifiers(implode(', ', array_keys($this->columns)));

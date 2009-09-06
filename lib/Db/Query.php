@@ -13,20 +13,6 @@
 class Db_Query
 {
 	/**
-	 * Contains the leading delimiter for the embedded error messages.
-	 * 
-	 * @var string
-	 */
-	const ERROR_START = "\0\0\n\0";
-	
-	/**
-	 * Contains the trailing delimiter for the embedded error messages.
-	 * 
-	 * @var string
-	 */
-	const ERROR_END = "\0\n\0\0";
-	
-	/**
 	 * WHERE data.
 	 * 
 	 * @var array
@@ -114,11 +100,11 @@ class Db_Query
 			{
 				if( ! is_numeric($k))
 				{
-					$this->where($k, $v);
+					$this->createCondition($k, $v, $this->where);
 				}
 				else
 				{
-					$this->where($v);
+					$this->createCondition($v, null, $this->where);
 				}
 			}
 			
@@ -144,44 +130,7 @@ class Db_Query
 		}
 		else
 		{
-			$pre = $this->getLogicalOperator($condition);
-			
-			// no escape
-			if( ! $this->escape && is_null($value))
-			{
-				// add the raw sql
-				$this->where[] = $pre . $condition;
-			}
-			// no escape, but with value
-			elseif( ! $this->escape)
-			{
-				// add the raw sql
-				$this->where[] = $pre . $condition . ($this->hasCmpOperator($condition) ? '' : ' =') . $value;
-			}
-			// bound statement
-			elseif(is_array($value))
-			{
-				$this->where[] = $pre . $this->_instance->replaceBinds($condition, $value);
-			}
-			// subquery
-			elseif($value instanceof Db_Query_Select)
-			{
-				$this->where[] = $pre . $this->_instance->protectIdentifiers($condition) .
-					($this->hasCmpOperator($condition) ? '' : ' =') .' (' . $value . ')';
-			}
-			// just a condition to filter
-			elseif(is_null($value))
-			{
-				$this->where[] = $pre . $this->_instance->protectIdentifiers($condition);
-			}
-			// normal match
-			else
-			{
-				$condition = $this->_instance->protectIdentifiers($condition);
-
-				$this->where[] = $pre . $condition .
-					($this->hasCmpOperator($condition) ? '' : ' =') .' ' . $this->_instance->escape($value);
-			}
+			$this->createCondition($condition, $value, $this->where);
 			
 			return $this;
 		}
@@ -205,7 +154,7 @@ class Db_Query
 	 */
 	public function bindWhere($condition, $binds)
 	{
-		$pre = $this->getLogicalOperator($condition);
+		$pre = self::getLogicalOperator($condition, $this->where);
 		
 		$this->where[] = $pre . $this->_instance->replaceBinds($condition, $binds);
 		
@@ -223,7 +172,7 @@ class Db_Query
 	 */
 	public function whereIn($statement, $values)
 	{
-		$pre = $this->getLogicalOperator($statement);
+		$pre = self::getLogicalOperator($statement, $this->where);
 		
 		if($this->escape)
 		{
@@ -233,10 +182,13 @@ class Db_Query
 		// create a list of values if there isn't a subquery
 		if( ! $values instanceof Db_Query_Select)
 		{
-			$values = implode(', ', array_map(array($this->_instance, 'escape'), $values));
+			$this->where[] = $pre . $statement . ' IN (' . 
+				implode(', ', array_map(array($this->_instance, 'escape'), $values)) . ')';
 		}
-		
-		$this->where[] = $pre . $statement . ' IN (' . $values . ')';
+		else
+		{
+			$this->where[] = $pre . $statement . ' IN (' . $values->__toString() . ')';
+		}
 		
 		return $this;
 	}
@@ -252,7 +204,7 @@ class Db_Query
 	 */
 	public function whereNotIn($statement, $values)
 	{
-		$pre = $this->getLogicalOperator($statement);
+		$pre = self::getLogicalOperator($statement, $this->where);
     	
 		if($this->escape)
 		{
@@ -262,10 +214,13 @@ class Db_Query
 		// create a list of values if there isn't a subquery
 		if( ! $values instanceof Db_Query_Select)
 		{
-			$values = implode(', ', array_map(array($this->_instance, 'escape'), $values));
+			$this->where[] = $pre . $statement . ' NOT IN (' . 
+				implode(', ', array_map(array($this->_instance, 'escape'), $values)) . ')';
 		}
-    
-		$this->where[] = $pre . $statement . ' NOT IN (' . $values . ')';
+		else
+		{
+			$this->where[] = $pre . $statement . ' NOT IN (' . $values->__toString() . ')';
+		}
     
 		return $this;
 	}
@@ -282,7 +237,7 @@ class Db_Query
 	 */
 	public function like($column, $value, $side = 'both')
 	{
-		$pre = $this->getLogicalOperator($column);
+		$pre = self::getLogicalOperator($column, $this->where);
 		
 		// escape wildcards too
 		$value = $this->_instance->escapeStr($value, true);
@@ -383,11 +338,85 @@ class Db_Query
 	 */
 	public function getSql()
 	{
-		$sql = $this->__toString();
+		return $this->__toString();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns true if the string has a comparison operator.
+	 * 
+	 * @return bool
+	 */
+	public static function hasCmpOperator($str)
+	{
+		return preg_match('/[!=<>]\s*$/i', $str);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates a SQL condition and appends it on the $list array.
+	 * 
+	 * This method creates:
+	 * - Non-escaped where parts (uses only $condition, $value = null, call escape(false) to enable)
+	 * - Bound statements (use array in $value)
+	 * - Column conditions / comparisons ($value = null, $condition is identifier protected)
+	 * - Column-value comparisons ($condition is identifier protected and $value is escaped)
+	 * - Subqueries, $condition is string, $value is Db_Query_Select
+	 * 
+	 * @param  mixed	The condition, operators are preserved (<, >, =, !)
+	 * @param  mixed	The value to add
+	 * @param  array
+	 * @return void
+	 */
+	public function createCondition($condition, $value, &$list)
+	{
+		$pre = self::getLogicalOperator($condition, $list);
 		
-		self::detectError($sql);
-		
-		return $sql;
+		// no escape
+		if( ! $this->escape && is_null($value))
+		{
+			// add the raw sql
+			$list[] = $pre . $condition;
+		}
+		// no escape, but with value
+		elseif( ! $this->escape)
+		{
+			if($value instanceof Db_Query_Select)
+			{
+				$list[] = $pre.$condition.(self::hasCmpOperator($condition) ? '' : ' =').' ('.$value->__toString().')';
+			}
+			else
+			{
+				// add the raw sql
+				$list[] = $pre.$condition.(self::hasCmpOperator($condition) ? '' : ' =').$value;
+			}
+		}
+		// bound statement
+		elseif(is_array($value))
+		{
+			$list[] = $pre . $this->_instance->replaceBinds($condition, $value);
+		}
+		// subquery
+		elseif($value instanceof Db_Query_Select)
+		{
+			$list[] = $pre.$this->_instance->protectIdentifiers($condition).
+				(self::hasCmpOperator($condition) ? '' : ' =') .' ('.$value->__toString().')';
+		}
+		// just a condition to filter
+		elseif(is_null($value))
+		{
+			$list[] = $pre . $this->_instance->protectIdentifiers($condition);
+		}
+		// normal match
+		else
+		{
+			$condition = $this->_instance->protectIdentifiers($condition);
+
+			$list[] = $pre . $condition .
+				(self::hasCmpOperator($condition) ? '' : ' =') . ' ' . $this->_instance->escape($value);
+		}
 	}
 	
 	// ------------------------------------------------------------------------
@@ -398,10 +427,11 @@ class Db_Query
 	 * Removes the operator (only OR) from $str if present.
 	 * Do this before using protectIdentifiers().
 	 * 
-	 * @param  string
-	 * @return string
+	 * @param  string	A reference to the condition
+	 * @param  array	The list to which the condition later will be added
+	 * @return string	The operator which should be used when adding the condition
 	 */
-	protected function getLogicalOperator(&$str)
+	public static function getLogicalOperator(&$str, &$list)
 	{	
 		// determine if there is an OR prepended, if so let it return OR
 		// otherwise let it return AND
@@ -410,60 +440,12 @@ class Db_Query
 		// remove the first occurrence of OR and store the count (ie. 1 if we have a replace)
 		$str = preg_replace('/^\s*or\s/i', '', $str, 1, $c);
 		
-		if(empty($this->where))
+		if(empty($list))
 		{
 			return '';
 		}
 		
 		return $c ? 'OR ' : 'AND ';
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns true if the string has a comparison operator.
-	 * 
-	 * @return bool
-	 */
-	protected function hasCmpOperator($str)
-	{
-		return preg_match('/[!=<>]\s*$/i', $str);
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Prepares an error string to be embedded in SQL.
-	 * 
-	 * @param  string
-	 * @return string
-	 */
-	public static function returnError($error_message)
-	{
-		return self::ERROR_START.$error_message.self::ERROR_END;
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Checks if there are any embedded error messages in the SQL strings,
-	 * throws them as a Db_Exception_QueryIncomplete exception if present.
-	 * 
-	 * This is needed because __toString() cannot throw errors when used in
-	 * a string context (eg. echo(), implode() etc.).
-	 * 
-	 * @throws Db_Exception_QueryIncomplete
-	 * @param  string
-	 * @return void
-	 */
-	public static function detectError($sql)
-	{
-		if(($p = strpos($sql, self::ERROR_START)) !== false)
-		{
-			$message = substr($sql, $p + strlen(self::ERROR_START), strpos($sql, self::ERROR_END));
-			
-			throw new Db_Exception_QueryIncomplete($message);
-		}
 	}
 }
 
