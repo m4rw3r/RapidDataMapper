@@ -218,7 +218,7 @@ SET "a" = b_result, "c" = d_result'))->will($this->returnValue('db_result'));
 	
 	// ------------------------------------------------------------------------
 	
-	public function testEnsureToStringCallBeforeExecute()
+	public function testEnsureToStringCallBeforeRender()
 	{
 		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'prefix', 'escape'));
 		$q_mock = $this->getMock('Db_Query_Select', array('limit', '__toString'));
