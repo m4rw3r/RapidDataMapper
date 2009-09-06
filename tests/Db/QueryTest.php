@@ -174,6 +174,45 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
+	public function testWhereWithSubqueryNoEscape()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		$sub = $this->getMock('Db_Query_Select', array('__toString'));
+		$sub2 = $this->getMock('Db_Query_Select', array('__toString'));
+		
+		$mock->expects($this->never())->method('protectIdentifiers');
+		$mock->expects($this->never())->method('protectIdentifiers');
+		
+		$sub->expects($this->once())->method('__toString')->will($this->returnValue('subquery_a'));
+		$sub2->expects($this->once())->method('__toString')->will($this->returnValue('subquery_b'));
+		
+		$q = new Db_Query($mock);
+		$q->escape(false);
+		
+		$this->assertSame($q, $q->where('a', $sub));
+		$this->assertEquals('(a = (subquery_a))', (String) $q);
+		$this->assertSame($q, $q->where('b', $sub2));
+		$this->assertEquals('(a = (subquery_a) AND b = (subquery_b))', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereWithSubqueryEnsureToStringBeforeRender()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		$sub = $this->getMock('Db_Query_Select', array('__toString'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		
+		$sub->expects($this->once())->method('__toString')->will($this->returnValue('subquery_a'));
+		
+		$q = new Db_Query($mock);
+		
+		$q->where('a', $sub);
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function testWhereNested()
 	{
 		$q = new Db_Query(new stdClass);
@@ -315,6 +354,29 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('("a" = (subquery_a))', (String) $q);
 		$this->assertSame($q, $q->where('or b', $sub2));
 		$this->assertEquals('("a" = (subquery_a) OR "b" = (subquery_b))', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testOrWhereWithSubqueryNoEscape()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		$sub = $this->getMock('Db_Query_Select', array('__toString'));
+		$sub2 = $this->getMock('Db_Query_Select', array('__toString'));
+		
+		$mock->expects($this->never())->method('protectIdentifiers');
+		$mock->expects($this->never())->method('protectIdentifiers');
+		
+		$sub->expects($this->once())->method('__toString')->will($this->returnValue('subquery_a'));
+		$sub2->expects($this->once())->method('__toString')->will($this->returnValue('subquery_b'));
+		
+		$q = new Db_Query($mock);
+		$q->escape(false);
+		
+		$this->assertSame($q, $q->where('or a', $sub));
+		$this->assertEquals('(a = (subquery_a))', (String) $q);
+		$this->assertSame($q, $q->where('or b', $sub2));
+		$this->assertEquals('(a = (subquery_a) OR b = (subquery_b))', (String) $q);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -619,6 +681,39 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
+	public function testWhereInSubquery()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		$q_mock = $this->getMock('Db_Query_Select', array('__toString'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		
+		$q_mock->expects($this->once())->method('__toString')->will($this->returnValue('subquery_mock'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->whereIn('a', $q_mock));
+		$this->assertEquals('("a" IN (subquery_mock))', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereInSubqueryEnsureToStringCallBeforeRender()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		$q_mock = $this->getMock('Db_Query_Select', array('__toString'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		
+		$q_mock->expects($this->once())->method('__toString')->will($this->returnValue('subquery_mock'));
+		
+		$q = new Db_Query($mock);
+		
+		$q->whereIn('a', $q_mock);
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function testWhereInOr()
 	{
 		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
@@ -714,6 +809,39 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertSame($q, $q->whereNotIn('a', array('aa', 'ab')));
 		$this->assertEquals('(a NOT IN ("aa", "ab"))', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereNotInSubquery()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		$q_mock = $this->getMock('Db_Query_Select', array('__toString'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		
+		$q_mock->expects($this->once())->method('__toString')->will($this->returnValue('subquery_mock'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->whereNotIn('a', $q_mock));
+		$this->assertEquals('("a" NOT IN (subquery_mock))', (String) $q);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereNotInSubqueryEnsureToStringCallBeforeRender()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		$q_mock = $this->getMock('Db_Query_Select', array('__toString'));
+		
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"a"'));
+		
+		$q_mock->expects($this->once())->method('__toString')->will($this->returnValue('subquery_mock'));
+		
+		$q = new Db_Query($mock);
+		
+		$q->whereIn('a', $q_mock);
 	}
 	
 	// ------------------------------------------------------------------------
