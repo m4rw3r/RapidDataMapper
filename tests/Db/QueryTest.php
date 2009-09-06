@@ -7,6 +7,10 @@
 
 require_once 'PHPUnit/Framework.php';
 
+require_once dirname(__FILE__).'/../../lib/Db/Query.php';
+require_once dirname(__FILE__).'/../../lib/Db/Exception.php';
+require_once dirname(__FILE__).'/../../lib/Db/Exception/QueryIncomplete.php';
+
 /**
  * @covers Db_Query
  * @runTestsInSeparateProcesses enabled	
@@ -14,15 +18,6 @@ require_once 'PHPUnit/Framework.php';
  */
 class Db_QueryTest extends PHPUnit_Framework_TestCase
 {
-	// ------------------------------------------------------------------------
-	
-	public function setUp()
-	{
-		require_once dirname(__FILE__).'/../../lib/Db/Query.php';
-		require_once dirname(__FILE__).'/../../lib/Db/Exception.php';
-		require_once dirname(__FILE__).'/../../lib/Db/Exception/QueryIncomplete.php';
-	}
-	
 	// ------------------------------------------------------------------------
 	
 	public function testEmpty()
@@ -990,33 +985,6 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 	}
 	
 	// ------------------------------------------------------------------------
-
-	/**
-	 * @expectedException Db_Exception_QueryIncomplete
-	 */
-	public function testErrorDetection()
-	{
-		$str = Db_Query::returnError('Some error message');
-		
-		Db_Query::detectError($str);
-	}
-	/**
-	 * @expectedException Db_Exception_QueryIncomplete
-	 */
-	public function testErrorDetection2()
-	{
-		$str = "sIF OGFGFO \0\n\"w 32 ".Db_Query::returnError('Some error message')."\0\n 3w3 rsg";
-		
-		Db_Query::detectError($str);
-	}
-	public function testErrorDetection3()
-	{
-		$str = "sIF OGFGFO \0\n\"w 32 \0\n 3w3 rsg\0\n 3w3 rsg";
-		
-		Db_Query::detectError($str);
-	}
-	
-	// ------------------------------------------------------------------------
 	
 	public function testGetSQL()
 	{
@@ -1038,24 +1006,6 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals((String) $q, $q->getSQL());
 		$q->whereNotIn('or b', array('ba', 'bb'));
 		$this->assertEquals((String) $q, $q->getSQL());
-	}
-	/**
-	 * @expectedException Db_Exception_QueryIncomplete
-	 */
-	public function testGetSQL2()
-	{
-		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
-		
-		$mock->expects($this->never())->method('protectIdentifiers');
-		$mock->expects($this->at(0))->method('escape')->with($this->equalTo('aa'))->will($this->returnValue('"aa"'));
-		$mock->expects($this->at(1))->method('escape')->with($this->equalTo('ab'))->will($this->returnValue(Db_Query::returnError('Some error here')));
-		
-		$q = new Db_Query($mock);
-		
-		$q->escape(false);
-		
-		$q->whereNotIn('or a', array('aa', 'ab'));
-		$q->getSQL();
 	}
 }
 
