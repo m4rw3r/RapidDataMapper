@@ -54,7 +54,7 @@ class Db_Plugin_Sluggable_Decorator extends Db_Decorator
 		// only assign the columns which are allowed to be updated
 		if(( ! $is_update && $this->isInsertable()) OR $is_update && $this->isUpdatable())
 		{
-			return 'Db::isChanged('.$object_var.', '.$this->source->getProperty().') && '.$dest_var.'[\''.$this->getColumn().'\'] = '.$this->callable.'('.$this->source->getCastFromPhpCode($this->source->getFromObjectCode($object_var)).');';
+			return 'Db::isChanged('.$object_var.', \''.$this->source->getProperty().'\') && '.$dest_var.'[\''.$this->getColumn().'\'] = '.$this->callable.'('.$this->source->getCastFromPhpCode($this->source->getFromObjectCode($object_var)).');';
 		}
 		else
 		{
