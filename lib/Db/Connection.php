@@ -189,6 +189,7 @@ abstract class Db_Connection
 			// not set, connect
 			$this->dbh = $this->connect();
 			
+			// just in case
 			if( ! $this->dbh)
 			{
 				// failed connection, report
@@ -641,6 +642,7 @@ abstract class Db_Connection
 	 * pconnect (persistent connection? true/false)
 	 * database (which database to select)
 	 * 
+	 * @throws Db_Exception_ConnectionError
 	 * @return resource|false
 	 */
 	abstract protected function connect();

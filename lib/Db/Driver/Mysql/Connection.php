@@ -18,14 +18,21 @@ class Db_Driver_Mysql_Connection extends Db_Connection
 		// try to connect
 		$conn = mysql_connect($this->hostname, $this->username, $this->password, $this->pconnect);
 		
-		// do we have a connection and can we select the database?
-		if($conn && mysql_select_db($this->database, $conn))
+		if( ! $conn)
 		{
-			return $conn;
+			throw new Db_Exception_ConnectionError($this->error());
 		}
 		else
 		{
-			return false;
+			// do we have a connection and can we select the database?
+			if(mysql_select_db($this->database, $conn))
+			{
+				return $conn;
+			}
+			else
+			{
+				throw new Db_Exception_ConnectionError('Cannot select database "'.$this->database.'".');
+			}
 		}
 	}
 	
