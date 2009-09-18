@@ -126,6 +126,13 @@ final class Db
 	 */
 	public static function autoload($class)
 	{
+		// only include Db_... classes, remove to make it generic
+		if(substr($class, 3) == 'Db_')
+		{
+			return false;
+		}
+		
+		// $lib_base is the basepath of this library
 		$file = self::$lib_base . str_replace(array('_', '\\'), DIRECTORY_SEPARATOR, $class).'.php';
 		
 		if(file_exists($file))
