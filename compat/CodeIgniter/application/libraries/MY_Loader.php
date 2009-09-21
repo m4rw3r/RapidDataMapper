@@ -35,10 +35,8 @@ class MY_Loader extends CI_Loader
 			Db::setConnectionConfig($db);
 			Db::setDefaultConnectionName($active_group);
 			Db::setCompileMappers(isset($cache_mappers) ? $cache_mappers : false);
-			if(isset($mapper_cache))
-			{
-				Db::setMapperCacheDir($mapper_cache);
-			}
+			
+			Db::setMapperCacheDir(APPPATH . 'mappercache');
 			
 			Db::initAutoload();
 			
