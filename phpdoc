@@ -1,2 +1,0 @@
-#!/bin/bash
-phpdoc -d ./lib,./tests,./compat --customtags expectedException,covers,runTestsInSeparateProcesses,runInSeparateProcess,preserveGlobalState -j -o HTML:frames/Extjs:default -s -t ./api -ti "RapidDataMapper API Documentation"
