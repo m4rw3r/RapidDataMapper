@@ -279,7 +279,7 @@ class Db_Query
 		}
 		elseif(is_string($column) && strtolower($column) == 'random')
 		{
-			$this->order_by = array($this->_instance->RANDOM_KEYWORD);
+			$this->order_by = array($this->_instance->getRandomKeyword());
 		}
 		else
 		{

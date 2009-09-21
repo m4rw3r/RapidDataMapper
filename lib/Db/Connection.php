@@ -141,6 +141,15 @@ abstract class Db_Connection
 	 */
 	protected $result_object_class;
 	
+	/**
+	 * The character to use as a delimiter for the SQL identifiers.
+	 * 
+	 * Overwrite in child class to provide another character.
+	 * 
+	 * @var string
+	 */
+	protected $IDENT_CHAR = '"';
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -430,7 +439,7 @@ abstract class Db_Connection
 				break;
 				
 			case 'boolean':
-				$value = $value ? $this->BOOLEAN_CHARS[0] : $this->BOOLEAN_CHARS[1];
+				$value = $this->escapeBoolean($value);
 				break;
 			
 			case 'integer':
@@ -736,6 +745,26 @@ abstract class Db_Connection
 	 * @return string
 	 */
 	abstract public function _limit($str, $limit, $offset = false);
+	/**
+	 * Returns the SQL keyword for random ordering.
+	 * 
+	 * @return string
+	 */
+	abstract public function getRandomKeyword();
+	/**
+	 * Converts a PHP boolean to a database specific boolean.
+	 * 
+	 * @param  bool
+	 * @return mixed
+	 */
+	abstract public function escapeBoolean($bool);
+	/**
+	 * Converts a database boolean to a PHP boolean.
+	 * 
+	 * @param  mixed
+	 * @return bool
+	 */
+	abstract public function unescapeBoolean($bool);
 }
 
 

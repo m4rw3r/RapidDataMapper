@@ -157,6 +157,27 @@ class Db_Driver_Mysql_Connection extends Db_Connection
 	{
 		return $str . "\nLIMIT " . ($offset != false ?  $offset . ', ' : '') . $limit;
 	}
+	
+	// ------------------------------------------------------------------------
+
+	public function escapeBoolean($bool)
+	{
+		return $bool ? '1' : '0';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	public function unescapeBoolean($bool)
+	{
+		return $bool == '1' ? true : false;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	public function getRandomKeyword()
+	{
+		return 'RAND()';
+	}
 }
 
 
