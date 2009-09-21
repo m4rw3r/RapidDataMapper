@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.installation"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Installation</title>
+	
+	<section>
+		<title>Generic PHP Installation</title>
+		
+		<para>
+			This is the generic PHP installation instructions.
+			They assume that you want to use RapidDataMapper in a any PHP script.
+		</para>
+		
+		<orderedlist>
+			<listitem>
+				<para>
+					Copy the <filename>Db.php</filename> file and the <filename>Db/</filename> directory into
+					your include path, project directory or somewhere else from where it can be reached by <function>include</function>.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Include the <filename>Db.php</filename> file, and if you don't have a matching autoloader
+					(see <link linkend="chapter.system_requirements.autoloader">Autoloader Requirements</link>),
+					call <function>Db::initAutoload()</function>:
+				</para>
+				
+				<example>
+					<title>Loading RapidDataMapper and the bundled Autoloader</title>
+					
+					<programlisting language="php" linenumbering="unnumbered"><![CDATA[<?php
+
+include 'Db.php';
+
+// if you don't have a compatible autoloader:
+Db::initAutoload();]]></programlisting>
+				</example>
+			</listitem>
+			
+			<listitem>
+				Configure RapidDataMapper, see the <link linkend="chapter.configuration">Configuration</link> chapter.
+			</listitem>
+		</orderedlist>
+	</section>
+	
+	<section>
+		<title>CodeIgniter Installation</title>
+		
+		<para>
+			RapidDataMapper can easily replace CodeIgniter's database abstraction.
+			The instructions below will replace the global <varname>$this->db</varname>
+			with an instance of <classname>Db_Connection</classname> from RapidDataMapper,
+			instead of CodeIgniter's abstraction.
+		</para>
+		
+		<orderedlist>
+			<listitem>
+				<para>
+					Copy the <filename>Db.php</filename> file and the <filename>Db/</filename> directory into the
+					<filename>application/libraries/</filename> folder.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Create the <filename>application/records/</filename> and <filename>application/mappercache/</filename>
+					directories.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Make <filename>application/mappercache/</filename> writeable.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Copy the custom classes from <filename>compat/CodeIgniter/libraries/</filename> into
+					<filename>application/libraries/</filename>.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Add the following code to <filename>application/config/database.php</filename>,
+					below the <varname>$active_group</varname> variable:
+				</para>
+				
+				<programlisting language="php"><![CDATA[// should we cache the mappers?
+$cache_mappers = FALSE;]]></programlisting>
+			</listitem>
+			
+			<listitem>
+				<para>
+					The default configuration structure of RapidDataMaper is compatible with the format CodeIgniter uses—
+					but if you want to expand on it (RapidDataMapper provides additional options), look at the
+					<link linkend="chapter.configuration">Configuration</link> section.
+				</para>
+			</listitem>
+		</orderedlist>
+		
+		<note>
+			I have not tried to use RapidDataMapper together with CodeIgniter's built-in abstraction, but should be possible.
+		</note>
+	</section>
+	
+	<section>
+		<title>Symphony Installation</title>
+		
+		<para>
+			TODO
+		</para>
+	</section>
+</chapter>

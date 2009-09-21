@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.database_connection_objects"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Database Connection Objects</title>
+	
+	<section>
+		<title>What is a Connection Object?</title>
+		
+		<para>
+			A connection object is an object managing a connection to the database.
+			The connection is wrapped in that object and the object provides methods which interacts with the database
+			and it also contains a few convenience methods.
+		</para>
+		
+		<para>
+			RapidDataMapper has separate objects handling the specific interactions with the database.
+			This provides a separate layer of abstraction, which can easily be swapped to provide support for another database.
+		</para>
+		
+		<para>
+			The database connection objects are managed by the <classname>Db</classname> class, a combination of the flyweight and singleton pattern.
+			This because it only allows one instance per configuration, but several instances per class
+			(because it allows several connections using the same driver).
+		</para>
+		
+		<para>
+			If you use the <glossterm>Object-Relational-Mapper</glossterm> you will probably not use this layer directly in most cases.
+		</para>
+	</section>
+	
+	<section>
+		<title>Fetching a Connection Object</title>
+		
+		<para>
+			The Connection objects are instantiated when they are requested.
+			All the requests are initiated by calling <function>Db::getConnection()</function> which will return the
+			connection instance after it has been instantiated (if it already is instantiated it will simply return
+			the already instantiated object).
+		</para>
+	</section>
+</chapter>

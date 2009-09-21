@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.configuration"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Configuration</title>
+
+	<para>
+		RapidDataMapper have three types of configurations, two will be covered in this chapter:
+	</para>
+	
+	<variablelist>
+		<varlistentry>
+			<term>Connection configurations</term>
+			
+			<listitem>
+				<para>
+					Several can exist during runtime, but only one can be the default connection.
+				</para>
+			</listitem>
+		</varlistentry>
+		
+		<varlistentry>
+			<term>Mapper and descriptor management settings</term>
+			
+			<listitem>
+				<para>
+					These settings can only have one set of values, and they control how to fetch, save,
+					create and store the mappers and descriptors.
+				</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+	
+	<para>
+		The two types above can be regarded as the lower level of configurations, they dictate how the system works;
+		what databases are available and where to store the files.
+	</para>
+	
+	<section>
+		<title>Connection configurations</title>
+		
+		<para>
+			The connection configurations are managed by the <classname>Db</classname> class.
+		</para>
+	</section>
+	
+	<section>
+		<title>Mapper and Descriptor management settings</title>
+		
+		<para>
+			
+		</para>
+	</section>
+</chapter>

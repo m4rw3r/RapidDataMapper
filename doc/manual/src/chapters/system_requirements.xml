@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.system_requirements"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>System Requirements</title>
+	
+	<section>
+		<title>Web server requirements</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					PHP version 5.2 or better
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					PHP Extensions:
+				</para>
+				
+				<itemizedlist>
+					<listitem>
+						<para>
+							Appropriate database extension for the database you have planned to use.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<acronym>SPL</acronym> (Standard PHP Library), included by default in PHP.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<acronym>PCRE</acronym> (Perl Compatible RegularExpressions), also included by default in PHP.
+						</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section xml:id="chapter.system_requirements.autoloader">
+		<title>PHP Autoloader</title>
+		
+		<para>
+			RapidDataMapper requires an <firstterm linkend="glossary.autoloader">autoloader</firstterm> for PHP classes, which means that
+			classes are only loaded when they are requested.
+			This reduces the number of files to load, and also the number of calls
+			to require_once and/or include.
+		</para>
+		
+		<para>
+			The autoloader must load files according to this schema:
+		</para>
+		
+		<orderedlist>
+			<listitem>
+				<para>
+					All underscores ("<literal>_</literal>") will be converted to a directory separator
+					("<literal>/</literal>" or "<literal>\</literal>" depending on OS).
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Append "<literal>.php</literal>".
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Include the path we got from the class name.
+				</para>
+			</listitem>
+		</orderedlist>
+		
+		<para>
+			For example will the class <classname>Db_Driver_Mysql_Connection</classname> reside in the file
+			<filename>Db/Driver/Mysql/Connection.php</filename>.
+		</para>
+		
+		<para>
+			A compatible autoloader is bundled with RapidDataMapper.
+			To use that autoloader, call <function>Db::initAutoload()</function> just after you have
+			included the base library file (<filename>lib/Db.php</filename>).
+		</para>
+	</section>
+	
+	<section>
+		<title>Database requirements</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					<link xlink:href="http://www.mysql.com">MySQL</link> version 4.2 or greater.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			I cannot test all databases with RapidDataMapper nor can I make drivers
+			for all the databases which RapidDataMapper may possibly interact with.
+			A driver is not that hard to create, but it requires first and foremost
+			a database to test it on (which in some instances are hard to come by
+			without spending money and/or set up), knowledge about said database and finally time.
+		</para>
+		
+		<para>
+			Contributions of additional database drivers are greatly appreciated!
+		</para>
+	</section>
+	
+	<section>
+		<title>PHP Frameworks supported by RapidDataMapper</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					<link xlink:href="http://www.codeigniter.com">CodeIgniter</link>
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			If your framework isn't listed above, don't be disappointed, you can
+			still use RapidDataMapper with almost any PHP script — the listing above is
+			for frameworks which are known to integrate well with RapidDataMapper and
+			have special installation instructions in this manual.
+		</para>
+		
+		<para>
+			As with the database drivers; I cannot possibly create adapters for
+			all the PHP frameworks out there. If you have got RapidDataMapper to work
+			nicely with another framework, I would be happy to know how so I can
+			add the instructions to this manual.
+		</para>
+	</section>
+	
+	<section>
+		<title>Requirements for unit testing</title>
+		
+		<para>
+			To run the Unit tests, these additions are required:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					PHPUnit 3.4 or later
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Xdebug PHP extension, for code coverage generation with PHPUnit
+					(not strictly needed).
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			To run the tests, place the <filename>lib/</filename> and <filename>tests/</filename> folders
+			in the same directory and issue this command there:
+		</para>
+		
+		<example>
+			<title>Running tests without code coverage</title>
+			
+			<screen><prompt>$</prompt> <command>PHPUnit tests</command>
+PHPUnit @package_version@ by Sebastian Bergmann.
+
+............................................................  60 / 205
+...................................................III...... 120 / 205
+............................................................ 180 / 205
+.........................
+
+Time: 17 seconds
+
+OK, but incomplete or skipped tests!
+Tests: 205, Assertions: 603, Incomplete: 3.</screen>
+		</example>
+		
+		<para>
+			To run them with code coverage:
+		</para>
+		
+		<example>
+			<title>Running tests with code coverage</title>
+			
+		<screen><prompt>$</prompt> <command>PHPUnit --coverage-html report tests</command>
+PHPUnit @package_version@ by Sebastian Bergmann.
+
+............................................................  60 / 205
+...................................................III...... 120 / 205
+............................................................ 180 / 205
+.........................
+
+Time: 31 seconds
+
+OK, but incomplete or skipped tests!
+Tests: 205, Assertions: 603, Incomplete: 3.
+
+Generating code coverage report, this may take a moment.</screen>
+		</example>
+	</section>
+</chapter>

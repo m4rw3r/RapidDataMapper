@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appendix
+	version="5.0"
+	xml:id="autoloader"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>The included Autoloader</title>
+	
+	<section>
+		<title>Introduction</title>
+		
+		<para>
+			RapidDataMapper uses the standard class to file mappings, also used by many other PHP projects.
+			Underscores ("<literal>_</literal>") in the classnames are converted to directory separators
+			("<literal>/</literal>" or "<literal>\</literal>" depending on OS) and finally "<literal>.php</literal>" is appended.
+		</para>
+		
+		<para>
+			The included autoloader is designed to be unobtrusive:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					It automatically avoids processing all classes which doesn't start with "Db_",
+					enabling the user to provide a separate autoloader for the other classes.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					It automatically uses absolute paths, relative to the <filename>Db.php</filename> file,
+					which makes it faster as PHP doesn't have to determine an absolute path and it also
+					makes it a lot easier for the user as the files to be loaded doesn't need to be placed
+					in the include path (defined by <option>include_path</option> in <filename>php.ini</filename>).
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section>
+		<title>Code</title>
+	
+		<programlisting language="php"><![CDATA[
+<?php
+// in Db.php:
+public static function autoload($class)
+{
+	// only include Db_... classes, remove to make it generic
+	if(substr($class, 3) == 'Db_')
+	{
+		return false;
+	}
+	
+	// $lib_base is the basepath of this library
+	$file = self::$lib_base . str_replace(array('_', '\\'), DIRECTORY_SEPARATOR, $class).'.php';
+	
+	if(file_exists($file))
+	{
+		require $file;
+		
+		// did we get a class or interface? (do not try to autoload)
+		if(class_exists($class, false) OR interface_exists($class, false))
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}]]></programlisting>
+	</section>
+	
+	<section>
+		<title>Usage</title>
+		
+		<para>
+			Preferably the included autoloader should be registered first, as it is the most specific autoloader
+			(only loads "Db_" classes).
+			<function>Db::initAutoload()</function> initializes the autoloader and registers it
+			with <function>spl_autoload_register()</function>.
+		</para>
+		
+		<example>
+			<title>Using the bundled Autoloader</title>
+			
+			<programlisting language="php">
+<![CDATA[<?php
+include 'Db.php';
+
+Db::initAutoload();
+
+// Use a class with the prefix "Db_" to make the autoloader load it:
+$dec = new Db_Decorator();]]></programlisting>
+		</example>
+	</section>
+</appendix>

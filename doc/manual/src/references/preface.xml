@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preface
+	version="5.0"
+	xml:id="preface"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	>
+	<title>Preface</title>
+
+	<para>
+		This is the manual for the <link xlink:href="http://www.php.net">PHP</link> library <application>RapidDataMapper</application>.
+	</para>
+
+	<para>
+		I created <application>RapidDataMapper</application> as my exam-work for my last year in
+		upper secondary school, as I already had experimented with Object-Relational-Mappers before then.
+		Previous experiments utilized an existing database abstraction and added additional features to
+		that. But I wanted something more adaptable, better performing and finally to have better control
+		over the whole stack, from the calls to <function>mysql_query()</function> and upwards.
+	</para>
+
+	<para>
+		At school we had to do an assignment which spans a whole year, it should take around 100 hours totally
+		(I have probably exceeded that requirement :) ).
+		I figured; why not do an ORM as assignment, when I will create one even if I don't do it as an assignment?
+	</para>
+	
+	<para>
+		// TODO: Continue a bit
+	</para>
+	
+	<para>
+		As examples I will use a simple database which is cataloguing music.
+		This is because examples with forums or similar thins with users etc. have been used a lot
+		and I want to do something different.
+		The examples are still usable in a real-life application.
+	</para>
+	
+	<para>
+		And of course I will use names from bands I listen to a lot :)
+	</para>
+</preface>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<book
+	version="5.0"
+	xml:lang="en"
+	xml:base=""
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<info>
+		<title>
+			RapidDataMapper User Guide
+		</title>
+		
+		<author>
+			<personname>
+				<honorific>Mr</honorific>
+				<firstname>Martin</firstname>
+				<surname>Wernståhl</surname>
+			</personname>
+			
+			<email>m4rw3r (a) gmail (.) com</email>
+		</author>
+		
+		<pubdate><?dbtimestamp format="Y-m-d"?></pubdate>
+		
+		<edition>0.1 dev</edition>
+		
+		<copyright>
+			<year><?dbtimestamp format="Y"?></year>
+			
+			<holder>Martin Wernståhl</holder>
+		</copyright>
+		
+		<abstract>
+			<para>
+				The official manual for the PHP library RapidDataMapper.
+			</para>
+			
+			<para>
+				RapidDataMapper is an Object-Relational-Mapper and a database abstraction for the PHP programming language.
+			</para>
+		</abstract>
+	</info>
+	
+	<xi:include href="references/preface.xml" />
+	
+	<xi:include href="chapters/introduction.xml" />
+	<xi:include href="chapters/system_requirements.xml" />
+	<xi:include href="chapters/installation.xml" />
+	<xi:include href="chapters/configuration.xml" />
+	<xi:include href="chapters/database_connection_objects.xml" />
+	
+	<xi:include href="references/autoloader.xml" />
+	<xi:include href="references/design_patterns.xml" />
+	<xi:include href="references/links.xml" />
+	<xi:include href="references/copyrights.xml" />
+	
+	<xi:include href="references/glossary.xml" />
+</book>

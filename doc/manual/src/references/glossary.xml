@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<glossary
+	version="5.0"
+	xml:id="glossary"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Glossary</title>
+	
+	<glossentry xml:id="glossary.autoloader">
+		<glossterm>autoloader</glossterm>
+		
+		<glossdef>
+			<para>
+				An autoloader is a function/method which PHP calls when a class or interface is missing (ie. not included).
+				The task of the autoloader is to load the specified class/interface.
+			</para>
+			
+			<para>
+				If the autoloader is successful, execution continues just as if the file already was included.
+				But if the autoloader fails to include the class/interface, PHP dies with a missing class/interface error as usual.
+			</para>
+			
+			<para>
+				Autoloaders can also be chained, so that if one autoloader doesn't find the requested class,
+				other autoloaders get their shot at it.
+			</para>
+		</glossdef>
+	</glossentry>
+	
+	<glossentry xml:id="glossary.descriptor">
+		<glossterm>descriptor</glossterm>
+		
+		<glossdef>
+			<para>
+				An object describing how a PHP class should be mapped to the database.
+			</para>
+			
+			<para>
+				It also controls the whole code creation process, instantiating the code builders and supplying the needed data.
+			</para>
+		</glossdef>
+	</glossentry>
+	
+	<glossentry xml:id="glossary.mapper">
+		<glossterm>mapper</glossterm>
+		
+		<glossdef>
+			<para>
+				A mapper is a class which contains the logic for inserting, deleting, updating and fetching data.
+				The mapper is also the class which handles the relations.
+			</para>
+			
+			<para>
+				The mappers are managed by the <classname>Db</classname> class, and usually you don't have to deal directly with them.
+				In the case you want to operate directly on a mapper, you can fetch it by calling <function>Db::getMapper()</function>.
+			</para>
+		</glossdef>
+	</glossentry>
+	
+	<glossentry xml:id="glossary.orm">
+		<glossterm>Object-Relational-Mapper</glossterm>
+		
+		<glossdef>
+			<para>
+				A term used to describe a library which maps object-data to a relational database.
+			</para>
+		</glossdef>
+	</glossentry>
+</glossary>

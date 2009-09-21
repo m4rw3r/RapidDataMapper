@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.introduction"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Introduction</title>
+
+	<section>
+		<title>About RapidDataMapper</title>
+
+		<para>
+			RapidDataMapper is a stand-alone <firstterm linkend="glossary.orm">Object-Relational-Mapper</firstterm>
+			(<acronym>ORM</acronym>) for <link xlink:href="http://www.php.net"><acronym>PHP</acronym></link>,
+			containing several different levels of abstraction. It is aimed to be
+			flexible, easy to use, secure, having good performance and finally
+			not requiring any third-party PHP extensions or libraries.
+		</para>
+
+		<para>
+			It has an extendable architecture, which makes it easy to add additional caching libraries or
+			support for additional database servers.
+			The <firstterm linkend="glossary.descriptor">descriptor</firstterm>s, which contain the mapping information, are under direct
+			control of the user, making it possible to tweak the <firstterm linkend="glossary.mapper">mapper</firstterm> generation at the lowest level possible.
+		</para>
+		
+		<para>
+			Despite its customizability, RapidDataMapper is meant to be easy to use.
+			It is easy to start with, easy to customize and easy to extend.
+		</para>
+	</section>
+
+	<section>
+		<title>What is an <acronym>ORM</acronym>?</title>
+		
+		<para>
+			<acronym>ORM</acronym> is short for <glossterm>Object-Relational-Mapper</glossterm> which is a type of abstraction
+			where database rows are mapped to objects, making them fit nicely into
+			an object-oriented environment. An object-relational-mapper also helps
+			with relations between rows, mapping them into the object properties.
+		</para>
+		
+		<para>
+			The goal of an ORM is to simplify the data interaction in an object-oriented programming language,
+			which in the most cases doesn't conform too well with the way databases store information.
+		</para>
+	</section>
+	
+	<section>
+		<title>Why use RapidDataMapper?</title>
+		
+		<para>
+			There are several reasons to use RapidDataMapper as the database abstraction;
+		</para>
+		
+		<para>
+			It...
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					...is easy to use compared to other abstractions.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					...is fast, both in terms of performance, setup and usage.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					...can be used as a standard database abstraction too,
+					you don't have to use the Object-Relational-Mapper part
+					if you don't want to.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					...provides escaping of the database queries, protecting your database from hacking attempts.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					...is portable across different PHP frameworks and can also be used stand alone,
+					making it unnecessary to learn a new abstraction when changing framework.
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section>
+		<title>Examples</title>
+		
+		<para>
+			Here are a few examples on how basic RapidDataMapper usage looks:
+		</para>
+		
+		<example>
+			<title>Loading and configuring RapidDataMapper</title>
+			
+			<programlisting language="php"><![CDATA[
+<?php
+
+include 'Db.php';
+
+Db::setConnectionConfig('default',
+	array(
+		'dbdriver' => 'mysql',
+		'username' => 'test',
+		'password' => 'testpasswd'
+		)
+	);]]></programlisting>
+		</example>
+		
+		<example>
+			<title>Mapping a class</title>
+			
+			<programlisting language="php"><![CDATA[
+<?php
+
+class Artist
+{
+	public $id;
+	public $name;
+}
+
+class ArtistDescriptor extends Db_Descriptor
+{
+	function __construct()
+	{
+		$this->add($this->newPrimaryKey('id'));
+		$this->add($this->newColumn('name'));
+	}
+}]]></programlisting>
+		</example>
+		
+		<example>
+			<title>Establishing a relation</title>
+			
+			<programlisting language="php"><![CDATA[
+<?php
+
+class Track
+{
+	public $id;
+	public $name;
+	public $artist;
+	public $artist_id;
+}
+
+class TrackDescriptor extends Db_Descriptor
+{
+	function __construct()
+	{
+		$this->add($this->newPrimaryKey('id'));
+		$this->add($this->newColumn('name'));
+		$this->add($this->newColumn('artist_id'));
+		
+		$this->add($this->newRelation('artist'));
+	}
+}]]></programlisting>
+		</example>
+		
+		<example>
+			<title>Using the previous examples</title>
+			
+			<programlisting language="php"><![CDATA[
+<?php
+
+$a = new Artist();
+
+$a->name = 'Draconian';
+
+Db::save($a);
+
+
+$t = new Track();
+
+$t->name = 'A Scenery of Loss';
+
+$t->artist = $a;
+
+Db::save($t);
+
+
+$tracks = Db::find('track')->related('artist')->get();
+
+foreach($tracks as $t)
+{
+	echo "$t->name - {$t->artist->name}\n";
+}]]></programlisting>
+		</example>
+	</section>
+</chapter>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appendix
+	version="5.0"
+	xml:id="links"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Links</title>
+	
+	<section>
+		<title>RapidDataMapper Resources</title>
+		<variablelist>
+			<varlistentry>
+				<term>GitHub repository</term>
+				
+				<listitem>
+					<para>
+						<link xlink:href="http://github.com/m4rw3r/RapidDataMapper">http://github.com/m4rw3r/RapidDataMapper</link>
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+	
+	<section>
+		<title>Tools Used</title>
+		
+		<variablelist>
+			<varlistentry>
+				<term>DocBook</term>
+				
+				<listitem>
+					<para>
+						The format I have used for this manual.
+					</para>
+					
+					<para>
+						<link xlink:href="http://www.docbook.org">http://www.docbook.org</link>
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term>Finder and Exposé</term>
+				
+				<listitem>
+					<para>
+						Used as a project panel and window switcher, I personally dislike TextMate's project feature.
+					</para>
+					
+					<para>
+						<link xlink:href="http://www.apple.com/macosx/what-is-macosx/dock-and-finder.html">http://www.apple.com/macosx/what-is-macosx/dock-and-finder.html</link>
+						and
+						<link xlink:href="http://www.apple.com/macosx/what-is-macosx/expose.html">http://www.apple.com/macosx/what-is-macosx/expose.html</link>
+					</para>
+					
+					<para>
+						Ok, I also use a lot of the rest of OS X :) .
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term>PHPUnit</term>
+				
+				<listitem>
+					<para>
+						Used for unit testing.
+					</para>
+					
+					<para>
+						<link xlink:href="http://www.phpunit.de">http://www.phpunit.de</link>
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term>Sequel Pro</term>
+				
+				<listitem>
+					<para>
+						Used to create and populate MySQL tables for testing RapidDataMapper.
+					</para>
+					
+					<para>
+						<link xlink:href="http://www.sequelpro.com/">http://www.sequelpro.com/</link>
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term>TextMate</term>
+				
+				<listitem>
+					<para>
+						The best text editor I have used.
+					</para>
+					
+					<para>
+						<link xlink:href="http://www.macromates.com">http://www.macromates.com</link>
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term>Xdebug</term>
+				
+				<listitem>
+					<para>
+						Used to profile RapidDataMapper and to generate code coverage information for the tests.
+					</para>
+					
+					<para>
+						<link xlink:href="http://www.xdebug.org/">http://www.xdebug.org/</link>
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+</appendix>
