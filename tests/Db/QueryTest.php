@@ -1057,11 +1057,10 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 	
 	public function testOrderByRandom()
 	{
-		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'getRandomKeyword'));
 		
 		$mock->expects($this->never())->method('protectIdentifiers');
-		
-		$mock->RANDOM_KEYWORD = 'RANDOM_KEY';
+		$mock->expects($this->once())->method('getRandomKeyword')->will($this->returnValue('RANDOM_KEY'));
 		
 		$q = new Db_Query($mock);
 		
