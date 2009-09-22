@@ -52,8 +52,10 @@ Running the tests
 Building the API documentation
 ==============================
 
-Default template is the `EXT JS template`_ by Zym.
+Requires PHPdocumentor.
 
-.. _`EXT JS template`: http://www.zymengine.com/dev/news/30-phpdoc-extjs-converter-template
+Run::
 
-the ./phpdoc file contains defualt settings
+    make phpdoc
+
+The api documentation will be placed in ./api
