@@ -210,6 +210,11 @@ final class Db
 				throw new Db_Exception_MissingConfig($name);
 			}
 			
+			if(empty(self::$conn_configs[$name]['dbdriver']))
+			{
+				throw new Db_Exception_InvalidConfiguration($name);
+			}
+			
 			$class = 'Db_Driver_'.ucfirst(strtolower(self::$conn_configs[$name]['dbdriver'])).'_Connection';
 			
 			self::$conn_list[$name] = new $class($name, self::$conn_configs[$name]);

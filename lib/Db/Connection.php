@@ -57,7 +57,7 @@ abstract class Db_Connection
 	 *
 	 * @var bool
 	 */
-	protected $pconnect;
+	protected $pconnect = false;
 	
 	/**
 	 * If to use caching.
