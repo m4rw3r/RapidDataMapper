@@ -46,6 +46,21 @@
 		</glossdef>
 	</glossentry>
 	
+	<glossentry xml:id="glossary.exception">
+		<glossterm>exception</glossterm>
+		
+		<glossdef>
+			<para>
+				An object which is "thrown" upwards the call stack to signal an error.
+			</para>
+			
+			<para>
+				These objects can be intercepted and then proper actions can take place to either try to rectify the error
+				or to terminate gracefully.
+			</para>
+		</glossdef>
+	</glossentry>
+	
 	<glossentry xml:id="glossary.mapper">
 		<glossterm>mapper</glossterm>
 		

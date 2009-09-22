@@ -43,15 +43,199 @@
 		what databases are available and where to store the files.
 	</para>
 	
-	<section>
+	<section xml:id="chapter.configuration.connection_configurations">
 		<title>Connection configurations</title>
 		
 		<para>
 			The connection configurations are managed by the <classname>Db</classname> class.
+			They are set by using the <function>Db::setConnectionConfig()</function>:
 		</para>
+		
+		<funcsynopsis xml:id="funcref.Db-setConnectionConfig">
+			<funcprototype>
+				<funcdef><type>void</type> <function>Db::setConnectionConfig</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$name</parameter>: Configuration name</paramdef>
+				
+				<paramdef><type>array</type> <parameter>$configuration</parameter>: Configuration</paramdef>
+			</funcprototype>
+			<funcprototype>
+				<funcdef><type>void</type> <function>Db::setConnectionConfig</function></funcdef>
+				
+				<paramdef>
+					<type>array</type> <parameter>$configurations</parameter>:
+					an associative array of configurations, key is configuration name
+				</paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			The configuration is an array containing several of these values:
+		</para>
+		
+		<table>
+			<title>Configuration options</title>
+			
+			<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Name</entry>
+						<entry>Type</entry>
+						<entry>Default</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				
+				<tbody>
+					<row>
+						<entry>dbdriver</entry>
+						<entry><type>string</type></entry>
+						<entry></entry>
+						<entry>
+							The identifier of the database driver, see
+							<link linkend="chapter.database_connection_objects.database_drivers">Database Drivers</link>
+						</entry>
+					</row>
+					
+					<row>
+						<entry>hostname</entry>
+						<entry><type>string</type></entry>
+						<entry><symbol>null</symbol></entry>
+						<entry>The hostname for the database to connect to</entry>
+					</row>
+					
+					<row>
+						<entry>username</entry>
+						<entry><type>string</type></entry>
+						<entry><symbol>null</symbol></entry>
+						<entry>The username used when connecting to the database</entry>
+					</row>
+					
+					<row>
+						<entry>password</entry>
+						<entry><type>string</type></entry>
+						<entry><symbol>null</symbol></entry>
+						<entry>The password used when connecting to the database</entry>
+					</row>
+					
+					<row>
+						<entry>database</entry>
+						<entry><type>string</type></entry>
+						<entry><symbol>null</symbol></entry>
+						<entry>The database name of the database to select</entry>
+					</row>
+					
+					<row>
+						<entry>dbprefix</entry>
+						<entry><type>string</type></entry>
+						<entry>'<literal></literal>'</entry>
+						<entry>
+							The prefix of the database tables the connection should use,
+							automatically used by the <link linkend="chapter.query_builders">Query Builders</link>
+						</entry>
+					</row>
+					
+					<row>
+						<entry>pconnect</entry>
+						<entry><type>boolean</type></entry>
+						<entry><symbol>false</symbol></entry>
+						<entry>If to use a persistent database connection or not</entry>
+					</row>
+					
+					<row>
+						<entry>cache_on</entry>
+						<entry><type>boolean</type></entry>
+						<entry><symbol>false</symbol></entry>
+						<entry>
+							If to use <link linkend="chapter.query_caching">query caching</link>,
+							they usually also require a few extra options
+						</entry>
+					</row>
+					
+					<row>
+						<entry>cachedrv</entry>
+						<entry><type>string</type></entry>
+						<entry>'<literal>file</literal>'</entry>
+						<entry>Which type of cache to use, see <link linkend="chapter.query_caching">Query Caching</link></entry>
+					</row>
+					
+					<row>
+						<entry>cacheopt</entry>
+						<entry><type>array</type></entry>
+						<entry><symbol>array()</symbol></entry>
+						<entry>Options sent to the cache driver, see <link linkend="chapter.query_caching">Query Caching</link></entry>
+					</row>
+					
+					<row>
+						<entry>char_set</entry>
+						<entry><type>string</type></entry>
+						<entry>'<literal>utf8</literal>'</entry>
+						<entry>The character set to use when communicating with the database</entry>
+					</row>
+					
+					<row>
+						<entry>dbcollat</entry>
+						<entry><type>string</type></entry>
+						<entry>'<literal>utf8_unicode_ci</literal>'</entry>
+						<entry>Which database collation to use when comparing values in the database</entry>
+					</row>
+					
+					<row>
+						<entry>redirect_write</entry>
+						<entry><type>boolean</type> or <type>string</type></entry>
+						<entry><symbol>false</symbol></entry>
+						<entry>
+							If to redirect write queries to another connection, and which connection in that case (<type>string</type>).
+							Useful for master/slave database server arrays.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+		
+		<note>
+			Keep in mind that the configuration options might vary depending on the type of database driver.
+		</note>
+		
+		<warning>
+			The <option>dbdriver</option> option must be set, otherwise RapidDataMapper will not know what driver to use
+			and an <firstterm linkend="glossary.exception">exception</firstterm> will be thrown.
+		</warning>
+		
+		<example>
+			<title>Initializing a connection to a MySQL database with the least amount of options</title>
+			
+			<programlisting language="php"><![CDATA[Db::setConnectionConfig('default',
+	array(
+		'dbdriver' => 'mysql',
+		'hostname' => 'localhost',
+		'username' => 'sample_user',
+		'password' => 'samplepasswd',
+		'database' => 'sample_db'
+		)
+	);]]></programlisting>
+		</example>
+		
+		<para>
+			By default the default database connection is named '<literal>default</literal>',
+			and it will be loaded if no database has been named in the call to
+			<function linkend="funcref.Db-getConnection">Db::getConnection()</function>.
+		</para>
+		
+		<para>
+			To change this, use the <function>Db::setDefaultConnectionName()</function> method:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db-setDefaultConnectionName">
+			<funcprototype>
+				<funcdef><type>void</type> <function>Db::setDefaultConnectionName</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$name</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
 	</section>
 	
-	<section>
+	<section xml:id="chapter.configuration.mapper_and_descriptor_management">
 		<title>Mapper and Descriptor management settings</title>
 		
 		<para>

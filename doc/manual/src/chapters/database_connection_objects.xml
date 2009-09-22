@@ -41,9 +41,48 @@
 		
 		<para>
 			The Connection objects are instantiated when they are requested.
-			All the requests are initiated by calling <function>Db::getConnection()</function> which will return the
+			All the requests are made by calling <function>Db::getConnection()</function> which will return the
 			connection instance after it has been instantiated (if it already is instantiated it will simply return
 			the already instantiated object).
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db-getConnection">
+			<funcprototype>
+				<funcdef><type>Db_Connection</type> <function>Db::getConnection</function></funcdef>
+				
+				<paramdef choice="opt"><type>string</type> <parameter>$name</parameter> = 'default'</paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<example>
+			<title>Fetching a Connection Object</title>
+			
+			<programlisting language="php"><![CDATA[// fetching the default connection
+$default_connection = Db::getConnection();
+
+// fetching a specific connection:
+$foo_connection = Db::getConnection('foo');]]></programlisting>
+		</example>
+		
+		<para>
+			You can change the name of the default connection using
+			<function linkend="funcref.Db-setDefaultConnectionName">Db::setDefaultConnectionName()</function>.
+		</para>
+	</section>
+	
+	<section>
+		<title>Querying the database using a Connection Object</title>
+		
+		<para>
+			
+		</para>
+	</section>
+	
+	<section xml:id="chapter.database_connection_objects.database_drivers">
+		<title>Database Drivers</title>
+		
+		<para>
+			
 		</para>
 	</section>
 </chapter>

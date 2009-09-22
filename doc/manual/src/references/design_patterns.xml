@@ -13,6 +13,13 @@
 	
 	<section>
 		<para>
+			This section exists because I need to write down all the design patterns I have used,
+			partly as part of my assignment (as my teachers can have a benefit in understanding the code),
+			partly as a reminder for myself,
+			but also as concrete real-life examples.
+		</para>
+		
+		<para>
 			Here is a list of (almost) all design patterns used in RapidDataMapper:
 		</para>
 	</section>
