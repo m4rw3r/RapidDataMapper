@@ -19,15 +19,17 @@
 			They assume that you want to use RapidDataMapper in a any PHP script.
 		</para>
 		
-		<orderedlist>
-			<listitem>
+		<procedure>
+			<title>Stand alone installation</title>
+			
+			<step>
 				<para>
 					Copy the <filename>Db.php</filename> file and the <filename>Db/</filename> directory into
 					your include path, project directory or somewhere else from where it can be reached by <function>include</function>.
 				</para>
-			</listitem>
+			</step>
 			
-			<listitem>
+			<step>
 				<para>
 					Include the <filename>Db.php</filename> file, and if you don't have a matching autoloader
 					(see <link linkend="chapter.system_requirements.autoloader">Autoloader Requirements</link>),
@@ -44,12 +46,12 @@ include 'Db.php';
 // if you don't have a compatible autoloader:
 Db::initAutoload();]]></programlisting>
 				</example>
-			</listitem>
+			</step>
 			
-			<listitem>
+			<step>
 				Configure RapidDataMapper, see the <link linkend="chapter.configuration">Configuration</link> chapter.
-			</listitem>
-		</orderedlist>
+			</step>
+		</procedure>
 	</section>
 	
 	<section>
@@ -62,35 +64,37 @@ Db::initAutoload();]]></programlisting>
 			instead of CodeIgniter's abstraction.
 		</para>
 		
-		<orderedlist>
-			<listitem>
+		<procedure>
+			<title>CodeIgniter Installation</title>
+			
+			<step>
 				<para>
 					Copy the <filename>Db.php</filename> file and the <filename>Db/</filename> directory into the
 					<filename>application/libraries/</filename> folder.
 				</para>
-			</listitem>
+			</step>
 			
-			<listitem>
+			<step>
 				<para>
 					Create the <filename>application/records/</filename> and <filename>application/mappercache/</filename>
 					directories.
 				</para>
-			</listitem>
+			</step>
 			
-			<listitem>
+			<step>
 				<para>
 					Make <filename>application/mappercache/</filename> writeable.
 				</para>
-			</listitem>
+			</step>
 			
-			<listitem>
+			<step>
 				<para>
 					Copy the custom classes from <filename>compat/CodeIgniter/libraries/</filename> into
 					<filename>application/libraries/</filename>.
 				</para>
-			</listitem>
+			</step>
 			
-			<listitem>
+			<step>
 				<para>
 					Add the following code to <filename>application/config/database.php</filename>,
 					below the <varname>$active_group</varname> variable:
@@ -98,16 +102,16 @@ Db::initAutoload();]]></programlisting>
 				
 				<programlisting language="php"><![CDATA[// should we cache the mappers?
 $cache_mappers = FALSE;]]></programlisting>
-			</listitem>
+			</step>
 			
-			<listitem>
+			<step>
 				<para>
 					The default configuration structure of RapidDataMaper is compatible with the format CodeIgniter uses—
 					but if you want to expand on it (RapidDataMapper provides additional options), look at the
 					<link linkend="chapter.configuration">Configuration</link> section.
 				</para>
-			</listitem>
-		</orderedlist>
+			</step>
+		</procedure>
 		
 		<note>
 			I have not tried to use RapidDataMapper together with CodeIgniter's built-in abstraction, but should be possible.
