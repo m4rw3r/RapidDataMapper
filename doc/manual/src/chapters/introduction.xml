@@ -99,6 +99,84 @@
 	</section>
 	
 	<section>
+		<title>Overview of RapidDataMapper</title>
+		
+		<para>
+			RapidDataMapper is composed of several different parts:
+		</para>
+		
+		<variablelist>
+			<varlistentry>
+				<term linkend="chapter.database_connection_objects">Database Connection Objects</term>
+				
+				<listitem>
+					<para>
+						The database connection objects manage the database connections and handles
+						the direct interaction with the database methods/functions.
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term linkend="chapter.query_builders">Query Builders</term>
+				
+				<listitem>
+					<para>
+						The query builders create SQL to be used when interacting with the database.
+						It provides escaping, easy creation of SQL programmatically and also a few other helpful features.
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term linkend="chapter.the_orm">Object-Relational-Mapper</term>
+				
+				<listitem>
+					<para>
+						The Object-Relational-Mapper is composed out of several different components:
+					</para>
+					
+					<variablelist>
+						<varlistentry>
+							<term>Mappers</term>
+							
+							<listitem>
+								<para>
+									The mappers are custom classes created by the <firstterm linkend="glossary.code_builder">code builders</firstterm>,
+									they are generated because it provides a large speed advantage.
+								</para>
+							</listitem>
+						</varlistentry>
+						
+						<varlistentry>
+							<term linkend="chapter.descriptors">Descriptors</term>
+							
+							<listitem>
+								<para>
+									Descriptors describe how the objects should be mapped to the database.
+									They also initialize and control the <glossterm>code builders</glossterm>.
+								</para>
+							</listitem>
+						</varlistentry>
+						
+						<varlistentry>
+							<term>Code Builders</term>
+							
+							<listitem>
+								<para>
+									These objects create the custom tailored mapping code for mapping the objects.
+								</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+				</listitem>
+			</varlistentry>
+			
+			
+		</variablelist>
+	</section>
+	
+	<section>
 		<title>Examples</title>
 		
 		<para>
