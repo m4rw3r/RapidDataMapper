@@ -11,6 +11,50 @@
 	
 	<title>Glossary</title>
 	
+	<glossentry xml:id="glossary.auto_increment">
+		<glossterm>auto_increment</glossterm>
+		
+		<glossdef>
+			<para>
+				Auto_increment is an option which can be applied on integer primary keys.
+				It keeps track of the latest identification that was added and
+				automatically assigns the following number on a new row (this is provided the
+				row doesn't already have an identification).
+			</para>
+			
+			<example>
+				<title>Auto increment in the database</title>
+				
+				<para>
+					We assume that the table has a few columns and an auto increment <literal>id</literal>
+					column.
+				</para>
+				
+				<programlisting language="SQL"><![CDATA[SELECT * FROM table;
+
+-- id  ...
+-- 1   ...
+
+INSERT INTO table SET ...;
+
+SELECT * FROM table;
+
+-- id  ...
+-- 1   ...
+-- 2   ...
+
+INSERT INTO table SET ...;
+
+SELECT * FROM table;
+
+-- id  ...
+-- 1   ...
+-- 2   ...
+-- 3   ...]]></programlisting>
+			</example>
+		</glossdef>
+	</glossentry>
+	
 	<glossentry xml:id="glossary.autoloader">
 		<glossterm>autoloader</glossterm>
 		
