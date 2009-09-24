@@ -32,6 +32,35 @@
 		</glossdef>
 	</glossentry>
 	
+	<glossentry xml:id="glossary.code_builder">
+		<glossterm>code builder</glossterm>
+		
+		<glossdef>
+			<para>
+				A code builder is a piece of program which generates code to be compiled/executed at a later stage.
+			</para>
+			
+			<para>
+				Code builders can be used because of several reasons, the reasons RapidDataMapper uses them are:
+			</para>
+			
+			<itemizedlist>
+				<listitem>
+					<para>
+						Speed: The code is optimized for the objects which are mapped,
+						the code is then cached which removes the need to rebuild the code on the following requests.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						Customizability: The generated code can be modified by the user-controlled descriptor objects.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</glossdef>
+	</glossentry>
+	
 	<glossentry xml:id="glossary.descriptor">
 		<glossterm>descriptor</glossterm>
 		
@@ -83,6 +112,20 @@
 		<glossdef>
 			<para>
 				A term used to describe a library which maps object-data to a relational database.
+			</para>
+		</glossdef>
+	</glossentry>
+	
+	<glossentry xml:id="glossary.primary_key">
+		<glossterm>primary key</glossterm>
+		
+		<glossdef>
+			<para>
+				A key (column) in the database which contains unique identifiers for the rows in a table.
+			</para>
+			
+			<para>
+				A primary key can also be composed out of several columns.
 			</para>
 		</glossdef>
 	</glossentry>
