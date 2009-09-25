@@ -177,7 +177,7 @@
 						<entry>dbcollat</entry>
 						<entry><type>string</type></entry>
 						<entry>'<literal>utf8_unicode_ci</literal>'</entry>
-						<entry>Which database collation to use when comparing values in the database</entry>
+						<entry>The database collation to use when comparing values in the database</entry>
 					</row>
 					
 					<row>
@@ -239,7 +239,17 @@
 		<title>Mapper and Descriptor management settings</title>
 		
 		<para>
-			
+			<glossterm>Descriptor</glossterm>s are the third type of configuration which RapidDataMapper uses.
+			Descriptors are usually not entered into the <classname>Db</classname> class,
+			instead they are loaded when they are needed.
 		</para>
+		
+		<para>
+			Descriptors can be found in three ways:
+		</para>
+		
+		
 	</section>
 </chapter>
+
+

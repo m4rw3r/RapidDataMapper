@@ -169,7 +169,7 @@ SELECT * FROM table;
 			</para>
 			
 			<para>
-				A primary key can also be composed out of several columns.
+				A primary key can also be composed out of several columns and is then called a composite primary key.
 			</para>
 		</glossdef>
 	</glossentry>
