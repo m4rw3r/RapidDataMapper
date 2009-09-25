@@ -53,6 +53,7 @@
 	<xi:include href="chapters/configuration.xml" />
 	<xi:include href="chapters/database_connection_objects.xml" />
 	<xi:include href="chapters/query_builders.xml" />
+	<xi:include href="chapters/the_orm.xml" />
 	
 	<xi:include href="references/autoloader.xml" />
 	<xi:include href="references/design_patterns.xml" />

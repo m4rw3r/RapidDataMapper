@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.the_orm"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>The Object-Relational-Mapper</title>
+	
+	<section>
+		<title>Quick Start</title>
+		
+		<para>
+			We assume that we have a table that looks like this:
+		</para>
+		
+		<programlisting language="SQL"><![CDATA[CREATE TABLE `tracks`(
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`title` varchar(255),
+	`artist` varchar(255)
+);]]></programlisting>
+		
+		<section>
+			<title>Create the class to be mapped</title>
+			
+			<para>
+				First you have to create a class to map to the database:
+			</para>
+			
+			<programlisting language="php"><![CDATA[class Track
+{
+	public $id;
+	public $title;
+	public $artist;
+}]]></programlisting>
+			
+			<para>
+				There are very few limitations on what you can do with the objects;
+				the properties to map to the database must be declared <token>public</token>
+				and the constructor must not take any required parameters
+				(although RapidDataMapper can be configured to either replace the code that
+				instantiates the objects or to use a factory for creating objects).
+			</para>
+		</section>
+		
+		<section>
+			<title>Create the descriptor for the class</title>
+			
+			<para>
+				The descriptor is very simple, only tells the <acronym>ORM</acronym> that the
+				<classname>Track</classname> class has one <glossterm>Primary key</glossterm>
+				(with <firstterm linkend="glossary.auto_increment">auto_increment</firstterm>,
+				as that is assumed by default)
+				and two columns.
+			</para>
+			
+			<programlisting language="php"><![CDATA[class TrackDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->add($this->newPrimaryKey('id'));
+		$this->add($this->newColumn('title'));
+		$this->add($this->newColumn('artist'));
+	}
+}]]></programlisting>
+			
+			<para>
+				By naming the <glossterm>descriptor</glossterm> <classname>TrackDescriptor</classname>
+				RapidDataMapper will auto-detect it when we are trying to use a <classname>Track</classname>
+				objects with the Object-Relational-Mapper.
+			</para>
+			
+			<para>
+				Now include the files containing these classes and proceed to <link linkend="chapter.the_orm.basic_crud">Basic CRUD</link>.
+			</para>
+		</section>
+	</section>
+	
+	<section xml:id="chapter.the_orm.basic_crud">
+		<title>Basic <acronym>CRUD</acronym></title>
+		
+		<para>
+			The acronym <acronym>CRUD</acronym> stands for Create-Read-Update-Delete,
+			which are—like they sound—basic instructions for handling rows in a relational database.
+		</para>
+		
+		<section>
+			<title>Create: Inserting objects into the database</title>
+			
+			<para>
+				To insert an object into the database you have to create an object which
+				will contain the data to insert. After that you call <function>Db::save()</function>:
+			</para>
+			
+			<example>
+				<title>Creating a new object and saving it in the database</title>
+				
+				<programlisting language="php"><![CDATA[$t = new Track();
+
+$t->name = 'The Last Crusade';
+$t->artist = 'Epica';
+
+Db::save($id);
+
+// The id property is automatically assigned because it is using auto_increment
+echo $t->id;]]></programlisting>
+			</example>
+			
+			<funcsynopsis xml:id="funcref.Db-save">
+				<funcprototype>
+					<funcdef><type>boolean</type> <function>Db::save</function></funcdef>
+					
+					<paramdef><type>object</type> <parameter>$object</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+		
+		<section>
+			<title>Read: Finding rows in the database</title>
+			
+			<para>
+				The <function>Db::find()</function> is the method
+				to use when fetching objects from the database.
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db-find">
+				<funcprototype>
+					<funcdef><type>Db_Query_MapperSelect</type> <function>Db::find</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$class_name</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>object</type> <function>Db::find</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$class_name</parameter></paramdef>
+					<paramdef><type>mixed</type> <parameter>$primary_key</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>array</type> <function>Db::find</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$class_name</parameter></paramdef>
+					<paramdef><type>array</type> <parameter>$conditions</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The first variant of <function>Db::find()</function> creates a new pre–populated
+				<classname>Db_Query_MapperSelect</classname> (see
+				<link linkend="chapter.the_orm.mapper_queries">Mapper Queries</link> for more information):
+			</para>
+			
+			<example>
+				<title>Fetching multiple rows with a constructed query</title>
+				
+				<programlisting language="php"><![CDATA[$query = Db::find('track');
+
+$query->escape(false)->like('LOWER(name)', 'loss')->escape(true); // escape(false) enables us to use LOWER()
+$query->where('artist', 'Draconian');
+
+$tracks = $query->get();]]></programlisting>
+			</example>
+			
+			<para>
+				The second variant of <function>Db::find()</function> fetches <emphasis>one</emphasis>
+				record from the database based on its <glossterm>primary key</glossterm>.
+			</para>
+			
+			<example>
+				<title>Fetching a single row based on its primary key</title>
+				
+				<programlisting language="php"><![CDATA[$t = Db::find('track', 2);
+
+echo $track->id;]]></programlisting>
+				
+				<para>
+					We now assume that we have created a class, Album,
+					which has a composite <glossterm>primary key</glossterm> pair consisting of (artist_id, int):
+				</para>
+				
+				<programlisting language="php"><![CDATA[$album = Db::find('track', array(1, 3));
+
+echo $album->name;]]></programlisting>
+			</example>
+			
+			<para>
+				The third variant takes an array of key => value conditions, like the <function>Db_Query::where()</function>
+				method:
+			</para>
+			
+			<example>
+				<title>Fetching multiple rows using an array of key => value conditions</title>
+				
+				<programlisting language="php"><![CDATA[$tracks = Db::find('track', array('artist' => 'Dark Tranquillity'));
+// is the same as:
+$tracks = Db::find('track')->where('artist', 'Dark Tranquillity')->get();]]></programlisting>
+			</example>
+		</section>
+		
+		<section>
+			<title>Update: Saving objects</title>
+			
+			<para>
+				Updating an object is almost the same as when you Insert the
+				object into the database in the first place.
+				The difference is that you use an object you have gotten from <function>Db::find()</function>
+				instead of a newly instantiated object:
+			</para>
+			
+			<example>
+				<title>Updating an object in the database</title>
+				
+				<programlisting language="php"><![CDATA[$track = Db::find('track', 5);
+
+$track->name = 'Jane Doe';
+
+Db::save($track);]]></programlisting>
+			</example>
+			
+			<para>
+				<function>Db::save()</function> also takes relations in consideration,
+				see <link linkend="chapter.relations">Relations</link>.
+			</para>
+		</section>
+		
+		<section>
+			<title>Delete: Deleting objects from the database</title>
+			
+			<para>
+				To delete objects you will use the, surprise, <function>Db::delete()</function> method.
+				It will take relations in consideration: either destroy the relation links or cascade,
+				depending on settings (see <link linkend="chapter.relations">Relations</link>).
+			</para>
+			
+			<example>
+				<title>Deleting an object from the database</title>
+				
+				<programlisting language="php"><![CDATA[$object = Db::find(...);
+
+Db::delete($object);]]></programlisting>
+			</example>
+			
+			<funcsynopsis xml:id="funcref.Db-delete">
+				<funcprototype>
+					<funcdef><type>boolean</type> <function>Db::delete</function></funcdef>
+					
+					<paramdef><type>object</type> <parameter>$object</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+	</section>
+	
+	<section xml:id="chapter.the_orm.mapper_queries">
+		<title>Mapper Queries</title>
+		
+		<para>
+			
+		</para>
+	</section>
+</chapter>
