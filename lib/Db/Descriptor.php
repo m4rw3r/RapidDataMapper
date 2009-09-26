@@ -857,7 +857,7 @@ class Db_Descriptor
 		foreach(array_merge($this->getColumns(), $this->getPrimaryKeys()) as $col)
 		{
 			// get select code, trim() to get rid of unnecessary spaces
-			$code = $col->getSelectCode($table, $this->getSingular(), $this->getConnection());
+			$code = $col->getSelectCode($table, $alias, $this->getConnection());
 			$code = trim($code, ' ');
 			
 			// do we have some code to add? (to prevent repeated commas)
