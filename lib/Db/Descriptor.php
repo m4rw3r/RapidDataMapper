@@ -836,6 +836,43 @@ class Db_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns a string which will select all the columns belonging to the
+	 * described object.
+	 * 
+	 * Example return:
+	 * <code>
+	 * $table.$column AS $alias.$property, ...
+	 * // real example:
+	 * artist-track.name AS artist-track_name, ...
+	 * </code>
+	 * 
+	 * @param  string	Name of table which contains the columns
+	 * @param  string	Alias to prefix the columns with
+	 * @return string
+	 */
+	public function getSelectCode($table, $alias)
+	{
+		$col_arr = array();
+		
+		foreach(array_merge($this->getColumns(), $this->getPrimaryKeys()) as $col)
+		{
+			// get select code, trim() to get rid of unnecessary spaces
+			$code = $col->getSelectCode($table, $this->getSingular(), $this->getConnection());
+			$code = trim($code, ' ');
+			
+			// do we have some code to add? (to prevent repeated commas)
+			if( ! empty($code))
+			{
+				$col_arr[] = $code;
+			}
+		}
+		
+		return implode(', ', $col_arr);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Creates a code builder for this descriptor.
 	 * 
 	 * @return Db_Mapper_Builder

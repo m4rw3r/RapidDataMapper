@@ -120,16 +120,10 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		}
 		
 		// build column list
-		$columns = array();
-		foreach(array_merge($related->getColumns(), $related->getPrimaryKeys()) as $prop)
-		{
-			// TODO: Integrate this with the Db_Descriptor_Column::getSelectCode() (specifically the '_' part, as it affects other parts of the code)
-			$columns[] = $db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'.'.$prop->getColumn()).' AS '.
-				$db->protectIdentifiers($alias_of_linked_var.'-'.$this->relation->getName().'_'.$prop->getProperty());
-		}
+		$columns = $related->getSelectCode($alias_of_linked_var.'-'.$this->relation->getName(), $alias_of_linked_var.'-'.$this->relation->getName());
 		
 		// select
-		$columns = $query_obj_var.'->columns[] = "'.addcslashes(implode(', ', $columns), '"').'";';
+		$columns = $query_obj_var.'->columns[] = "'.addcslashes($columns, '"').'";';
 		
 		return $query_obj_var.'->join[] = "LEFT JOIN ' . 
 			addcslashes($db->protectIdentifiers($db->dbprefix . $related->getTable()), '"') . 

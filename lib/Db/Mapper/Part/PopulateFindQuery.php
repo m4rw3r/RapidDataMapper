@@ -34,20 +34,9 @@ class Db_Mapper_Part_PopulateFindQuery extends Db_Mapper_Code_Method
 		
 		$this->addPart('$q = new Db_Query_MapperSelect($this, \''.$this->descriptor->getSingular().'\');');
 		
-		$col_arr = array();
-		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $col)
-		{
-			// get select code, trim to get rid of unnecessary spaces
-			$code = trim($col->getSelectCode($this->descriptor->getSingular(), $this->descriptor->getSingular(), $db), ' ');
-			
-			// do we have some code to add? (to prevent repeated commas)
-			if( ! empty($code))
-			{
-				$col_arr[] = $code;
-			}
-		}
+		$columns = $this->descriptor->getSelectCode($this->descriptor->getSingular(), $this->descriptor->getSingular());
 		
-		$this->addPart('$q->columns[] = \''.addcslashes(implode(', ', $col_arr), "'").'\';
+		$this->addPart('$q->columns[] = \''.addcslashes($columns, "'").'\';
 $q->from[] = \''.addcslashes($db->protectIdentifiers($this->descriptor->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($this->descriptor->getSingular()), "'").'\';');
 		
 		// HOOK: on_find

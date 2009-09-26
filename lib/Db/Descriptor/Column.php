@@ -228,8 +228,8 @@ class Db_Descriptor_Column
 	/**
 	 * Returns a fragment which selects the column and aliases it properly.
 	 * 
-	 * @param  string
-	 * @param  string
+	 * @param  string			Passed through Db_Connection::protectIdentifiers()
+	 * @param  string			Passed through Db_Connection::protectIdentifiers()
 	 * @param  Db_Connection
 	 * @return string
 	 */
