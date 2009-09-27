@@ -55,17 +55,15 @@
 			<funcprototype>
 				<funcdef><type>void</type> <function>Db::setConnectionConfig</function></funcdef>
 				
-				<paramdef><type>string</type> <parameter>$name</parameter>: Configuration name</paramdef>
+				<paramdef><type>string</type> <parameter>$name</parameter></paramdef>
 				
-				<paramdef><type>array</type> <parameter>$configuration</parameter>: Configuration</paramdef>
+				<paramdef><type>array</type> <parameter>$configuration</parameter></paramdef>
 			</funcprototype>
+			
 			<funcprototype>
 				<funcdef><type>void</type> <function>Db::setConnectionConfig</function></funcdef>
 				
-				<paramdef>
-					<type>array</type> <parameter>$configurations</parameter>:
-					an associative array of configurations, key is configuration name
-				</paramdef>
+				<paramdef><type>associative array</type> <parameter>$configurations</parameter></paramdef>
 			</funcprototype>
 		</funcsynopsis>
 		
