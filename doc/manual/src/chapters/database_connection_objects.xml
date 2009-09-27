@@ -74,6 +74,60 @@ $foo_connection = Db::getConnection('foo');]]></programlisting>
 		<title>Querying the database using a Connection Object</title>
 		
 		<para>
+			Querying the database using the <classname>Db_Connnection</classname> objects
+			is pretty straightforward: call <function>Db_Connection::query()</function> with
+			the SQL as the first parameter:
+		</para>
+		
+		<example>
+			<title>Performing a basic query</title>
+			
+			<programlisting language="php"><![CDATA[$db = Db::getConnection();
+
+$result = $db->query('SELECT * FROM users');
+
+foreach($result as $row)
+{
+	// ...
+}]]></programlisting>
+		</example>
+		
+		<funcsynopsis xml:id="funcref.Db_Connection-query">
+			<funcprototype>
+				<funcdef><type>Db_Result</type>|<type>int</type> <function>Db_Connection::query</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$SQL</parameter></paramdef>
+				<paramdef choice="opt"><type>associative array</type> <parameter>$binds</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			The return values differ depending on the type of query: read queries (SELECT and its relatives)
+			make <function>Db_Connection::query()</function> return <type>Db_Result</type> objects,
+			write queries (INSERT, UPDATE, DELETE and similar) make it return an <type>int</type> which contains the number of modified rows.
+		</para>
+		
+		<example>
+			<title>Performing an UPDATE query and checking for modified rows</title>
+			
+			<programlisting language="php"><![CDATA[$db = Db::getConnection();
+
+// 0 == false, so if 0 rows were modified, the condition below will fail
+if($db->query('UPDATE users SET name = "foobar" WHERE id = 2'))
+{
+	echo 'UPDATE successful!';
+}
+else
+{
+	echo 'UPDATE failed';
+}]]></programlisting>
+		</example>
+	</section>
+	
+	<section>
+		<title>Db_Result objects, the database return objects</title>
+		
+		<para>
 			
 		</para>
 	</section>
