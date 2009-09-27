@@ -261,10 +261,7 @@ abstract class Db_Connection
 			}
 		}
 		
-		if( ! $this->initDbh())
-		{
-			return false;
-		}
+		$this->initDbh();
 		
 		// log
 		$this->queries[] = $sql;
