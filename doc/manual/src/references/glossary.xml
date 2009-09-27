@@ -76,6 +76,53 @@ SELECT * FROM table;
 		</glossdef>
 	</glossentry>
 	
+	<glossentry xml:id="glossary.callback">
+		<glossterm>callback</glossterm>
+		
+		<glossdef>
+			<para>
+				A callback is a value which can be treated as a reference to a method or function.
+				Sort of like function pointers.
+			</para>
+			
+			<para>
+				Examples:
+			</para>
+			
+			<example>
+				<title>Examples of different callbacks</title>
+				
+				<programlisting language="php"><![CDATA[// reference to trim()
+$function_callback = 'trim';
+
+// MyClass::myMethod()
+$static_method_callback = 'MyClass::myMethod';
+// or
+$static_method_callback = array('MyClass', 'myMethod');
+
+// $instance->method()
+$c = new MyClass();
+$method_callback = array($c, 'method');
+
+// closure:
+$closure = function()
+{
+	return 'foo';
+};]]></programlisting>
+			</example>
+			
+			<para>
+				To call a callback, one either appends parenthesis on the variable name (<literal>$name()</literal>),
+				this is used by string-based callbacks and closures.
+			</para>
+			
+			<para>
+				To be able to call all types of callbacks, one usually uses <function>call_user_func()</function>
+				or <function>call_user_func_array()</function>.
+			</para>
+		</glossdef>
+	</glossentry>
+	
 	<glossentry xml:id="glossary.code_builder">
 		<glossterm>code builder</glossterm>
 		
