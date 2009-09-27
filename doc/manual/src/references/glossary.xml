@@ -150,6 +150,40 @@ SELECT * FROM table;
 		</glossdef>
 	</glossentry>
 	
+	<glossentry xml:id="glossary.method_chaining">
+		<glossterm>method chaining</glossterm>
+		
+		<glossdef>
+			<para>
+				Method chaining is a new feature for PHP 5, which enables a programmer to call methods directly on
+				returned objects without having to assign them to objects:
+			</para>
+			
+			<example>
+				<title>Method chaining vs. no method chaining</title>
+				
+				<programlisting language="php"><![CDATA[// not chained:
+$db = Db::getConnection();
+$query = $db->select();
+$query->from('users');
+$result = $query->get();
+
+// chained:
+$result = Db::getConnection()->select()->from('users')->get();]]></programlisting>
+				
+				<para>
+					The <function>Db_Query_Select::from()</function> method returns the object instance,
+					which means that <function>get()</function> above was called on the same <classname>Db_Query_Select</classname>
+					instance as <function>from()</function> was.
+				</para>
+			</example>
+			
+			<para>
+				See <link linkend="chapters.query_builders">Query Builders</link> for more information and examples.
+			</para>
+		</glossdef>
+	</glossentry>
+	
 	<glossentry xml:id="glossary.orm">
 		<glossterm>Object-Relational-Mapper</glossterm>
 		
