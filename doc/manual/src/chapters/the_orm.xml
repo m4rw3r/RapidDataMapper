@@ -104,7 +104,7 @@
 $t->name = 'The Last Crusade';
 $t->artist = 'Epica';
 
-Db::save($id);
+Db::save($t);
 
 // The id property is automatically assigned because it is using auto_increment
 echo $t->id;]]></programlisting>
