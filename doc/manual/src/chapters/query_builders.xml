@@ -15,6 +15,200 @@
 		<title>Query builders at a glance</title>
 		
 		<para>
+			The query builders are a set of PHP classes which generate <acronym>SQL</acronym>.
+			These classes contain methods which manipulate the final output,
+			making it possible to easily tailor a query dynamically without
+			fear of malformed <acronym>SQL</acronym> or compromised security. 
+		</para>
+		
+		<para>
+			The classes, starting with <classname>Db_Query_*</classname> are responsible
+			for one type of query each: SELECT (
+			<classname linkend="chapter.query_builders.select_queries">Db_Query_Select</classname>),
+			INSERT (<classname linkend="chapter.query_builders.insert_queries">Db_Query_Insert</classname>),
+			UPDATE (<classname linkend="chapter.query_builders.update_queries">Db_Query_Update</classname>) and
+			DELETE (<classname linkend="chapter.query_builders.delete_queries">Db_Query_Delete</classname>)
+		</para>
+		
+		<para>
+			The benefits of using query builders are several:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Automatic escaping and protection from <acronym>SQL</acronym> injection attacks and other SQL-vulnerabilities.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					You can easily manipulate queries before executing them,
+					no need to perform complex string building or to call escaping methods all the time.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Almost no risk of executing malformed SQL.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			A few drawbacks:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					A small loss of performance when generating the queries.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					The query builders cannot create all types of <acronym>SQL</acronym>.
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section>
+		<title>Generic Usage</title>
+		
+		<para>
+			The different query builders work very alike, they differ in a few key points
+			in the same way that the different query types differ between each other.
+		</para>
+		
+		<para>
+			To get a query builder object, you call a specific method on the
+			<classname linkend="chapter.database_connection_objects">Db_Connection</classname> object(s):
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Connection-select">
+			<funcprototype>
+				<funcdef><type>Db_Query_Select</type> <function>Db_Connection::select</function></funcdef>
+				
+				<paramdef choice="opt"><type>mixed</type> <parameter>$columns</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<funcsynopsis xml:id="funcref.Db_Connection-insert">
+			<funcprototype>
+				<funcdef><type>Db_Query_Insert</type> <function>Db_Connection::insert</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+			</funcprototype>
+			
+			<funcprototype>
+				<funcdef><type>boolean</type> <function>Db_Connection::insert</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+				<paramdef><type>array</type> <parameter>$data</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<funcsynopsis xml:id="funcref.Db_Connection-update">
+			<funcprototype>
+				<funcdef><type>Db_Query_Update</type> <function>Db_Connection::update</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+				<paramdef choice="opt"><type>array</type> <parameter>$data</parameter></paramdef>
+			</funcprototype>
+			
+			<funcprototype>
+				<funcdef><type>boolean</type> <function>Db_Connection::update</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+				<paramdef><type>array</type> <parameter>$data</parameter></paramdef>
+				<paramdef><type>array</type> <parameter>$conditions</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<funcsynopsis xml:id="funcref.Db_Connection-delete">
+			<funcprototype>
+				<funcdef><type>Db_Query_Delete</type> <function>Db_Connection::delete</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+			</funcprototype>
+			
+			<funcprototype>
+				<funcdef><type>boolean</type> <function>Db_Connection::delete</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+				<paramdef><type>array</type> <parameter>$conditions</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			All the Query builders have the <function>Db_Query::getSQL()</function> method,
+			making it easy to either debug your queries or to create eg. UNIONs:
+		</para>
+		
+		<example>
+			<title>Creating an UNION query from two Db_Query_Select objects</title>
+			
+			<programlisting language="php"><![CDATA[$db = Db::getConnection();
+
+$select1 = $db->select()->from('table1');
+$select2 = $db->select()->from('table2');
+
+$query = '('.$select1->getSQL().') UNION ('.$select2->getSQL().')';
+
+$result = $db->query($query);]]></programlisting>
+		</example>
+		
+		<para>
+			All the Query builders can use <firstterm linkend="glossary.method_chaining">method chaining</firstterm>.
+			They also return the object instance in almost all cases, except when the method returns the return value
+			of the query (or some other "special" method).
+		</para>
+		
+		<example>
+			<title>Method Chaining with the Query builders</title>
+			
+			<programlisting language="php"><![CDATA[$db = Db::getConnection();
+
+// SELECT * FROM `users`:
+$result = $db->select()->from('tracks')->get();
+
+foreach($result as $row)
+{
+	echo $row->name.' - '.$row->artist;
+}]]></programlisting>
+		</example>
+	</section>
+	
+	<section xml:id="chapter.query_builders.select_queries">
+		<title>SELECT Queries</title>
+		
+		<para>
+			
+		</para>
+	</section>
+	
+	<section xml:id="chapter.query_builders.insert_queries">
+		<title>INSERT Queries</title>
+		
+		<para>
+			
+		</para>
+	</section>
+	
+	<section xml:id="chapter.query_builders.update_queries">
+		<title>UPDATE Queries</title>
+		
+		<para>
+			
+		</para>
+	</section>
+	
+	<section xml:id="chapter.query_builders.delete_queries">
+		<title>DELETE Queries</title>
+		
+		<para>
 			
 		</para>
 	</section>
