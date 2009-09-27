@@ -266,11 +266,158 @@
 			instead they are loaded when they are needed.
 		</para>
 		
-		<para>
-			Descriptors can be found in three ways:
-		</para>
+		<section>
+			<title>How descriptors are loaded</title>
+			
+			<para>
+				Descriptors can be found in four ways:
+			</para>
+			
+			<orderedlist>
+				<listitem>
+					<para>
+						First it checks an internal array containing already loaded descriptors,
+						descriptors can be added to this array using <function linkend="funcref.Db-addDescriptor">Db::addDescriptor()</function>,
+						see <link linkend="chapter.descriptors">Descriptors</link> for more information.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						It checks if there is a registered descriptor loader—a
+						<firstterm linkend="glossary.callback">callback</firstterm> which will return
+						a valid descriptor.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						Then it checks if a class with the name of "<varname>class</varname>Descriptor" exists.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						Finally it tries to load a file with the name "<varname>class</varname>.php" from
+						the directory set by <function linkend="funcref.Db-setDescriptorDirectory">Db::setDescriptorDirectory()</function>.
+					</para>
+				</listitem>
+			</orderedlist>
+			
+			<para>
+				If all the attempts above fails when loading a descriptor, a <classname>Db_Exception_MissingDescriptor</classname>
+				<glossterm>exception</glossterm> is thrown.
+			</para>
+		</section>
 		
+		<section>
+			<title>Setting the Descriptor Loader</title>
+			
+			<para>
+				The descriptor loader is set by this method:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db-setDescriptorLoader">
+				<funcprototype>
+					<funcdef><type>void</type> <function>Db::setDescriptorLoader</function></funcdef>
+					
+					<paramdef><type>callback</type> <parameter>$callable</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The supplied <glossterm>callback</glossterm> should return an instance of
+				<classname>Db_Descriptor</classname> or an instance of a child class of it <classname>Db_Descriptor</classname>.
+			</para>
+		</section>
 		
+		<section>
+			<title>Setting the descriptor directory</title>
+			
+			<para>
+				The descriptor directory is a directory which contains the descriptors
+				named in the following scheme: "<varname>class</varname>.php".
+			</para>
+			
+			<para>
+				The path is set by the following method:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db-setDescriptorDirectory">
+				<funcprototype>
+					<funcdef><type>void</type> <function>Db::setDescriptorDirectory</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$path</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+		
+		<section>
+			<title>Controlling the caching of the mappers</title>
+			
+			<para>
+				The mappers are generated and hence they can be cached from one execution to the next
+				to avoid having to recreate them every time (actually, regeneration of mappers in a
+				normal production environment should never happen or be needed).
+			</para>
+			
+			<para>
+				The mappers are stored in a folder defined by
+				<function linkend="funcref.Db-setMapperCacheDir">Db::setMapperCacheDir()</function>
+				and it must be writeable by the PHP process running RapidDataMapper
+				(write access can then be revoked once RapidDataMapper has generated the final
+				(production) mappers, provided they shouldn't be changed).
+			</para>
+			
+			<para>
+				To activate caching of the mappers, first set a folder to store the mappers in with
+				<function>Db::setMapperCacheDir()</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db-setMapperCacheDir">
+				<funcprototype>
+					<funcdef><type>void</type> <function>Db::setMapperCacheDir</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$path</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				If the folder is not writeable—and no cached mapper is found—RapidDataMapper will use <function>eval()</function>
+				to evaluate the generated code instead of using the cache directory.
+			</para>
+			
+			<para>
+				To start caching, call <function>Db::setCompileMappers()</function> with <symbol>true</symbol>
+				as the first parameter:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db-setCompileMappers">
+				<funcprototype>
+					<funcdef><type>void</type> <function>Db::setCompileMappers</function></funcdef>
+					
+					<paramdef><type>boolean</type> <parameter>$value</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				If <parameter>$value</parameter> is set to <symbol>true</symbol>, then the mapper management
+				method will try to save generated mappers in the mapper caching directory.
+				If that fails, it will use <function>eval()</function> to still be able to use the mapper(s).
+			</para>
+			
+			<para>
+				If <parameter>$value</parameter> is set to <symbol>false</symbol>, then the mapper management
+				method will <function>eval()</function> the generated code right away, not even attempting to
+				check for a cached mapper.
+			</para>
+			
+			<para>
+				Setting <function>Db::setCompileMappers</function> to <symbol>false</symbol> is a good thing
+				to do while developing, as the <glossterm>descriptors</glossterm>—and therefore also the
+				mappers—might change during development.
+			</para>
+		</section>
 	</section>
 </chapter>
 
