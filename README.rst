@@ -14,10 +14,8 @@ RapidDataMapper:
 
 Tests:
 
-* PHPUnit 3.4-SVN or 4.0-SVN, can be found here_
+* PHPUnit 3.4 or later
 * PHP > 5.3
-
-.. _here: http://www.phpunit.de/wiki/SubversionRepository
 
 Loading of files
 ================
