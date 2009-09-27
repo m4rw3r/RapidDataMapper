@@ -179,7 +179,7 @@ $result = Db::getConnection()->select()->from('users')->get();]]></programlistin
 			</example>
 			
 			<para>
-				See <link linkend="chapters.query_builders">Query Builders</link> for more information and examples.
+				See <link linkend="chapter.query_builders">Query Builders</link> for more information and examples.
 			</para>
 		</glossdef>
 	</glossentry>
