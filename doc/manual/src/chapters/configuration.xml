@@ -201,7 +201,7 @@
 		</warning>
 		
 		<example>
-			<title>Initializing a connection to a MySQL database with the least amount of options</title>
+			<title>Configuring a connection to a MySQL database with the least amount of options</title>
 			
 			<programlisting language="php"><![CDATA[Db::setConnectionConfig('default',
 	array(
@@ -210,6 +210,30 @@
 		'username' => 'sample_user',
 		'password' => 'samplepasswd',
 		'database' => 'sample_db'
+		)
+	);]]></programlisting>
+		</example>
+		
+		<example>
+			<title>Supplying an array as the only parameter of Db::setConnectionConfig()</title>
+			
+			<programlisting language="php"><![CDATA[Db::setConnectionConfig(
+	array(
+		'default' => array(
+			'dbdriver' => 'mysql',
+			'hostname' => 'localhost',
+			'username' => 'sample_user',
+			'password' => 'samplepasswd',
+			'database' => 'sample_db',
+			'redirect_write' => 'write'
+			),
+		'write' => array(
+			'dbdriver' => 'mysql',
+			'hostname' => 'master_db',
+			'username' => 'master_user',
+			'password' => 'master_passwd',
+			'database' => 'master'
+			)
 		)
 	);]]></programlisting>
 		</example>
