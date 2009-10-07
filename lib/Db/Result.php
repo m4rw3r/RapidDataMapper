@@ -241,12 +241,26 @@ abstract class Db_Result implements IteratorAggregate, Countable
 		return new ArrayIterator($this->result());
 	}
 	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Alias for count().
+	 * 
+	 * @return int
+	 */
+	public function numRows()
+	{
+		return $this->count();
+	}
+	
 	// --------------------------------------------------------------------
 	// --  ABSTRACT METHODS                                              --
 	// --------------------------------------------------------------------
 		
 	/**
 	 * Returns the number of rows in this result set.
+	 * 
+	 * NOTE: Must be implemented by child class.
 	 *
 	 * @return int
 	 */
