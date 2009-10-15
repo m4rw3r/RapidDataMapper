@@ -156,37 +156,144 @@ foreach($result as $row)
 }]]></programlisting>
 		</example>
 		
-		<para>
-			If you would like to get the result as an array of arrays, you can use <function>Db_Result->resultArray()</function>:
-		</para>
-		
-		<example>
-			<title>Getting arrays of arrays as results</title>
-			
-			<programlisting language="php"><![CDATA[$result = Db::getConnection()->query('SELECT * FROM tracks');
-
-$array = $result->resultArray();]]></programlisting>
-		</example>
-		
-		<example>
-			<title>Fastest iteration using the Db_Result</title>
+		<section>
+			<title>Iterating the result sets</title>
 			
 			<para>
-				The fastest iteration is made using <function>Db_Result->next()</function>:
+				As the <classname>Db_Result</classname> objects implement <classname>IteratorAggregate</classname>
+				they can be used by the <literal>foreach</literal> construct.
 			</para>
 			
-			<programlisting language="php"><![CDATA[$result = Db::getConnection()->query('SELECT * FROM tracks');
-
-while($row = $result->next())
+			<example>
+				<title>Iterating Db_Result</title>
+				
+				<programlisting language="php"><![CDATA[foreach($result as $row)
 {
+	print_r($row);
+}
+
+// getting the ArrayIterator:
+$iterator = $result->getIterator();]]></programlisting>
+			</example>
+			
+			<para>
+				Another variant is to extract an array of objects or an array of arrays and
+				iterate those, described under <link linkend="chapter.Db_Result.special_cases">Special Cases</link>.
+			</para>
+		</section>
+		
+		<section>
+			<title>Counting results</title>
+			
+			<para>
+				Use either <function>Db_Result->count</function> or the PHP function <function>count</function>:
+			</para>
+			
+			<programlisting language="php"><![CDATA[$count = count($result);
+$count = $result->count();]]></programlisting>
+			
+			<para>
+				The result is the same on both, it is just a question of preference.
+			</para>
+			
+			<para>
+				<function>Db_Result->count</function> is also aliased as <function>Db_Result->numRows</function>.
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Result-count">
+				<funcprototype>
+					<funcdef><type>int</type> <function>Db_Result->count</function></funcdef>
+					
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+			
+			<funcsynopsis xml:id="funcref.Db_Result-numRows">
+				<funcprototype>
+					<funcdef><type>int</type> <function>Db_Result->numRows</function></funcdef>
+					
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+		
+		<section>
+			<title>Getting a single value from a result set</title>
+			
+			<para>
+				Usually when you do a <literal>SELECT COUNT(...)</literal> query you get a single column and
+				a single row, which means that you have to iterate over a single row to get the result.
+				But RapidDataMapper provides a convenience method for this: <function>Db_Result->val</function>.
+			</para>
+			
+			<para>
+				<function>Db_Result->var</function> will return the first value in the result set
+				(first row and first column) as a scalar variable. It can also return a select column-row cell:
+			</para>
+			
+			<example>
+				<title>Getting a single value from a Db_Result</title>
+				
+				<programlisting language="php"><![CDATA[$count = Db::getConnection()->query('SELECT COUNT(1) FROM tracks')->val();
+
+$result = Db::getConnection()->query('SELECT artists.name, COUNT(albums.name)
+	FROM artits JOIN albums ON albums.artist_id = artists.id
+	GROUP BY artists.name')
+
+$some_album_count = $result->val(1, 2); // third row and second column]]></programlisting>
+			</example>
+			
+			<funcsynopsis xml:id="funcref.Db_Result-val">
+				<funcprototype>
+					<funcdef><type>mixed</type> <function>Db_Result->val</function></funcdef>
+
+					<paramdef choice="opt"><type>int</type> <parameter>$column</parameter></paramdef>
+					<paramdef choice="opt"><type>int</type> <parameter>$row</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+		
+		<section xml:id="chapter.Db_Result.special_cases">
+			<title>Special Cases</title>
+			
+			<para>
+				If you would like to get the result as an array of arrays, you can use <function>Db_Result->resultArray()</function>:
+			</para>
+			
+			<example>
+				<title>Getting arrays of arrays as result</title>
+				
+				<programlisting language="php"><![CDATA[$result = Db::getConnection()->query('SELECT * FROM tracks');
+        	
+$array = $result->resultArray();]]></programlisting>
+			</example>
+			
+			<example>
+				<title>Getting arrays of objects as result</title>
+				
+				<programlisting language="php"><![CDATA[$resultArr = $resultObj->result();s]]></programlisting>
+			</example>
+			
+			<example>
+				<title>Fastest iteration using the Db_Result</title>
+				
+				<para>
+					The fastest iteration is made using <function>Db_Result->next</function>:
+				</para>
+				
+				<programlisting language="php"><![CDATA[$result = Db::getConnection()->query('SELECT * FROM tracks');
+        	
+while($row = $result->next())
+{       	
 	echo $row->name;
 }]]></programlisting>
-			
-			<para>
-				It is only marginally faster when iterating, so the slower iteration
-				using <classname>IteratorAggregate</classname> is recommended as it is easier to read and understand.
-			</para>
-		</example>
+				
+				<para>
+					It is only marginally faster when iterating, so the slower iteration
+					using <classname>IteratorAggregate</classname> is recommended as it is easier to read and understand.
+				</para>
+			</example>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.database_connection_objects.database_drivers">
