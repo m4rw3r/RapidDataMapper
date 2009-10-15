@@ -46,6 +46,7 @@
 	</info>
 	
 	<xi:include href="references/preface.xml" />
+	<xi:include href="references/notation_conventions.xml" />
 	
 	<xi:include href="chapters/introduction.xml" />
 	<xi:include href="chapters/system_requirements.xml" />

@@ -89,7 +89,7 @@
 		
 		<funcsynopsis xml:id="funcref.Db_Connection-select">
 			<funcprototype>
-				<funcdef><type>Db_Query_Select</type> <function>Db_Connection::select</function></funcdef>
+				<funcdef><type>Db_Query_Select</type> <function>Db_Connection->select</function></funcdef>
 				
 				<paramdef choice="opt"><type>mixed</type> <parameter>$columns</parameter></paramdef>
 			</funcprototype>
@@ -97,13 +97,13 @@
 		
 		<funcsynopsis xml:id="funcref.Db_Connection-insert">
 			<funcprototype>
-				<funcdef><type>Db_Query_Insert</type> <function>Db_Connection::insert</function></funcdef>
+				<funcdef><type>Db_Query_Insert</type> <function>Db_Connection->insert</function></funcdef>
 				
 				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
 			</funcprototype>
 			
 			<funcprototype>
-				<funcdef><type>boolean</type> <function>Db_Connection::insert</function></funcdef>
+				<funcdef><type>boolean</type> <function>Db_Connection->insert</function></funcdef>
 				
 				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
 				<paramdef><type>array</type> <parameter>$data</parameter></paramdef>
@@ -112,14 +112,14 @@
 		
 		<funcsynopsis xml:id="funcref.Db_Connection-update">
 			<funcprototype>
-				<funcdef><type>Db_Query_Update</type> <function>Db_Connection::update</function></funcdef>
+				<funcdef><type>Db_Query_Update</type> <function>Db_Connection->update</function></funcdef>
 				
 				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
 				<paramdef choice="opt"><type>array</type> <parameter>$data</parameter></paramdef>
 			</funcprototype>
 			
 			<funcprototype>
-				<funcdef><type>boolean</type> <function>Db_Connection::update</function></funcdef>
+				<funcdef><type>boolean</type> <function>Db_Connection->update</function></funcdef>
 				
 				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
 				<paramdef><type>array</type> <parameter>$data</parameter></paramdef>
@@ -129,13 +129,13 @@
 		
 		<funcsynopsis xml:id="funcref.Db_Connection-delete">
 			<funcprototype>
-				<funcdef><type>Db_Query_Delete</type> <function>Db_Connection::delete</function></funcdef>
+				<funcdef><type>Db_Query_Delete</type> <function>Db_Connection->delete</function></funcdef>
 				
 				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
 			</funcprototype>
 			
 			<funcprototype>
-				<funcdef><type>boolean</type> <function>Db_Connection::delete</function></funcdef>
+				<funcdef><type>boolean</type> <function>Db_Connection->delete</function></funcdef>
 				
 				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
 				<paramdef><type>array</type> <parameter>$conditions</parameter></paramdef>
@@ -143,9 +143,15 @@
 		</funcsynopsis>
 		
 		<para>
-			All the Query builders have the <function>Db_Query::getSQL()</function> method,
+			All the Query builders have the <function>Db_Query->getSQL()</function> method,
 			making it easy to either debug your queries or to create eg. UNIONs:
 		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Query-getSQL">
+			<funcprototype>
+				<funcdef><type>string</type> <function>Db_Query->getSQL()</function></funcdef>
+			</funcprototype>
+		</funcsynopsis>
 		
 		<example>
 			<title>Creating an UNION query from two Db_Query_Select objects</title>

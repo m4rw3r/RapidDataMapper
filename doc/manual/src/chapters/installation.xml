@@ -60,7 +60,7 @@ Db::initAutoload();]]></programlisting>
 		<para>
 			RapidDataMapper can easily replace CodeIgniter's database abstraction.
 			The instructions below will replace the global <varname>$this->db</varname>
-			with an instance of <classname>Db_Connection</classname> from RapidDataMapper,
+			with the default instance of <classname>Db_Connection</classname> from RapidDataMapper,
 			instead of CodeIgniter's abstraction.
 		</para>
 		

@@ -189,7 +189,8 @@ echo $album->name;]]></programlisting>
 			</example>
 			
 			<para>
-				The third variant takes an array of key => value conditions, like the <function>Db_Query::where()</function>
+				The third variant takes an array of key => value conditions, like the
+				<function linkend="chapter.query_builders.conditions">Db_Query->where()</function>
 				method:
 			</para>
 			

@@ -219,7 +219,7 @@ $result = $query->get();
 $result = Db::getConnection()->select()->from('users')->get();]]></programlisting>
 				
 				<para>
-					The <function>Db_Query_Select::from()</function> method returns the object instance,
+					The <function>Db_Query_Select->from()</function> method returns the object instance,
 					which means that <function>get()</function> above was called on the same <classname>Db_Query_Select</classname>
 					instance as <function>from()</function> was.
 				</para>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preface
+	version="5.0"
+	xml:id="preface"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	>
+	<title>Notation Conventions</title>
+	
+	<para>
+		In this manual code examples will be written in a monospaced font and all will have a title, like this:
+	</para>
+	
+	<example>
+		<title>Preface Example</title>
+		
+		<programlisting language="php"><![CDATA[class SampleObject
+{
+	// Methods and properties
+}]]></programlisting>
+	</example>
+	
+	<para>
+		To reference a certain class in the text we will mark the class like this: <classname>ClassName</classname>.
+		The methods of a class are written like this: <function>ClassName::methodName</function> will be used for static
+		members of the class and <function>ClassName->methodName</function> for instance methods.
+	</para>
+	
+	<para>
+		Parameters are denoted by a leading dollar sign ($, just as in PHP): <varname>$variable_name</varname>.
+	</para>
+	
+	<para>
+		A typical function synopsis looks like this:
+	</para>
+	
+	<funcsynopsis>
+		<funcprototype>
+			<funcdef><type>returnType</type> <function>ClassName->methodName</function></funcdef>
+			
+			<paramdef><type>parameterType</type> <parameter>$parameter_name</parameter></paramdef>
+			<paramdef choice="opt"><type>parameterType</type> <parameter>$optional_parameter</parameter></paramdef>
+		</funcprototype>
+	</funcsynopsis>
+	
+	<para>
+		It displays one variant of the method call to <function>Class->method</function> and that it takes two parameters
+		of <type>parameterType</type>, has one optional parameter and that it returns <type>returnType</type>.
+	</para>
+</preface>
