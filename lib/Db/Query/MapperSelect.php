@@ -188,13 +188,13 @@ class Db_Query_MapperSelect extends Db_Query_Select
 		
 		if( ! empty($this->where))
 		{
-			$str .= "\nWHERE " . $this->where_prefix.implode(' ', $this->where).$this->where_suffix;
+			$str .= "\nWHERE ".$this->where_prefix.implode(' ', $this->where).$this->where_suffix;
 		}
 		elseif( ! empty($this->where_prefix))
 		{
 			// TODO: Should the trim methods be here? Does it affect the SQL (except for removing parenthesis)?
 			
-			$str .= "\nWHERE ".rtrim($this->where_prefix, ' (').' '.ltrim($this->where_suffix, ' )');
+			$str .= "\nWHERE ".preg_replace('/(?:\s+AND|\s+OR)?[\( ]*$/i', '', $this->where_prefix).' '.preg_replace('/^[\) ]*(?:AND\s+|OR\s+)?/i', '', $this->where_suffix);
 		}
 		
 		if( ! empty($this->group_by))
