@@ -523,13 +523,31 @@ final class Db
 	/**
 	 * Populates a query which will fetch the objects related to the first parameter.
 	 * 
+	 * Example:
+	 * <code>
+	 * $user = Db::find('user', 3);
+	 * $posts = Db::related($user, 'posts')->get();
+	 * </code>
+	 * 
 	 * @param  object
 	 * @param  string
 	 * @return Db_Query_MapperSelect
 	 */
 	public static function related($object, $relation)
 	{
-		// TODO: code...
+		$m = self::getMapper(get_class($object));
+		
+		if( ! isset($m->relations[$relation]))
+		{
+			throw new Db_Exception_MissingRelation($reltion);
+		}
+		
+		$rm = self::getMapper($m->relations[$relation]);
+		
+		$q = $rm->populateFindQuery();
+		$m->applyRelatedConditions($q, $relation, $object);
+		
+		return $q;
 	}
 	
 	// ------------------------------------------------------------------------
