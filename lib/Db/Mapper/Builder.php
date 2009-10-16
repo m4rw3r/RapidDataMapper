@@ -84,6 +84,8 @@ class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 		
 		$this->addPart(new Db_Mapper_Part_JoinRelated($this->descriptor));
 		
+		$this->addPart(new Db_Mapper_Part_ApplyRelatedConditions($this->descriptor));
+		
 		$this->addPart(new Db_Mapper_Part_Objectify($this->descriptor));
 		
 		$this->addPart(new Db_Mapper_Part_Save($this->descriptor));

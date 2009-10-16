@@ -117,6 +117,29 @@ abstract class Db_Mapper
 	abstract public function joinRelated($query, $relation_name, $alias_of_linked);
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Adds conditions to a query to fetch related objects which filters so it only
+	 * returns the objects related to the $object parameter.
+	 * 
+	 * Example:
+	 * 
+	 * <code>
+	 * // User relates to posts:
+	 * $q = $post_model->populateFindQuery();
+	 * $user_model->apply_RelatedConditions($q, 'posts', $some_user_object);
+	 * </code>
+	 * 
+	 * @todo   Is the alias also needed?
+	 * 
+	 * @param  Db_Query_MapperSelect
+	 * @param  string
+	 * @param  object
+	 * @return void
+	 */
+	abstract public function applyRelatedConditions($query, $relation_name, $object);
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Loops the database result and sends each row to be objectified.

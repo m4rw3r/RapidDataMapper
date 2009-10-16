@@ -51,6 +51,20 @@ interface Db_Descriptor_RelationInterface
 	public function getJoinRelatedCode($query_obj_var, $alias_of_linked_var);
 	
 	/**
+	 * Returns the code which will add the conditions for the relation.
+	 * 
+	 * Example code:
+	 * <code>
+	 * $q->where_prefix = 'user_id = '.$this->db->escape($user-id).'(';
+	 * $q->where_suffix = ')';
+	 * </code>
+	 * 
+	 * @param string
+	 * @param string
+	 */
+	public function getApplyRelatedConditionsCode($query_obj_var, $object_var);
+	
+	/**
 	 * Returns the code which will establish a relationship between an object which will be saved and others.
 	 * 
 	 * @param  string
