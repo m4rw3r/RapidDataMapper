@@ -190,7 +190,7 @@ class Db_Query_MapperSelect extends Db_Query_Select
 		{
 			$str .= "\nWHERE ".$this->where_prefix.implode(' ', $this->where).$this->where_suffix;
 		}
-		elseif( ! empty($this->where_prefix))
+		elseif( ! empty($this->where_prefix) OR ! empty($this->where_suffix))
 		{
 			// TODO: Should the trim methods be here? Does it affect the SQL (except for removing parenthesis)?
 			
