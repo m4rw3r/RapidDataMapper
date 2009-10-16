@@ -38,6 +38,27 @@ class Db_Query_MapperSelect extends Db_Query_Select
 	 */
 	public $main_object;
 	
+	/**
+	 * A prefix for the WHERE conditions, prepended once before the first condition.
+	 * 
+	 * Usually something like this:
+	 * <code>
+	 * "user_id = 12 AND ("
+	 * </code>
+	 * 
+	 * @var string
+	 */
+	public $where_prefix = '';
+	
+	/**
+	 * A suffix for the WHERE conditions, appended once after the last condition.
+	 * 
+	 * Usually an ending parenthesis (")").
+	 * 
+	 * @var string
+	 */
+	public $where_suffix = '';
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -148,8 +169,58 @@ class Db_Query_MapperSelect extends Db_Query_Select
 		
 		return $ret;
 	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function __toString()
+	{
+		if(empty($this->from))
+		{
+			throw new Db_Exception_QueryIncomplete('Missing FROM part');
+		}
+		
+		$str = 'SELECT ' . ($this->distinct ? 'DISTINCT ' : '') . implode(', ', $this->columns) . "\nFROM " . implode(', ', $this->from);
+		
+		if( ! empty($this->join))
+		{
+			$str .= "\n" . implode("\n", $this->join);
+		}
+		
+		if( ! empty($this->where))
+		{
+			$str .= "\nWHERE " . $this->where_prefix.implode(' ', $this->where).$this->where_suffix;
+		}
+		elseif( ! empty($this->where_prefix))
+		{
+			// TODO: Should the trim methods be here? Does it affect the SQL (except for removing parenthesis)?
+			
+			$str .= "\nWHERE ".rtrim($this->where_prefix, ' (').' '.ltrim($this->where_suffix, ' )');
+		}
+		
+		if( ! empty($this->group_by))
+		{
+			$str .= "\nGROUP BY " . implode(', ', $this->group_by);
+		}
+		
+		if( ! empty($this->having))
+		{
+			$str .= "\nHAVING " . implode(' ', $this->having);
+		}
+
+		if( ! empty($this->order_by))
+		{
+			$str .= "\nORDER BY " . implode(', ', $this->order_by);
+		}
+
+		if($this->limit !== false)
+		{
+			$str = $this->_instance->_limit($str, $this->limit, $this->offset);
+		}
+		
+		return $str;
+	}
 }
 
 
-/* End of file query.php */
-/* Location: ./lib/mapper */
+/* End of file MapperSelect.php */
+/* Location: ./lib/mapper/query */
