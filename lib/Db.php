@@ -10,6 +10,8 @@
  */
 final class Db
 {
+	const VERSION = '0.5dev';
+	
 	const ERROR = 1;
 	const WARNING = 2;
 	const NOTICE = 4;
