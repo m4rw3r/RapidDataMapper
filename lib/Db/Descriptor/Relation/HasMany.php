@@ -133,6 +133,32 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 	
 	// ------------------------------------------------------------------------
 	
+	public function getApplyRelatedConditionsCode($query_obj_var, $object_var)
+	{
+		$db = $this->relation->getParentDescriptor()->getConnection();
+		$local = $this->relation->getParentDescriptor();
+		$related = $this->relation->getRelatedDescriptor();
+		
+		list($local_keys, $foreign_keys) = $this->getKeys();
+		
+		// build foreign key conditions
+		$cols = array();
+		$c = count($local_keys);
+		for($i = 0; $i < $c; $i++)
+		{
+			$lprop = $local_keys[$i];
+			$fprop = $foreign_keys[$i];
+			
+			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$fprop->getColumn()), "'").' = \'.$this->db->escape('.$object_var.'->'.$lprop->getProperty().')';
+		}
+		
+		return $query_obj_var.'->where_prefix = \'' . 
+			implode('.\'', $cols).'.\' AND (\';
+'.$query_obj_var.'->where_suffix = \')\';';
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function getPreSaveRelationCode($object_var)
 	{
 		return '';

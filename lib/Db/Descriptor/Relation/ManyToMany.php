@@ -184,6 +184,49 @@ LEFT JOIN ' . addcslashes($db->protectIdentifiers($db->dbprefix . $related->getT
 	
 	// ------------------------------------------------------------------------
 	
+	public function getApplyRelatedConditionsCode($query_obj_var, $object_var)
+	{
+		$db = $this->relation->getParentDescriptor()->getConnection();
+		$local = $this->relation->getParentDescriptor();
+		$related = $this->relation->getRelatedDescriptor();
+		
+		list($local_keys, $link_local_keys) = $this->getKeysToLink();
+		list($link_foreign_keys, $foreign_keys) = $this->getKeysFromLink();
+		
+		// build foreign key conditions to link
+		$local_cols = array();
+		$c = count($local_keys);
+		for($i = 0; $i < $c; $i++)
+		{
+			$lprop = $local_keys[$i];
+			$fprop = $link_local_keys[$i];
+			
+			$local_cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'-_l_' . $this->getLinkTable().'.'.$fprop), "'").' = \'.$this->db->escape('.$object_var.'->'.$lprop->getProperty().')';
+		}
+		
+		// build foreign key conditions from link to related
+		$cols = array();
+		$c = count($foreign_keys);
+		for($i = 0; $i < $c; $i++)
+		{
+			$lprop = $link_foreign_keys[$i];
+			$fprop = $foreign_keys[$i];
+			
+			$cols[] = $db->protectIdentifiers($related->getSingular().'-_l_' . $this->getLinkTable().'.'.$lprop).' = '.
+				$db->protectIdentifiers($related->getSingular().'.'.$fprop->getColumn());
+		}
+		
+		return $query_obj_var.'->join[] = \'LEFT JOIN '.
+			addcslashes($db->protectIdentifiers($db->dbprefix . $this->getLinkTable()), "'") . 
+			' AS ' . addcslashes($db->protectIdentifiers($related->getSingular().'-_l_'.$this->getLinkTable()), "'").'
+	ON '.addcslashes(implode(' AND ', $cols), "'").'\';
+'.$query_obj_var.'->where_prefix = \'' . 
+			implode('.\'', $local_cols).'.\' AND (\';
+'.$query_obj_var.'->where_suffix = \')\';';
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function getPreSaveRelationCode($object_var)
 	{
 		return '';
