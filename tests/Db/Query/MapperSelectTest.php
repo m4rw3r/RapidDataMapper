@@ -165,6 +165,60 @@ WHERE foo bar', $q->getSQL());
 FROM user
 WHERE fooAND ANDbar', $q->getSQL());
 	}
+	public function testWherePrefixSuffix8()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape', 'prefix'));
+		$mapper = $this->getMock('Db_Mapper', array('getConnection'));
+		
+		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
+		
+		$q = new Db_Query_MapperSelect($mapper, 'object');
+		
+		$q->columns[] = '*';
+		$q->from[] = 'user';
+		$q->where_prefix = 'foo OR (';
+		$q->where_suffix = ') OR bar';
+		
+		$this->assertEquals('SELECT *
+FROM user
+WHERE foo bar', $q->getSQL());
+	}
+	public function testWherePrefixSuffix9()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape', 'prefix'));
+		$mapper = $this->getMock('Db_Mapper', array('getConnection'));
+		
+		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
+		
+		$q = new Db_Query_MapperSelect($mapper, 'object');
+		
+		$q->columns[] = '*';
+		$q->from[] = 'user';
+		$q->where_prefix = 'foo  OR  (';
+		$q->where_suffix = ')  OR  bar';
+		
+		$this->assertEquals('SELECT *
+FROM user
+WHERE foo bar', $q->getSQL());
+	}
+	public function testWherePrefixSuffix10()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape', 'prefix'));
+		$mapper = $this->getMock('Db_Mapper', array('getConnection'));
+		
+		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
+		
+		$q = new Db_Query_MapperSelect($mapper, 'object');
+		
+		$q->columns[] = '*';
+		$q->from[] = 'user';
+		$q->where_prefix = 'fooOR(';
+		$q->where_suffix = ') ORbar';
+		
+		$this->assertEquals('SELECT *
+FROM user
+WHERE fooOR ORbar', $q->getSQL());
+	}
 	
 	// ------------------------------------------------------------------------
 
@@ -267,6 +321,44 @@ WHERE foo AND (testing)', $q->getSQL());
 		$this->assertEquals('SELECT *
 FROM user
 WHERE (testing) AND bar', $q->getSQL());
+	}
+	public function testWherePrefixSuffixWWhere6()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape', 'prefix'));
+		$mapper = $this->getMock('Db_Mapper', array('getConnection'));
+		
+		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
+		
+		$q = new Db_Query_MapperSelect($mapper, 'object');
+		
+		$q->columns[] = '*';
+		$q->from[] = 'user';
+		$q->where = array('testing');
+		$q->where_prefix = 'foo OR (';
+		$q->where_suffix = ')';
+		
+		$this->assertEquals('SELECT *
+FROM user
+WHERE foo OR (testing)', $q->getSQL());
+	}
+	public function testWherePrefixSuffixWWhere7()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape', 'prefix'));
+		$mapper = $this->getMock('Db_Mapper', array('getConnection'));
+		
+		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
+		
+		$q = new Db_Query_MapperSelect($mapper, 'object');
+		
+		$q->columns[] = '*';
+		$q->from[] = 'user';
+		$q->where = array('testing');
+		$q->where_prefix = '(';
+		$q->where_suffix = ') OR bar';
+		
+		$this->assertEquals('SELECT *
+FROM user
+WHERE (testing) OR bar', $q->getSQL());
 	}
 }
 
