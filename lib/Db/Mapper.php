@@ -127,7 +127,7 @@ abstract class Db_Mapper
 	 * <code>
 	 * // User relates to posts:
 	 * $q = $post_model->populateFindQuery();
-	 * $user_model->apply_RelatedConditions($q, 'posts', $some_user_object);
+	 * $user_model->applyRelatedConditions($q, 'posts', $some_user_object);
 	 * </code>
 	 * 
 	 * @todo   Is the alias also needed?
