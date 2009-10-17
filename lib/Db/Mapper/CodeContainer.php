@@ -56,7 +56,7 @@ abstract class Db_Mapper_CodeContainer
 				foreach($this->content as $k => $p)
 				{
 					// matching names
-					if($part->getName() == $p->getName())
+					if($p instanceof Db_Mapper_CodeContainer && $part->getName() == $p->getName())
 					{
 						unset($this->content[$k]);
 					}

@@ -134,6 +134,21 @@ class Db_Mapper_CodeContainerTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
+	public function testAddPartReplace2()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart('foo');
+		
+		$this->assertSame(array('foo'), $c->getContent());
+		
+		$this->assertTrue($c->addPart($o = new TestContainer(), '', true));
+		
+		$this->assertSame(array('foo', $o), $c->getContent());
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function testAddPartPath()
 	{
 		$c = new TestContainer();
