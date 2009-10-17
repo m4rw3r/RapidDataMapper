@@ -85,6 +85,11 @@ class Db_Plugin_I18n extends Db_Plugin
 			$this->columns = (Array)$options['columns'];
 		}
 		
+		if( ! empty($options['default_language']))
+		{
+			$this->default_language = $options['default_language'];
+		}
+		
 		if( ! empty($options['table_prefix']))
 		{
 			$this->table_prefix = $options['table_prefix'];
