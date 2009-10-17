@@ -10,31 +10,15 @@
  */
 class Db_Mapper_Part_ApplyRelatedConditions extends Db_Mapper_Code_Method
 {
-	protected $descriptor;
-	
-	function __construct(Db_Descriptor $desc)
+	function __construct(Db_Descriptor $descriptor)
 	{
 		$this->name = 'applyRelatedConditions';
 		$this->param_list = '$query, $relation_name, $object';
 		
-		$this->descriptor = $desc;
-		
-		$this->addContents();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Adds the default contents of this method.
-	 * 
-	 * @return void
-	 */
-	public function addContents()
-	{
 		$this->addPart('switch($relation_name)
 {');
 		
-		foreach($this->descriptor->getRelations() as $rel)
+		foreach($descriptor->getRelations() as $rel)
 		{
 			$this->addPart("\tcase '".$rel->getName()."':");
 			$this->addPart("\t\t".self::indentCode(self::indentCode($rel->getApplyRelatedConditionsCode('$query', '$object'))));

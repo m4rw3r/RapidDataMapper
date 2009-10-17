@@ -10,37 +10,21 @@
  */
 class Db_Mapper_Part_Objectify extends Db_Mapper_Code_Method
 {
-	protected $descriptor;
-	
-	function __construct(Db_Descriptor $desc)
+	function __construct(Db_Descriptor $descriptor)
 	{
 		$this->name = 'objectify';
 		$this->param_list = '&$res, $row, $alias, &$mappers, $alias_paths';
 		
-		$this->descriptor = $desc;
-		
-		$this->addContents();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Adds the default contents of this method.
-	 * 
-	 * @return void
-	 */
-	public function addContents()
-	{
-		$this->addPart('if('.$this->descriptor->getNotContainsObjectCode('$row', '$alias').')
+		$this->addPart('if('.$descriptor->getNotContainsObjectCode('$row', '$alias').')
 {
 	return null;
 }');
 		
-		$this->addPart('$uid = '.$this->descriptor->getUidCode('$row', '$alias').';');
+		$this->addPart('$uid = '.$descriptor->getUidCode('$row', '$alias').';');
 		
-		$this->addPart(new Db_Mapper_Part_Objectify_NewObj($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_Objectify_NewObj($descriptor));
 		
-		$this->addPart(new Db_Mapper_Part_Objectify_LoadRelated($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_Objectify_LoadRelated($descriptor));
 	}
 }
 

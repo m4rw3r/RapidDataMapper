@@ -10,30 +10,14 @@
  */
 class Db_Mapper_Part_Save_Update extends Db_Mapper_CodeContainer
 {
-	protected $descriptor;
-	
-	function __construct(Db_Descriptor $desc)
-	{
-		$this->descriptor = $desc;
-		
-		$this->addContent();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Populates this object
-	 * 
-	 * @return void
-	 */
-	public function addContent()
+	function __construct(Db_Descriptor $descriptor)
 	{
 		// HOOK: on_update
-		$this->addPart($this->descriptor->getHookCode('on_update', '$object'));
+		$this->addPart($descriptor->getHookCode('on_update', '$object'));
 		
 		// assign the data to $data
 		$arr = array('//collect data', '$data = array();');
-		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
+		foreach(array_merge($descriptor->getColumns(), $descriptor->getPrimaryKeys()) as $prop)
 		{
 			$v = $prop->getFromObjectToDataCode('$object', '$data', true);
 			
@@ -46,16 +30,16 @@ class Db_Mapper_Part_Save_Update extends Db_Mapper_CodeContainer
 		$this->addPart(implode("\n", $arr));
 		
 		// HOOK: pre_update
-		$this->addPart($this->descriptor->getHookCode('pre_update', '$object', '$data'));
+		$this->addPart($descriptor->getHookCode('pre_update', '$object', '$data'));
 		
 		$this->addPart("// just update the data which have been changed\n\$save_data = array_diff_assoc(\$data, \$object->__data);");
 		
-		foreach($this->descriptor->getRelations() as $rel)
+		foreach($descriptor->getRelations() as $rel)
 		{
 			$this->addPart($rel->getSaveUpdateRelationCode('$object'));
 		}
 		
-		$this->addPart('if(empty($save_data) OR $this->db->update(\''.$this->descriptor->getTable().'\', $save_data, $object->__id) === false)
+		$this->addPart('if(empty($save_data) OR $this->db->update(\''.$descriptor->getTable().'\', $save_data, $object->__id) === false)
 {
 	return false;
 }');
@@ -63,7 +47,7 @@ class Db_Mapper_Part_Save_Update extends Db_Mapper_CodeContainer
 		$this->addPart('$object->__data = $data;');
 		
 		// HOOK: post_update
-		$this->addPart($this->descriptor->getHookCode('post_update', '$object'));
+		$this->addPart($descriptor->getHookCode('post_update', '$object'));
 	}
 	
 	// ------------------------------------------------------------------------

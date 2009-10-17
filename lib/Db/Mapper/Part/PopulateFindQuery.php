@@ -10,37 +10,21 @@
  */
 class Db_Mapper_Part_PopulateFindQuery extends Db_Mapper_Code_Method
 {
-	protected $descriptor;
-	
-	function __construct(Db_Descriptor $desc)
+	function __construct(Db_Descriptor $descriptor)
 	{
 		$this->name = 'populateFindQuery';
 		
-		$this->descriptor = $desc;
+		$db = $descriptor->getConnection();
 		
-		$this->addContents();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Adds the default contents of this method.
-	 * 
-	 * @return void
-	 */
-	public function addContents()
-	{
-		$db = $this->descriptor->getConnection();
+		$this->addPart('$q = new Db_Query_MapperSelect($this, \''.$descriptor->getSingular().'\');');
 		
-		$this->addPart('$q = new Db_Query_MapperSelect($this, \''.$this->descriptor->getSingular().'\');');
-		
-		$columns = $this->descriptor->getSelectCode($this->descriptor->getSingular(), $this->descriptor->getSingular());
+		$columns = $descriptor->getSelectCode($descriptor->getSingular(), $descriptor->getSingular());
 		
 		$this->addPart('$q->columns[] = \''.addcslashes($columns, "'").'\';
-$q->from[] = \''.addcslashes($db->protectIdentifiers($this->descriptor->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($this->descriptor->getSingular()), "'").'\';');
+$q->from[] = \''.addcslashes($db->protectIdentifiers($descriptor->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($descriptor->getSingular()), "'").'\';');
 		
 		// HOOK: on_find
-		$this->addPart($this->descriptor->getHookCode('on_find', false, '$q'));
+		$this->addPart($descriptor->getHookCode('on_find', false, '$q'));
 		
 		// TODO: Add autoloaded join-related handling code
 		

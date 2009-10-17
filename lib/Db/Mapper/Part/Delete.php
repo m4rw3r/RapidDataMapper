@@ -10,29 +10,13 @@
  */
 class Db_Mapper_Part_Delete extends Db_Mapper_Code_Method
 {
-	protected $descriptor;
-	
-	function __construct(Db_Descriptor $desc)
+	function __construct(Db_Descriptor $descriptor)
 	{
 		$this->name = 'delete';
 		$this->param_list = '$object';
 		
-		$this->descriptor = $desc;
-		
-		$this->addContents();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Adds the default contents of this method.
-	 * 
-	 * @return void
-	 */
-	public function addContents()
-	{
 		// HOOK: on_delete
-		$this->addPart($this->descriptor->getHookCode('on_delete', '$object'));
+		$this->addPart($descriptor->getHookCode('on_delete', '$object'));
 		
 		// is it already deleted?
 		$this->addPart('if(empty($object->__id))
@@ -44,10 +28,10 @@ class Db_Mapper_Part_Delete extends Db_Mapper_Code_Method
 		
 		// TODO: Call the unlink relation code for the relations which haven't been affected by the cascades
 		
-		$this->addPart('$ret = $this->db->delete(\''.$this->descriptor->getTable().'\', $object->__id);');
+		$this->addPart('$ret = $this->db->delete(\''.$descriptor->getTable().'\', $object->__id);');
 		
 		// HOOK: on_delete
-		$this->addPart($this->descriptor->getHookCode('post_delete', '$object'));
+		$this->addPart($descriptor->getHookCode('post_delete', '$object'));
 		
 		$this->addPart('return $ret;');
 	}

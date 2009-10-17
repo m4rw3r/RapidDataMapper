@@ -11,30 +11,14 @@
  */
 class Db_Mapper_Part_Objectify_NewObj extends Db_Mapper_CodeContainer
 {
-	protected $descriptor;
-	
-	function __construct(Db_Descriptor $desc)
+	function __construct(Db_Descriptor $descriptor)
 	{
-		$this->descriptor = $desc;
-		
-		$this->addContents();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Adds the default contents to this CodeContainer
-	 * 
-	 * @return void
-	 */
-	public function addContents()
-	{
-		$this->addPart('$obj = '.$this->descriptor->getFactory().';');
+		$this->addPart('$obj = '.$descriptor->getFactory().';');
 		
 		// let the primary key assignments do their part
 		// group them together so they are easily spotted
 		$arr = array('$obj->__id = array();');
-		foreach($this->descriptor->getPrimaryKeys() as $key)
+		foreach($descriptor->getPrimaryKeys() as $key)
 		{
 			$arr[] = $key->getFromDataToObjectCode('$obj', '$row', '$alias');
 		}
@@ -42,7 +26,7 @@ class Db_Mapper_Part_Objectify_NewObj extends Db_Mapper_CodeContainer
 		
 		// the same goes for the columns
 		$arr = array();
-		foreach($this->descriptor->getColumns() as $col)
+		foreach($descriptor->getColumns() as $col)
 		{
 			$arr[] = $col->getFromDataToObjectCode('$obj', '$row', '$alias');
 		}
@@ -51,7 +35,7 @@ class Db_Mapper_Part_Objectify_NewObj extends Db_Mapper_CodeContainer
 		// Create the comparable
 		$this->addPart('$obj->__data = array();');
 		$arr = array();
-		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $col)
+		foreach(array_merge($descriptor->getColumns(), $descriptor->getPrimaryKeys()) as $col)
 		{
 			$arr[] = '$obj->__data[\''.$col->getColumn().'\'] = '.$col->getFromObjectCode('$obj').';';
 		}

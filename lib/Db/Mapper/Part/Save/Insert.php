@@ -10,30 +10,14 @@
  */
 class Db_Mapper_Part_Save_Insert extends Db_Mapper_CodeContainer
 {
-	protected $descriptor;
-	
-	function __construct(Db_Descriptor $desc)
-	{
-		$this->descriptor = $desc;
-		
-		$this->addContent();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Populates this object
-	 * 
-	 * @return void
-	 */
-	public function addContent()
+	function __construct(Db_Descriptor $descriptor)
 	{
 		// HOOK: on_insert
-		$this->addPart($this->descriptor->getHookCode('on_insert', '$object'));
+		$this->addPart($descriptor->getHookCode('on_insert', '$object'));
 		
 		// assign the data to $data
 		$arr = array('//collect data', '$data = array();');
-		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
+		foreach(array_merge($descriptor->getColumns(), $descriptor->getPrimaryKeys()) as $prop)
 		{
 			$v = $prop->getFromObjectToDataCode('$object', '$data');
 			
@@ -46,28 +30,28 @@ class Db_Mapper_Part_Save_Insert extends Db_Mapper_CodeContainer
 		$this->addPart(implode("\n", $arr));
 		
 		// assign the generated values and add the preprocessing and/or validation
-		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
+		foreach(array_merge($descriptor->getColumns(), $descriptor->getPrimaryKeys()) as $prop)
 		{
 			$this->addPart($prop->getInsertPopulateColumnCode('$data', '$object'));
 		}
 		
 		// HOOK: pre_insert
-		$this->addPart($this->descriptor->getHookCode('pre_insert', '$object', '$data'));
+		$this->addPart($descriptor->getHookCode('pre_insert', '$object', '$data'));
 		
 		$this->addPart("if(empty(\$data))\n{\n\treturn false;\n}");
 		
-		$this->addPart('$status = $this->db->insert(\''.$this->descriptor->getTable().'\', $data);');
+		$this->addPart('$status = $this->db->insert(\''.$descriptor->getTable().'\', $data);');
 		
 		// on failed save skip saving relations
 		$this->addPart("if( ! \$status)\n{\n\treturn false;\n}");
 		
 		// assign the database generated values
-		foreach(array_merge($this->descriptor->getColumns(), $this->descriptor->getPrimaryKeys()) as $prop)
+		foreach(array_merge($descriptor->getColumns(), $descriptor->getPrimaryKeys()) as $prop)
 		{
 			$this->addPart($prop->getInsertReadColumnCode('$data', '$object'));
 		}
 		
-		foreach($this->descriptor->getRelations() as $rel)
+		foreach($descriptor->getRelations() as $rel)
 		{
 			$this->addPart($rel->getSaveInsertRelationCode('$object'));
 		}
@@ -76,7 +60,7 @@ class Db_Mapper_Part_Save_Insert extends Db_Mapper_CodeContainer
 		$this->addPart("// save the data to be able to only update the modified data\n\$object->__data = \$data;");
 		
 		// HOOK: post_insert
-		$this->addPart($this->descriptor->getHookCode('post_insert', '$object'));
+		$this->addPart($descriptor->getHookCode('post_insert', '$object'));
 	}
 	
 	// ------------------------------------------------------------------------

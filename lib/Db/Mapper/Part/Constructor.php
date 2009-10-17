@@ -10,27 +10,11 @@
  */
 class Db_Mapper_Part_Constructor extends Db_Mapper_Code_Method
 {
-	protected $descriptor;
-	
-	function __construct(Db_Descriptor $desc)
+	function __construct(Db_Descriptor $descriptor)
 	{
 		$this->name = '__construct';
 		
-		$this->descriptor = $desc;
-		
-		$this->addContents();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Adds the default contents of this method.
-	 * 
-	 * @return void
-	 */
-	public function addContents()
-	{
-		$conn_name = $this->descriptor->getConnectionName();
+		$conn_name = $descriptor->getConnectionName();
 		
 		if( ! empty($conn_name))
 		{

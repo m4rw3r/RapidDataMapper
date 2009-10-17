@@ -10,25 +10,9 @@
  */
 class Db_Mapper_Part_Objectify_LoadRelated extends Db_Mapper_CodeContainer
 {
-	protected $descriptor;
-	
-	function __construct(Db_Descriptor $desc)
+	function __construct(Db_Descriptor $descriptor)
 	{
-		$this->descriptor = $desc;
-		
-		$this->addContents();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Adds the default contents to this CodeContainer
-	 * 
-	 * @return void
-	 */
-	public function addContents()
-	{
-		foreach($this->descriptor->getRelations() as $rel)
+		foreach($descriptor->getRelations() as $rel)
 		{
 			if($rel->isPlural())
 			{
