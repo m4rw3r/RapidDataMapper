@@ -30,7 +30,7 @@ class Db_Plugin_Sluggable_Decorator extends Db_Decorator
 	 * @param  Db_Descriptor_Column
 	 * @param  string
 	 */
-	function __construct(Db_Descriptor_Column $destination, Db_Descriptor_Column $source, $callable)
+	function __construct($destination, $source, $callable)
 	{
 		$this->setDecoratedObject($destination);
 		$this->source = $source;
