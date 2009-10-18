@@ -33,6 +33,11 @@ class Db_Mapper_Part_Delete extends Db_Mapper_Code_Method
 		// HOOK: on_delete
 		$this->addPart($descriptor->getHookCode('post_delete', '$object'));
 		
+		$this->addPart('if($ret)
+{
+	$object->__id = array();
+}');
+		
 		$this->addPart('return $ret;');
 	}
 }
