@@ -122,6 +122,33 @@ else
 	echo 'UPDATE failed';
 }]]></programlisting>
 		</example>
+		
+		<para>
+			Binds are placeholders in the query which will be replaced with an escaped value which
+			is supplied in the <varname>$binds</varname> parameter. The format for anonymous bind placeholders
+			are question marks ("<literal>?</literal>"), they will take the bind parameters in the order
+			of appearance in the <varname>$binds</varname> array. To use named binds, use a colon followed
+			by whitespace, then it will fetch the values from the key with that name in <varname>$binds</varname>.
+		</para>
+		
+		<para>
+			If a bind parameter is not found, a <classname>Db_Exception_MissingBindParameter</classname> is thrown.
+			That can be used as a simple validation feature, as it will complain if a parameter is missing.
+		</para>
+		
+		<example>
+			<title>Using the binds in a SQL query</title>
+			
+			<programlisting language="php"><![CDATA[$db = Db::getConnection();
+
+// anonymous binds
+$r = $db->query('SELECT * FROM users WHERE name = ? AND password = ?', array($_POST['name'], md5(SALT.$_POST['password'])));
+
+// named binds
+$r = $db->query('SELECT * FROM users WHERE name = :name AND password = :passwd', $_POST);
+// Requested array: array('name' => 'Foo', 'passwd' => 'bar')
+]]></programlisting>
+		</example>
 	</section>
 	
 	<section xml:id="chapter.database_connection_objects.Db_Result">
