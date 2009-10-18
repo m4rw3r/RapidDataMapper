@@ -23,8 +23,8 @@
 	
 	<para>
 		To reference a certain class in the text we will mark the class like this: <classname>ClassName</classname>.
-		The methods of a class are written like this: <function>ClassName::methodName</function> will be used for static
-		members of the class and <function>ClassName->methodName</function> for instance methods.
+		The methods of a class are written like this <function>ClassName::methodName</function> (will be used for static
+		members of the class) or this <function>ClassName->methodName</function> (for instance methods).
 	</para>
 	
 	<para>
@@ -45,7 +45,8 @@
 	</funcsynopsis>
 	
 	<para>
-		It displays one variant of the method call to <function>Class->method</function> and that it takes two parameters
-		of <type>parameterType</type>, has one optional parameter and that it returns <type>returnType</type>.
+		It displays one variant of the method call to the instance method <function>Class->method</function>
+		and that it takes two parameters of <type>parameterType</type>, has one optional parameter and
+		that it returns <type>returnType</type>.
 	</para>
 </preface>
