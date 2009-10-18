@@ -125,10 +125,16 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		// select
 		$columns = $query_obj_var.'->columns[] = "'.addcslashes($columns, '"').'";';
 		
-		return $query_obj_var.'->join[] = "LEFT JOIN ' . 
+		$str = $query_obj_var.'->join[] = "LEFT JOIN ' . 
 			addcslashes($db->protectIdentifiers($db->dbprefix . $related->getTable()), '"') . 
-			' AS ' . addcslashes($db->protectIdentifiers($alias_of_linked_var.'-' . $this->relation->getName()), '"') . '
-	ON ' . addcslashes(implode(' AND ', $cols), '"')."\";\n".$columns;
+			' AS ' . addcslashes($db->protectIdentifiers($alias_of_linked_var.'-' . $this->relation->getName()), '"');
+		
+		$str .= '
+	ON ' . addcslashes(implode(' AND ', $cols), '"')."\";\n";
+		
+		$str .= $related->getPluginHook('relation.joinRelated.extra_code', array('$query', '$alias_of_linked-' . $this->relation->getName()))."\n";
+		
+		return $str.$columns;
 	}
 	
 	// ------------------------------------------------------------------------

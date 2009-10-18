@@ -172,14 +172,23 @@ class Db_Descriptor_Relation_ManyToMany implements Db_Descriptor_RelationInterfa
 		// select
 		$columns = $query_obj_var.'->columns[] = "'.addcslashes($columns, '"').'";';
 		
-		return '$query->join[] = "LEFT JOIN ' .
+		$str = '$query->join[] = "LEFT JOIN ' .
 			addcslashes($db->protectIdentifiers($db->dbprefix . $this->getLinkTable()), '"') . 
-			' AS ' . addcslashes($db->protectIdentifiers('$alias_of_linked-_l_' . $this->getLinkTable()), '"') . 
-			' 
-	ON ' . addcslashes(implode(' AND ', $local_cols), '"') . '
+			' AS ' . addcslashes($db->protectIdentifiers('$alias_of_linked-_l_' . $this->getLinkTable()), '"');
+		
+		$str .= ' 
+	ON ' . addcslashes(implode(' AND ', $local_cols), '"');
+		
+		$str .= '
 LEFT JOIN ' . addcslashes($db->protectIdentifiers($db->dbprefix . $related->getTable()), '"') . 
-			' AS '.addcslashes($db->protectIdentifiers('$alias_of_linked-' . $this->relation->getName()), '"').'
-	ON ' . addcslashes(implode(' AND ', $cols), '"')."\";\n".$columns;
+			' AS '.addcslashes($db->protectIdentifiers('$alias_of_linked-' . $this->relation->getName()), '"');
+		
+		$str .= '
+	ON ' . addcslashes(implode(' AND ', $cols), '"')."\";\n";
+		
+		$str .= $related->getPluginHook('relation.joinRelated.extra_code', array('$query', '$alias_of_linked-' . $this->relation->getName()))."\n";
+		
+		return $str.$columns;
 	}
 	
 	// ------------------------------------------------------------------------

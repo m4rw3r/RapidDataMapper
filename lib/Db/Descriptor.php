@@ -104,6 +104,13 @@ class Db_Descriptor
 	protected $plugins = array();
 	
 	/**
+	 * A list with hooked code which the plugins have added.
+	 * 
+	 * @var array
+	 */
+	protected $plugin_hooks = array();
+	
+	/**
 	 * Contains a list of the primary keys described by this object.
 	 * 
 	 * @var array
@@ -868,6 +875,48 @@ class Db_Descriptor
 		}
 		
 		return implode(', ', $col_arr);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns code/data from a plugin hook.
+	 * 
+	 * @param  string
+	 * @param  array
+	 * @param  string
+	 * @return string
+	 */
+	public function getPluginHook($hook_name, $parameters = array(), $default = '')
+	{
+		$hook_name = strtolower($hook_name);
+		
+		if(empty($this->plugin_hooks[$hook_name]))
+		{
+			return $default;
+		}
+		
+		$str = '';
+		foreach($this->plugin_hooks[$hook_name] as $callable)
+		{
+			$str .= call_user_func_array($callable, $parameters);
+		}
+		
+		return $str;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Registers a callable with the plugin hooks system.
+	 * 
+	 * @param  string
+	 * @param  callable
+	 * @return void
+	 */
+	public function setPluginHook($hook_name, $callable)
+	{
+		$this->plugin_hooks[strtolower($hook_name)][] = $callable;
 	}
 	
 	// ------------------------------------------------------------------------

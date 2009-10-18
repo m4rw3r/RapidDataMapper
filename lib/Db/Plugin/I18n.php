@@ -128,6 +128,9 @@ class Db_Plugin_I18n extends Db_Plugin
 			$this->lang_table = $this->table_prefix.$this->descriptor->getTable().$this->table_suffix;
 		}
 		
+		// register extra code for the joinRelated() method
+		$this->descriptor->setPluginHook('relation.joinRelated.extra_code', array($this, 'getJoinTranslationCode'));
+		
 		$columns = $this->descriptor->getColumns();
 		$to_decorate = $this->columns;
 		
@@ -231,8 +234,8 @@ class Db_Plugin_I18n extends Db_Plugin
 		
 		$conditions = implode(' AND ', $conds);
 		
-		return $query_var.'->join[] = \'INNER JOIN '.addcslashes($db->protectIdentifiers($this->lang_table), "'").' AS '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix), "'").'
-	ON '.$conditions.' AND '.$db->protectIdentifiers($base_alias.$this->alias_suffix.'.'.$this->lang_column->getColumn()).' = \'.$this->language;';
+		return $query_var.'->join[] = "INNER JOIN '.addcslashes($db->protectIdentifiers($this->lang_table), '"').' AS '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix), '"').'
+	ON '.$conditions.' AND '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix.'.'.$this->lang_column->getColumn()), '"').' = ".$this->language;';
 	}
 	
 	// ------------------------------------------------------------------------
