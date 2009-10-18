@@ -13,7 +13,7 @@ class Db_Plugin_I18n_Part_SetLang extends Db_Mapper_Code_Method
 		$this->param_list = '$lang_key';
 		
 		// TODO: Filter?
-		$this->addPart('$this->language = $this->db->protectIdentifiers($lang_key);');
+		$this->addPart('$this->language = $this->db->escape($lang_key);');
 	}
 }
 
