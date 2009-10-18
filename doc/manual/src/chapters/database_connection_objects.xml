@@ -298,7 +298,7 @@ $array = $result->resultArray();]]></programlisting>
 			<example>
 				<title>Getting arrays of objects as result</title>
 				
-				<programlisting language="php"><![CDATA[$resultArr = $resultObj->result();s]]></programlisting>
+				<programlisting language="php"><![CDATA[$resultArr = $resultObj->result();]]></programlisting>
 			</example>
 			
 			<example>
@@ -317,7 +317,7 @@ while($row = $result->next())
 				
 				<para>
 					It is only marginally faster when iterating, so the slower iteration
-					using <classname>IteratorAggregate</classname> is recommended as it is easier to read and understand.
+					using <classname>IteratorAggregate</classname> is recommended as it is easier to read and maintain.
 				</para>
 			</example>
 		</section>
