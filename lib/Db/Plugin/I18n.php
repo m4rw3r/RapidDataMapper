@@ -212,7 +212,7 @@ class Db_Plugin_I18n extends Db_Plugin
 		
 		$builder->addPart(new Db_Plugin_I18n_Part_SetLang($this->descriptor));
 		
-		$builder->addPart(new Db_Mapper_Code_Property('language', $db->protectIdentifiers($this->default_language)));
+		$builder->addPart(new Db_Mapper_Code_Property('language', $db->escape($this->default_language)));
 	}
 	
 	// ------------------------------------------------------------------------
@@ -234,7 +234,7 @@ class Db_Plugin_I18n extends Db_Plugin
 		
 		$conditions = implode(' AND ', $conds);
 		
-		return $query_var.'->join[] = "INNER JOIN '.addcslashes($db->protectIdentifiers($this->lang_table), '"').' AS '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix), '"').'
+		return $query_var.'->join[] = "LEFT JOIN '.addcslashes($db->protectIdentifiers($this->lang_table), '"').' AS '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix), '"').'
 	ON '.$conditions.' AND '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix.'.'.$this->lang_column->getColumn()), '"').' = ".$this->language;';
 	}
 	
