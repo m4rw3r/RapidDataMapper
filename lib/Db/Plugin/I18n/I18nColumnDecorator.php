@@ -11,19 +11,19 @@
 class Db_Plugin_I18n_I18nColumnDecorator extends Db_Decorator
 {
 	/**
-	 * The suffix for the table alias for the translated table.
+	 * The plugin object.
 	 * 
-	 * @var string
+	 * @var Db_Plugin_I18n
 	 */
-	protected $alias_suffix;
+	protected $plugin;
 	
 	/**
 	 * @param  Db_Descriptor_Column
 	 */
-	function __construct(Db_Descriptor_Column $destination, $alias_suffix)
+	function __construct(Db_Descriptor_Column $destination, Db_Plugin_I18n $plugin)
 	{
 		$this->setDecoratedObject($destination);
-		$this->alias_suffix = $alias_suffix;
+		$this->plugin = $plugin;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -38,7 +38,40 @@ class Db_Plugin_I18n_I18nColumnDecorator extends Db_Decorator
 	 */
 	public function getSelectCode($table, $alias, Db_Connection $db)
 	{
-		return $db->protectIdentifiers($table.$this->alias_suffix.'.'.$this->getColumn()).' AS '.$db->protectIdentifiers($alias.'_'.$this->getProperty());
+		return $db->protectIdentifiers($table.$this->plugin->getAliasSuffix().'.'.$this->getColumn()).' AS '.$db->protectIdentifiers($alias.'_'.$this->getProperty());
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a piece of code which fetches the data from an instance of the described
+	 * object and inserts it into an array, with the column name as key.
+	 * 
+	 * Only assign data if the value exists on the described object, otherwise
+	 * do not assign anything to the $dest_var.
+	 * 
+	 * Example of generated code:
+	 * <code>
+	 * // params: $object_var = '$obj', $dest_var = '$data'
+	 * isset($obj->id) && $data['PK_id'] = (Int) $obj->id;
+	 * </code>
+	 * 
+	 * @param  string	The name of the variable holding an instance of the described object.
+	 * @param  string	The name of the variable holding an associative array to assign the data to.
+	 * @param  bool		If it is an update which the code is fetching data for
+	 * @return string
+	 */
+	public function getFromObjectToDataCode($object_var, $dest_var, $is_update = false)
+	{
+		// only assign the columns which are allowed to be updated
+		if(( ! $is_update && $this->isInsertable()) OR $is_update && $this->isUpdatable())
+		{
+			return 'isset('.$object_var.'->'.$this->getProperty().') && $lang_data[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFromObjectCode($object_var)).';';
+		}
+		else
+		{
+			return '';
+		}
 	}
 }
 

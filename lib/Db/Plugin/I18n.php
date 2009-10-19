@@ -145,7 +145,7 @@ class Db_Plugin_I18n extends Db_Plugin
 					throw new Db_Exception('Db_Plugin_I18n: Cannot use primary key "'.$column->getColumn().'" as language key.');
 				}
 				
-				$dec = new Db_Plugin_I18n_LangColumnDecorator($column, $this->alias_suffix);
+				$dec = new Db_Plugin_I18n_LangColumnDecorator($column, $this);
 				
 				$this->lang_column = $dec;
 				
@@ -174,7 +174,7 @@ class Db_Plugin_I18n extends Db_Plugin
 					throw new Db_Exception('Db_Plugin_I18n: Cannot translate primary key "'.$column->getColumn().'".');
 				}
 				
-				$dec = new Db_Plugin_I18n_I18nColumnDecorator($column, $this->alias_suffix);
+				$dec = new Db_Plugin_I18n_I18nColumnDecorator($column, $this);
 				
 				$this->descriptor->addDecorator($dec);
 				
@@ -204,8 +204,14 @@ class Db_Plugin_I18n extends Db_Plugin
 		$db = $this->descriptor->getConnection();
 		
 		$pop_query = new Db_Plugin_I18n_Part_PopulateFindQuery($this->descriptor, $this);
+		$save_insert = new Db_Plugin_I18n_Part_Save_Insert($this->descriptor, $this);
 		
 		if( ! $builder->addPart($pop_query, '', true))
+		{
+			throw new Db_Exception('Db_Plugin_I18n: Cannot replace the populateFindQuery method.');
+		}
+		
+		if( ! $builder->addPart($save_insert, 'method_save', true))
 		{
 			throw new Db_Exception('Db_Plugin_I18n: Cannot replace the populateFindQuery method.');
 		}
@@ -248,6 +254,42 @@ class Db_Plugin_I18n extends Db_Plugin
 			
 			unset($this->decorators[$k]);
 		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the table storing the language data.
+	 * 
+	 * @return string
+	 */
+	public function getLangTable()
+	{
+		return $this->lang_table;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the suffix to use when aliasing internationalized columns.
+	 * 
+	 * @return string
+	 */
+	public function getAliasSuffix()
+	{
+		return $this->alias_suffix;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the language identifier to use by default.
+	 * 
+	 * @return string
+	 */
+	public function getDefaultLanguage()
+	{
+		return $this->default_language;
 	}
 }
 
