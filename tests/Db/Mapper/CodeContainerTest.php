@@ -115,21 +115,25 @@ class Db_Mapper_CodeContainerTest extends PHPUnit_Framework_TestCase
 	{
 		$c = new TestContainer();
 		
-		$c->addPart($n = new TestContainer('Foobar'));
+		$this->assertTrue($c->addPart($n = new TestContainer('Foobar')));
 		
-		$this->assertSame(array($n), $c->getContent());
+		$this->assertSame(array(0 => $n), $c->getContent());
 		
-		$c->addPart($p = new TestContainer('Foobar'), '', true);
+		$this->assertTrue($c->addPart($p = new TestContainer('Foobar'), '', true));
 		
-		$this->assertSame(array(1 => $p), $c->getContent());
+		$this->assertSame(array(0 => $p), $c->getContent());
 		
-		$c->addPart($k = new TestContainer('foo'), '', true);
+		$this->assertFalse($c->addPart($k = new TestContainer('foo'), '', true));
 		
-		$this->assertSame(array(1 => $p, 2 => $k), $c->getContent());
+		$this->assertSame(array(0 => $p), $c->getContent());
 		
-		$c->addPart($l = new TestContainer('Foobar'), '', true);
+		$this->assertTrue($c->addPart($l = new TestContainer('foo')));
 		
-		$this->assertSame(array(2 => $k, 3 => $l), $c->getContent());
+		$this->assertSame(array(0 => $p, 1 => $l), $c->getContent());
+		
+		$this->assertTrue($c->addPart($m = new TestContainer('Foobar'), '', true));
+		
+		$this->assertSame(array(0 => $m, 1 => $l), $c->getContent());
 	}
 	
 	// ------------------------------------------------------------------------
@@ -142,9 +146,17 @@ class Db_Mapper_CodeContainerTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertSame(array('foo'), $c->getContent());
 		
-		$this->assertTrue($c->addPart($o = new TestContainer(), '', true));
+		$this->assertFalse($c->addPart($o = new TestContainer(), '', true));
 		
-		$this->assertSame(array('foo', $o), $c->getContent());
+		$this->assertSame(array('foo'), $c->getContent());
+		
+		$this->assertTrue($c->addPart($d = new TestContainer('foo')));
+		
+		$this->assertSame(array('foo', $d), $c->getContent());
+		
+		$this->assertTrue($c->addPart($e = new TestContainer('foo'), '', true));
+		
+		$this->assertSame(array('foo', $e), $c->getContent());
 	}
 	
 	// ------------------------------------------------------------------------
