@@ -205,6 +205,7 @@ class Db_Plugin_I18n extends Db_Plugin
 		
 		$pop_query = new Db_Plugin_I18n_Part_PopulateFindQuery($this->descriptor, $this);
 		$save_insert = new Db_Plugin_I18n_Part_Save_Insert($this->descriptor, $this);
+		$save_update = new Db_Plugin_I18n_Part_Save_Update($this->descriptor, $this);
 		
 		if( ! $builder->addPart($pop_query, '', true))
 		{
@@ -213,7 +214,12 @@ class Db_Plugin_I18n extends Db_Plugin
 		
 		if( ! $builder->addPart($save_insert, 'method_save', true))
 		{
-			throw new Db_Exception('Db_Plugin_I18n: Cannot replace the populateFindQuery method.');
+			throw new Db_Exception('Db_Plugin_I18n: Cannot replace the insert part of the save method.');
+		}
+		
+		if( ! $builder->addPart($save_update, 'method_save', true))
+		{
+			throw new Db_Exception('Db_Plugin_I18n: Cannot replace the update part of the save method.');
 		}
 		
 		$builder->addPart(new Db_Plugin_I18n_Part_SetLang($this->descriptor));
@@ -290,6 +296,18 @@ class Db_Plugin_I18n extends Db_Plugin
 	public function getDefaultLanguage()
 	{
 		return $this->default_language;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the column which is responsible for containing the language identifier.
+	 * 
+	 * @return Db_Descriptor_Column
+	 */
+	public function getLangColumn()
+	{
+		return $this->lang_column;
 	}
 }
 

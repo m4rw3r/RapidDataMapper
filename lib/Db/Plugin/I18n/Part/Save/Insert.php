@@ -48,7 +48,7 @@ class Db_Plugin_I18n_Part_Save_Insert extends Db_Mapper_CodeContainer
 }
 else
 {
-	// TODO: Add syntax that is supported by all databases
+	// TODO: Does this query work with all databases? (assume auto increment, manual pks aren\'t allowed to come so far if nulled)
 	$status = $this->db->query(\'INSERT INTO '.addcslashes($db->protectIdentifiers($descriptor->getTable()), "'").' SET '.addcslashes(array_shift($descriptor->getPrimaryKeys())->getColumn(), "'").' = NULL\');
 }');
 		
@@ -60,6 +60,9 @@ else
 		{
 			$this->addPart($prop->getInsertReadColumnCode('$data', '$object'));
 		}
+		
+		// save for future comparison
+		$this->addPart("// save the data to be able to only update the modified data\n\$object->__data = array_merge(\$data, \$lang_data);");
 		
 		// assign the "primary keys"
 		foreach($descriptor->getPrimaryKeys() as $prop)
@@ -74,9 +77,6 @@ else
 		{
 			$this->addPart($rel->getSaveInsertRelationCode('$object'));
 		}
-		
-		// save for future comparison
-		$this->addPart("// save the data to be able to only update the modified data\n\$object->__data = \$data;");
 		
 		// HOOK: post_insert
 		$this->addPart($descriptor->getHookCode('post_insert', '$object'));

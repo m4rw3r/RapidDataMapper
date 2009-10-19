@@ -32,19 +32,24 @@ class Db_Plugin_I18n_Part_Save_Update extends Db_Mapper_CodeContainer
 		// HOOK: pre_update
 		$this->addPart($descriptor->getHookCode('pre_update', '$object', '$data'));
 		
-		$this->addPart("// just update the data which have been changed\n\$save_data = array_diff_assoc(\$data, \$object->__data);");
+		$this->addPart("// just update the data which have been changed\n\$save_data = array_diff_assoc(\$data, \$object->__data);\n\$save_lang_data = array_diff_assoc(\$lang_data, \$object->__data);");
 		
 		foreach($descriptor->getRelations() as $rel)
 		{
 			$this->addPart($rel->getSaveUpdateRelationCode('$object'));
 		}
 		
-		$this->addPart('if(empty($save_data) OR $this->db->update(\''.$descriptor->getTable().'\', $save_data, $object->__id) === false)
+		$this->addPart('
+if(empty($save_data) && empty($save_lang_data))
 {
 	return false;
-}');
+}
+
+empty($save_data) OR $this->db->update(\''.$descriptor->getTable().'\', $save_data, $object->__id);
+
+empty($save_lang_data) OR $this->db->update(\''.$plugin->getLangTable().'\', $save_lang_data, array_merge(array(\''.$plugin->getLangColumn()->getColumn().'\' => $object->'.$plugin->getLangColumn()->getProperty().'), $object->__id));');
 		
-		$this->addPart('$object->__data = $data;');
+		$this->addPart('$object->__data = array_merge($data, $lang_data);');
 		
 		// HOOK: post_update
 		$this->addPart($descriptor->getHookCode('post_update', '$object'));
