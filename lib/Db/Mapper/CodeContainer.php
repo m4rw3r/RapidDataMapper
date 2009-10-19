@@ -31,10 +31,13 @@ abstract class Db_Mapper_CodeContainer
 	/**
 	 * Adds a part to this container.
 	 * 
-	 * @param  Db_Mapper_CodeContainer
-	 * @param  string	The path to the destination container
-	 * @param  bool
-	 * @return bool
+	 * NOTE:
+	 * Strings cannot be replaced as they have no identifier (ie. a getName() method).
+	 * 
+	 * @param  Db_Mapper_CodeContainer|string
+	 * @param  string	The path to the destination container (which will contain the object/string)
+	 * @param  bool		If to replace an existing code part with same name (located in the destination container)
+	 * @return bool		True if the object/string has been added/replaced
 	 */
 	final public function addPart($part, $path = '', $replace = false)
 	{
@@ -52,20 +55,33 @@ abstract class Db_Mapper_CodeContainer
 		{
 			if($replace && $part instanceof Db_Mapper_CodeContainer)
 			{
+				// return:
+				$replaced = false;
+				
 				// replace the CodeContainer with a new one
 				foreach($this->content as $k => $p)
 				{
 					// matching names
 					if($p instanceof Db_Mapper_CodeContainer && $part->getName() == $p->getName())
 					{
-						unset($this->content[$k]);
+						// replace:
+						$this->content[$k] = $part;
+						
+						$replaced = true;
 					}
 				}
+				
+				// sort, so we preserve the original order:
+				ksort($this->content);
+				
+				return $replaced;
 			}
-			
-			$this->content[] = $part;
-			
-			return true;
+			else
+			{
+				$this->content[] = $part;
+				
+				return true;
+			}
 		}
 		else
 		{
