@@ -203,7 +203,7 @@ class Db_Plugin_I18n extends Db_Plugin
 	{
 		$db = $this->descriptor->getConnection();
 		
-		$pop_query = new Db_Plugin_I18n_Part_PopulateFindQuery($this->descriptor, $this);
+		$pop_query   = new Db_Plugin_I18n_Part_PopulateFindQuery($this->descriptor, $this);
 		$save_insert = new Db_Plugin_I18n_Part_Save_Insert($this->descriptor, $this);
 		$save_update = new Db_Plugin_I18n_Part_Save_Update($this->descriptor, $this);
 		
