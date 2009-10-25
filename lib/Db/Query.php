@@ -170,24 +170,24 @@ class Db_Query
 	 * @param  array|Db_Query_Select
 	 * @return self
 	 */
-	public function whereIn($statement, $values)
+	public function whereIn($column, $values)
 	{
-		$pre = self::getLogicalOperator($statement, $this->where);
+		$pre = self::getLogicalOperator($column, $this->where);
 		
 		if($this->escape)
 		{
-			$statement = $this->_instance->protectIdentifiers($statement);
+			$statement = $this->_instance->protectIdentifiers($column);
 		}
 		
 		// create a list of values if there isn't a subquery
 		if( ! $values instanceof Db_Query_Select)
 		{
-			$this->where[] = $pre . $statement . ' IN (' . 
+			$this->where[] = $pre . $column . ' IN (' . 
 				implode(', ', array_map(array($this->_instance, 'escape'), $values)) . ')';
 		}
 		else
 		{
-			$this->where[] = $pre . $statement . ' IN (' . $values->__toString() . ')';
+			$this->where[] = $pre . $column . ' IN (' . $values->__toString() . ')';
 		}
 		
 		return $this;
@@ -202,24 +202,24 @@ class Db_Query
 	 * @param  array|Db_Query_Select
 	 * @return self
 	 */
-	public function whereNotIn($statement, $values)
+	public function whereNotIn($column, $values)
 	{
-		$pre = self::getLogicalOperator($statement, $this->where);
+		$pre = self::getLogicalOperator($column, $this->where);
     	
 		if($this->escape)
 		{
-			$statement = $this->_instance->protectIdentifiers($statement);
+			$statement = $this->_instance->protectIdentifiers($column);
 		}
     
 		// create a list of values if there isn't a subquery
 		if( ! $values instanceof Db_Query_Select)
 		{
-			$this->where[] = $pre . $statement . ' NOT IN (' . 
+			$this->where[] = $pre . $column . ' NOT IN (' . 
 				implode(', ', array_map(array($this->_instance, 'escape'), $values)) . ')';
 		}
 		else
 		{
-			$this->where[] = $pre . $statement . ' NOT IN (' . $values->__toString() . ')';
+			$this->where[] = $pre . $column . ' NOT IN (' . $values->__toString() . ')';
 		}
     
 		return $this;
@@ -392,11 +392,6 @@ class Db_Query
 				// add the raw sql
 				$list[] = $pre.$condition.(self::hasCmpOperator($condition) ? '' : ' =').$value;
 			}
-		}
-		// bound statement
-		elseif(is_array($value))
-		{
-			$list[] = $pre . $this->_instance->replaceBinds($condition, $value);
 		}
 		// subquery
 		elseif($value instanceof Db_Query_Select)
