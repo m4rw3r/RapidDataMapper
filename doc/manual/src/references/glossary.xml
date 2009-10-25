@@ -166,6 +166,51 @@ $closure = function()
 		</glossdef>
 	</glossentry>
 	
+	<glossentry xml:id="escaping">
+		<glossterm>escaping</glossterm>
+		
+		<glossdef>
+			<para>
+				Escaping is the procedure of prefixing characters located in a string which otherwise
+				will affect the behaviour of the result. For example are single quotes ("<literal>'</literal>")
+				usually escaped in values because otherwise they would have ended the string prematurely
+				and thus creating a security vulnerability (the strings in SQL are denoted by a single quote
+				at both the end and beginning and if a single quote is encountered without an escape character
+				it will be assumed that the string is ending there, even if it really ends a few characters later).
+			</para>
+			
+			<table>
+				<title>Examples of escaping</title>
+				
+				<tgroup cols="2">
+					<thead>
+						<row>
+							<entry>No escaping</entry>
+							<entry>With escaping</entry>
+						</row>
+					</thead>
+					
+					<tbody>
+						<row>
+							<entry>"<literal>Some string</literal>"</entry>
+							<entry>"<literal>Some string</literal>"</entry>
+						</row>
+						
+						<row>
+							<entry>"<literal>Some 'string'</literal>"</entry>
+							<entry>"<literal>Some \'string\'</literal>"</entry>
+						</row>
+						
+						<row>
+							<entry>"<literal>'Some String' here ''</literal>"</entry>
+							<entry>"<literal>\'Some String\' here \'\'</literal>"</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+		</glossdef>
+	</glossentry>
+	
 	<glossentry xml:id="glossary.exception">
 		<glossterm>exception</glossterm>
 		
@@ -177,6 +222,24 @@ $closure = function()
 			<para>
 				These objects can be intercepted and then proper actions can take place to either try to rectify the error
 				or to terminate gracefully.
+			</para>
+		</glossdef>
+	</glossentry>
+	
+	<glossentry xml:id="glossary.identifier_protection">
+		<glossterm>Identifier protection</glossterm>
+		
+		<glossdef>
+			<para>
+				Identifiers in <abbrev>SQL</abbrev> are pointing towards columns, tables, aliases etc.
+				A problem arises if you are trying to give an identifier the same name as a keyword
+				(eg. "<literal>SELECT</literal>" or "<literal>left</literal>"), because the database will interpret the word as not
+				an identifier but as the keyword.
+			</para>
+			
+			<para>
+				To avoid this identifiers are surrounded by certain characters that indicates that it is an
+				identifier (eg. MySQL uses "<literal>´</literal>").
 			</para>
 		</glossdef>
 	</glossentry>

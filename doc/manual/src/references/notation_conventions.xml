@@ -22,9 +22,14 @@
 	</example>
 	
 	<para>
+		Literal strings are surrounded by citation marks (") and look like "<literal>this</literal>" when
+		written inline.
+	</para>
+	
+	<para>
 		To reference a certain class in the text we will mark the class like this: <classname>ClassName</classname>.
-		The methods of a class are written like this <function>ClassName::methodName</function> (will be used for static
-		members of the class) or this <function>ClassName->methodName</function> (for instance methods).
+		The methods of a class are written like <function>ClassName::methodName</function> (will be used for static
+		members of the class) or <function>ClassName->methodName</function> (for instance methods).
 	</para>
 	
 	<para>
