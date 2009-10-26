@@ -166,7 +166,7 @@ $closure = function()
 		</glossdef>
 	</glossentry>
 	
-	<glossentry xml:id="escaping">
+	<glossentry xml:id="glossary.escaping">
 		<glossterm>escaping</glossterm>
 		
 		<glossdef>
