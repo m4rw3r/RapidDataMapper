@@ -70,7 +70,7 @@ $foo_connection = Db::getConnection('foo');]]></programlisting>
 		</para>
 	</section>
 	
-	<section>
+	<section xml:id="chapter.database_connection_objects.querying">
 		<title>Querying the database using a Connection Object</title>
 		
 		<para>
@@ -254,8 +254,8 @@ $count = $result->count();]]></programlisting>
 			</para>
 			
 			<para>
-				<function>Db_Result->var</function> will return the first value in the result set
-				(first row and first column) as a scalar variable. It can also return a select column-row cell:
+				<function>Db_Result->val</function> will by default return the first value in the result set
+				(first row and first column) as a scalar variable, but can also return an abitrary column-row cell:
 			</para>
 			
 			<example>
