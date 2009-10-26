@@ -218,4 +218,460 @@ foreach($result as $row)
 			
 		</para>
 	</section>
+	
+	<section xml:id="chapter.query_builders.escaping">
+		<title>Controlling escaping</title>
+		
+		<para>
+			By default are all the data sent into the query builders either
+			<glossterm linkend="glossary.escaping">escaped</glossterm>
+			or <glossterm linkend="glossary.identifier_protection">identifier protected</glossterm>
+		</para>
+	</section>
+	
+	<section xml:id="chapter.query_builders.conditions">
+		<title>The Different SQL Conditions</title>
+		
+		<para>
+			Conditions are very common in SQL, and it is almost impossible to avoid them.
+			As soon as you need to filter something you have to use them
+			(unless you want to do it the slow way: load everything and then iterate in PHP).
+		</para>
+		
+		<para>
+			RapidDataMapper provides helper methods on the query objects to make it easy
+			to both create the initial conditions but also to simplify the addition of
+			extra conditions.
+			The conditions do not have to be specified all at once, instead you can add
+			them wherever the need arises.
+		</para>
+		
+		<para>
+			The code below dynamically adds a <token>LIKE</token> condition to a query when
+			it is a "search request":
+		</para>
+		
+		<example>
+			<title>Adding additional WHERE conditions</title>
+			
+			<programlisting language="php"><![CDATA[$q = Db::getConnection()->select()->from('tracks');
+
+$q->where('artist', $_POST['name']);
+
+if($search)
+{
+	$q->like('name', $_POST['search']);
+}
+
+$result = $q->get();]]></programlisting>
+		</example>
+		
+		<section xml:id="chapter.query_builders.conditions.or">
+			<title>Replacing AND with OR boolean operators</title>
+			
+			<para>
+				All the conditions have their methods on the query building objects (except for INSERT which
+				does not have the need) and the first parameter behaves the same on all of them:
+				It is <glossterm>identifier protected</glossterm> and if it is prefixed by an OR ("<literal>or </literal>")
+				then an <token>OR</token> operator will precede the condition instead of an <token>AND</token>.
+			</para>
+
+			<para>
+				If there are no earlier conditions no boolean operator will be prepended, even if you
+				explicitly write "<literal>or </literal>" before the column name.
+			</para>
+
+			<example>
+				<title>Using OR operators</title>
+
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select()->from('tracks');
+
+foreach($_POST['artists'] as $artist)
+{
+	$q->where('or artist', $artist);
+}]]></programlisting>
+			</example>
+		</section>
+		
+		<section xml:id="chapter.query_builders.conditions.where">
+			<title>WHERE</title>
+			
+			<para>
+				The <token>WHERE</token> condition is the most commonly used and also the one with
+				the most features in the query builder. It can add the conditions in sequences,
+				but it can also nest them in parenthesis and use <glossterm>subqueries</glossterm>.
+			</para>
+			
+			<para>
+				By default all the conditions and values sent to <function>Db_Query->where</function>
+				will be identifier protected and escaped, respectively.
+				The identifier protection will protect all the identifiers (to avoid both injection attacks
+				and interference with database keywords) but it will preserve all conditional operators
+				(eg. "<literal>=</literal>", "<literal>&lt;</literal>", "<literal>&gt;</literal>",
+				"<literal>!=</literal>").
+			</para>
+			
+			<para>
+				To avoid escaping or identifier protection, use
+				<link linkend="funcref.Db_Query-escape"><function>Db_Query->escape</function></link>
+				to temporarily switch escaping off.
+			</para>
+			
+			<para>
+				Function synopsis for <function>Db_Query->where</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query-where">
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->where</function></funcdef>
+					
+					<paramdef choice="opt"><type>string</type> <parameter>$condition</parameter> = 'or'</paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->where</function></funcdef>
+					
+					<paramdef><type>array</type> <parameter>$condition</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->where</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$condition</parameter></paramdef>
+					<paramdef choice="opt"><type>scalar</type> <parameter>$value</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->where</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$condition</parameter></paramdef>
+					<paramdef><type>Db_Query_Select</type> <parameter>$subquery</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<section>
+				<title>Nesting WHERE conditions</title>
+				
+				<para>
+					The first variant creates a nested list of conditions that will be wrapped in parenthesis.
+					If the first parameter is empty, it will be preceded by <token>AND</token> if there are
+					conditions before it. If the first parameter is equal to "<literal>or</literal>" it will
+					instead be preceded by <token>OR</token>.
+				</para>
+				
+				<para>
+					You can not only use <function>Db_Query->where</function> in the nested query
+					(on the nested where object), but also
+					<function linkend="funcref.Db_Query-whereIn">Db_Query->whereIn</function>,
+					<function linkend="funcref.Db_Query-whereNotIn">Db_Query->whereNotIn</function> and
+					<function linkend="funcref.Db_Query-like">Db_Query->like</function>.
+				</para>
+				
+				<example>
+					<title>Using nested WHERE conditions</title>
+					
+					<programlisting language="php"><![CDATA[$q = Db::getConnection()->select()->from('tracks');
+
+// store the nested variant in $nested
+$nested = $q->where();
+
+// no need to reassign it to $q again, it is already linked with the proper place in the WHERE stack in $q
+$nested->where('artist', 'Within Temptation');
+$nested->where('or artist', 'Skyfire');
+
+// add another condition after the nested conditions
+$q->like('name', 'intro');
+
+$r = $q->get();
+// SELECT t1.* FROM tracks WHERE (`artist` = 'Within Temptation' OR `artist` = 'Skyfire') AND `name` LIKE '%intro%']]></programlisting>
+				</example>
+			</section>
+			
+			<section>
+				<title>Conditions between two columns</title>
+				
+				<para>
+					The second variant is a lot simpler, it will simply append the <varname>$condition</varname>
+					to the WHERE stack (but it will still parse the OR condition if present, and also
+					protect the identifiers provided escaping is on):
+				</para>
+				
+				<example>
+					<title>Adding conditions between different columns</title>
+					
+					<programlisting language="php"><![CDATA[$q = Db::getConnection()->select()->from('tracks');
+
+$q->where('name = artist'); // WHERE `name` = `artist`
+
+$r = $q->get();]]></programlisting>
+				</example>
+			</section>
+			
+			<section>
+				<title>Conditions between column and a value</title>
+				
+				<para>
+					To add a condition which compares a column with a specified value, you just supply a
+					column name as the first parameter (<varname>$condition</varname>, with optional
+					comparison operator) and the value to compare with as the <varname>$value</varname> parameter.
+				</para>
+				
+				<para>
+					If the <varname>$condition</varname> does not have a condition at the end, an equal
+					sign ("<literal>=</literal>") will be appended. The check for a boolean <token>OR</token>
+					operator will also be made (see
+					<link linkend="chapter.query_builders.conditions.or">Replacing AND with OR boolean operators</link>).
+				</para>
+				
+				<para>
+					If <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> is set to <symbol>false</symbol>,
+					<varname>$condition</varname> will not be identifier protected (conditions will still be
+					appended and <token>OR</token> will also be parsed, and if a condition is missing at the
+					end of <varname>$condition</varname>, an "<literal>=</literal>" will still be appended)
+					and <varname>$value</varname> will be concatenated (no escaping) and then appended to the WHERE
+					stack.
+				</para>
+				
+				<example>
+					<title>Comparing column to a value</title>
+					
+					<programlisting language="php"><![CDATA[$q = Db::getConnection()->select()->from('tracks');
+
+$q->where('artist', 'Wintersun'); // `artist` = 'Wintersun'
+$q->where('or artist =', 'Within Temptation'); // OR `artist` = 'Within Temptation'
+$q->where('plays >', 23); // AND `plays` > 23
+
+// no escaping (in the case of Db_Query->like, only the column is affected by the escape setting):
+$q->escape(false);
+$q->where('or LOWER(name)', 'something \' not escaped');
+// OR LOWER(name) = something ' not escaped
+// recommending this instead:
+$q->where('or LOWER(name)', Db::getConnection()->escape('something \' escaped'));
+// OR LOWER(name) = 'something \' escaped'
+$q->escape(true);
+
+$r = $q->get();]]></programlisting>
+				</example>
+			</section>
+			
+			<section>
+				<title>Condition with a subquery</title>
+				
+				<para>
+					You can also make a condition that compares a column to a single value returned
+					by a subquery (notice: SINGLE value, otherwise it is a high probability that the
+					database will complain).
+				</para>
+				
+				<para>
+					It will work the same as if you compare a column with a value, only that the value
+					is substituted with the subquery.
+				</para>
+				
+				<example>
+					<title>Comparing a column with a subquery</title>
+					
+					<programlisting language="php"><![CDATA[$db = Db::getConnection();
+
+$q   = $db->select()->from('tracks');
+$sub = $db->select()->from('tracks', 'name')->where('plays >', 23)->limit(1);
+
+$q->where('artist', $sub); // `artist` = (SELECT `name` FROM `tracks` WHERE `plays` > 23 LIMIT 1)
+
+$r = $q->get();]]></programlisting>
+				</example>
+			</section>
+		</section>
+		
+		<section xml:id="chapter.query_builders.conditions.where_in">
+			<title>WHERE IN</title>
+			
+			<para>
+				The WHERE IN condition matches a single column against a list of values, matching if
+				the column matches at least one of the values.
+				The WHERE IN condition is added to a query by calling <function>Db_Query->whereIn</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query-whereIn">
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->whereIn</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$column</parameter></paramdef>
+					<paramdef><type>array</type> <parameter>$values</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->whereIn</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$column</parameter></paramdef>
+					<paramdef><type>Db_Query_Select</type> <parameter>$values</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				As usual you can prepend an <token>or</token> to the column to concatenate it
+				with an OR to the previous condition.
+			</para>
+			
+			<example>
+				<title>Using WHERE IN with a PHP array</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select()->from('tracks');
+
+$titles = array('Ten Leagues Beneath Contempt', 'Genesis', 'Loot Burn Rape Kill Repeat');
+
+$q->whereIn('name', $titles); // WHERE `name` IN ('Ten Leagues Beneath Contempt', 'Genesis', 'Loot Burn Rape Kill Repeat')
+
+$r = $q->get();]]></programlisting>
+			</example>
+			
+			<example>
+				<title>Using subqueries with WHERE IN</title>
+				
+				<programlisting language="php"><![CDATA[$db = Db::getConnection();
+
+$q  = $db->select()->from('artists');
+
+$q2 = $db->select()->from('tracks', 'name'); // important to only select one column
+$q2->escape(false)->having('COUNT(name) >', 2)->groupBy('name');
+
+$q->whereIn('name', $q2); // WHERE `name` IN (SELECT `name` FROM `tracks` HAVING COUNT(name) > 2 GROUP BY `name`)
+
+$r = $q->get();]]></programlisting>
+			</example>
+			
+			<para>
+				If the <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> method
+				has set escaping to <symbol>false</symbol>, <varname>$column</varname> will not be identifier
+				protected (but "<literal>OR </literal>" is still parsed).
+			</para>
+			
+			<example>
+				<title>Using WHERE IN without escaping the column</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db:getConnection()->select()->from('tracks');
+
+$q->escape(false);
+$q->where('LOWER(name)', $titles);
+// WHERE LOWER(name) IN (some list goes here)
+
+$r = $q->get();]]></programlisting>
+			</example>
+		</section>
+		
+		<section xml:id="chapter.query_builders.conditions.where_not_in">
+			<title>WHERE NOT IN</title>
+			
+			<para>
+				This is a variant of the WHERE IN condition, but instead of searching for matches
+				to the supplied list it searches for columns NOT matching the list.
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query-whereNotIn">
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->whereNotIn</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$column</parameter></paramdef>
+					<paramdef><type>array</type> <parameter>$values</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->whereNotIn</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$column</parameter></paramdef>
+					<paramdef><type>Db_Query_Select</type> <parameter>$values</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+		
+		<section xml:id="chapter.query_builders.conditions.like">
+			<title>LIKE</title>
+			
+			<para>
+				To add a LIKE search condition, use <function>Db_Query->like</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query-like">
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->like</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$column</parameter></paramdef>
+					<paramdef><type>array</type> <parameter>$match</parameter></paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$side</parameter> = "<literal>both</literal>"</paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The <varname>$column</varname> parameter is filtered for "<literal>or </literal>" and also identifier
+				protected.
+				<varname>$match</varname> is escaped, with the addition that LIKE wildcards also are escaped
+				(eg. in MySQL are "<literal>%</literal>" and "<literal>_</literal>" escaped), to prevent
+				a too high workload on the server.
+			</para>
+			
+			<para>
+				The <varname>$side</varname> parameter dictates on which side the "<literal>%</literal>"
+				wildcards should be placed ("<literal>%</literal>" matches any number of characters of any type).
+				The possible values are "<literal>left</literal>", "<literal>right</literal>"
+				and "<literal>both</literal>".
+			</para>
+			
+			<example>
+				<title>Using Db_Query->like</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select()->from('tracks');
+
+$q->like('name', 'loss', 'left'); // WHERE `name` LIKE '%loss'
+
+$q->escape(false);
+$q->like('or LOWER(artist)', 'dark'); // OR LOWER(artist) LIKE '%dark%'
+
+$r = $q->get();]]></programlisting>
+			</example>
+		</section>
+		
+		<section xml:id="chapter.query_builders.conditions.bind_where">
+			<title>Fragments with parameters added to WHERE</title>
+			
+			<para>
+				Sometimes you would like to add a large prewritten condition (or list of conditions) to the WHERE part
+				of the query, but still be able to escape all the values.
+				RapidDataMapper provides a way for you to do that, where it only replaces certain placeholders
+				with the escaped values.
+				This is also called prepared statements with bound parameters.
+			</para>
+			
+			<para>
+				(Actually, it is not, but it works exactly like it on the PHP side.)
+			</para>
+			
+			<para>
+				This works like the <varname>$binds</varname> parameter to
+				<function linkend="funcref.Db_Connection-query">Db_Connection->query</function>,
+				with the exception that it only appends it to the WHERE part of the query.
+				It also parses any prepended "<literal>or </literal>" on the <varname>$condition</varname>
+				parameter.
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query-bindWhere">
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->bindWhere</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$condition</parameter></paramdef>
+					<paramdef><type>array</type> <parameter>$binds</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<example>
+				<title>Using bound parameters in the WHERE part of a query builder</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnnection()->select()->from('tracks');
+
+// requires two parameters, first = name, second = artist
+$q->bindWhere('LOWER(name) = ? OR SUBSTR(name, 3) = SUBSTR(artist, -3) AND artist = ?', $_POST);
+
+$r = $q->get();]]></programlisting>
+			</example>
+		</section>
+	</section>
 </chapter>
