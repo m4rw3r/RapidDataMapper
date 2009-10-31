@@ -194,11 +194,6 @@ class Db_Query_Insert
 			$values[] = '(' . implode(', ', $data) . ')';
 		}
 		
-		if(empty($values))
-		{
-			throw new Db_Exception_QueryIncomplete('VALUES missing in INSERT statement');
-		}
-		
 		$str .= implode(', ', $values);
 		
 		return $str;
