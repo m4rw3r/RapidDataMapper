@@ -134,6 +134,7 @@ else
 		<para>
 			If a bind parameter is not found, a <classname>Db_Exception_MissingBindParameter</classname> is thrown.
 			That can be used as a simple validation feature, as it will complain if a parameter is missing.
+			(It will also send the name of the missing parameter if it is a  named bind parameter.)
 		</para>
 		
 		<example>
