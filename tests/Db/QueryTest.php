@@ -117,41 +117,6 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
-	public function testWhereWithBind()
-	{
-		$mock = $this->getMock('Db_Connection', array('replaceBinds'));
-		
-		$mock->expects($this->once())->method('replaceBinds')->with($this->equalTo('a = ?'), $this->equalTo(array('foobar')))->will($this->returnValue('foobar_result'));
-		
-		$q = new Db_Query($mock);
-		
-		$this->assertSame($q, $q->where('a = ?', array('foobar')));
-		
-		$this->assertEquals('(foobar_result)', (String) $q);
-	}
-	
-	// ------------------------------------------------------------------------
-	
-	public function testWhereWithBindMultiple()
-	{
-		$mock = $this->getMock('Db_Connection', array('replaceBinds'));
-		
-		$mock->expects($this->at(0))->method('replaceBinds')->with($this->equalTo('a = ?'), $this->equalTo(array('foobar')))->will($this->returnValue('foobar_result'));
-		$mock->expects($this->at(1))->method('replaceBinds')->with($this->equalTo('b = ?'), $this->equalTo(array('bar', 'lol')))->will($this->returnValue('bar_lol'));
-		
-		$q = new Db_Query($mock);
-		
-		$this->assertSame($q, $q->where('a = ?', array('foobar')));
-		
-		$this->assertEquals('(foobar_result)', (String) $q);
-		
-		$this->assertSame($q, $q->where('b = ?', array('bar', 'lol')));
-		
-		$this->assertEquals('(foobar_result AND bar_lol)', (String) $q);
-	}
-	
-	// ------------------------------------------------------------------------
-	
 	public function testWhereWithSubquery()
 	{
 		$mock = $this->getMock('Db_Connection', array('protectIdentifiers'));
@@ -312,26 +277,6 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$this->assertSame($q, $q->where('or aa > cc'));
 		
 		$this->assertEquals('("a" = "b" OR "aa" > "cc")', (String) $q);
-	}
-	
-	// ------------------------------------------------------------------------
-	
-	public function testWhereOrWithBind()
-	{
-		$mock = $this->getMock('Db_Connection', array('replaceBinds'));
-		
-		$mock->expects($this->at(0))->method('replaceBinds')->with($this->equalTo('a = ?'), $this->equalTo(array('foobar')))->will($this->returnValue('foobar_result'));
-		$mock->expects($this->at(1))->method('replaceBinds')->with($this->equalTo('b = ?'), $this->equalTo(array('bar', 'lol')))->will($this->returnValue('bar_lol'));
-		
-		$q = new Db_Query($mock);
-		
-		$this->assertSame($q, $q->where('or a = ?', array('foobar')));
-		
-		$this->assertEquals('(foobar_result)', (String) $q);
-		
-		$this->assertSame($q, $q->where('or b = ?', array('bar', 'lol')));
-		
-		$this->assertEquals('(foobar_result OR bar_lol)', (String) $q);
 	}
 	
 	// ------------------------------------------------------------------------
