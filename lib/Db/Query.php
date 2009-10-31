@@ -176,7 +176,7 @@ class Db_Query
 		
 		if($this->escape)
 		{
-			$statement = $this->_instance->protectIdentifiers($column);
+			$column = $this->_instance->protectIdentifiers($column);
 		}
 		
 		// create a list of values if there isn't a subquery
@@ -208,7 +208,7 @@ class Db_Query
     	
 		if($this->escape)
 		{
-			$statement = $this->_instance->protectIdentifiers($column);
+			$column = $this->_instance->protectIdentifiers($column);
 		}
     
 		// create a list of values if there isn't a subquery
