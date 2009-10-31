@@ -4,16 +4,18 @@ empty: ;
 clean:	
 	rm -fR report
 	rm -fR dist
-	rm -fR api
+	rm -fR doc/api
 	rm -f doc/manual.html
 	rm -f dist.tar
 	rm -f dist.tar.gz
+
+doc: doc-html
 
 doc-html: empty
 	xsltproc --xinclude --output doc/manual.html doc/docbook-xsl/xhtml/docbook.xsl doc/manual/src/book.xml
 
 phpdoc: empty
-	phpdoc -t ./api -d ./lib,./compat -j -o HTML:frames:DOM/earthli -s -ti "RapidDataMapper API Documentation"
+	phpdoc -t ./doc/api -d ./lib,./compat -j -o HTML:frames:DOM/earthli -s -ti "RapidDataMapper API Documentation"
 
 report-compatinfo:
 	pci -d lib
@@ -24,9 +26,9 @@ tests: empty
 dist: clean tests phpdoc doc-html
 	mkdir dist
 	git checkout-index -a -f --prefix=dist/
-	cp doc/manual.html dist/manual.html
-	cp -R api dist/api
-	cp -R report dist/report
+	cp doc/manual.html dist/doc/manual.html
+	cp -R doc/api dist/doc/api
+	cp -R report dist/doc/code_coverage_report
 	tar -cf dist.tar dist/
 	gzip dist.tar
 
