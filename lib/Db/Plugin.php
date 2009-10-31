@@ -54,7 +54,7 @@ abstract class Db_Plugin
 	/**
 	 * Removes a plugin from the descriptor it is assigned to.
 	 * 
-	 * @return 
+	 * @return void
 	 */
 	public function remove(){ }
 	

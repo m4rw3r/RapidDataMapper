@@ -397,7 +397,7 @@ class Db_Descriptor
 	/**
 	 * Returns an array of relations described in this descriptor.
 	 * 
-	 * @return 
+	 * @return array
 	 */
 	public function getRelations()
 	{

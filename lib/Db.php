@@ -242,7 +242,8 @@ final class Db
 	/**
 	 * Sets the directory for the mapper cache.
 	 * 
-	 * @return 
+	 * @param  string
+	 * @return void
 	 */
 	public static function setMapperCacheDir($path)
 	{
@@ -376,6 +377,7 @@ final class Db
 		{
 			return self::$mapper_list[$class];
 		}
+		// do not try to use the autoloader here, as the mappers aren't stored in the lib folder
 		elseif( ! class_exists($klass = 'Db_Compiled_'.$class.'Mapper', false))
 		{
 			if(file_exists(self::$mapper_cache_dir.'/'.$class.'.php'))
@@ -553,7 +555,10 @@ final class Db
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Checks if a property has been edited.
+	 * Checks if a property has been edited, if no property name is supplied it checks if the object has been changed.
+	 * 
+	 * NOTE:
+	 * Does not yet check for modified relations.
 	 * 
 	 * @param  object
 	 * @param  string
@@ -571,6 +576,7 @@ final class Db
 		
 		if($property === false)
 		{
+			// no property, iterate all
 			$ret = false;
 			
 			foreach($m->properties as $property => $column)
@@ -584,6 +590,7 @@ final class Db
 		}
 		else
 		{
+			// single property
 			if(isset($m->properties[$property]))
 			{
 				$column = $m->properties[$property];
@@ -592,6 +599,7 @@ final class Db
 			}
 			else
 			{
+				// does not exist
 				return false;
 			}
 		}

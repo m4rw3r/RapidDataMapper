@@ -193,12 +193,19 @@ class Db_Plugin_I18n extends Db_Plugin
 	}
 	
 	// ------------------------------------------------------------------------
-
-	/**
-	 * 
-	 * 
-	 * @return 
-	 */
+	
+	public function remove()
+	{
+		foreach($this->decorators as $k => $d)
+		{
+			$this->descriptor->removeDecorator($d);
+			
+			unset($this->decorators[$k]);
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function editBuilder($builder)
 	{
 		$db = $this->descriptor->getConnection();
@@ -230,9 +237,12 @@ class Db_Plugin_I18n extends Db_Plugin
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the conditions that links the translated table together with the 
+	 * Returns the conditions that links the translated table together with the
+	 * internationalized table.
 	 * 
-	 * @return 
+	 * @param  string	The name of the variable containing the query variable
+	 * @param  string	The name of the variable containing the base_alias (empty to use no alias)
+	 * @return string
 	 */
 	public function getJoinTranslationCode($query_var, $base_alias)
 	{
@@ -248,18 +258,6 @@ class Db_Plugin_I18n extends Db_Plugin
 		
 		return $query_var.'->join[] = "LEFT JOIN '.addcslashes($db->protectIdentifiers($this->lang_table), '"').' AS '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix), '"').'
 	ON '.$conditions.' AND '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix.'.'.$this->lang_column->getColumn()), '"').' = ".$this->language;';
-	}
-	
-	// ------------------------------------------------------------------------
-	
-	public function remove()
-	{
-		foreach($this->decorators as $k => $d)
-		{
-			$this->descriptor->removeDecorator($d);
-			
-			unset($this->decorators[$k]);
-		}
 	}
 	
 	// ------------------------------------------------------------------------
