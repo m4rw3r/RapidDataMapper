@@ -82,81 +82,150 @@
 			in the same way that the different query types differ between each other.
 		</para>
 		
-		<para>
-			To get a query builder object, you call a specific method on the
-			<classname linkend="chapter.database_connection_objects">Db_Connection</classname> object(s):
-		</para>
-		
-		<funcsynopsis xml:id="funcref.Db_Connection-select">
-			<funcprototype>
-				<funcdef><type>Db_Query_Select</type> <function>Db_Connection->select</function></funcdef>
-				
-				<paramdef choice="opt"><type>mixed</type> <parameter>$columns</parameter></paramdef>
-			</funcprototype>
-		</funcsynopsis>
-		
-		<funcsynopsis xml:id="funcref.Db_Connection-insert">
-			<funcprototype>
-				<funcdef><type>Db_Query_Insert</type> <function>Db_Connection->insert</function></funcdef>
-				
-				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
-			</funcprototype>
+		<section>
+			<title>Getting a query builder object</title>
 			
-			<funcprototype>
-				<funcdef><type>boolean</type> <function>Db_Connection->insert</function></funcdef>
-				
-				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
-				<paramdef><type>array</type> <parameter>$data</parameter></paramdef>
-			</funcprototype>
-		</funcsynopsis>
-		
-		<funcsynopsis xml:id="funcref.Db_Connection-update">
-			<funcprototype>
-				<funcdef><type>Db_Query_Update</type> <function>Db_Connection->update</function></funcdef>
-				
-				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
-				<paramdef choice="opt"><type>array</type> <parameter>$data</parameter></paramdef>
-			</funcprototype>
+			<para>
+				To get a query builder object, you call a specific method on the
+				<classname linkend="chapter.database_connection_objects">Db_Connection</classname> object(s):
+			</para>
 			
-			<funcprototype>
-				<funcdef><type>boolean</type> <function>Db_Connection->update</function></funcdef>
+			<section>
+				<title>SELECT query builder object</title>
 				
-				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
-				<paramdef><type>array</type> <parameter>$data</parameter></paramdef>
-				<paramdef><type>array</type> <parameter>$conditions</parameter></paramdef>
-			</funcprototype>
-		</funcsynopsis>
-		
-		<funcsynopsis xml:id="funcref.Db_Connection-delete">
-			<funcprototype>
-				<funcdef><type>Db_Query_Delete</type> <function>Db_Connection->delete</function></funcdef>
+				<funcsynopsis xml:id="funcref.Db_Connection-select">
+					<funcprototype>
+						<funcdef><type>Db_Query_Select</type> <function>Db_Connection->select</function></funcdef>
+						
+						<paramdef choice="opt"><type>mixed</type> <parameter>$columns</parameter></paramdef>
+					</funcprototype>
+				</funcsynopsis>
 				
-				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
-			</funcprototype>
+				<para>
+					The <varname>$columns</varname> parameter is there for selecting special columns
+					that might not be bound to a special table, or some other thing that should be placed in
+					the <token>SELECT</token> part of the query.
+				</para>
+				
+				<para>
+					(If a column is located in a table which is to be included, use the
+					<function linkend="funcref.Db_Query_Select-from">Db_Query_Select->from</function>
+					to select the columns, then they will be aliased properly.)
+				</para>
+			</section>
 			
-			<funcprototype>
-				<funcdef><type>boolean</type> <function>Db_Connection->delete</function></funcdef>
+			<section>
+				<title>INSERT query builder object</title>
 				
-				<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
-				<paramdef><type>array</type> <parameter>$conditions</parameter></paramdef>
-			</funcprototype>
-		</funcsynopsis>
-		
-		<para>
-			All the Query builders have the <function>Db_Query->getSQL()</function> method,
-			making it easy to either debug your queries or to create eg. UNIONs:
-		</para>
-		
-		<funcsynopsis xml:id="funcref.Db_Query-getSQL">
-			<funcprototype>
-				<funcdef><type>string</type> <function>Db_Query->getSQL()</function></funcdef>
-			</funcprototype>
-		</funcsynopsis>
-		
-		<example>
-			<title>Creating an UNION query from two Db_Query_Select objects</title>
+				<funcsynopsis xml:id="funcref.Db_Connection-insert">
+					<funcprototype>
+						<funcdef><type>Db_Query_Insert</type> <function>Db_Connection->insert</function></funcdef>
+						
+						<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+					</funcprototype>
+					
+					<funcprototype>
+						<funcdef><type>boolean</type> <function>Db_Connection->insert</function></funcdef>
+						
+						<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+						<paramdef><type>associative array</type> <parameter>$data</parameter></paramdef>
+					</funcprototype>
+				</funcsynopsis>
+				
+				<para>
+					The <function>Db_Connection->insert</function> method requires a table name which would
+					be the name of the table to insert data into. If the <varname>$data</varname> is specified,
+					the row will be inserted with the supplied data and a boolean value will be returned
+					(<symbol>true</symbol> equals a successful query).
+				</para>
+			</section>
 			
-			<programlisting language="php"><![CDATA[$db = Db::getConnection();
+			<section>
+				<title>UPDATE query builder object</title>
+				
+				<funcsynopsis xml:id="funcref.Db_Connection-update">
+					<funcprototype>
+						<funcdef><type>Db_Query_Update</type> <function>Db_Connection->update</function></funcdef>
+						
+						<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+						<paramdef choice="opt"><type>associative array</type> <parameter>$data</parameter></paramdef>
+					</funcprototype>
+					
+					<funcprototype>
+						<funcdef><type>boolean</type> <function>Db_Connection->update</function></funcdef>
+						
+						<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+						<paramdef><type>associative array</type> <parameter>$data</parameter></paramdef>
+						<paramdef><type>associative array</type> <parameter>$conditions</parameter></paramdef>
+					</funcprototype>
+				</funcsynopsis>
+				
+				<para>
+					Like the <classname>Db_Connection->insert</classname> this method has two variants:
+					one to create a query object and another to create the object, populate it the
+					supplied data and finally execute the query and returning the results.
+					Both variants uses <varname>$data</varname> to populate the update object, sending
+					it to <function linkend="funcref.Db_Query_Update-set">Db_Query_Update->set</function>.
+				</para>
+				
+				<para>
+					The <varname>$conditions</varname> array is sent to the
+					<function linkend="chapter.query_builders.conditions">Db_Query_Update->where</function> method.
+					But if you require some fancy conditions, it might not be satisfactory — it would
+					be better to use the first variant of <function>Db_Connection->update</function> and
+					then apply them using <function>Db_Query->where</function>
+					(which <classname>Db_Query_Update</classname> has inherited).
+				</para>
+			</section>
+			
+			<section>
+				<title>DELETE query builder object</title>
+				
+				<funcsynopsis xml:id="funcref.Db_Connection-delete">
+					<funcprototype>
+						<funcdef><type>Db_Query_Delete</type> <function>Db_Connection->delete</function></funcdef>
+						
+						<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+					</funcprototype>
+					
+					<funcprototype>
+						<funcdef><type>boolean</type> <function>Db_Connection->delete</function></funcdef>
+						
+						<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+						<paramdef><type>array</type> <parameter>$conditions</parameter></paramdef>
+					</funcprototype>
+				</funcsynopsis>
+				
+				<para>
+					As you probably already guessed, the first variant is for creating the query object
+					and the second is to execute the query directly.
+					<varname>$table</varname> is the table name of the table to delete rows from and
+					<varname>$conditions</varname> work in the same way as the <varname>$conditions</varname>
+					parameter of <function>Db_Connection->update</function>.
+				</para>
+			</section>
+		</section>
+		
+		<section>
+			<title>Getting the generated SQL before it is sent to the database</title>
+			
+			<para>
+				All the Query builders have the <function>Db_Query->getSQL()</function> method,
+				making it easy to either debug your queries or to create eg. UNIONs:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query-getSQL">
+				<funcprototype>
+					<funcdef><type>string</type> <function>Db_Query->getSQL</function></funcdef>
+					
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+			
+			<example>
+				<title>Creating an UNION query from two Db_Query_Select objects</title>
+
+				<programlisting language="php"><![CDATA[$db = Db::getConnection();
 
 $select1 = $db->select()->from('table1');
 $select2 = $db->select()->from('table2');
@@ -164,18 +233,22 @@ $select2 = $db->select()->from('table2');
 $query = '('.$select1->getSQL().') UNION ('.$select2->getSQL().')';
 
 $result = $db->query($query);]]></programlisting>
-		</example>
+			</example>
+		</section>
 		
-		<para>
-			All the Query builders can use <firstterm linkend="glossary.method_chaining">method chaining</firstterm>.
-			They also return the object instance in almost all cases, except when the method returns the return value
-			of the query (or some other "special" method).
-		</para>
-		
-		<example>
-			<title>Method Chaining with the Query builders</title>
+		<section>
+			<title>Method chaining</title>
 			
-			<programlisting language="php"><![CDATA[$db = Db::getConnection();
+			<para>
+				All the Query builders can use <firstterm linkend="glossary.method_chaining">method chaining</firstterm>.
+				They also return the object instance in almost all cases, except when the method returns the return value
+				of the query (or some other "special" method).
+			</para>
+			
+			<example>
+				<title>Method Chaining with the Query builders</title>
+				
+				<programlisting language="php"><![CDATA[$db = Db::getConnection();
 
 // SELECT * FROM `users`:
 $result = $db->select()->from('tracks')->get();
@@ -184,15 +257,162 @@ foreach($result as $row)
 {
 	echo $row->name.' - '.$row->artist;
 }]]></programlisting>
-		</example>
+			</example>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.query_builders.select_queries">
 		<title>SELECT Queries</title>
 		
-		<para>
+		<section>
+			<title>The FROM part</title>
 			
-		</para>
+			<para>
+				The one call that is required to be made to a <classname>Db_Query_Select</classname> object
+				is a call to <function>Db_Query_Select->from</function>, to specify from which table
+				to fetch the data.
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-from">
+				<funcprototype>
+					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->from</function></funcdef>
+					
+					<paramdef><type>string</type>|<type>array</type>|<type>Db_Query_Select</type> <parameter>$tables</parameter></paramdef>
+					<paramdef choice="opt"><type>string</type>|<type>array</type> <parameter>$columns</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The <varname>$tables</varname> parameter is very versatile, it can be just contain a string
+				with the table name — making it generate an "anonymous" alias (internally it names them using
+				the "<literal>t</literal>" prefix and then a number). Or it can contain an array with several
+				table names, aliasing all with different "anonymous" aliases.
+			</para>
+			
+			<example>
+				<title>Simple Db_Query_Select->from usage</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select();
+
+$q->from('tracks');
+
+var_dump($q->getSQL());
+// SELECT `t1`.* FROM `tracks` AS `t1`
+
+$q2 = Db::getConnection()->select();
+
+$q2->from(array('tracks', 'artists'));
+
+var_dump($q->getSQL());
+// SELECT `t1`.*, `t2`.* FROM `tracks` AS `t1`, `artists` AS `t2`]]></programlisting>
+			</example>
+			
+			<para>
+				But it can also take an array with non-numeric keys as a parameter.
+				This makes it alias the values as the key names:
+			</para>
+			
+			<example>
+				<title>Specifying custom aliases using Db_Query_Select->from</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select();
+
+$q->from(array('t' => 'tracks'));
+
+var_dump($q->getSQL());
+// SELECT `t`.* FROM `tracks` AS `t`
+
+$q2 = Db::getConnection()->select();
+
+$q2->from(array('t' => 'tracks', 'a' => 'artists'));
+
+var_dump($q->getSQL());
+// SELECT `t`.*, `a`.* FROM `tracks` AS `t`, `artists` AS `a`]]></programlisting>
+			</example>
+			
+			<para>
+				Finally you can replace the table names with instances of <classname>Db_Query_Select</classname>
+				to make them <glossterm>subqueries</glossterm>:
+			</para>
+			
+			<example>
+				<title>Using subqueries with Db_Query_Select->from</title>
+				
+				<programlisting language="php"><![CDATA[// create the subquery
+$sq = Db::getConnection()->select();
+
+// here we use the second parameter, going to explain that below — but you might figure it out from this :)
+$sq->from('tracks', 'artist_id');
+$sq->where('play_count >', 20);
+
+
+$q = Db::getConnection()->select();
+
+$q->from(array('a' => 'artists', 't' => $sq));
+$q->where('t.artist_id = a.id');
+
+var_dump($q->getSQL());
+// SELECT `a`.*, `t`.*
+// FROM `artists` AS `a´,
+// (
+//     SELECT `t1`.`artist_id` FROM `tracks` AS `t1` WHERE `play_count` > 20
+// ) AS `t`
+// WHERE `t`.`artist_id` = `a`.`id`]]></programlisting>
+			</example>
+			
+			<para>
+				The second parameter of <function>Db_Query_Select->from</function>, <varname>$columns</varname>,
+				is used to control which columns to fetch from the database.
+				Limiting the number of columns which are fetched from the database increases performance,
+				especially when joining other tables which you only filter by (or when using subqueries).
+				All the column names are prefixed by the table name, making them unambiguous.
+			</para>
+			
+			<para>
+				If the second parameter is an array, all the non-numeric keys are used as aliases
+				for the columns (and the alias will be the name to refer to the property which contains
+				the column data) — the numeric keys will not get any aliases
+				(which means that they will get the column name as the property name).
+			</para>
+			
+			<example>
+				<title>Choosing which columns to fetch with Db_Query_Select->from</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select();
+
+$q->from('tracks', 'name');
+
+var_dump($q->getSQL());
+// SELECT `t1`.`name` FROM `tracks` AS `t1`
+
+$q2 = Db::getConnection()->select();
+
+$q->from(array('t' => 'tracks'), array('track' => 'name'));
+$q->from(array('a' => 'artists', array('artist' => 'name'));
+$q->where('a.id = t.artist_id');
+
+var_dump($q2->getSQL());
+// SELECT `t`.`name` AS `track`, `a`.`name` AS `artist`
+// FROM `tracks` AS `t`, `artists` AS `a`
+// WHERE `a`.`id` = `t`.`artist_id`]]></programlisting>
+			</example>
+			
+			<para>
+				If two tables are specified in the <varname>$tables</varname> array, both will have the
+				columns specified in <varname>$columns</varname> SELECTed.
+			</para>
+			
+			<section>
+				<title>No escape() combined with Db_Query_Select->from</title>
+				
+				<para>
+					If <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> is set to
+					<symbol>false</symbol>, then the <varname>$columns</varname> parameter won't be escaped,
+					just like the <function linkend="funcref.Db_Query_Select-column">Db_Query_Select->column</function>
+					works when escaping is turned off.
+				</para>
+			</section>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.query_builders.insert_queries">
