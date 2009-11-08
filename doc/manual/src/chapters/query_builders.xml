@@ -506,6 +506,7 @@ $result = $q->get();]]></programlisting>
 
 				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select()->from('tracks');
 
+// this is very foolish, use Db_Query->whereIn() instead as it will be both faster on the PHP and database ends
 foreach($_POST['artists'] as $artist)
 {
 	$q->where('or artist', $artist);
