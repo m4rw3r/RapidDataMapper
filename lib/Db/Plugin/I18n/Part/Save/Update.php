@@ -8,7 +8,7 @@
 /**
  * Renders the update part of the save() method.
  */
-class Db_Plugin_I18n_Part_Save_Update extends Db_Mapper_CodeContainer
+class Db_Plugin_I18n_Part_Save_Update extends Db_CodeBuilder_Container
 {
 	function __construct(Db_Descriptor $descriptor, Db_Plugin_I18n $plugin)
 	{

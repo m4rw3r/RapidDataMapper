@@ -1118,5 +1118,5 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 }
 
 
-/* End of file Descriptor.php */
+/* End of file DescriptorTest.php */
 /* Location: ./tests/Db */

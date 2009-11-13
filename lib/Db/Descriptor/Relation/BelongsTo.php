@@ -14,7 +14,7 @@ class Db_Descriptor_Relation_BelongsTo extends Db_Descriptor_Relation_HasOne
 	
 	public function getPreSaveRelationCode($object_var)
 	{
-		// TODO: Maybe use some Db_Mapper_CodeContainer here?
+		// TODO: Maybe use some Db_CodeBuilder_Container here?
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();
 		

@@ -8,19 +8,17 @@
 require_once 'PHPUnit/Framework.php';
 
 /**
- * @covers Db_Mapper_CodeContainer
+ * @covers Db_CodeBuilder_Container
  */
-class Db_Mapper_CodeContainerTest extends PHPUnit_Framework_TestCase
+class Db_CodeBuider_ContainerTest extends PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
-		require_once dirname(__FILE__).'/../../../lib/Db.php';
-		
-		Db::initAutoload();
+		require_once dirname(__FILE__).'/../../../lib/Db/CodeBuilder/Container.php';
 		
 		if( ! class_exists('TestContainer', false))
 		{
-			eval('class TestContainer extends Db_Mapper_CodeContainer
+			eval('class TestContainer extends Db_CodeBuilder_Container
 			{
 				public function __construct($name = null)
 					{ $this->setName($name); }
@@ -37,7 +35,7 @@ class Db_Mapper_CodeContainerTest extends PHPUnit_Framework_TestCase
 	
 	public function testIsAbstract()
 	{
-		$ref = new ReflectionClass('Db_Mapper_CodeContainer');
+		$ref = new ReflectionClass('Db_CodeBuilder_Container');
 		
 		$this->assertTrue($ref->isAbstract(), 'Class is abstract');
 		$this->assertTrue($ref->getMethod('getName') instanceof ReflectionMethod, 'Class has a method called getName()');
@@ -319,10 +317,10 @@ echo "foo";', 		'// testing " in comments:
 	 */
 	protected function checkIndent($code, $expect)
 	{
-		$this->assertEquals(Db_Mapper_CodeContainer::indentCode($code), $expect);
+		$this->assertEquals(Db_CodeBuilder_Container::indentCode($code), $expect);
 	}
 }
 
 
-/* End of file CodeContainer.php */
-/* Location: ./tests/Db/Mapper */
+/* End of file ContainerTest.php */
+/* Location: ./tests/Db/CodeBuilder */

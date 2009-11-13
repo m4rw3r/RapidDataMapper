@@ -8,7 +8,7 @@
 /**
  * Renders the insert part of the save() method.
  */
-class Db_Plugin_I18n_Part_Save_Insert extends Db_Mapper_CodeContainer
+class Db_Plugin_I18n_Part_Save_Insert extends Db_CodeBuilder_Container
 {
 	function __construct(Db_Descriptor $descriptor, Db_Plugin_I18n $plugin)
 	{
@@ -108,4 +108,4 @@ else
 
 
 /* End of file Inert.php */
-/* Location: ./lib/Db/Mapper/Part/Save */
+/* Location: ./lib/Db/Plugin/I18n/Part/Save */

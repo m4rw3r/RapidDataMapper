@@ -5,7 +5,7 @@
  * All rights reserved.
  */
 
-class Db_Plugin_I18n_Part_PopulateFindQuery extends Db_Mapper_Code_Method
+class Db_Plugin_I18n_Part_PopulateFindQuery extends Db_CodeBuilder_Method
 {
 	function __construct(Db_Descriptor $descriptor, Db_Plugin_I18n $plugin)
 	{

@@ -8,7 +8,7 @@
 /**
  * Renders the update part of the save() method.
  */
-class Db_Mapper_Part_Save_Update extends Db_Mapper_CodeContainer
+class Db_Mapper_Part_Save_Update extends Db_CodeBuilder_Container
 {
 	function __construct(Db_Descriptor $descriptor)
 	{

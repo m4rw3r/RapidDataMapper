@@ -8,7 +8,7 @@
 /**
  * Renders the applyRelatedConditions() method of a Db_Mapper descendant.
  */
-class Db_Mapper_Part_ApplyRelatedConditions extends Db_Mapper_Code_Method
+class Db_Mapper_Part_ApplyRelatedConditions extends Db_CodeBuilder_Method
 {
 	function __construct(Db_Descriptor $descriptor)
 	{

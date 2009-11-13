@@ -8,7 +8,7 @@
 /**
  * Renders the delete() method of a Db_Mapper descendant.
  */
-class Db_Mapper_Part_Delete extends Db_Mapper_Code_Method
+class Db_Mapper_Part_Delete extends Db_CodeBuilder_Method
 {
 	function __construct(Db_Descriptor $descriptor)
 	{

@@ -8,7 +8,7 @@
 /**
  * A class which generates code for a method.
  */
-class Db_Mapper_Code_Method extends Db_Mapper_CodeContainer
+class Db_CodeBuilder_Method extends Db_CodeBuilder_Container
 {
 	public $name;
 	
@@ -38,4 +38,4 @@ class Db_Mapper_Code_Method extends Db_Mapper_CodeContainer
 }
 
 /* End of file Method.php */
-/* Location: ./lib/Db/Mapper/Code */
+/* Location: ./lib/Db/CodeBuilder */

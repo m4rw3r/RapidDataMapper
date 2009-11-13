@@ -231,7 +231,7 @@ class Db_Plugin_I18n extends Db_Plugin
 		
 		$builder->addPart(new Db_Plugin_I18n_Part_SetLang($this->descriptor));
 		
-		$builder->addPart(new Db_Mapper_Code_Property('language', $db->escape($this->default_language)));
+		$builder->addPart(new Db_CodeBuilder_Property('language', $db->escape($this->default_language)));
 	}
 	
 	// ------------------------------------------------------------------------

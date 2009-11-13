@@ -7,8 +7,10 @@
 
 /**
  * Uses the Composite pattern to construct code.
+ * 
+ * An object of this type is usually the root node for a code tree.
  */
-abstract class Db_Mapper_CodeContainer
+abstract class Db_CodeBuilder_Container
 {
 	/**
 	 * Array of nested parts.
@@ -34,14 +36,14 @@ abstract class Db_Mapper_CodeContainer
 	 * NOTE:
 	 * Strings cannot be replaced as they have no identifier (ie. a getName() method).
 	 * 
-	 * @param  Db_Mapper_CodeContainer|string
+	 * @param  Db_CodeBuilder_Container|string
 	 * @param  string	The path to the destination container (which will contain the object/string)
 	 * @param  bool		If to replace an existing code part with same name (located in the destination container)
 	 * @return bool		True if the object/string has been added/replaced
 	 */
 	final public function addPart($part, $path = '', $replace = false)
 	{
-		if( ! is_string($part) && ! $part instanceof Db_Mapper_CodeContainer)
+		if( ! is_string($part) && ! $part instanceof self)
 		{
 			throw new InvalidArgumentException(is_object($part) ? get_class($part) : gettype($part));
 		}
@@ -53,7 +55,7 @@ abstract class Db_Mapper_CodeContainer
 		
 		if(empty($path))
 		{
-			if($replace && $part instanceof Db_Mapper_CodeContainer)
+			if($replace && $part instanceof self)
 			{
 				// return:
 				$replaced = false;
@@ -62,7 +64,7 @@ abstract class Db_Mapper_CodeContainer
 				foreach($this->content as $k => $p)
 				{
 					// matching names
-					if($p instanceof Db_Mapper_CodeContainer && $part->getName() == $p->getName())
+					if($p instanceof self && $part->getName() == $p->getName())
 					{
 						// replace:
 						$this->content[$k] = $part;
@@ -98,7 +100,7 @@ abstract class Db_Mapper_CodeContainer
 			// find the container to add it to
 			foreach($this->content as $container)
 			{
-				if($container instanceof Db_Mapper_CodeContainer)
+				if($container instanceof self)
 				{
 					if($container->getName() != $key)
 					{
@@ -137,7 +139,7 @@ abstract class Db_Mapper_CodeContainer
 		
 		foreach($this->content as $k => $part)
 		{
-			if($part instanceof Db_Mapper_CodeContainer)
+			if($part instanceof self)
 			{
 				if($part->getName() != $key)
 				{
@@ -196,7 +198,7 @@ abstract class Db_Mapper_CodeContainer
 		
 		foreach($this->content as $c)
 		{
-			if( ! $c instanceof Db_Mapper_CodeContainer)
+			if( ! $c instanceof self)
 			{
 				continue;
 			}
@@ -266,5 +268,5 @@ abstract class Db_Mapper_CodeContainer
 }
 
 
-/* End of file CodeContainer.php */
-/* Location: ./lib/Db/Mapper */
+/* End of file Container.php */
+/* Location: ./lib/Db/CodeBuilder */

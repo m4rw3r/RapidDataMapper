@@ -8,7 +8,7 @@
 /**
  * The main class builder for Db_Mapper descendants.
  */
-class Db_Mapper_Builder extends Db_Mapper_CodeContainer
+class Db_Mapper_Builder extends Db_CodeBuilder_Container
 {
 	/**
 	 * The class descriptor.
@@ -28,7 +28,7 @@ class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 	{
 		$this->descriptor = $desc;
 		
-		$this->addPart(new Db_Mapper_Code_Property('class', $desc->getClass()));
+		$this->addPart(new Db_CodeBuilder_Property('class', $desc->getClass()));
 		
 		$this->addProperties();
 		
@@ -50,7 +50,7 @@ class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 		{
 			$rel_arr[$rel->getName()] = $rel->getRelatedClass();
 		}
-		$this->addPart(new Db_Mapper_Code_Property('relations', $rel_arr));
+		$this->addPart(new Db_CodeBuilder_Property('relations', $rel_arr));
 		
 		// create a list of the properties
 		$prop_arr = array();
@@ -58,7 +58,7 @@ class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 		{
 			$prop_arr[$prop->getProperty()] = $prop->getColumn();
 		}
-		$this->addPart(new Db_Mapper_Code_Property('properties', $prop_arr));
+		$this->addPart(new Db_CodeBuilder_Property('properties', $prop_arr));
 		
 		// create a list of the primary keys
 		$pk_arr = array();
@@ -66,7 +66,7 @@ class Db_Mapper_Builder extends Db_Mapper_CodeContainer
 		{
 			$pk_arr[$prop->getProperty()] = $prop->getColumn();
 		}
-		$this->addPart(new Db_Mapper_Code_Property('primary_keys', $pk_arr));
+		$this->addPart(new Db_CodeBuilder_Property('primary_keys', $pk_arr));
 	}
 	
 	// ------------------------------------------------------------------------

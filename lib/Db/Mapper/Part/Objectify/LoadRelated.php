@@ -8,7 +8,7 @@
 /**
  * Renders the code responsible for dispatching loading of related objects.
  */
-class Db_Mapper_Part_Objectify_LoadRelated extends Db_Mapper_CodeContainer
+class Db_Mapper_Part_Objectify_LoadRelated extends Db_CodeBuilder_Container
 {
 	function __construct(Db_Descriptor $descriptor)
 	{

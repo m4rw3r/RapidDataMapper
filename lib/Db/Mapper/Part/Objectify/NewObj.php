@@ -9,7 +9,7 @@
  * Renders the code responsible for ensuring that an object instance exists in $res[$uid],
  * if an instance does not exist it will create it.
  */
-class Db_Mapper_Part_Objectify_NewObj extends Db_Mapper_CodeContainer
+class Db_Mapper_Part_Objectify_NewObj extends Db_CodeBuilder_Container
 {
 	function __construct(Db_Descriptor $descriptor)
 	{

@@ -19,7 +19,7 @@ class Db_Descriptor_Relation_HasOne extends Db_Descriptor_Relation_HasMany
 	
 	public function getSaveInsertRelationCode($object_var)
 	{
-		// TODO: Maybe use some Db_Mapper_CodeContainer here?
+		// TODO: Maybe use some Db_CodeBuilder_Container here?
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();
 		
@@ -55,7 +55,7 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'
 	
 	public function getSaveUpdateRelationCode($object_var)
 	{
-		// TODO: Maybe use some Db_Mapper_CodeContainer here?
+		// TODO: Maybe use some Db_CodeBuilder_Container here?
 		$db = $this->relation->getParentDescriptor()->getConnection();
 		$local = $this->relation->getParentDescriptor();
 		$related = $this->relation->getRelatedDescriptor();

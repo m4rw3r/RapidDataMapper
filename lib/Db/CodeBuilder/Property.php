@@ -8,7 +8,7 @@
 /**
  * A class which generates code for a property.
  */
-class Db_Mapper_Code_Property extends Db_Mapper_CodeContainer
+class Db_CodeBuilder_Property extends Db_CodeBuilder_Container
 {
 	
 	function __construct($name, $data = null)
@@ -94,5 +94,5 @@ class Db_Mapper_Code_Property extends Db_Mapper_CodeContainer
 	}
 }
 
-/* End of file property.php */
-/* Location: ./lib/code */
+/* End of file Property.php */
+/* Location: ./lib/Db/CodeBuilder */
