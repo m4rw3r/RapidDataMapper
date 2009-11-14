@@ -197,7 +197,7 @@ class Db_MapperQuery extends Db_Query_Select
 	
 	// ------------------------------------------------------------------------
 	
-	public function groupBy($columns)
+	public function groupBy($columns, $table = false, $table_is_aliased = false)
 	{
 		return parent::groupBy($this->translateColumns($columns));
 	}
