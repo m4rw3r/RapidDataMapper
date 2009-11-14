@@ -413,13 +413,38 @@ var_dump($q2->getSQL());
 				</para>
 			</section>
 		</section>
+		
+		<section>
+			<title>Selecting additional columns</title>
+			
+			<para>
+				To select extra columns, which might not be bound to a specific table or columns that
+				needs to be added later in the execution (to a table which already have been used in
+				<function linkend="funcref.Db_Query_Select-from">Db_Query_Select->from</function>),
+				you use <function>Db_Query_Select->column</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-column">
+				<funcprototype>
+					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->column</function></funcdef>
+					
+					<paramdef><type>string</type>|<type>array</type>|<type>Db_Query_Select</type> <parameter>$columns</parameter></paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$table</parameter> = <symbol>false</symbol></paramdef>
+					<paramdef choice="opt"><type>bool</type> <parameter>$table_is_aliases</parameter> = <symbol>false</symbol></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				TODO: MORE
+			</para>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.query_builders.insert_queries">
 		<title>INSERT Queries</title>
 		
 		<para>
-			
+			TODO: MORE
 		</para>
 	</section>
 	
@@ -427,7 +452,7 @@ var_dump($q2->getSQL());
 		<title>UPDATE Queries</title>
 		
 		<para>
-			
+			TODO: MORE
 		</para>
 	</section>
 	
@@ -435,7 +460,7 @@ var_dump($q2->getSQL());
 		<title>DELETE Queries</title>
 		
 		<para>
-			
+			TODO: MORE
 		</para>
 	</section>
 	
@@ -446,6 +471,10 @@ var_dump($q2->getSQL());
 			By default are all the data sent into the query builders either
 			<glossterm linkend="glossary.escaping">escaped</glossterm>
 			or <glossterm linkend="glossary.identifier_protection">identifier protected</glossterm>
+		</para>
+		
+		<para>
+			TODO: MORE
 		</para>
 	</section>
 	
