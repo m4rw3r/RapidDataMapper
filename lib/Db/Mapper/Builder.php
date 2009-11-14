@@ -8,17 +8,8 @@
 /**
  * The main class builder for Db_Mapper descendants.
  */
-class Db_Mapper_Builder extends Db_CodeBuilder_Container
+class Db_Mapper_Builder extends Db_CodeBuilder_Class
 {
-	/**
-	 * The class descriptor.
-	 * 
-	 * @var Db_Descriptor
-	 */
-	protected $descriptor;
-	
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Starts the initialization of the structure for the whole composite.
 	 * 
@@ -26,13 +17,14 @@ class Db_Mapper_Builder extends Db_CodeBuilder_Container
 	 */
 	public function __construct(Db_Descriptor $desc)
 	{
-		$this->descriptor = $desc;
+		$this->name = 'Db_Compiled_'.$desc->getClass().'Mapper';
+		$this->extends = 'Db_Mapper';
 		
 		$this->addPart(new Db_CodeBuilder_Property('class', $desc->getClass()));
 		
-		$this->addProperties();
+		$this->addProperties($desc);
 		
-		$this->addMethods();
+		$this->addMethods($desc);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -42,11 +34,11 @@ class Db_Mapper_Builder extends Db_CodeBuilder_Container
 	 * 
 	 * @return void
 	 */
-	protected function addProperties()
+	protected function addProperties(Db_Descriptor $descriptor)
 	{
 		// create a list of the relations
 		$rel_arr = array();
-		foreach($this->descriptor->getRelations() as $rel)
+		foreach($descriptor->getRelations() as $rel)
 		{
 			$rel_arr[$rel->getName()] = $rel->getRelatedClass();
 		}
@@ -54,7 +46,7 @@ class Db_Mapper_Builder extends Db_CodeBuilder_Container
 		
 		// create a list of the properties
 		$prop_arr = array();
-		foreach($this->descriptor->getColumns() as $prop)
+		foreach($descriptor->getColumns() as $prop)
 		{
 			$prop_arr[$prop->getProperty()] = $prop->getColumn();
 		}
@@ -62,7 +54,7 @@ class Db_Mapper_Builder extends Db_CodeBuilder_Container
 		
 		// create a list of the primary keys
 		$pk_arr = array();
-		foreach($this->descriptor->getPrimaryKeys() as $prop)
+		foreach($descriptor->getPrimaryKeys() as $prop)
 		{
 			$pk_arr[$prop->getProperty()] = $prop->getColumn();
 		}
@@ -76,37 +68,28 @@ class Db_Mapper_Builder extends Db_CodeBuilder_Container
 	 * 
 	 * @return void
 	 */
-	public function addMethods()
+	public function addMethods(Db_Descriptor $descriptor)
 	{
-		$this->addPart(new Db_Mapper_Part_Constructor($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_Constructor($descriptor));
 		
-		$this->addPart(new Db_Mapper_Part_PopulateFindQuery($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_CreateMapperQuery($descriptor));
 		
-		$this->addPart(new Db_Mapper_Part_JoinRelated($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_JoinRelated($descriptor));
 		
-		$this->addPart(new Db_Mapper_Part_ApplyRelatedConditions($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_ApplyRelatedConditions($descriptor));
 		
-		$this->addPart(new Db_Mapper_Part_Objectify($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_Objectify($descriptor));
 		
-		$this->addPart(new Db_Mapper_Part_Save($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_Save($descriptor));
 		
-		$this->addPart(new Db_Mapper_Part_Delete($this->descriptor));
+		$this->addPart(new Db_Mapper_Part_Delete($descriptor));
 	}
 	
 	// ------------------------------------------------------------------------
 	
 	public function getName()
 	{
-		return 'Db_Compiled_'.$this->descriptor->getClass().'Mapper';
-	}
-	
-	// ------------------------------------------------------------------------
-	
-	public function __toString()
-	{
-		$str = 'class Db_Compiled_'.$this->descriptor->getClass().'Mapper extends Db_Mapper';
-		
-		return $str."\n{".self::indentCode("\n".implode("\n\n", $this->content))."\n}";
+		return 'mapper';
 	}
 }
 
