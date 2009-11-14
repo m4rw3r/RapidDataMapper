@@ -200,6 +200,78 @@ class Db_CodeBuider_ContainerTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
+	public function testGetPart()
+	{
+		$c = new TestContainer();
+		
+		$this->assertSame($c->getPart('something'), false);
+	}
+	public function testGetPart2()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart($d = new TestContainer('foobar'));
+		
+		$this->assertSame($c->getPart('foobar'), $d);
+		$this->assertSame($c->getPart('something'), false);
+	}
+	public function testGetPart3()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart($d = new TestContainer('foobar'));
+		
+		$c->addPart($e = new TestContainer('baz'));
+		
+		$this->assertSame($c->getPart('foobar'), $d);
+		$this->assertSame($c->getPart('baz'), $e);
+		$this->assertSame($c->getPart('something'), false);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testGetPartNested()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart($d = new TestContainer('d'));
+		$d->addPart($e = new TestContainer('e'));
+		
+		$this->assertSame($c->getPart('d.e'), $e);
+		$this->assertSame($c->getPart('e'), false);
+	}
+	public function testGetPartNested2()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart($d = new TestContainer('d'));
+		$d->addPart($e = new TestContainer('e'));
+		$c->addPart($f = new TestContainer('f'));
+		
+		$this->assertSame($c->getPart('d.e'), $e);
+		$this->assertSame($c->getPart('e'), false);
+		$this->assertSame($c->getPart('f'), $f);
+		$this->assertSame($c->getPart('d.f'), false);
+	}
+	public function testGetPartNested3()
+	{
+		$c = new TestContainer();
+		
+		$c->addPart($d = new TestContainer('d'));
+		$d->addPart($e = new TestContainer('e'));
+		$c->addPart($f = new TestContainer('f'));
+		$d->addPart($g = new TestContainer('g'));
+		
+		$this->assertSame($c->getPart('d.e'), $e);
+		$this->assertSame($c->getPart('e'), false);
+		$this->assertSame($c->getPart('f'), $f);
+		$this->assertSame($c->getPart('d.f'), false);
+		$this->assertSame($c->getPart('d.g'), $g);
+		$this->assertSame($c->getPart('g'), false);
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function testRemovePart()
 	{
 		$c = new TestContainer();

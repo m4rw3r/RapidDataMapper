@@ -120,6 +120,51 @@ abstract class Db_CodeBuilder_Container
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns a part from this container object.
+	 * 
+	 * @param  string
+	 * @return Db_CodeBuilder_Container
+	 */
+	public function getPart($path)
+	{
+		// get the first dot to separate segments
+		$p = ($p = strpos($path, '.')) === false ? strlen($path) : $p;
+		
+		// get key and then the rest of it
+		$key = substr($path, 0, $p);
+		$path = substr($path, $p + 1);
+		
+		foreach($this->content as $k => $part)
+		{
+			if($part instanceof self)
+			{
+				if($part->getName() != $key)
+				{
+					continue;
+				}
+				
+				if( ! empty($path))
+				{
+					$r = $part->getPart($path);
+					
+					if($r)
+					{
+						return $r;
+					}
+				}
+				else
+				{
+					return $this->content[$k];
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Removes a code part from this container.
 	 * 
 	 * @param  string	The path to the container to remove (includes the container to remove)
