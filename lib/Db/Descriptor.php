@@ -662,6 +662,8 @@ class Db_Descriptor
 	 * // Foo::Bar_method($obj);
 	 * </code>
 	 * 
+	 * foo_method() and bar_method() are specified by the hook.
+	 * 
 	 * Also performs validation before returning the generated code,
 	 * see it as a compile-time error detection.
 	 * 
@@ -928,7 +930,7 @@ class Db_Descriptor
 	 */
 	protected function createBuilder()
 	{
-		return new Db_Mapper_Builder($this);
+		return new Db_CompiledBuilder($this);
 	}
 }
 

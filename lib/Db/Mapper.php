@@ -45,11 +45,11 @@ abstract class Db_Mapper
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * Creates a Db_Query_MapperSelect object to fetch the mapped objects from the database.
+	 * Creates a Db_MapperQuery object to fetch the mapped objects from the database.
 	 * 
-	 * @return Db_Query_MapperSelect
+	 * @return Db_MapperQuery
 	 */
-	abstract protected function populateFindQuery();
+	abstract protected function createMapperQuery();
 	
 	// ------------------------------------------------------------------------
 	
@@ -62,7 +62,7 @@ abstract class Db_Mapper
 	 */
 	public function find($conditions = false, $values = false)
 	{
-		$query = $this->populateFindQuery();
+		$query = $this->createMapperQuery();
 		
 		// do we have a filter?
 		if($conditions !== false)

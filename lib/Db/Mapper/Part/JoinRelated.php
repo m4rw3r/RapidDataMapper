@@ -22,6 +22,29 @@ class Db_Mapper_Part_JoinRelated extends Db_CodeBuilder_Method
 		{
 			$this->addPart("\tcase '".$rel->getName()."':");
 			$this->addPart("\t\t".self::indentCode(self::indentCode($rel->getJoinRelatedCode('$query', '$alias_of_linked'))));
+			
+			// add column mappings
+			$php_names = array();
+			$sql_names = array();
+			foreach($rel->getRelatedDescriptor()->getColumns() as $col)
+			{
+				$p = $col->getLocalColumn('$alias_of_linked-'.$rel->getName());
+				$s = $col->getSourceColumn('$alias_of_linked-'.$rel->getName());
+				
+				// smaller optimization, makes for fewer replaces
+				if(strtolower($p) != strtolower($s))
+				{
+					$php_names[] = '"'.addcslashes($p, '"').'"';
+					$sql_names[] = '"'.addcslashes($s, '"').'"';
+				}
+			}
+			
+			if( ! empty($php_names))
+			{
+				$this->addPart("\n\t\t\n\t\t// Add column translations\$query->php_columns = array_merge(\$query->php_columns, array(".implode(', ', $php_names)."));
+		\$query->sql_names = array_merge(\$query->sql_names, array(".implode(', ', $sql_names)."));");
+			}
+			
 			$this->addPart("\t\tbreak;");
 		}
 		
