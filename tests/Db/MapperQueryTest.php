@@ -8,28 +8,28 @@
 require_once 'PHPUnit/Framework.php';
 
 /**
- * @covers Db_Query_MapperSelect
+ * @covers Db_MapperQuery
  * @runTestsInSeparateProcesses enabled
  * @preserveGlobalState disabled
  */
-class Db_Query_MapperSelectTest extends PHPUnit_Framework_TestCase
+class Db_MapperQueryTest extends PHPUnit_Framework_TestCase
 {
 	// ------------------------------------------------------------------------
 	
 	public function setUp()
 	{
-		require_once dirname(__FILE__).'/../../../lib/Db/Query.php';
-		require_once dirname(__FILE__).'/../../../lib/Db/Query/Select.php';
-		require_once dirname(__FILE__).'/../../../lib/Db/Query/MapperSelect.php';
-		require_once dirname(__FILE__).'/../../../lib/Db/Exception.php';
-		require_once dirname(__FILE__).'/../../../lib/Db/Exception/QueryIncomplete.php';
+		require_once dirname(__FILE__).'/../../lib/Db/Query.php';
+		require_once dirname(__FILE__).'/../../lib/Db/Query/Select.php';
+		require_once dirname(__FILE__).'/../../lib/Db/MapperQuery.php';
+		require_once dirname(__FILE__).'/../../lib/Db/Exception.php';
+		require_once dirname(__FILE__).'/../../lib/Db/Exception/QueryIncomplete.php';
 	}
 	
 	// ------------------------------------------------------------------------
 	
 	public function testEmpty()
 	{
-		$this->markTestIncomplete('Mapper Select query tests.');
+		$this->markTestIncomplete('Db_MapperQuery query tests.');
 	}
 	
 	// ------------------------------------------------------------------------
@@ -46,7 +46,7 @@ class Db_Query_MapperSelectTest extends PHPUnit_Framework_TestCase
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -64,7 +64,7 @@ WHERE foo bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -82,7 +82,7 @@ WHERE foo bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -100,7 +100,7 @@ WHERE foo bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -118,7 +118,7 @@ WHERE foo bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -136,7 +136,7 @@ WHERE foo bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -154,7 +154,7 @@ WHERE foo bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -172,7 +172,7 @@ WHERE fooAND ANDbar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -190,7 +190,7 @@ WHERE foo bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -208,7 +208,7 @@ WHERE foo bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -234,7 +234,7 @@ WHERE fooOR ORbar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -253,7 +253,7 @@ WHERE foo(testing)bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -272,7 +272,7 @@ WHERE foo( testing )bar',$q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -291,7 +291,7 @@ WHERE foo (testing) bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -310,7 +310,7 @@ WHERE foo AND (testing)', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -329,7 +329,7 @@ WHERE (testing) AND bar', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';
@@ -348,7 +348,7 @@ WHERE foo OR (testing)', $q->getSQL());
 		
 		$mapper->expects($this->once())->method('getConnection')->will($this->returnValue($db));
 		
-		$q = new Db_Query_MapperSelect($mapper, 'object');
+		$q = new Db_MapperQuery($mapper);
 		
 		$q->columns[] = '*';
 		$q->from[] = 'user';

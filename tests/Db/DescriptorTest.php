@@ -435,11 +435,11 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		
 		$p->expects($this->once())->method('setDescriptor')->with($this->isInstanceOf('Db_Descriptor'));
 		$p->expects($this->once())->method('init');
-		$p->expects($this->once())->method('editBuilder')->with($this->isInstanceOf('Db_Mapper_Builder'));
+		$p->expects($this->once())->method('editBuilder')->with($this->isInstanceOf('Db_CompiledBuilder'));
 		
 		$desc->applyPlugin($p);
 		
-		$this->assertThat($desc->getBuilder(), $this->isInstanceOf('Db_Mapper_Builder'));
+		$this->assertThat($desc->getBuilder(), $this->isInstanceOf('Db_CompiledBuilder'));
 	}
 	
 	// ------------------------------------------------------------------------
@@ -667,7 +667,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	public function testGetBuilder3()
 	{
 		// Dummy class
-		eval('class Db_Mapper_Builder
+		eval('class Db_CompiledBuilder
 		{
 			protected $desc;
 			public function __construct($desc)
@@ -682,7 +682,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		
 		$b = $desc->getBuilder();
 		
-		$this->assertTrue($b instanceof Db_Mapper_Builder);
+		$this->assertThat($b, $this->isInstanceOf('Db_CompiledBuilder'));
 		$this->assertSame($desc, $b->getDesc());
 		
 		$b2 = $desc->getBuilder();
