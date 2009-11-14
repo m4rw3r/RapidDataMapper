@@ -210,28 +210,29 @@ class Db_Plugin_I18n extends Db_Plugin
 	{
 		$db = $this->descriptor->getConnection();
 		
-		$pop_query   = new Db_Plugin_I18n_Part_PopulateFindQuery($this->descriptor, $this);
-		$save_insert = new Db_Plugin_I18n_Part_Save_Insert($this->descriptor, $this);
-		$save_update = new Db_Plugin_I18n_Part_Save_Update($this->descriptor, $this);
+		$save_insert = new Db_Plugin_I18n_MapperPart_Save_Insert($this->descriptor, $this);
+		$save_update = new Db_Plugin_I18n_MapperPart_Save_Update($this->descriptor, $this);
 		
-		if( ! $builder->addPart($pop_query, '', true))
-		{
-			throw new Db_Exception('Db_Plugin_I18n: Cannot replace the populateFindQuery method.');
-		}
-		
-		if( ! $builder->addPart($save_insert, 'method_save', true))
+		if( ! $builder->addPart($save_insert, 'mapper.method_save', true))
 		{
 			throw new Db_Exception('Db_Plugin_I18n: Cannot replace the insert part of the save method.');
 		}
 		
-		if( ! $builder->addPart($save_update, 'method_save', true))
+		if( ! $builder->addPart($save_update, 'mapper.method_save', true))
 		{
 			throw new Db_Exception('Db_Plugin_I18n: Cannot replace the update part of the save method.');
 		}
 		
-		$builder->addPart(new Db_Plugin_I18n_Part_SetLang($this->descriptor));
+		if( ! $builder->addPart($this->getJoinTranslationCode('$this', $this->descriptor->getSingular(), '$mapper'), 'query.method___construct'))
+		{
+			throw new Db_Exception('Db_Plugin_I18n: Cannot add code to the constructor of the MapperQuery.');
+		}
 		
-		$builder->addPart(new Db_CodeBuilder_Property('language', $db->escape($this->default_language)));
+		$builder->getPart('query.method___construct')->render = true;
+		
+		$builder->addPart(new Db_Plugin_I18n_MapperPart_SetLang($this->descriptor), 'mapper');
+		
+		$builder->addPart(new Db_CodeBuilder_Property('language', $db->escape($this->default_language)), 'mapper');
 	}
 	
 	// ------------------------------------------------------------------------
@@ -244,7 +245,7 @@ class Db_Plugin_I18n extends Db_Plugin
 	 * @param  string	The name of the variable containing the base_alias (empty to use no alias)
 	 * @return string
 	 */
-	public function getJoinTranslationCode($query_var, $base_alias)
+	public function getJoinTranslationCode($query_var, $base_alias, $mapper_object = '$this')
 	{
 		$conds = array();
 		$db = $this->descriptor->getConnection();
@@ -257,7 +258,7 @@ class Db_Plugin_I18n extends Db_Plugin
 		$conditions = implode(' AND ', $conds);
 		
 		return $query_var.'->join[] = "LEFT JOIN '.addcslashes($db->protectIdentifiers($this->lang_table), '"').' AS '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix), '"').'
-	ON '.$conditions.' AND '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix.'.'.$this->lang_column->getColumn()), '"').' = ".$this->language;';
+	ON '.$conditions.' AND '.addcslashes($db->protectIdentifiers($base_alias.$this->alias_suffix.'.'.$this->lang_column->getColumn()), '"').' = ".'.$mapper_object.'->language;';
 	}
 	
 	// ------------------------------------------------------------------------

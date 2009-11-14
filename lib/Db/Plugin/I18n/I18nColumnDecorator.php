@@ -29,7 +29,22 @@ class Db_Plugin_I18n_I18nColumnDecorator extends Db_Decorator
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the source column name (ie. as it looks in the final SQL), including the table alias.
+	 * 
+	 * @param  string
+	 * @return string
+	 */
+	public function getSourceColumn($table_alias)
+	{
+		return $this->getDecoratedObject()->getSourceColumn($table_alias.$this->plugin->getAliasSuffix());
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns a fragment which selects the column and aliases it properly.
+	 * 
+	 * Needed because it has to call the local getSourceColumn().
 	 * 
 	 * @param  string			Passed through Db_Connection::protectIdentifiers()
 	 * @param  string			Passed through Db_Connection::protectIdentifiers()
@@ -38,7 +53,7 @@ class Db_Plugin_I18n_I18nColumnDecorator extends Db_Decorator
 	 */
 	public function getSelectCode($table, $alias, Db_Connection $db)
 	{
-		return $db->protectIdentifiers($table.$this->plugin->getAliasSuffix().'.'.$this->getColumn()).' AS '.$db->protectIdentifiers($alias.'_'.$this->getProperty());
+		return $db->protectIdentifiers($this->getSourceColumn($table)).' AS '.$db->protectIdentifiers($alias.'_'.$this->getProperty());
 	}
 	
 	// ------------------------------------------------------------------------

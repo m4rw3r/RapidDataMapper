@@ -8,7 +8,7 @@
 /**
  * Renders the update part of the save() method.
  */
-class Db_Plugin_I18n_Part_Save_Update extends Db_CodeBuilder_Container
+class Db_Plugin_I18n_MapperPart_Save_Update extends Db_CodeBuilder_Container
 {
 	function __construct(Db_Descriptor $descriptor, Db_Plugin_I18n $plugin)
 	{
@@ -81,4 +81,4 @@ empty($save_lang_data) OR $this->db->update(\''.$plugin->getLangTable().'\', $sa
 
 
 /* End of file Inert.php */
-/* Location: ./lib/Db/Plugin/I18n/Part/Save */
+/* Location: ./lib/Db/Plugin/I18n/MapperPart/Save */

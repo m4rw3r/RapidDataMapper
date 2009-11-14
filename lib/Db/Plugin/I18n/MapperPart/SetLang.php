@@ -5,7 +5,7 @@
  * All rights reserved.
  */
 
-class Db_Plugin_I18n_Part_SetLang extends Db_CodeBuilder_Method
+class Db_Plugin_I18n_MapperPart_SetLang extends Db_CodeBuilder_Method
 {
 	function __construct(Db_Descriptor $descriptor)
 	{
@@ -18,5 +18,5 @@ class Db_Plugin_I18n_Part_SetLang extends Db_CodeBuilder_Method
 }
 
 
-/* End of file SetLangPart.php */
-/* Location: ./lib/Db/Plugin/I18n */
+/* End of file SetLang.php */
+/* Location: ./lib/Db/Plugin/I18n/MapperPart */
