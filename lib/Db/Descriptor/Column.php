@@ -226,6 +226,32 @@ class Db_Descriptor_Column
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the name of the column as it is named in PHP (NOT IN THE FINAL SQL), including the table alias.
+	 * 
+	 * @param  string
+	 * @return string
+	 */
+	public function getLocalColumn($table_alias)
+	{
+		return $table_alias.'.'.$this->getProperty();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the source column name (ie. as it looks in the final SQL), including the table alias.
+	 * 
+	 * @param  string
+	 * @return string
+	 */
+	public function getSourceColumn($table_alias)
+	{
+		return $table_alias.'.'.$this->getColumn();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns a fragment which selects the column and aliases it properly.
 	 * 
 	 * @param  string			Passed through Db_Connection::protectIdentifiers()
@@ -235,7 +261,7 @@ class Db_Descriptor_Column
 	 */
 	public function getSelectCode($table, $alias, Db_Connection $db)
 	{
-		return $db->protectIdentifiers($table.'.'.$this->getColumn()).' AS '.$db->protectIdentifiers($alias.'_'.$this->getProperty());
+		return $db->protectIdentifiers($this->getSourceColumn($table)).' AS '.$db->protectIdentifiers($alias.'_'.$this->getProperty());
 	}
 	
 	// ------------------------------------------------------------------------
