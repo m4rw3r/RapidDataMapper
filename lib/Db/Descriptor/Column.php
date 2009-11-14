@@ -57,7 +57,7 @@ class Db_Descriptor_Column
 	 * 
 	 * @var bool
 	 */
-	protected $insrtable = true;
+	protected $insertable = true;
 	
 	/**
 	 * Tells if this column can be updated.
@@ -172,13 +172,28 @@ class Db_Descriptor_Column
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Sets the data length for the column this object describes.
+	 * 
+	 * @param  int
+	 * @return self
+	 */
+	public function setDataLength($length)
+	{
+		$this->data_length = $length;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns true if this column can be used in an INSERT query.
 	 * 
 	 * @return bool
 	 */
 	public function isInsertable()
 	{
-		return $this->updatable;
+		return $this->insertable;
 	}
 	
 	// ------------------------------------------------------------------------
