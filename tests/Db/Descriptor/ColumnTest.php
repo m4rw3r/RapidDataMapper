@@ -172,15 +172,24 @@ class Db_Descriptor_ColumnTest extends PHPUnit_Framework_TestCase
 	
 	public function testGetFromDataToObjectCode()
 	{
-		$desc = $this->getMock('Db_Descriptor_Column', array('getCastToPhpCode', 'getFromDataCode'));
+		$desc = $this->getMock('Db_Descriptor_Column', array('getCastToPhpCode', 'getFromDataCode', 'getProperty'));
 		
 		$desc->expects($this->once())->method('getFromDataCode')->with('$data', '$alias')->will($this->returnValue('$data->{$alias.\'prop\'}'));
+		$desc->expects($this->once())->method('getProperty')->will($this->returnValue('prop'));
 		$desc->expects($this->once())->method('getCastToPhpCode')->with('$data->{$alias.\'prop\'}')->will($this->returnValue('(String) $data->{$alias.\'_prop\'}'));
 		
-		$desc->setColumn('col');
-		$desc->setProperty('prop');
-		
 		$this->assertEquals('$o->prop = (String) $data->{$alias.\'_prop\'};', $desc->getFromDataToObjectCode('$o', '$data', '$alias'));
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testGetFromDataCode()
+	{
+		$desc = $this->getMock('Db_Descriptor_Column', array('getProperty'));
+		
+		$desc->expects($this->once())->method('getProperty')->will($this->returnValue('prop'));
+		
+		$this->assertEquals('$o->{$al.\'_prop\'}', $desc->getFromDataCode('$o', '$al'));
 	}
 }
 
