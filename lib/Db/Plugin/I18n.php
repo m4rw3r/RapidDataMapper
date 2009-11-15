@@ -245,8 +245,13 @@ class Db_Plugin_I18n extends Db_Plugin
 	 * @param  string	The name of the variable containing the base_alias (empty to use no alias)
 	 * @return string
 	 */
-	public function getJoinTranslationCode($query_var, $base_alias, $mapper_object = '$this')
+	public function getJoinTranslationCode($query_var, $base_alias, $mapper_object = false)
 	{
+		if( ! $mapper_object)
+		{
+			$mapper_object = 'Db::getMapper(\''.$this->descriptor->getClass().'\')';
+		}
+		
 		$conds = array();
 		$db = $this->descriptor->getConnection();
 		
