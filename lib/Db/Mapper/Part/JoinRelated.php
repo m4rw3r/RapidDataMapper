@@ -41,8 +41,8 @@ class Db_Mapper_Part_JoinRelated extends Db_CodeBuilder_Method
 			
 			if( ! empty($php_names))
 			{
-				$this->addPart("\n\t\t\n\t\t// Add column translations\$query->php_columns = array_merge(\$query->php_columns, array(".implode(', ', $php_names)."));
-		\$query->sql_names = array_merge(\$query->sql_names, array(".implode(', ', $sql_names)."));");
+				$this->addPart("\n\t\t\n\t\t// Add column translations\n\t\t\$query->php_columns = array_merge(\$query->php_columns, array(".implode(', ', $php_names)."));
+		\$query->sql_columns = array_merge(\$query->sql_columns, array(".implode(', ', $sql_names)."));");
 			}
 			
 			$this->addPart("\t\tbreak;");
