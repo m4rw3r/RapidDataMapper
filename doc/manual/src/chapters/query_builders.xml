@@ -740,13 +740,16 @@ $q->where('artist', 'Wintersun'); // `artist` = 'Wintersun'
 $q->where('or artist =', 'Within Temptation'); // OR `artist` = 'Within Temptation'
 $q->where('plays >', 23); // AND `plays` > 23
 
-// no escaping (in the case of Db_Query->like, only the column is affected by the escape setting):
+// no escaping:
 $q->escape(false);
 $q->where('or LOWER(name)', 'something \' not escaped');
 // OR LOWER(name) = something ' not escaped
 // recommending this instead:
 $q->where('or LOWER(name)', Db::getConnection()->escape('something \' escaped'));
 // OR LOWER(name) = 'something \' escaped'
+
+// switching escaping to on (not strictly needed in this case,
+// but good to do if you eg. want to insert more code after the unescaped condition):
 $q->escape(true);
 
 $r = $q->get();]]></programlisting>
