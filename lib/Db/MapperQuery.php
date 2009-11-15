@@ -283,6 +283,18 @@ class Db_MapperQuery extends Db_Query_Select
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the raw database result object, no processing is made on it.
+	 * 
+	 * @return Db_Result
+	 */
+	public function getRaw()
+	{
+		return $this->_instance->query($this->__toString());
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * A common method, doing the most work of the fetching.
 	 * 
 	 * @return array|object|false
