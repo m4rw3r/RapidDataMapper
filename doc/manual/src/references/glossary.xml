@@ -266,7 +266,7 @@ $closure = function()
 		<glossdef>
 			<para>
 				Method chaining is a new feature for PHP 5, which enables a programmer to call methods directly on
-				returned objects without having to assign them to objects:
+				returned objects without having to assign them to variables:
 			</para>
 			
 			<example>
