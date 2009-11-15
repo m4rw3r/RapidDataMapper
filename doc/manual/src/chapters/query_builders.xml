@@ -436,7 +436,7 @@ var_dump($q2->getSQL());
 					
 					<paramdef><type>string</type>|<type>array</type>|<type>Db_Query_Select</type> <parameter>$columns</parameter></paramdef>
 					<paramdef choice="opt"><type>string</type> <parameter>$table</parameter> = <symbol>false</symbol></paramdef>
-					<paramdef choice="opt"><type>bool</type> <parameter>$table_is_aliases</parameter> = <symbol>false</symbol></paramdef>
+					<paramdef choice="opt"><type>bool</type> <parameter>$table_is_aliased</parameter> = <symbol>false</symbol></paramdef>
 				</funcprototype>
 			</funcsynopsis>
 			
@@ -476,11 +476,54 @@ var_dump($q2->getSQL());
 		<para>
 			By default are all the data sent into the query builders either
 			<glossterm linkend="glossary.escaping">escaped</glossterm>
-			or <glossterm linkend="glossary.identifier_protection">identifier protected</glossterm>
+			or <glossterm linkend="glossary.identifier_protection">identifier protected</glossterm>.
+			To control escaping <classname>Db_Query</classname> and all its descendants has the
+			<function>Db_Query->escape</function>:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Query-escape">
+			<funcprototype>
+				<funcdef><type>Db_Query</type> <function>Db_Query->escape</function></funcdef>
+				
+				<paramdef choice="opt"><type>bool</type> <parameter>$escape</parameter> = <symbol>true</symbol></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			<function>Db_Query->escape</function> will return the object it is located on, which means
+			that if it is called on a <classname>Db_Query_Select</classname> object, that object instance
+			will be returned.
 		</para>
 		
 		<para>
-			TODO: MORE
+			The setting that <function>Db_Query->escape</function> controls does not affect previous calls
+			to the query object, so if you want to disable escaping for some parts and not for others,
+			it is definitely possible.
+		</para>
+		
+		<example>
+			<title>Switching escaping on and off during construction of a single query</title>
+			
+			<programlisting language="php"><![CDATA[$q = Db::getConnection()->select();
+
+$q->from('artists', 'name');
+
+$q->escape(false);
+$q->column('COUNT(tracks.id)');
+
+$q->escape(true);
+$q->join('tracks', 'tracks.artist_id = artists.id', array()); // no need to select columns
+$q->groupBy('artists.name');
+
+var_dump($q->getSQL());
+// SELECT `t1`.`name`, COUNT(artists.id)
+// FROM `artists` AS `t1`
+// JOIN `tracks` AS `t2` ON `tracks`.`artist_id` = `artists`.`id`
+// GROUP BY `artists`.`name`]]></programlisting>
+		</example>
+		
+		<para>
+			TODO: MORE?
 		</para>
 	</section>
 	
