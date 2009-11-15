@@ -375,6 +375,12 @@ var_dump($q->getSQL());
 				(which means that they will get the column name as the property name).
 			</para>
 			
+			<para>
+				Essentially, the <varname>$columns</varname> parameter is sent to the
+				<function linkend="funcref.Db_Query_Select-columns">Db_Query_Select->columns</function> method.
+				See its behaviour for more in-depth information.
+			</para>
+			
 			<example>
 				<title>Choosing which columns to fetch with Db_Query_Select->from</title>
 				
@@ -388,7 +394,7 @@ var_dump($q->getSQL());
 $q2 = Db::getConnection()->select();
 
 $q->from(array('t' => 'tracks'), array('track' => 'name'));
-$q->from(array('a' => 'artists', array('artist' => 'name'));
+$q->from(array('a' => 'artists'), array('artist' => 'name'));
 $q->where('a.id = t.artist_id');
 
 var_dump($q2->getSQL());
