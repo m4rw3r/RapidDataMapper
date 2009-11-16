@@ -13,7 +13,21 @@ class Db_Mapper_Part_Objectify_NewObj extends Db_CodeBuilder_Container
 {
 	function __construct(Db_Descriptor $descriptor)
 	{
-		$this->addPart('$obj = '.$descriptor->getFactory().';');
+		// TODO: Should we preserve object data? or do we do as "usual" and replace the object contents?
+		// TODO: Should the usage of Db_IdentityMap be configurable? (ie. switch on off on compile time?)
+		
+		$this->addPart('$new = true;');
+		
+		$this->addPart('if(Db_IdentityMap::has(\''.addcslashes($descriptor->getClass(), "'").'\', $uid))
+{
+	$new = false;
+	
+	$obj = Db_IdentityMap::get(\''.addcslashes($descriptor->getClass(), "'").'\', $uid);
+}
+else
+{
+	$obj = '.$descriptor->getFactory().';
+}');
 		
 		// let the primary key assignments do their part
 		// group them together so they are easily spotted
@@ -40,6 +54,11 @@ class Db_Mapper_Part_Objectify_NewObj extends Db_CodeBuilder_Container
 			$arr[] = '$obj->__data[\''.$col->getColumn().'\'] = '.$col->getFromObjectCode('$obj').';';
 		}
 		$this->addPart(implode("\n", $arr));
+		
+		$this->addPart('if($new)
+{
+	Db_IdentityMap::add(\''.addcslashes($descriptor->getClass(), "'").'\', $uid, $obj);
+}');
 		
 		// assign the object to the proper key
 		$this->addPart('$res[$uid] = $obj;');
