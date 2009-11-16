@@ -15,6 +15,7 @@ class Db_Mapper_Part_Objectify_NewObj extends Db_CodeBuilder_Container
 	{
 		// TODO: Should we preserve object data? or do we do as "usual" and replace the object contents?
 		// TODO: Should the usage of Db_IdentityMap be configurable? (ie. switch on off on compile time?)
+		// TODO: Make the update of objects also configurable, if it should do it or not when it already has a populated object
 		
 		$this->addPart('$new = true;');
 		
@@ -62,6 +63,9 @@ else
 		
 		// assign the object to the proper key
 		$this->addPart('$res[$uid] = $obj;');
+		
+		// HOOK: post_objectify
+		$this->addPart($descriptor->getHookCode('post_objectify', '$obj'));
 	}
 	
 	public function getName()
