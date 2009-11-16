@@ -380,6 +380,8 @@ final class Db
 		// do not try to use the autoloader here, as the mappers aren't stored in the lib folder
 		elseif( ! class_exists($klass = 'Db_Compiled_'.$class.'Mapper', false))
 		{
+			$class = strtolower($class);
+			
 			if(file_exists(self::$mapper_cache_dir.'/'.$class.'.php'))
 			{
 				// cached mapper
