@@ -120,7 +120,7 @@ class Db_Query_Select extends Db_Query
 		// separate the columns if they need to have a table prepended
 		elseif(is_string($columns) && $table && strpos($columns, ','))
 		{
-			$columns = explode(',', $columns);
+			$columns = array_map('trim', explode(',', $columns));
 		}
 		
 		// table to prefix the column(s) with
@@ -162,7 +162,7 @@ class Db_Query_Select extends Db_Query
 				}
 				else
 				{
-					$this->columns[] = $this->_instance->protectIdentifiers($t . $col) . ' AS ' . $this->_instance->protect_identifiers($alias);
+					$this->columns[] = $this->_instance->protectIdentifiers($t . $col) . ' AS ' . $this->_instance->protectIdentifiers($alias);
 				}
 				
 			}
