@@ -627,6 +627,161 @@ class Db_Query_SelectTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
+	public function testHaving()
+	{
+		$db = $this->getMock('Db_Connection', array('escape'));
+		
+		$db->expects($this->at(0))->method('escape')->with(3)->will($this->returnValue('esc'));
+		$db->expects($this->at(1))->method('escape')->with(6)->will($this->returnValue('esc2'));
+		$db->expects($this->at(2))->method('escape')->with('e')->will($this->returnValue('es'));
+		
+		$q = new Db_Query_Select($db);
+		
+		$this->assertSame($q, $q->having('COUNT(name)', 3));
+		
+		$this->assertEquals(array('COUNT(name) = esc'), $q->having);
+		
+		$this->assertSame($q, $q->having('foobar >', 6));
+		
+		$this->assertEquals(array('COUNT(name) = esc', 'AND foobar > esc2'), $q->having);
+		
+		$this->assertSame($q, $q->having('or baz <', 'e'));
+		
+		$this->assertEquals(array('COUNT(name) = esc', 'AND foobar > esc2', 'OR baz < es'), $q->having);
+	}
+	public function testHaving2()
+	{
+		$db = $this->getMock('Db_Connection', array('escape'));
+		
+		$db->expects($this->never())->method('escape');
+		
+		$q = new Db_Query_Select($db);
+		
+		$this->assertSame($q, $q->escape(false));
+		
+		$this->assertSame($q, $q->having('CCasd', 'no escape in this'));
+		
+		$this->assertEquals(array('CCasd no escape in this'), $q->having);
+		
+		$this->assertSame($q, $q->having('C', 'n'));
+		
+		$this->assertEquals(array('CCasd no escape in this', 'AND C n'), $q->having);
+		
+		$this->assertSame($q, $q->having('or baz <', 'e'));
+		
+		$this->assertEquals(array('CCasd no escape in this', 'AND C n', 'OR baz < e'), $q->having);
+	}
+	public function testHaving3()
+	{
+		$q = new Db_Query_Select(new stdClass());
+		
+		$this->assertSame($q, $q->having('COUNT(a) > b'));
+		
+		$this->assertEquals(array('COUNT(a) > b'), $q->having);
+		
+		$this->assertSame($q, $q->having('COUNT(c) < d'));
+		
+		$this->assertEquals(array('COUNT(a) > b', 'AND COUNT(c) < d'), $q->having);
+		
+		$this->assertSame($q, $q->having('or COUNT(c) < d'));
+		
+		$this->assertEquals(array('COUNT(a) > b', 'AND COUNT(c) < d', 'OR COUNT(c) < d'), $q->having);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testGroupBy()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->expects($this->once())->method('protectIdentifiers')->with('col')->will($this->returnValue('esc'));
+		
+		$q = new Db_Query_Select($db);
+		
+		$this->assertSame($q, $q->groupBy('col'));
+		
+		$this->assertEquals(array('esc'), $q->group_by);
+	}
+	public function testGroupBy2()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('PrefixTable.col')->will($this->returnValue('esc1'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('Table.col')->will($this->returnValue('esc2'));
+		
+		$q = new Db_Query_Select($db);
+		
+		$this->assertSame($q, $q->groupBy('col', 'Table'));
+		
+		$this->assertEquals(array('esc1'), $q->group_by);
+		
+		$this->assertSame($q, $q->groupBy('col', 'Table', true));
+		
+		$this->assertEquals(array('esc1', 'esc2'), $q->group_by);
+	}
+	public function testGroupBy3()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('PrefixTable.col')->will($this->returnValue('esc1'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('PrefixTable.asd')->will($this->returnValue('esc2'));
+		
+		$q = new Db_Query_Select($db);
+		
+		$this->assertSame($q, $q->groupBy('col, asd', 'Table'));
+		
+		$this->assertEquals(array('esc1', 'esc2'), $q->group_by);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testLimitOffset()
+	{
+		$q = new Db_Query_Select(new stdClass());
+		
+		$this->assertFalse($q->limit);
+		
+		$this->assertSame($q, $q->limit(1));
+		
+		$this->assertEquals(1, $q->limit);
+		
+		$this->assertSame($q, $q->limit(5));
+		
+		$this->assertEquals(5, $q->limit);
+	}
+	public function testLimitOffset2()
+	{
+		$q = new Db_Query_Select(new stdClass());
+		
+		$this->assertFalse($q->limit);
+		$this->assertFalse($q->offset);
+		
+		$this->assertSame($q, $q->limit(1, 3));
+		
+		$this->assertEquals(1, $q->limit);
+		$this->assertEquals(3, $q->offset);
+	}
+	public function testLimitOffset3()
+	{
+		$q = new Db_Query_Select(new stdClass());
+		
+		$this->assertFalse($q->offset);
+		
+		$this->assertSame($q, $q->offset(1));
+		
+		$this->assertEquals(1, $q->offset);
+		
+		$this->assertSame($q, $q->offset(5));
+		
+		$this->assertEquals(5, $q->offset);
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function testIncomplete()
 	{
 		$this->markTestIncomplete('Select Query tests');
