@@ -6,8 +6,7 @@
  */
 
 require_once 'PHPUnit/Framework.php';
-require_once dirname(__FILE__).'/../../../lib/Db/Query.php';
-require_once dirname(__FILE__).'/../../../lib/Db/Query/Select.php';
+
 /**
  * @covers Db_Query_Select
  * @runTestsInSeparateProcesses enabled
@@ -22,6 +21,8 @@ class Db_Query_SelectTest extends PHPUnit_Framework_TestCase
 		
 		require_once dirname(__FILE__).'/../../../lib/Db/Exception.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Exception/QueryIncomplete.php';
+		require_once dirname(__FILE__).'/../../../lib/Db/Query.php';
+		require_once dirname(__FILE__).'/../../../lib/Db/Query/Select.php';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -462,10 +463,190 @@ class Db_Query_SelectTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
+	public function testJoin()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('PrefixTable')->will($this->returnValue('esct'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('t1')->will($this->returnValue('et1'));
+		$db->expects($this->at(2))->method('protectIdentifiers')->with('t1.*')->will($this->returnValue('ecols'));
+		
+		$q = $this->getMock('Db_Query_Select', array('createCondition', 'column'), array($db));
+		
+		$q->expects($this->once())->method('createCondition')->with($this->equalTo('foobar'), $this->isNull(), $this->equalTo(array()))->will($this->returnCallback(array(__CLASS__, 'dummyCreateCondition')));
+		
+		$this->assertSame($q, $q->join('Table', 'foobar'));
+		
+		$this->assertEquals(array('LEFT JOIN esct AS et1 ON foobar$'), $q->join);
+		$this->assertEquals(array('ecols'), $q->columns);
+	}
+	public function testJoin2()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('PrefixTable')->will($this->returnValue('esct'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('al')->will($this->returnValue('escal'));
+		$db->expects($this->at(2))->method('protectIdentifiers')->with('al.*')->will($this->returnValue('ecols'));
+		
+		$q = $this->getMock('Db_Query_Select', array('createCondition', 'column'), array($db));
+		
+		$q->expects($this->once())->method('createCondition')->with($this->equalTo('foobar'), $this->isNull(), $this->equalTo(array()))->will($this->returnCallback(array(__CLASS__, 'dummyCreateCondition')));
+		
+		$this->assertSame($q, $q->join(array('al' => 'Table'), 'foobar'));
+		
+		$this->assertEquals(array('LEFT JOIN esct AS escal ON foobar$'), $q->join);
+		$this->assertEquals(array('ecols'), $q->columns);
+	}
+	public function testJoin3()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('PrefixTable')->will($this->returnValue('esct'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('t1')->will($this->returnValue('et1'));
+		$db->expects($this->at(2))->method('protectIdentifiers')->with('t1.*')->will($this->returnValue('ecols'));
+		
+		$q = $this->getMock('Db_Query_Select', array('createCondition', 'column'), array($db));
+		
+		$q->expects($this->once())->method('createCondition')->with($this->equalTo('foo'), $this->equalTo('bar'), $this->equalTo(array()))->will($this->returnCallback(array(__CLASS__, 'dummyCreateCondition')));
+		
+		$this->assertSame($q, $q->join('Table', array('foo' => 'bar')));
+		
+		$this->assertEquals(array('LEFT JOIN esct AS et1 ON foo$bar'), $q->join);
+		$this->assertEquals(array('ecols'), $q->columns);
+	}
+	public function testJoin4()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('PrefixTable')->will($this->returnValue('esct'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('t1')->will($this->returnValue('et1'));
+		$db->expects($this->at(2))->method('protectIdentifiers')->with('t1.*')->will($this->returnValue('ecols'));
+		
+		$q = $this->getMock('Db_Query_Select', array('createCondition', 'column'), array($db));
+		
+		$q->expects($this->at(0))->method('createCondition')->with($this->equalTo('foo'), $this->equalTo('bar'), $this->equalTo(array()))->will($this->returnCallback(array(__CLASS__, 'dummyCreateCondition')));
+		$q->expects($this->at(1))->method('createCondition')->with($this->equalTo('baz'), $this->equalTo('lol'), $this->equalTo(array('foo$bar')))->will($this->returnCallback(array(__CLASS__, 'dummyCreateCondition')));
+		
+		$this->assertSame($q, $q->join('Table', array('foo' => 'bar', 'baz' => 'lol')));
+		
+		$this->assertEquals(array('LEFT JOIN esct AS et1 ON foo$bar baz$lol'), $q->join);
+		$this->assertEquals(array('ecols'), $q->columns);
+	}
+	public function testJoin5()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('PrefixTable')->will($this->returnValue('esct'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('t1')->will($this->returnValue('et1'));
+		
+		$q = $this->getMock('Db_Query_Select', array('createCondition', 'column'), array($db));
+		
+		$q->expects($this->once())->method('createCondition')->with($this->equalTo('foobar'), $this->isNull(), $this->equalTo(array()))->will($this->returnCallback(array(__CLASS__, 'dummyCreateCondition')));
+		$q->expects($this->once())->method('column')->with('testcol', 't1', true);
+		
+		$this->assertSame($q, $q->join('Table', 'foobar', 'testcol'));
+		
+		$this->assertEquals(array('LEFT JOIN esct AS et1 ON foobar$'), $q->join);
+		$this->assertEquals(array(), $q->columns);
+	}
+	public function testJoin6()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('t1')->will($this->returnValue('et1'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('t1.*')->will($this->returnValue('ecols'));
+		
+		$sq = $this->getMock('Db_Query_Select', array('__toString'), array(new stdClass()));
+		
+		$sq->expects($this->once())->method('__toString')->will($this->returnValue('lolcat'));
+		
+		$q = $this->getMock('Db_Query_Select', array('createCondition', 'column'), array($db));
+		
+		$q->expects($this->once())->method('createCondition')->with($this->equalTo('foobar'), $this->isNull(), $this->equalTo(array()))->will($this->returnCallback(array(__CLASS__, 'dummyCreateCondition')));
+		$q->expects($this->never())->method('column');
+		
+		$this->assertSame($q, $q->join($sq, 'foobar'));
+		
+		$this->assertEquals(array('LEFT JOIN (lolcat) AS et1 ON foobar$'), $q->join);
+		$this->assertEquals(array('ecols'), $q->columns);
+	}
+	public function testJoin7()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('PrefixTable')->will($this->returnValue('esct'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('t1')->will($this->returnValue('et1'));
+		$db->expects($this->at(2))->method('protectIdentifiers')->with('t1.*')->will($this->returnValue('ecols'));
+		
+		$q = $this->getMock('Db_Query_Select', array('createCondition', 'column'), array($db));
+		
+		$q->expects($this->once())->method('createCondition')->with($this->equalTo('foobar'), $this->isNull(), $this->equalTo(array()))->will($this->returnCallback(array(__CLASS__, 'dummyCreateCondition')));
+		
+		$this->assertSame($q, $q->join('Table', 'foobar', false, 'right'));
+		
+		$this->assertEquals(array('RIGHT JOIN esct AS et1 ON foobar$'), $q->join);
+		$this->assertEquals(array('ecols'), $q->columns);
+	}
+	public function testJoin8()
+	{
+		$db = $this->getMock('Db_Connection', array('protectIdentifiers'));
+		
+		$db->dbprefix = 'Prefix';
+		
+		$db->expects($this->at(0))->method('protectIdentifiers')->with('a')->will($this->returnValue('et1'));
+		$db->expects($this->at(1))->method('protectIdentifiers')->with('a.*')->will($this->returnValue('ecols'));
+		
+		$sq = $this->getMock('Db_Query_Select', array('__toString'), array(new stdClass()));
+		
+		$sq->expects($this->once())->method('__toString')->will($this->returnValue('lolcat'));
+		
+		$q = $this->getMock('Db_Query_Select', array('createCondition', 'column'), array($db));
+		
+		$q->expects($this->once())->method('createCondition')->with($this->equalTo('foobar'), $this->isNull(), $this->equalTo(array()))->will($this->returnCallback(array(__CLASS__, 'dummyCreateCondition')));
+		$q->expects($this->never())->method('column');
+		
+		$this->assertSame($q, $q->join(array('a' => $sq), 'foobar'));
+		
+		$this->assertEquals(array('LEFT JOIN (lolcat) AS et1 ON foobar$'), $q->join);
+		$this->assertEquals(array('ecols'), $q->columns);
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	public function testIncomplete()
 	{
 		$this->markTestIncomplete('Select Query tests');
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Dummy method for the Db_Query::createCondition() method.
+	 * 
+	 * @param  mixed
+	 * @param  mixed
+	 * @param  array
+	 * @return void
+	 */
+	public static function dummyCreateCondition($col, $v, &$arr)
+	{
+		$arr[] = $col.'$'.$v;
+	}
+	
 }
 
 /* End of file SelectTest.php */
