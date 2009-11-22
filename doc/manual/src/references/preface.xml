@@ -7,11 +7,7 @@
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	>
 	<title>Preface</title>
-
-	<para>
-		This is the manual for the <link xlink:href="http://www.php.net">PHP</link> library <application>RapidDataMapper</application>.
-	</para>
-
+	
 	<para>
 		I created <application>RapidDataMapper</application> as my exam-work for my last year in
 		upper secondary school, as I already had experimented with Object-Relational-Mappers before then.
@@ -19,7 +15,7 @@
 		that. But I wanted something more adaptable, better performing and finally to have better control
 		over the whole stack, from the calls to <function>mysql_query()</function> and upwards.
 	</para>
-
+	
 	<para>
 		At school we had to do an assignment which spans a whole year, it should take around 100 hours totally
 		(I have probably exceeded that requirement :) ).
