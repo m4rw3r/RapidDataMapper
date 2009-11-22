@@ -23,31 +23,7 @@ class MY_Loader extends CI_Loader
 	 */
 	public function database($params = '', $return = false, $active_record = false)
 	{
-		static $defined;
-		
-		if($defined !== true)
-		{
-			// load the RapidDataMapper base
-			require_once APPPATH.'libraries/db.php';
-			
-			include APPPATH.'config/database.php';
-			
-			Db::setConnectionConfig($db);
-			Db::setDefaultConnectionName($active_group);
-			Db::setCompileMappers(isset($cache_mappers) ? $cache_mappers : false);
-			
-			Db::setMapperCacheDir(APPPATH . 'mappercache');
-			
-			Db::initAutoload();
-			
-			// let CodeIgniter handle the logging
-			Db::attachLogger(array('MY_Loader', 'db_log_message'));
-			
-			// register a loader for the records
-			spl_autoload_register(array('MY_Loader', 'load_record'));
-			
-			$defined = true;
-		}
+		self::initRDM();
 		
 		// do we already have it instantiated?
 		$CI = get_instance();
@@ -97,7 +73,7 @@ class MY_Loader extends CI_Loader
 	 * @param  string
 	 * @return void
 	 */
-	public function db_log_message($severity, $message)
+	public static function db_log_message($severity, $message)
 	{
 		$severity = $severity == Db::WARNING ? 'warning' : 'error';
 		
@@ -113,7 +89,7 @@ class MY_Loader extends CI_Loader
 	 */
 	public function dbutil()
 	{
-		show_error('CodeIgniter\' dbutil is not supported by RapidDataMapper, use the table abstraction ORM Tools provides instead');
+		show_error('CodeIgniter\' dbutil is not supported by RapidDataMapper, use the table abstraction RapidDataMapper provides instead');
 	}
 	
 	// ------------------------------------------------------------------------
@@ -125,7 +101,70 @@ class MY_Loader extends CI_Loader
 	 */
 	public function dbforge()
 	{
-		show_error('CodeIgniter\' dbforge is not supported by RapidDataMapper, use the table abstraction ORM Tools provides instead');
+		show_error('CodeIgniter\' dbforge is not supported by RapidDataMapper, use the table abstraction RapidDataMapper provides instead');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the original Ci database instance.
+	 * 
+	 * @return CI_DB
+	 */
+	public function database_original()
+	{
+		static $instance;
+		
+		if($instance)
+		{
+			return $instance;
+		}
+		
+		// Do we even need to load the database class?
+		if( ! class_exists('CI_DB'))
+		{
+			require_once(BASEPATH.'database/DB'.EXT);
+		}
+		
+		return DB('', true);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Initializes the RapidDataMapper class.
+	 * 
+	 * @return void
+	 */
+	public static function initRDM()
+	{
+		static $defined;
+		
+		if($defined !== true)
+		{
+			// load the RapidDataMapper base
+			require_once APPPATH.'libraries/Db.php';
+			
+			include APPPATH.'config/database.php';
+			
+			Db::setConnectionConfig($db);
+			Db::setDefaultConnectionName($active_group);
+			Db::setCompileMappers(isset($cache_mappers) ? $cache_mappers : false);
+			if(isset($mapper_cache))
+			{
+				Db::setMapperCacheDir($mapper_cache);
+			}
+			
+			Db::initAutoload();
+			
+			// let CodeIgniter handle the logging
+			Db::attachLogger(array('MY_Loader', 'db_log_message'));
+			
+			// register a loader for the records
+			spl_autoload_register(array('MY_Loader', 'load_record'));
+			
+			$defined = true;
+		}
 	}
 }
 
