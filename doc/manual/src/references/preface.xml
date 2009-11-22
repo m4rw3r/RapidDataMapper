@@ -27,7 +27,49 @@
 	</para>
 	
 	<para>
-		// TODO: Continue a bit
+		And don't worry about the licensing bit; The school only requires to get a copy and the source (of the
+		version I hand in) to use in educational purposes.
+		I still keep full rights to what I've created.
+	</para>
+	
+	<para>
+		In RapidDataMapper I use the "Assume a lot of defaults, but make (almost) EVERYTHING configurable" approach
+		which I really like.
+		This does not make the end product any slower if it is done right, but the number of code parts
+		increases and hence also the complexity for a user if he wants to modify a lot.
+		I've strived to keep it simple, but it is not easy as there are a lot of things which just are not simple
+		to begin with.
+	</para>
+	
+	<para>
+		First I thought about how I would like to have my Object-Relational-Mapper, but I also searched the internet
+		for opinions about existing implementations and how they have solved problems.
+		I decided to not "cage in" the user into using a specific way to interact with the database.
+		Instead I wanted the objects containing the data to be independent of the mapper, making it easer for the
+		user as the database logic isn't placed in the data-objects at all
+		(This can be placed almost anywhere, but I recommend the <firstterm linkend="glossary.mvc">MVC</firstterm>
+		pattern and place the code dealing with saving and fetching objects in the Model).
+	</para>
+	
+	<para>
+		I wanted to make my Object-Relational-Mapper configurable, secure and easy to use yet good performing.
+		It isn't an easy task.
+		So I settled on a code builder in conjunction with a configuration object, and then I started coding.
+	</para>
+	
+	<para>
+		During the summer I bought the book <link xml:href="http://en.wikipedia.org/wiki/Design_Patterns_%28book%29">
+		Design Patterns: Elements if Reusable Object-Oriented Software by E. Gamma et al.</link>.
+		It made me look at my "heap of objects" in another way, and eventually got me to rewrite RapidDataMapper.
+		From scratch.
+	</para>
+	
+	<para>
+		But it is for the better, as the whole "heap of objects" now resemble a more complete structure which
+		has a more clear purpose, and it also helped me to get rid of some of the more "inefficient" usages of
+		the objects.
+		The code builder became a composite, decorators are now used by plugins, abstract factories are used by
+		the mappers, and so on.
 	</para>
 	
 	<para>
