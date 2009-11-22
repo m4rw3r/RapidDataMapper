@@ -118,11 +118,11 @@ $cache_mappers = FALSE;]]></programlisting>
 		</note>
 	</section>
 	
-	<section>
-		<title>Symphony Installation</title>
+	<!--<section>
+		<title>Symfony Installation</title>
 		
 		<para>
 			TODO
 		</para>
-	</section>
+	</section>-->
 </chapter>
