@@ -8,14 +8,22 @@ Requirements
 ============
 
 RapidDataMapper:
+----------------
 
 * PHP > 5.2
 * Appropriate database extension
 
 Tests:
+------
+
+Currently, PHPUnit does not support passing parameters by reference to a
+mocked method. This means that some test-cases will fail under a vanilla
+PHPUnit installation.
+Instead of the standard 3.4 version of PHPUnit I recommend using a modified
+version which can be found here: http://github.com/m4rw3r/phpunit
 
 * PHPUnit 3.4 or later
-* PHP > 5.3
+* PHP > 5.2
 
 Loading of files
 ================
