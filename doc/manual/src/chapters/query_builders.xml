@@ -285,8 +285,8 @@ foreach($result as $row)
 			<para>
 				The <varname>$tables</varname> parameter is very versatile, it can be just contain a string
 				with the table name — making it generate an "anonymous" alias (internally it names them using
-				the "<literal>t</literal>" prefix and then a number). Or it can contain an array with several
-				table names, aliasing all with different "anonymous" aliases.
+				the "<literal>t</literal>" prefix and then a number).
+				Or it can contain an array with several table names, aliasing all with different "anonymous" aliases.
 			</para>
 			
 			<example>
@@ -441,7 +441,58 @@ var_dump($q2->getSQL());
 			</funcsynopsis>
 			
 			<para>
-				TODO: MORE
+				The first parameter <varname>$columns</varname> contains columns
+				which will be appended to the SELECT part of the query.
+				If <varname>$columns</varname> is a string, it will just be <glossterm>identifier protected</glossterm>
+				and then appended.
+				And if it is an array, the non-numeric keys will be used as aliases for the columns.
+			</para>
+			
+			<para>
+				The <varname>$table</varname> parameter is the name of the table from which the columns
+				should be selected.
+				This is used to prevent unambiguous column names inside the SELECT.
+				If it is non-empty, this table name will be prepended to all the specified columns
+				(with a dot in between).
+				The <varname>$table</varname> will also be <glossterm>identifier protected</glossterm>.
+			</para>
+			
+			<para>
+				<varname>$table_is_aliased</varname> controls whether the
+				<link linkend="database_connection_objects.database_prefix">Database Prefix</link>
+				will be prepended to <varname>$table</varname> before it is added to the query.
+				This is used when you refer to columns from eg. an alias.
+			</para>
+			
+			<section>
+				<title>No escape() and column()</title>
+				
+				<para>
+					If <function linkend="funcref.Db_Query-escape">escape</function> is set to <symbol>false</symbol>
+					the columns won't be <glossterm>identifier protected</glossterm>.
+					The aliases will still be <glossterm>identifier protected</glossterm> even if the columns
+					themselves are not.
+				</para>
+				
+				<example>
+					<title>Counting the number of rows in a table</title>
+					
+					<programlisting language="php"><![CDATA[$q = Db::getConnection()->select();
+
+$q->from('tracks', array()); // do not select any columns from tracks
+$q->escape(false);
+$q->column('COUNT(1)');
+
+$number_of_tracks = $q->get()->val();]]></programlisting>
+				</example>
+			</section>
+		</section>
+		
+		<section>
+			<title>Joining tables</title>
+			
+			<para>
+				
 			</para>
 		</section>
 	</section>
