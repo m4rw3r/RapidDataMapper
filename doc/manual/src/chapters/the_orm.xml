@@ -62,6 +62,8 @@
 {
 	public function __construct()
 	{
+		$this->setClass('Track');
+		
 		$this->add($this->newPrimaryKey('id'));
 		$this->add($this->newColumn('title'));
 		$this->add($this->newColumn('artist'));

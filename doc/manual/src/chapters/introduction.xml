@@ -216,6 +216,8 @@ class ArtistDescriptor extends Db_Descriptor
 {
 	function __construct()
 	{
+		$this->setClass('Artist');
+		
 		$this->add($this->newPrimaryKey('id'));
 		$this->add($this->newColumn('name'));
 	}
@@ -240,6 +242,8 @@ class TrackDescriptor extends Db_Descriptor
 {
 	function __construct()
 	{
+		$this->setClass('Track');
+		
 		$this->add($this->newPrimaryKey('id'));
 		$this->add($this->newColumn('name'));
 		$this->add($this->newColumn('artist_id'));
