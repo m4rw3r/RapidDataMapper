@@ -54,7 +54,7 @@
 	</para>
 	
 	<para>
-		During the summer I bought the book <link xml:href="http://en.wikipedia.org/wiki/Design_Patterns_%28book%29">
+		During the summer I bought the book <link xlink:href="http://en.wikipedia.org/wiki/Design_Patterns_%28book%29">
 		Design Patterns: Elements if Reusable Object-Oriented Software by E. Gamma et al.</link>.
 		It made me look at my "heap of objects" in another way, and eventually got me to rewrite RapidDataMapper.
 		From scratch.

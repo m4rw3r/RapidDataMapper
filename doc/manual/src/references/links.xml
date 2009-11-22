@@ -107,6 +107,20 @@
 			</varlistentry>
 			
 			<varlistentry>
+				<term>Webgrind</term>
+				
+				<listitem>
+					<para>
+						The tool I use to analyze profiling information from Xdebug.
+					</para>
+					
+					<para>
+						<link xlink:href="http://code.google.com/p/webgrind/">http://code.google.com/p/webgrind/</link>
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
 				<term>Xdebug</term>
 				
 				<listitem>
