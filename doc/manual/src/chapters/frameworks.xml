@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.frameworks"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Framework Usage</title>
+	
+	<section>
+		<title>CodeIgniter</title>
+		
+		<para>
+			TODO: MORE
+		</para>
+	</section>
+</chapter>

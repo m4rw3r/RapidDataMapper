@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.descriptors"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Descriptors</title>
+	
+	<section>
+		<title>Introduction</title>
+		
+		<para>
+			In RapidDataMapper there are no configuration files, instead it uses <abbrev>PHP</abbrev> objects
+			for storing the configuration.
+			This enables a lot of customization as classes makes it possible to modify their behaviour by sub-classing.
+		</para>
+		
+		<para>
+			The objects which contain the configurations are called descriptors, this is because they describe the mapping.
+			All descriptors are either instances of Db_Descriptor or instances of a descendant class.
+		</para>
+		
+		<para>
+			The Db_Descriptor class contains a lot of default values and assumptions,
+			some of them are modifiable by changing properties or calling methods,
+			others are modifiable by overriding one or several methods in a child class.
+			This not only enables a user to have a simple and powerful way to configure a mapping,
+			it also enables the user to create his own default descriptor settings with a subclass which
+			is then used as the base class for his descriptors.
+		</para>
+		
+		<para>
+			TODO: MORE
+		</para>
+	</section>
+	
+	<section>
+		<title>Mapping classes to tables</title>
+		
+		<para>
+			TODO: MORE
+		</para>
+	</section>
+	
+	<section>
+		<title>Mapping properties to columns</title>
+		
+		<para>
+			TODO: MORE
+		</para>
+	</section>
+	
+	<section>
+		<title>Using Plugins</title>
+		
+		<para>
+			TODO: MORE
+		</para>
+	</section>
+</chapter>

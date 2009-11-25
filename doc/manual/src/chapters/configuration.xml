@@ -287,6 +287,8 @@
 						It checks if there is a registered descriptor loader—a
 						<firstterm linkend="glossary.callback">callback</firstterm> which will return
 						a valid descriptor.
+						See <link linkend="chapter.alternatives_to_the_db_descriptor">Alternatives to the Db_Descriptor</link>
+						for more information.
 					</para>
 				</listitem>
 				

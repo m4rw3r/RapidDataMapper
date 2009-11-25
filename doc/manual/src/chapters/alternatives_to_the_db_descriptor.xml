@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.alternatives_to_the_db_descriptor"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Alternatives to the Db_Descriptor</title>
+	
+	<section>
+		<title>Introduction</title>
+		
+		<para>
+			The <classname>Db</classname> class facilitates a mechanism for "replacing" the
+			<classname>Db_Descriptor</classname> child-classes with an alternative way for storing
+			the configuration. This mechanism consists of a simple hook where it is possible to register
+			a <glossterm>callback</glossterm> which will receive a class name for which it should
+			return a configured <classname>Db_Descriptor</classname> object describing the mapping.
+		</para>
+		
+		<para>
+			This enables us to implement alternative ways of storing the mapping configurations. In those
+			cases the callback will attempt to fetch the configuration for the supplied class in some way,
+			and if it finds a configuration it will create a <classname>Db_Descriptor</classname> instance
+			which it then populates.
+		</para>
+		
+		<para>
+			If the callable returns false (which it should do if it cannot find a matching configuration),
+			the <function linkend="funcref.Db-getDescriptor">Db::getDescriptor</function> will proceed and
+			try to load a child class of <classname>Db_Descriptor</classname>.
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db-setDescriptorLoader">
+			<funcprototype>
+				<funcdef><type>void</type> <function>Db::setDescriptorLoader</function></funcdef>
+				
+				<paramdef><type>callback</type> <parameter>$callable</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			The method synopsis for the <varname>$callable</varname> <glossterm>callback</glossterm>:
+		</para>
+		
+		<funcsynopsis>
+			<funcprototype>
+				<funcdef><type>Db_Descriptor</type>|<type>false</type> <function>$callable</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$class</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			There WILL be several adapters for other configuration formats:
+		</para>
+	</section>
+	
+	<section>
+		<title>XML</title>
+		
+		<para>
+			TODO: MAKE "PLUGIN"
+		</para>
+	</section>
+	
+	<section>
+		<title>YAML</title>
+		
+		<para>
+			TODO: MAKE "PLUGIN"
+		</para>
+	</section>
+</chapter>

@@ -492,7 +492,7 @@ $number_of_tracks = $q->get()->val();]]></programlisting>
 			<title>Joining tables</title>
 			
 			<para>
-				
+				TODO: MORE
 			</para>
 		</section>
 	</section>
