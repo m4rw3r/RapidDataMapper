@@ -13,7 +13,7 @@
 	</para>
 	
 	<example>
-		<title>Preface Example</title>
+		<title>Example Code-example</title>
 		
 		<programlisting language="php"><![CDATA[class SampleObject
 {
