@@ -26,7 +26,7 @@
 		
 		<pubdate><?dbtimestamp format="Y-m-d"?></pubdate>
 		
-		<edition>0.1 dev</edition>
+		<edition>0.5 dev</edition>
 		
 		<copyright>
 			<year><?dbtimestamp format="Y"?></year>
@@ -55,6 +55,10 @@
 	<xi:include href="chapters/database_connection_objects.xml" />
 	<xi:include href="chapters/query_builders.xml" />
 	<xi:include href="chapters/the_orm.xml" />
+	<xi:include href="chapters/descriptors.xml" />
+	<xi:include href="chapters/relations.xml" />
+	<xi:include href="chapters/alternatives_to_the_db_descriptor.xml" />
+	<xi:include href="chapters/frameworks.xml" />
 	
 	<xi:include href="references/autoloader.xml" />
 	<xi:include href="references/design_patterns.xml" />
