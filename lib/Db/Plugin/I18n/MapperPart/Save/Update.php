@@ -12,6 +12,8 @@ class Db_Plugin_I18n_MapperPart_Save_Update extends Db_CodeBuilder_Container
 {
 	function __construct(Db_Descriptor $descriptor, Db_Plugin_I18n $plugin)
 	{
+		$db = $descriptor->getConnection();
+		
 		// HOOK: on_update
 		$this->addPart($descriptor->getHookCode('on_update', '$object'));
 		
@@ -47,7 +49,20 @@ if(empty($save_data) && empty($save_lang_data))
 
 empty($save_data) OR $this->db->update(\''.$descriptor->getTable().'\', $save_data, $object->__id);
 
-empty($save_lang_data) OR $this->db->update(\''.$plugin->getLangTable().'\', $save_lang_data, array_merge(array(\''.$plugin->getLangColumn()->getColumn().'\' => $object->'.$plugin->getLangColumn()->getProperty().'), $object->__id));');
+if( ! empty($save_lang_data))
+{
+	// do we have a row in the language table?
+	if($this->db->select()->from(\''.$plugin->getLangTable().'\', array())->where(array_merge(array(\''.$plugin->getLangColumn()->getColumn().'\' => $object->'.$plugin->getLangColumn()->getProperty().'), $object->__id))->escape(false)->column(\'1\')->get()->val())
+	{
+		// existing row
+		$this->db->update(\''.$plugin->getLangTable().'\', $save_lang_data, array_merge(array(\''.$plugin->getLangColumn()->getColumn().'\' => $object->'.$plugin->getLangColumn()->getProperty().'), $object->__id));
+	}
+	else
+	{
+		// create new row
+		$this->db->insert(\''.$plugin->getLangTable().'\', array_merge($save_lang_data, array(\''.$plugin->getLangColumn()->getColumn().'\' => $object->'.$plugin->getLangColumn()->getProperty().'), $object->__id));
+	}
+}');
 		
 		$this->addPart('$object->__data = array_merge($data, $lang_data);');
 		
