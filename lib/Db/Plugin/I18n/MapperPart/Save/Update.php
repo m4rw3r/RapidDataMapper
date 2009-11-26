@@ -41,6 +41,8 @@ class Db_Plugin_I18n_MapperPart_Save_Update extends Db_CodeBuilder_Container
 			$this->addPart($rel->getSaveUpdateRelationCode('$object'));
 		}
 		
+		// TODO: Add a way to determine if to get all the data instead of only the changed data for translations if a new row needs to be created in the translation table
+		
 		$this->addPart('
 if(empty($save_data) && empty($save_lang_data))
 {
