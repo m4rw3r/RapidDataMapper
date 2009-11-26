@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="chapter.plugins"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Plugins</title>
+	
+	<para>
+		RapidDataMapper has a very powerful plugin system which enables the user to modify or add to core components
+		of the Object-Relational-Mapper without having to change the core files themselves.
+		It is also possible to add methods to the mappers, and thanks to the composite style of the code-builder of
+		the <classname>Db_Mapper</classname> and <classname>Db_MapperQuery</classname>, it is also possible to even
+		replace the code which creates the class itself and all the other parts creating smaller code pieces.
+	</para>
+	
+	<para>
+		This allows the plugins made for RapidDataMapper to either just add a simple line of code to the generated
+		files, or to replace almost every generated line of code.
+	</para>
+	
+	<para>
+		Here is a list of officially supported plugins, including instructions for using them:
+	</para>
+	
+	<section>
+		<title>Internationalization (<classname>Db_Plugin_I18n</classname>)</title>
+		
+		<para>
+			The Internationalization (<abbrev>I18n</abbrev> for short) plugin is a plugin which unobtrusively
+			(on the programming side, the database needs to be changed though) makes it possible to provide
+			different values of the database columns depending on which language is used.
+			For example you can have a title and description field change content between English or Swedish
+			depending on which language the end-user requests.
+		</para>
+		
+		<para>
+			This means that you only have to change the descriptors and add a line which selects which language
+			to use to be able to have an application internationalized.
+			You also have to adapt the admin-interface in the case of this, because you probably want to be able
+			to edit many languages at the same time (which involves creating a simple relation to the language
+			table from the main-table, and then making the admin-interface use that).
+		</para>
+		
+		<para>
+			The plugin adds a method, <function>Db_Mapper->setLang</function> which sets the language code
+			(ie. the string to filter the language column by) for the mapper.
+			It also changes the logic for creating parts of the fetch-SQL which instead of just including
+			the main-table also includes the language table with a LEFT JOIN.
+			Modifications to the save logic are also made which makes it save the language currently in use.
+		</para>
+		
+		<note>
+			The I18n plugin's <function>Db_Mapper->setLang</function> method is a "mapper global" variant
+			which means that all objects fetched after the call to <function>Db_Mapper->setLang</function>
+			will use that language.
+			But the plugin also keeps track of which language a previously loaded object has, which means
+			that you can still save an object containing eg. English language even when you've changed the
+			language to fetch other objects in to eg. French.
+		</note>
+		
+		<para>
+			The plugin also has a setting for the default language, which will be the default language for
+			fetching objects in when <function>Db_Mapper->setLang</function> has not been called.
+			It also is the default language when creating new rows in the database (to change the language
+			for a new object which is to be inserted, change the property which corresponds to the language
+			column).
+		</para>
+		
+		<section>
+			<title>Database structure</title>
+			
+			<para>
+				This plugin uses the two-table approach to the <abbrev>i18n</abbrev> problem:
+				All the language-independent data is stored in one table (eg. id, dates, links etc.)
+				while the internationalized data is stored in a separate table which links to the first one
+				using the primary key and an additional language key (this table therefore contains identical
+				primary keys as the first one + a language column and then eg. title, description, name etc.).
+			</para>
+			
+			<para>
+				To change an existing non-internationalized database to be compatible with this plugin,
+				follow these simple steps (assuming default settings):
+			</para>
+			
+			<orderedlist>
+				<listitem>
+					<para>
+						Create a new table, call it the same as the table to be internationalized but add
+						"<literal>_lang</literal>" at the end.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						Add the same primary keys as you have in the first table.
+						That is, copy them from the first table into the language table, but with one exception:
+						do not make the columns auto-update (eg. via auto-increment).
+						The I18n plugin will take care of that by itself.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						Create the language column which will be the column which the plugin will use to select
+						the proper language.
+						The usual variant is a <type>CHAR</type><token>(2)</token> with the name
+						"<literal>lang</literal>".
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						Move the columns to be internationalized from the first table to the language-table.
+						More or less a copy-and-paste action.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						DONE
+					</para>
+				</listitem>
+			</orderedlist>
+			
+			<example>
+				<title>Database structure for the I18n plugin</title>
+				
+				<programlisting language="sql"><![CDATA[-- First table
+CREATE TABLE `tracks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `artist_id` int(11) DEFAULT NULL,
+  `album_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Language table
+CREATE TABLE `tracks_lang` (
+  `id` int(11) DEFAULT NULL,
+  `lang` char(2) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL
+);]]></programlisting>
+			</example>
+		</section>
+		
+		<section>
+			<title>Applying the plugin</title>
+			
+			<para>
+				Applying the plugin to an existing descriptor is very easy.
+				You first add the language column using "<literal>$this->add($this->newColumn('lang'))</literal>",
+				then you use the
+				<function linkend="funcref.Db_Descriptor-applyPlugin">Db_Descriptor->applyPlugin</function>
+				method to enable its usage:
+				"<literal>$this->applyPlugin(new Db_Plugin_I18n(array('columns' => array('column'))));</literal>".
+			</para>
+			
+			<example>
+				<title>Example descriptor using the Db_Plugin_I18n</title>
+				
+				<programlisting language="php"><![CDATA[class TrackDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->setClass('Track');
+
+		$this->add($this->newPrimaryKey('id'));
+		$this->add($this->newColumn('name'));
+		$this->add($this->newColumn('artist_id'));
+		$this->add($this->newColumn('album_id'));
+		
+		// language column:
+		$this->add($this->newColumn('lang'));
+		
+		// enable the plugin and internationalize the name column
+		$this->applyPlugin(new Db_Plugin_I18n(array('columns' => 'name')));
+		
+		$this->add($this->newRelation('album'));
+		$this->add($this->newRelation('artist'));
+	}
+}]]></programlisting>
+			</example>
+		</section>
+		
+		<section>
+			<title>Configuration settings</title>
+			
+			<para>
+				The configuration settings are passed as an <type>array</type> to the constructor
+				of <classname>Db_Plugin_I18n</classname>.
+			</para>
+			
+			<table>
+				<title>Db_Plugin_I18n options</title>
+				
+				<tgroup cols="4">
+					<thead>
+						<row>
+							<entry>Name</entry>
+							<entry>Type</entry>
+							<entry>Default</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+					
+					<tbody>
+						<row>
+							<entry>columns</entry>
+							<entry><type>string</type>|<type>array</type></entry>
+							<entry>REQUIRED</entry>
+							<entry>Column-name or list of column names to internationalize.</entry>
+						</row>
+						
+						<row>
+							<entry>default_language</entry>
+							<entry><type>string</type></entry>
+							<entry>"<literal>en</literal>"</entry>
+							<entry>The default language code which to filter by on the language column.</entry>
+						</row>
+						
+						<row>
+							<entry>table_prefix</entry>
+							<entry><type>string</type></entry>
+							<entry>"<literal></literal>"</entry>
+							<entry>
+								The string to prepend to the main-table name when creating the language-table name
+							</entry>
+						</row>
+						
+						<row>
+							<entry>table_suffix</entry>
+							<entry><type>string</type></entry>
+							<entry>"<literal>_lang</literal>"</entry>
+							<entry>
+								The string to append to the main-table name when creating the language-table name
+							</entry>
+						</row>
+						
+						<row>
+							<entry>lang_table</entry>
+							<entry><type>string</type></entry>
+							<entry>table_prefix + main-table name + table_suffix</entry>
+							<entry>The name of the table to store the internationalized data in</entry>
+						</row>
+						
+						<row>
+							<entry>alias_suffix</entry>
+							<entry><type>string</type></entry>
+							<entry>"<literal>Translation</literal>"</entry>
+							<entry>
+								The suffix which is to be appended to the main-table alias to create the
+								language table alias.
+								Eg. Track -> TrackTranslation
+							</entry>
+						</row>
+						
+						<row>
+							<entry>lang_key</entry>
+							<entry><type>string</type></entry>
+							<entry>"<literal>lang</literal>"</entry>
+							<entry>
+								The column name of the column to use when filtering out the requested language
+								from the language table.
+							</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+		</section>
+		
+		<section>
+			<title>Example Usage</title>
+			
+			<example>
+				<title>Using the Db_Plugin_I18n</title>
+				
+				<para>
+					This assumes it has the descriptor and table structure as defined in the Database structure
+					and Applying the Plugin for this plugin.
+				</para>
+				
+				<programlisting language="php"><![CDATA[// use the default language:
+
+$t = Db::find('track')->where('name', 'Some english name');
+
+echo $t->name;
+
+// change to Swedish
+Db::getMapper('track')->setLang('sv');
+
+// get Swedish version (note: if the IdentityMap is enabled and set to replace columns in existing objects,
+// the previous $t will be overwritten with the swedish variant.
+// but if the IdentityMap is used and overwriting is off, then the new $t will still be English)
+$t = Db::find('track', $t->id);
+
+echo $t->name;
+
+// create an english track:
+$t = new Track();
+$t->name = 'Some other title';
+
+Db::save($t);
+
+// create the swedish translation
+$t->name = 'A swedish track';
+
+$t->lang = 'sv';   // this sets it to use the swedish variant, which means that it either overwrites
+// the current swedish data or it creates a row for the swedish data
+// NOTE: Only the changed data goes into the translation currently (maybe going to fix it later)
+
+Db::save($t);]]></programlisting>
+			</example>
+		</section>
+	</section>
+	
+	<section>
+		<title>Sluggable (<classname>Db_Plugin_Sluggable</classname>)</title>
+		
+		<para>
+			TODO: MORE
+		</para>
+	</section>
+</chapter>

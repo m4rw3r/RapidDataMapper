@@ -57,6 +57,7 @@
 	<xi:include href="chapters/the_orm.xml" />
 	<xi:include href="chapters/descriptors.xml" />
 	<xi:include href="chapters/relations.xml" />
+	<xi:include href="chapters/plugins.xml" />
 	<xi:include href="chapters/alternatives_to_the_db_descriptor.xml" />
 	<xi:include href="chapters/frameworks.xml" />
 	

@@ -26,7 +26,7 @@
 		</para>
 		
 		<para>
-			The Db_Descriptor class contains a lot of default values and assumptions,
+			The <classname>Db_Descriptor</classname> class contains a lot of default values and assumptions,
 			some of them are modifiable by changing properties or calling methods,
 			others are modifiable by overriding one or several methods in a child class.
 			This not only enables a user to have a simple and powerful way to configure a mapping,
