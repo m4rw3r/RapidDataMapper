@@ -272,7 +272,7 @@ class Db_Descriptor
 	 */
 	public function getConnectionName()
 	{
-		return $this->db_conn_name;
+		return empty($this->db_conn) ? $this->db_conn_name : $this->getConnection()->getName();
 	}
 	
 	// ------------------------------------------------------------------------

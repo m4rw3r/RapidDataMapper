@@ -320,6 +320,15 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertSame('default', $desc->getConnectionName());
 	}
+	public function testGetConnectionName2()
+	{
+		$desc = new Db_Descriptor();
+		
+		$c = $this->getMock('Db_Driver_Mysql_Connection', null, array('mock', array()));
+		$desc->setConnection($c);
+		
+		$this->assertEquals('mock', $desc->getConnectionName());
+	}
 	
 	// ------------------------------------------------------------------------
 	
