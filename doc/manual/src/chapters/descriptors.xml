@@ -21,8 +21,10 @@
 		</para>
 		
 		<para>
-			The objects which contain the configurations are called descriptors, this is because they describe the mapping.
-			All descriptors are either instances of Db_Descriptor or instances of a descendant class.
+			The objects which contain the configurations are called descriptors, this is because
+			they describe the mapping.
+			All descriptors are either instances of <classname>Db_Descriptor</classname>
+			or instances of a descendant class.
 		</para>
 		
 		<para>
@@ -43,8 +45,169 @@
 		<title>Mapping classes to tables</title>
 		
 		<para>
-			TODO: MORE
+			First, you create an instance of Db_Descriptor; either a subclass or a normal instance which
+			you then send to <function linkend="funcref.Db-addDescriptor">Db::addDescriptor</function>.
+			This instance needs to know which class it describes, otherwise it is useless,
+			which is set using the <function>Db_Descriptor->setClass</function> method:
 		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Descriptor-setClass">
+			<funcprototype>
+				<funcdef><type>Db_Descriptor</type> <function>Db_Descriptor->setClass</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$class_name</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			(This method, an many other methods of the <classname>Db_Descriptor</classname> supports
+			<glossterm>method-chaining</glossterm>.)
+		</para>
+		
+		<para>
+			By default is the class attribute used as a base for the following settings:
+			singular name (name used to refer to the class in singular, eg.
+			<link linkend="chapter.relations">Relations</link> and their foreign keys),
+			table name, and finally factory (the code piece which is used to create a new instance of the class when
+			fetching data. All these values are constructed from the value supplied to
+			<function>Db_Descriptor->setClass</function> and can be changed;
+			either through their setters or through replacing their getter methods.
+		</para>
+		
+		<table>
+			<title>Class - Table mapping settings</title>
+			
+			<tgroup cols="5">
+				<thead>
+					<row>
+						<entry>Name</entry>
+						<entry>Setter</entry>
+						<entry>Getter</entry>
+						<entry>Default</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				
+				<tbody>
+					<row>
+						<entry>class</entry>
+						<entry><function>setClass</function></entry>
+						<entry><function>getClass</function></entry>
+						<entry>REQUIRED</entry>
+						<entry>
+							The class name the current descriptor describes.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>singular</entry>
+						<entry><function>setSingular</function></entry>
+						<entry><function>getSingular</function></entry>
+						<entry>lowercase of classname</entry>
+						<entry>
+							The name which is use to refer to the class in a singular fashion in queries and
+							also used as a base for the relations' foreign keys
+						</entry>
+					</row>
+					
+					<row>
+						<entry>table</entry>
+						<entry><function>setTable</function></entry>
+						<entry><function>getTable</function></entry>
+						<entry>plural of the singular setting</entry>
+						<entry>
+							The table name of the database table to which the class should be mapped to.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>factory</entry>
+						<entry><function>setFactory</function></entry>
+						<entry><function>getFactory</function></entry>
+						<entry>"<literal>new</literal> " + class name</entry>
+						<entry>
+							The code piece to add after an equal sign ("<literal>=</literal>") but before the
+							semicolon ("<literal>;</literal>") which is used to create a new object instance.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>database connection name</entry>
+						<entry><function>setConnectionName</function></entry>
+						<entry><function>getConnectionName</function></entry>
+						<entry>
+							"" (ie. the default database connection or if a connection has been specified by
+							<function>setConnection</function>, that is used.
+						</entry>
+						<entry>
+							The database connection to which the class should be mapped.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>database connection</entry>
+						<entry><function>setConnection</function></entry>
+						<entry><function>getConnection</function></entry>
+						<entry>
+							Default connection or the connection specified by <function>setConnectionName</function>.
+						</entry>
+						<entry>
+							The <classname>Db_Connection object</classname> to use when mapping the
+							class to the database.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+		
+		<para>
+			As listed in the table; it is also possible to map the classes to several different connections.
+		</para>
+		
+		<para>
+			It is not always that the <classname>Db_Inflector</classname> can pluralize the singular name properly.
+			If that is the case (you can easily see this by testing with
+			"<literal>echo Db::getDescriptor('class name')->getTable();</literal>"),
+			then use <function>Db_Descriptor->setTable</function> to set the correct table name.
+		</para>
+		
+		<example>
+			<title>Mapping a class to a table</title>
+			
+			<programlisting language="php"><![CDATA[// We're doing it the short way, to easily show how it works
+$d = new Db_Descriptor();
+
+// Exception is thrown:
+// $d->getClass();
+
+$d->setClass('Track_obj');
+
+echo $d->getClass();    // Track_obj
+echo $d->getSingular(); // track_obj
+echo $d->getPlural();   // track_objs
+echo $d->getFactory();  // new Track_obj
+
+$d->setSingular('track');
+
+echo $d->getClass();    // Track_obj
+echo $d->getSingular(); // track
+echo $d->getPlural();   // tracks
+echo $d->getFactory();  // new Track_obj
+
+$d->setTable('track_tbl');
+
+echo $d->getClass();    // Track_obj
+echo $d->getSingular(); // track
+echo $d->getPlural();   // track_tbl
+echo $d->getFactory();  // new Track_obj
+
+$d->setFactory('Track_obj::create()');
+
+echo $d->getClass();    // Track_obj
+echo $d->getSingular(); // track
+echo $d->getPlural();   // track_tbl
+echo $d->getFactory();  // Track_obj::create()]]></programlisting>
+		</example>
 	</section>
 	
 	<section>
