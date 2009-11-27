@@ -325,4 +325,12 @@ Db::save($t);]]></programlisting>
 			TODO: MORE
 		</para>
 	</section>
+	
+	<section>
+		<title>Making a plugin</title>
+		
+		<para>
+			TODO: MORE
+		</para>
+	</section>
 </chapter>
