@@ -36,9 +36,225 @@
 			is then used as the base class for his descriptors.
 		</para>
 		
+	</section>
+	
+	<section xml:id="chapter.descriptors.associating">
+		<title>Associating descriptors with the class to be mapped</title>
+		
 		<para>
-			TODO: MORE
+			There are several ways to add descriptors, which one that is suitable depends on your preferences
+			and how the project is set up (<glossterm>autoloaders</glossterm>, configuration files,
+			folder structure <abbrev>etc</abbrev>.).
 		</para>
+		
+		<para>
+			All loaded descriptors are stored in an internal array, which means that once a descriptor
+			is loaded, that instance is the descriptor for that class permanently (until the restart of the PHP
+			thread running, so the static <classname>Db</classname> class is reloaded).
+		</para>
+		
+		<para>
+			If all tries to load a descriptor fails, a <classname>Db_Exception_MissingDescriptor</classname>
+			is thrown.
+		</para>
+		
+		<para>
+			Here are the different methods of associating a class as the <glossterm>descriptor</glossterm> for a class
+			to be mapped (ordered after precedence, RapidDataMapper tries to find a descriptor using the first
+			listed method and then the second and so on):
+		</para>
+		
+		<section>
+			<title>Using Db::addDescriptor</title>
+			
+			<para>
+				This method is suitable when you eg. generate a descriptor on the fly
+				(ie. creating an instance of <classname>Db_Descriptor</classname> and then configure it
+				for the mapping) or want to make another descriptor class take precedence over another
+				which would be loaded by any of the other methods (eg. you need a special variant of the
+				descriptor. NOTE: This requires the <function>Db::compileMappers</function> setting to
+				be set to <symbol>false</symbol> as there can only be one compiled mapper instance per
+				class to map.).
+			</para>
+			
+			<para>
+				<function>Db::addDescriptor</function> takes a <classname>Db_Descriptor</classname>
+				instance and adds it to the internal array of descriptors.
+				The <function>Db::getDescriptor</function> method always checks this array first
+				to get the descriptor for the descriptor instance, which makes this method
+				(<function>Db::addDescriptor</function>) have the highest precedence.
+				The descriptors in this array are assigned by which class name they map
+				(ie. what <function>Db_Descriptor->getClass</function> says it maps).
+			</para>
+			
+			<para>
+				If a class already has a loaded descriptor instance, <function>Db::addDescriptor</function>
+				will throw a <classname>RuntimeException</classname>.
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db-addDescriptor">
+				<funcprototype>
+					<funcdef><type>void</type> <function>Db::addDescriptor</function></funcdef>
+
+					<paramdef><type>Db_Descriptor</type> <parameter>$descriptor</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<example>
+				<title>Creating and assigning a descriptor on the fly</title>
+				
+				<programlisting language="php"><![CDATA[$d = new Db_Descriptor();
+
+$d->setClass('Foobar');
+
+$d->add($d->newPrimaryKey('id'));
+
+foreach($columns as $c)
+{
+	$d->add($d->newColumn($c));
+}
+
+Db::addDescriptor($d);
+
+$f = Db::find('Foobar')->get();]]></programlisting>
+			</example>
+		</section>
+		
+		<section>
+			<title>Using a callback to return the appropriate descriptor</title>
+			
+			<para>
+				This method uses a <glossterm>callback</glossterm> to fetch the proper descriptor instance.
+			</para>
+			
+			<para>
+				See chapter <link linkend="chapter.alternatives_to_the_db_descriptor">Alternatives to the Db_Descriptor</link>
+			</para>
+			
+			<example>
+				<title>Using XML configurations as the descriptors</title>
+				
+				<para>
+					Firstly, create a directory for the configuration files
+					(somewhere suitable, where PHP can read the files).
+					Then add XML configuration files in that directory,
+					for their format and naming, check
+					<link linkend="chapter.alternatives_to_the_db_descriptor.xml">Alternatives to the Db_Descriptor: XML</link>.
+				</para>
+				
+				<programlisting language="php"><![CDATA[// this is hypothetical syntax, as the Db_DescriptorLoader_*
+// classes still needs to be written:
+
+Db::setDescriptorLoader(array(new Db_DescriptorLoader_Xml('path/to/config/dir'), 'getDescriptor'));
+
+// try to fetch an object which is described by an XML file
+$o = Db::find('Foobar')->getOne();]]></programlisting>
+			</example>
+		</section>
+		
+		<section>
+			<title>Using a class named classname + "<literal>Descriptor</literal>"</title>
+			
+			<para>
+				This will probably be the most common method of loading the descriptors, which is to be
+				used when using an <glossterm>autoloader</glossterm> to fetch the classes which are
+				to be mapped.
+				It makes it easy, as the descriptors will be stored in the same directory as the
+				classes they map.
+				Their filename will also be almost identical to the filename that they map, with
+				the addition of "<literal>Descriptor</literal>" before the "<literal>.php</literal>"
+				(depends on the autoloader).
+			</para>
+			
+			<para>
+				<function>Db::getDescriptor</function> tries to see if the class exists, and also
+				tries to autoload it (by using <function>class_exists</function>).
+				If the class is found, an instance is created and then used as the descriptor for the
+				class to map.
+			</para>
+			
+			<example>
+				<title>Using class names to assign descriptors</title>
+				
+				<programlisting language="php"><![CDATA[// Preferably, this class should be defined in a separate file which is autoloaded.
+// It makes for less loaded files when using compiled mappers (because the descriptors aren't needed).
+class FoobarDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->setClass('Foobar');
+		
+		$this->add($this->newPrimaryKey('id'));
+		$this->add($this->newColumn('title'));
+		// ...
+	}
+}
+
+echo Db::find('Foobar')->count();]]></programlisting>
+			</example>
+		</section>
+		
+		<section>
+			<title>Using the Db::setDescriptorDirectory to load PHP files from a directory</title>
+			
+			<para>
+				This method will probably be used in projects which does not use an <glossterm>autoloader</glossterm>,
+				mainly because it fits more with their style: defining directories to contain specific files,
+				classes and helper methods and then loading them with the help of <function>file_exists</function>
+				and <function>include</function>.
+			</para>
+			
+			<para>
+				This is what <function>Db::getDescriptor</function> does if it cannot find a class with any of
+				the above mentioned methods; tries to find a file with the same name as the class
+				(+ "<literal>.php</literal>") and if the file exists: <function>require</function>s it and then
+				tries to instantiate a class with the name of classname + "<literal>Descriptor</literal>".
+			</para>
+			
+			<para>
+				Use <function linkend="funcref.Db-setDescriptorDirectory">Db::setDescriptorDirectory</function>
+				to set the path to the folder which contain the files with the descriptors.
+			</para>
+		</section>
+	</section>
+	
+	<section>
+		<title>Getting the descriptor which is mapped to a certain class</title>
+		
+		<para>
+			To see which descriptor instance that a certain class is using for the mapping,
+			use the <function>Db::getDescriptor</function>.
+			This method will return a loaded descriptor instance, and if it isn't,
+			it will try to load it with the steps shown in the section above.
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db-getDescriptor">
+			<funcprototype>
+				<funcdef><type>Db_Descriptor</type> <function>Db::getDescriptor</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$class_name</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			If a descriptor is not found, a <classname>Db_Exception_MissingDescriptor</classname>
+			will be thrown.
+		</para>
+		
+		<example>
+			<title>Checking if a class has a descriptor, and if so, which table the class is mapped to</title>
+			
+			<programlisting language="php"><![CDATA[try
+{
+	$d = Db::getDescriptor('Foobar');
+	
+	echo sprintf('Class Foobar is mapped to the table %s.', $d->getTable());
+}
+catch(Db_Exception_MissingDescriptor $e)
+{
+	echo sprintf('Failed to get a descriptor for the class %s', $e->getClassName());
+}]]></programlisting>
+		</example>
 	</section>
 	
 	<section>
@@ -172,7 +388,7 @@
 		</para>
 		
 		<example>
-			<title>Mapping a class to a table</title>
+			<title>Adjusting singular, table name and factory of table mappings</title>
 			
 			<programlisting language="php"><![CDATA[// We're doing it the short way, to easily show how it works
 $d = new Db_Descriptor();
