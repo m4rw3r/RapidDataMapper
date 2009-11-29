@@ -62,7 +62,7 @@
 		<!-- TODO: Replace the WILL in the line above with "are" when they are finished -->
 	</section>
 	
-	<section>
+	<section xml:id="chapter.alternatives_to_the_db_descriptor.xml">
 		<title>XML</title>
 		
 		<para>
@@ -70,7 +70,7 @@
 		</para>
 	</section>
 	
-	<section>
+	<section xml:id="chapter.alternatives_to_the_db_descriptor.yaml">
 		<title>YAML</title>
 		
 		<para>
