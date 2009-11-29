@@ -277,7 +277,8 @@
 				<listitem>
 					<para>
 						First it checks an internal array containing already loaded descriptors,
-						descriptors can be added to this array using <function linkend="funcref.Db-addDescriptor">Db::addDescriptor()</function>,
+						descriptors can be added to this array using
+						<function linkend="funcref.Db-addDescriptor">Db::addDescriptor()</function>,
 						see <link linkend="chapter.descriptors">Descriptors</link> for more information.
 					</para>
 				</listitem>
@@ -301,7 +302,8 @@
 				<listitem>
 					<para>
 						Finally it tries to load a file with the name "<varname>class</varname>.php" from
-						the directory set by <function linkend="funcref.Db-setDescriptorDirectory">Db::setDescriptorDirectory()</function>.
+						the directory set by
+						<function linkend="funcref.Db-setDescriptorDirectory">Db::setDescriptorDirectory()</function>.
 					</para>
 				</listitem>
 			</orderedlist>
@@ -309,6 +311,12 @@
 			<para>
 				If all the attempts above fails when loading a descriptor, a <classname>Db_Exception_MissingDescriptor</classname>
 				<glossterm>exception</glossterm> is thrown.
+			</para>
+			
+			<para>
+				See <link linkend="chapter.descriptors.associating">Descriptors:
+				Associating descriptors with the class to be mapped</link> for examples and typical usage
+				information.
 			</para>
 		</section>
 		
