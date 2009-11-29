@@ -177,35 +177,38 @@
 			<programlisting language="php"><![CDATA[// We're doing it the short way, to easily show how it works
 $d = new Db_Descriptor();
 
-// Exception is thrown:
+// Exceptions are thrown when class is not set:
 // $d->getClass();
+// $d->getSingular();
+// $d->getTable();
+// $d->getFactory();
 
 $d->setClass('Track_obj');
 
 echo $d->getClass();    // Track_obj
 echo $d->getSingular(); // track_obj
-echo $d->getPlural();   // track_objs
+echo $d->getTable();    // track_objs
 echo $d->getFactory();  // new Track_obj
 
 $d->setSingular('track');
 
 echo $d->getClass();    // Track_obj
 echo $d->getSingular(); // track
-echo $d->getPlural();   // tracks
+echo $d->getTable();    // tracks
 echo $d->getFactory();  // new Track_obj
 
 $d->setTable('track_tbl');
 
 echo $d->getClass();    // Track_obj
 echo $d->getSingular(); // track
-echo $d->getPlural();   // track_tbl
+echo $d->getTable();    // track_tbl
 echo $d->getFactory();  // new Track_obj
 
 $d->setFactory('Track_obj::create()');
 
 echo $d->getClass();    // Track_obj
 echo $d->getSingular(); // track
-echo $d->getPlural();   // track_tbl
+echo $d->getTable();    // track_tbl
 echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 		</example>
 	</section>
