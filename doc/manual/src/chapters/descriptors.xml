@@ -91,8 +91,8 @@
 				<tbody>
 					<row>
 						<entry>class</entry>
-						<entry><function>setClass</function></entry>
-						<entry><function>getClass</function></entry>
+						<entry><function>setClass</function>(<type>string</type> <parameter>$class_name</parameter>)</entry>
+						<entry><type>string</type> <function>getClass</function>()</entry>
 						<entry>REQUIRED</entry>
 						<entry>
 							The class name the current descriptor describes.
@@ -101,8 +101,8 @@
 					
 					<row>
 						<entry>singular</entry>
-						<entry><function>setSingular</function></entry>
-						<entry><function>getSingular</function></entry>
+						<entry><function>setSingular</function>(<type>string</type> <parameter>$singular</parameter>)</entry>
+						<entry><type>string</type> <function>getSingular</function>()</entry>
 						<entry>lowercase of classname</entry>
 						<entry>
 							The name which is use to refer to the class in a singular fashion in queries and
@@ -112,8 +112,8 @@
 					
 					<row>
 						<entry>table</entry>
-						<entry><function>setTable</function></entry>
-						<entry><function>getTable</function></entry>
+						<entry><function>setTable</function> (<type>string</type> <parameter>$table</parameter>)</entry>
+						<entry><type>string</type> <function>getTable</function>()</entry>
 						<entry>plural of the singular setting</entry>
 						<entry>
 							The table name of the database table to which the class should be mapped to.
@@ -122,8 +122,8 @@
 					
 					<row>
 						<entry>factory</entry>
-						<entry><function>setFactory</function></entry>
-						<entry><function>getFactory</function></entry>
+						<entry><function>setFactory</function> (<type>string</type> <parameter>$factory</parameter>)</entry>
+						<entry><type>string</type> <function>getFactory</function>()</entry>
 						<entry>"<literal>new</literal> " + class name</entry>
 						<entry>
 							The code piece to add after an equal sign ("<literal>=</literal>") but before the
@@ -133,8 +133,8 @@
 					
 					<row>
 						<entry>database connection name</entry>
-						<entry><function>setConnectionName</function></entry>
-						<entry><function>getConnectionName</function></entry>
+						<entry><function>setConnectionName</function> (<type>string</type> <parameter>$connection_name</parameter>)</entry>
+						<entry><type>string</type> <function>getConnectionName</function>()</entry>
 						<entry>
 							"" (ie. the default database connection or if a connection has been specified by
 							<function>setConnection</function>, that is used.
@@ -146,8 +146,8 @@
 					
 					<row>
 						<entry>database connection</entry>
-						<entry><function>setConnection</function></entry>
-						<entry><function>getConnection</function></entry>
+						<entry><function>setConnection</function> (<type>Db_Connection</type> <parameter>$connection_object</parameter>)</entry>
+						<entry><type>Db_Connection</type> <function>getConnection</function>()</entry>
 						<entry>
 							Default connection or the connection specified by <function>setConnectionName</function>.
 						</entry>
