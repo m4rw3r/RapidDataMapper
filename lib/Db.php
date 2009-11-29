@@ -303,6 +303,11 @@ final class Db
 	 */
 	public static function addDescriptor(Db_Descriptor $descriptor)
 	{
+		if(array_key_exists(self::$mapper_descriptors[$descriptor->getClass()]))
+		{
+			throw new RuntimeException(sprintf('RapidDataMapper: The descriptor for the class "%s" has already been loaded.', $descriptor->getClass()));
+		}
+		
 		self::$mapper_descriptors[$descriptor->getClass()] = $descriptor;
 	}
 	
