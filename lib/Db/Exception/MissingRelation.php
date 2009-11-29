@@ -15,13 +15,45 @@ class Db_Exception_MissingRelation extends Db_Exception
 	 * 
 	 * @var string
 	 */
-	public $relation_name;
+	protected $relation_name;
 	
-	function __construct($relation_name)
+	/**
+	 * The class for which the error occurred.
+	 * 
+	 * @var string
+	 */
+	protected $class_name;
+	
+	function __construct($relation_name, $class_name)
 	{
 		parent::__construct('Missing relation: "'.$relation_name.'".');
 		
 		$this->relation_name = $relation_name;
+		$this->class_name = $class_name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name of the missing relation.
+	 * 
+	 * @return string
+	 */
+	public function getRelationName()
+	{
+		return $this->relation_name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the class name for which the relation was requested.
+	 * 
+	 * @return string
+	 */
+	public function getClassName()
+	{
+		return $this->class_name;
 	}
 }
 

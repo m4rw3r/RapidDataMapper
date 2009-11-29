@@ -11,17 +11,29 @@
 class Db_Exception_InvalidConfiguration extends Db_Exception
 {
 	/**
-	 * The name of the malformed configuration, if present.
+	 * The name of the malformed configuration.
 	 * 
 	 * @var string
 	 */
-	public $name;
+	protected $config_name;
 	
-	function __construct($name)
+	function __construct($config_name)
 	{
-		parent::__construct('Malformed configuration: "'.$name.'".');
+		parent::__construct('Malformed configuration: "'.$config_name.'".');
 		
-		$this->name = $name;
+		$this->config_name = $config_name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name of the configuration that is malformed.
+	 * 
+	 * @return string
+	 */
+	public function getConfigurationName()
+	{
+		return $this->config_name;
 	}
 }
 

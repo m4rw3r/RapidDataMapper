@@ -15,13 +15,25 @@ class Db_Exception_MissingPrimaryKey extends Db_Exception
 	 * 
 	 * @var string
 	 */
-	public $class_name;
+	protected $class_name;
 	
 	function __construct($class_name)
 	{
 		parent::__construct('Missing primary key for the class: "'.$class_name.'".');
 		
 		$this->class_name = $class_name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name of the class that is missing a primary key.
+	 * 
+	 * @return string
+	 */
+	public function getClassName()
+	{
+		return $this->class_name;
 	}
 }
 

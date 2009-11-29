@@ -15,13 +15,25 @@ class Db_Exception_QueryIncomplete extends Db_Exception
 	 * 
 	 * @var string
 	 */
-	public $error_message;
+	protected $error_message;
 	
 	function __construct($error_message)
 	{
 		parent::__construct('Query Incomplete: '.$error_message.'.');
 		
 		$this->error_message = $error_message;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name of the missing part.
+	 * 
+	 * @return string
+	 */
+	public function getErrorMessage()
+	{
+		return $this->error_message;
 	}
 }
 

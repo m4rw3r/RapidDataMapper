@@ -12,6 +12,5 @@ class Db_Exception_InvalidCallable extends Db_Exception
 {
 }
 
-
 /* End of file InvalidCallable.php */
 /* Location: ./lib/Db/Exception */

@@ -15,13 +15,25 @@ class Db_Exception_ConnectionError extends Db_Exception
 	 * 
 	 * @var string
 	 */
-	public $error_message;
+	protected $error_message;
 	
 	function __construct($error_message)
 	{
 		parent::__construct('Connection Error: "'.$error_message.'".');
 		
 		$this->error_message = $error_message;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the error message.
+	 * 
+	 * @return string
+	 */
+	public function getErrorMessage()
+	{
+		return $this->error_message;
 	}
 }
 

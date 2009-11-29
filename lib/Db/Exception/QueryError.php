@@ -15,13 +15,25 @@ class Db_Exception_QueryError extends Db_Exception
 	 * 
 	 * @var string
 	 */
-	public $error_message;
+	protected $error_message;
 	
 	function __construct($error_message)
 	{
 		parent::__construct('Query Error: '.$error_message.'.');
 		
 		$this->error_message = $error_message;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the query error message.
+	 * 
+	 * @return string
+	 */
+	public function getErrorMessage()
+	{
+		return $this->error_message;
 	}
 }
 

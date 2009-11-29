@@ -15,13 +15,25 @@ class Db_Exception_MissingConfig extends Db_Exception
 	 * 
 	 * @var string
 	 */
-	public $config_name;
+	protected $config_name;
 	
 	function __construct($config_name)
 	{
 		parent::__construct('Missing configuration: "'.$config_name.'".');
 		
 		$this->config_name = $config_name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name of the configuration that is missing.
+	 * 
+	 * @return string
+	 */
+	public function getConfigurationName()
+	{
+		return $this->config_name;
 	}
 }
 
