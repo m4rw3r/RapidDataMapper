@@ -305,7 +305,7 @@ final class Db
 	{
 		if(array_key_exists(self::$mapper_descriptors[$descriptor->getClass()]))
 		{
-			throw new RuntimeException(sprintf('RapidDataMapper: The descriptor for the class "%s" has already been loaded.', $descriptor->getClass()));
+			throw new RuntimeException('RapidDataMapper: The descriptor for the class "'.$descriptor->getClass().'" has already been loaded.');
 		}
 		
 		self::$mapper_descriptors[$descriptor->getClass()] = $descriptor;
@@ -548,7 +548,7 @@ final class Db
 		
 		if( ! isset($m->relations[$relation]))
 		{
-			throw new Db_Exception_MissingRelation($reltion);
+			throw new Db_Exception_MissingRelation($reltion, get_class($object));
 		}
 		
 		$rm = self::getMapper($m->relations[$relation]);

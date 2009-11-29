@@ -19,7 +19,7 @@ class Db_Exception_MissingDescriptor extends Db_Exception
 	
 	function __construct($class_name)
 	{
-		parent::__construct(sprintf('Missing descriptor for the class: "%s".', $class_name));
+		parent::__construct('Missing descriptor for the class: "'.$class_name.'".');
 		
 		$this->class_name = $class_name;
 	}
