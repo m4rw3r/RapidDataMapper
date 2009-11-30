@@ -11,32 +11,127 @@
 	
 	<title>Design Patterns Used</title>
 	
-	<section>
-		<para>
-			This section exists because I need to write down all the design patterns I have used,
-			partly as part of my assignment (as my teachers can have a benefit in understanding the code),
-			partly as a reminder for myself,
-			but also as concrete real-life examples.
-		</para>
+	<para>
+		This section exists because I need to write down all the design patterns I have used,
+		partly as part of my assignment (as my teachers can have a benefit in understanding the code),
+		partly as a reminder for myself,
+		but also as concrete real-life examples.
+	</para>
+	
+	<para>
+		Here is a list of (almost) all design patterns used in RapidDataMapper:
+	</para>
+	
+	<section xml:id="design_patterns.composite">
+		<title>Composite</title>
 		
-		<para>
-			Here is a list of (almost) all design patterns used in RapidDataMapper:
-		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					<classname>Db_CodeBuilder_Container</classname> and all its descendants are composites;
+					they allow multiple instances which are contained inside to create parts of the whole result
+					which is to be returned.
+				</para>
+			</listitem>
+		</itemizedlist>
 	</section>
 	
 	<section xml:id="design_patterns.decorator">
 		<title>Decorator</title>
 		
-		<para>
-			TODO: Where is it used?
-		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					The <classname>Db_Decorator</classname> class which is used by various plugins to
+					decorate columns in the <classname>Db_Descriptor</classname>.
+				</para>
+				
+				<para>
+					See <function>Db_Descriptor->addDecorator</function> and
+					<function>Db_Descriptor->removeDecorator</function> for information
+					(the existing plugins provide real-life usage examples).
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					<classname>Db_Plugin_I18n</classname> use it to remap the columns and to add translations of
+					column names.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					<classname>Db_Plugin_Sluggable</classname> use it to add the conversion logic.
+				</para>
+			</listitem>
+		</itemizedlist>
 	</section>
 	
 	<section xml:id="design_patterns.factory_method">
 		<title>Factory Method</title>
 		
-		<para>
-			TODO: Where is it used?
-		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					<classname>Db_Descriptor</classname> with its <function>Db_Descriptor->newColumn</function>,
+					<function>Db_Descriptor->newPrimaryKey</function> and <function>Db_Descriptor->newRelation</function>.
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section xml:id="design_patterns.flyweight">
+		<title>Flyweight</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					<classname>Db_Descriptor</classname> instances use the Flyweight pattern,
+					as they are managed by the <classname>Db</classname> class with one instance per described
+					object.
+					<classname>Db</classname> does not either allow two instances describing the same class,
+					but it allows multiple instances of the same class (ie. <classname>Db_Decorator</classname>
+					or a descendant).
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					<classname>Db_Connection</classname> instances also use the Flyweight pattern
+					for the same reasons as <classname>Db_Descriptor</classname> does it.
+					The only difference is what they do; <classname>Db_Connection</classname> holds a connection
+					while <classname>Db_Descriptor</classname> hold mapping data.
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section xml:id="design_patterns.template_method">
+		<title>Template Method</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					<classname>Db_Descriptor</classname> with its <function>Db_Descriptor->newColumn</function>,
+					<function>Db_Descriptor->newPrimaryKey</function> and <function>Db_Descriptor->newRelation</function>.
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section xml:id="design_patterns.singleton">
+		<title>Singleton</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					<classname>Db_Mapper</classname> objects which are fetched with
+					<function>Db::getMapper</function> is not strictly a singleton, mainly because there are no
+					hard restrictions upon the number of instances.
+					Instead it is only implied that it is a singleton.
+				</para>
+			</listitem>
+		</itemizedlist>
 	</section>
 </appendix>
