@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<?xml-stylesheet href="manual.css" type="text/css"?> 
+
 <book
 	version="5.0"
 	xml:lang="en"

@@ -18,7 +18,7 @@ doc: doc-html
 
 # Generate documentation from Docbook
 doc-html: empty
-	xsltproc --xinclude --output doc/manual.html doc/docbook-xsl/xhtml/docbook.xsl doc/manual/src/book.xml
+	xsltproc --xinclude --stringparam html.stylesheet manual.css --output doc/manual.html doc/docbook-xsl/xhtml/docbook.xsl doc/manual/src/book.xml
 
 
 # Generate
@@ -41,6 +41,7 @@ dist: clean tests phpdoc doc-html
 	mkdir dist
 	git checkout-index -a -f --prefix=dist/
 	cp doc/manual.html dist/doc/manual.html
+	cp doc/manual.css dist/doc/manual.css
 	cp -R doc/api dist/doc/api
 	cp -R report dist/doc/code_coverage_report
 	tar -cf dist.tar dist/
