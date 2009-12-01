@@ -36,6 +36,56 @@
 			is then used as the base class for his descriptors.
 		</para>
 		
+		<para>
+			There are several ways in which a descriptor can be created.
+			Firstly you can just create an instance of <classname>Db_Descriptor</classname> and
+			then configure it directly.
+			Secondly, you can create a subclass which then configures itself in the constructor
+			(recommended for most purposes).
+			Thirdly, and this can be combined with the previous two, you create a subclass of
+			<classname>Db_Descriptor</classname> which redefines some defaults, making for less code
+			to be repeated in the final descriptor instances.
+		</para>
+		
+		<example>
+			<title>Creating Descriptors in three ways</title>
+			
+			<programlisting language="php"><![CDATA[// # 1:
+$d = new Db_Descriptor();
+$d->setClass('Classname');
+// ...
+
+// # 2:
+class FooDescriptor extends Db_Descriptor
+{
+	function __construct()
+	{
+		$this->setClass('Classname');
+		// ...
+	}
+}
+
+// # 3:
+class Lib_Descriptor extends Db_Descriptor
+{
+	// make the table become singular_tbl
+	public function getTable()
+	{
+		return empty($this->table) ? $this->getSingular().'_tbl' : $this->table;
+	}
+}
+
+class BazDescriptor extends Lib_Descriptor
+{
+	function __construct()
+	{
+		$this->setClass('Someclass');
+		// ...
+	}
+}
+
+// or create an instance of Lib_Descriptor]]></programlisting>
+		</example>
 	</section>
 	
 	<section xml:id="chapter.descriptors.associating">
@@ -261,8 +311,9 @@ catch(Db_Exception_MissingDescriptor $e)
 		<title>Mapping classes to tables</title>
 		
 		<para>
-			First, you create an instance of Db_Descriptor; either a subclass or a normal instance which
-			you then send to <function linkend="funcref.Db-addDescriptor">Db::addDescriptor</function>.
+			First, you create an instance of Db_Descriptor; either a subclass which is automatically instantiated by
+			RapidDataMapper or a plain instance which you then send to
+			<function linkend="funcref.Db-addDescriptor">Db::addDescriptor</function>.
 			This instance needs to know which class it describes, otherwise it is useless,
 			which is set using the <function>Db_Descriptor->setClass</function> method:
 		</para>
@@ -276,7 +327,7 @@ catch(Db_Exception_MissingDescriptor $e)
 		</funcsynopsis>
 		
 		<para>
-			(This method, an many other methods of the <classname>Db_Descriptor</classname> supports
+			(This method, an many other setter-methods of the <classname>Db_Descriptor</classname> supports
 			<glossterm>method-chaining</glossterm>.)
 		</para>
 		
@@ -431,6 +482,75 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 	
 	<section>
 		<title>Mapping properties to columns</title>
+		
+		<para>
+			To map a PHP property to a database column RapidDataMapper also uses a kind of descriptor
+			for the columns themselves: the <classname>Db_Descriptor_Column</classname> class.
+			Each instance controls which property is mapped to which column and also how typecasting,
+			column selection, data type, if it can be updated etc.
+		</para>
+		
+		<section>
+			<title>Creating a property - column descriptor</title>
+			
+			<para>
+				To create an object describing a property - column mapping you use the
+				<function>Db_Descriptor->newColumn</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor-newColumn">
+				<funcprototype>
+					<funcdef><type>Db_Descriptor_Column</type> <function>Db_Descriptor->newColumn</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$column_name</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				This method creates an instance of the <classname>Db_Descriptor_Column</classname>
+				(or a descendant if the <function>Db_Descriptor->newColumn</function> has been replaced)
+				which you then can configure further if needed.
+				The created instance is associated with the <classname>Db_Descriptor</classname>
+				instance that created it, but it is not yet present in the internal column listing.
+			</para>
+			
+			<para>
+				To add the <classname>Db_Descriptor_Column</classname> instance to the
+				<classname>Db_Descriptor</classname> instance's column list, use the
+				<function linkend="funcref.Db_Descriptor-add">Db_Descriptor->add</function>:
+			</para>
+			
+			<example>
+				<title>Assigning a property - column descriptor to a table descriptor</title>
+				
+				<programlisting language="php"><![CDATA[class FooDescriptor extends Db_Descriptor
+{
+	function __construct()
+	{
+		$this->setClass('Foo');
+		
+		$this->add($this->newColumn('example_column'));
+	}
+}]]></programlisting>
+			</example>
+		</section>
+		
+		<section>
+			<title>Configuring a property - column mapping</title>
+			
+			<para>
+				TODO: MORE
+			</para>
+		</section>
+		
+		<para>
+			The <classname>Db_Descriptor</classname> uses the
+			<link linkend="design_patterns.template_method">Template Method</link> design pattern combined
+			with <link linkend="design_patterns.factory_method">Factory Method</link> which makes it very
+			easy to move the original descriptor code to a new descendant of <classname>Db_Descriptor</classname>
+			which uses alternative classes for describing the columns (eg. for replacing the default
+			naming conventions).
+		</para>
 		
 		<para>
 			TODO: MORE
