@@ -484,10 +484,11 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 		<title>Mapping properties to columns</title>
 		
 		<para>
-			To map a PHP property to a database column RapidDataMapper also uses a kind of descriptor
+			To map a PHP property to a database column, RapidDataMapper also uses a kind of descriptor
 			for the columns themselves: the <classname>Db_Descriptor_Column</classname> class.
-			Each instance controls which property is mapped to which column and also how typecasting,
-			column selection, data type, if it can be updated etc.
+			Each instance of the <classname>Db_Descriptor_Column</classname> not only controls which property is
+			mapped to which column, but it also also controls typecasting, column SELECT string, data type,
+			if it can be updated, if it can be inserted and a lot more.
 		</para>
 		
 		<section>
