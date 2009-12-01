@@ -52,6 +52,14 @@ Db::initAutoload();]]></programlisting>
 				Configure RapidDataMapper, see the <link linkend="chapter.configuration">Configuration</link> chapter.
 			</step>
 		</procedure>
+		
+		<para>
+			This also forces you to load your data objects and descriptors manually
+			(autoloader, include or whatever).
+			See <link linkend="chapter.descriptors.associating">Descriptors:
+			Associating descriptors with the class to be mapped</link> to how you associate the descriptors with
+			the data objects.
+		</para>
 	</section>
 	
 	<section>
@@ -76,7 +84,7 @@ Db::initAutoload();]]></programlisting>
 			
 			<step>
 				<para>
-					Create the <filename>application/records/</filename> and <filename>application/mappercache/</filename>
+					Create the <filename>application/data_model/</filename> and <filename>application/mappercache/</filename>
 					directories.
 				</para>
 			</step>
@@ -112,6 +120,14 @@ $cache_mappers = FALSE;]]></programlisting>
 				</para>
 			</step>
 		</procedure>
+		
+		<para>
+			This also includes a special autoloader for the classes placed in the
+			<filename>application/data_model/</filename> folder.
+			The filenames are the lowercase of the class name and then add "<literal>.php</literal>".
+			(This makes for autoloading of both the data classes and the descriptor classes if the
+			descriptor classes are named as data object class name + "<literal>Descriptor</literal>".)
+		</para>
 		
 		<note>
 			I have not tried to use RapidDataMapper together with CodeIgniter's built-in abstraction, but should be possible.

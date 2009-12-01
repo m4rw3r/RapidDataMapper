@@ -47,18 +47,18 @@ class MY_Loader extends CI_Loader
 	// ------------------------------------------------------------------------
 
 	/**
-	 * A loader for the record objects.
+	 * A loader for the data objects and their descriptors.
 	 * 
 	 * @param  string
 	 * @return void
 	 */
-	public static function load_record($class)
+	public static function load_data_object($class)
 	{
 		$class = strtolower($class);
 		
-		if(file_exists(APPPATH . 'records/'.$class.EXT))
+		if(file_exists(APPPATH . 'data_model/'.$class.EXT))
 		{
-			require APPPATH . 'records/'.$class.EXT;
+			require APPPATH . 'data_model/'.$class.EXT;
 			
 			return true;
 		}
@@ -157,8 +157,8 @@ class MY_Loader extends CI_Loader
 			// let CodeIgniter handle the logging
 			Db::attachLogger(array('MY_Loader', 'db_log_message'));
 			
-			// register a loader for the records
-			spl_autoload_register(array('MY_Loader', 'load_record'));
+			// register a loader for the data objects and their descriptors
+			spl_autoload_register(array('MY_Loader', 'load_data_object'));
 			
 			$defined = true;
 		}
