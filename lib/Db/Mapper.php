@@ -33,6 +33,44 @@ abstract class Db_Mapper
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Do not allow cloning.
+	 * 
+	 * Only one mapper per class should exist.
+	 * 
+	 * @throws Db_Exception
+	 */
+	public final function __clone()
+	{
+		throw new Db_Exception('Cloning of Db_Connection instances are not allowed.');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Do not allow serialization.
+	 * 
+	 * @throws Db_Exception
+	 */
+	public final function __sleep()
+	{
+		throw new Db_Exception('Serialization of Db_Connection objects are not allowed.');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Do not allow unserialization.
+	 * 
+	 * @throws Db_Exception
+	 */
+	public final function __wakeup()
+	{
+		throw new Db_Exception('Unserialization of Db_Connection objects are not allowed.');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the database connection.
 	 * 
 	 * @return Db_Connection

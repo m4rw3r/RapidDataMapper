@@ -153,7 +153,7 @@ abstract class Db_Connection
 	// ------------------------------------------------------------------------
 
 	/**
-	 * 
+	 * Constructor.
 	 * 
 	 * @param string
 	 * @param array
@@ -168,6 +168,44 @@ abstract class Db_Connection
 		}
 		
 		$this->result_object_class = str_replace('_Connection', '', get_class($this)).'_Result';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Do not allow cloning.
+	 * 
+	 * Only one connection per configuration should exist.
+	 * 
+	 * @throws Db_Exception
+	 */
+	public final function __clone()
+	{
+		throw new Db_Exception('Cloning of Db_Connection instances are not allowed.');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Do not allow serialization.
+	 * 
+	 * @throws Db_Exception
+	 */
+	public final function __sleep()
+	{
+		throw new Db_Exception('Serialization of Db_Connection objects are not allowed.');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Do not allow unserialization.
+	 * 
+	 * @throws Db_Exception
+	 */
+	public final function __wakeup()
+	{
+		throw new Db_Exception('Unserialization of Db_Connection objects are not allowed.');
 	}
 	
 	// ------------------------------------------------------------------------

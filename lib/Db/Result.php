@@ -39,6 +39,45 @@ abstract class Db_Result implements IteratorAggregate, Countable
 		$this->resource =& $resource;
 	}
 	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Do not allow cloning.
+	 * 
+	 * Clones can cause problems if they free their resources while a clone is still accessing it.
+	 * Plus it can cause problems with the resource's internal counter.
+	 * 
+	 * @throws Db_Exception
+	 */
+	public final function __clone()
+	{
+		throw new Db_Exception('Cloning of Db_Connection instances are not allowed.');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Do not allow serialization.
+	 * 
+	 * @throws Db_Exception
+	 */
+	public final function __sleep()
+	{
+		throw new Db_Exception('Serialization of Db_Connection objects are not allowed.');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Do not allow unserialization.
+	 * 
+	 * @throws Db_Exception
+	 */
+	public final function __wakeup()
+	{
+		throw new Db_Exception('Unserialization of Db_Connection objects are not allowed.');
+	}
+	
 	// --------------------------------------------------------------------
 		
 	/**
