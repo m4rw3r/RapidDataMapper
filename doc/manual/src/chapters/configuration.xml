@@ -43,6 +43,11 @@
 		what databases are available and where to store the files.
 	</para>
 	
+	<para>
+		For the third configuration type, which are the descriptors, see the
+		<link linkend="chapter.descriptors">Descriptors</link> chapter.
+	</para>
+	
 	<section xml:id="chapter.configuration.connection_configurations">
 		<title>Connection configurations</title>
 		
