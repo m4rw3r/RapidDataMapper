@@ -377,7 +377,7 @@ var_dump($q->getSQL());
 			
 			<para>
 				Essentially, the <varname>$columns</varname> parameter is sent to the
-				<function linkend="funcref.Db_Query_Select-columns">Db_Query_Select->columns</function> method.
+				<function linkend="funcref.Db_Query_Select-column">Db_Query_Select->columns</function> method.
 				See its behaviour for more in-depth information.
 			</para>
 			
@@ -489,7 +489,7 @@ $number_of_tracks = $q->get()->val();]]></programlisting>
 		</section>
 		
 		<section>
-			<title>Joining tables</title>
+			<title>Joining tables (JOIN)</title>
 			
 			<para>
 				To join another table to the tables you already have specified with
@@ -616,6 +616,57 @@ $r2 = $q2->get();
 				(if the <parameter>$condition</parameter> does not have a comparison operator, "<literal>=</literal>"
 				will be added between the condition and the value).
 			</para>
+		</section>
+		
+		<section>
+			<title>Grouping rows (GROUP BY)</title>
+			
+			<para>
+				To add columns to the GROUP BY clause, use <function>Db_Query_Select->groupBy</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-groupBy">
+				<funcprototype>
+					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->groupBy</function></funcdef>
+					
+					<paramdef><type>string</type>|<type>array</type> <parameter>$columns</parameter></paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$table</parameter> = <symbol>false</symbol></paramdef>
+					<paramdef choice="opt"><type>boolean</type> <parameter>$table_is_aliased</parameter> = <symbol>false</symbol></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The <parameter>$columns</parameter> is <glossterm>identifier protected</glossterm>
+				and is then added to the array.
+			</para>
+			
+			<para>
+				<parameter>$table</parameter> and <parameter>$table_is_aliased</parameter> controls wether
+				to add a table alias in front of the columns (ie. "<literal>table_alias.column</literal>").
+				<parameter>$table</parameter> is the table alias, and will be prefixed with the database
+				prefix if <parameter>$table_is_aliased</parameter> is <symbol>false</symbol>.
+			</para>
+		</section>
+		
+		<section>
+			<title>Limit and Offset</title>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-limit">
+				<funcprototype>
+					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->limit</function></funcdef>
+					
+					<paramdef><type>int</type> <parameter>$limit</parameter></paramdef>
+					<paramdef choice="opt"><type>int</type> <parameter>$offset</parameter> = <symbol>false</symbol></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-offset">
+				<funcprototype>
+					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->limit</function></funcdef>
+					
+					<paramdef><type>int</type> <parameter>$offset</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
 		</section>
 	</section>
 	
