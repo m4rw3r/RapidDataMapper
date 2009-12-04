@@ -419,7 +419,7 @@ class Db_Query_Select extends Db_Query
 		elseif($this->escape)
 		{
 			// escape the string
-			$column = $this->_instance->escape($column);
+			$column = $this->_instance->protectIdentifiers($column);
 		}
 		
 		// save it, so we still can use this query object here
