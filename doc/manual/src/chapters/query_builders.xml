@@ -668,6 +668,55 @@ $r2 = $q2->get();
 				</funcprototype>
 			</funcsynopsis>
 		</section>
+		
+		<section>
+			<title>Issuing a COUNT() query</title>
+			
+			<para>
+				COUNT() queries are quite common, hence were the <function>Db_Query_Select->count</function>
+				method created.
+				It temporarily modifies the current query object, making it count the number of rows instead
+				of fetching a result set.
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-count">
+				<funcprototype>
+					<funcdef><type>int</type>|<type>false</type> <function>Db_Query_Select->count</function></funcdef>
+					
+					<paramdef choice="opt"><type>string</type> <parameter>$column</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				By default, <function>count</function> sends a "<literal>COUNT(1)</literal>" query,
+				which counts all rows in a result set.
+				This might not be satisfactory, so the <parameter>$column</parameter> is there
+				to replace the "<literal>1</literal>" within the COUNT() function (you can also
+				add multiple columns by separating them by commas), <parameter>$columns</parameter>
+				will be <glossterm>identifier protected</glossterm>.
+			</para>
+			
+			<para>
+				<symbol>false</symbol> can be returned in case of an error.
+			</para>
+			
+			<example>
+				<title>Couning a query and then fetching the data</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select();
+
+$q->from('tracks');
+$q->where('artist_id', $_GET['artist_id']);
+
+// count a total to be able to determine the number of pages
+$tot = $q->count();
+
+// now limit and set offset to the correct page
+$q->limit(10, $_GET['p'] * 10);
+
+$r = $q->get();]]></programlisting>
+			</example>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.query_builders.insert_queries">
