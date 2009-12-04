@@ -492,7 +492,129 @@ $number_of_tracks = $q->get()->val();]]></programlisting>
 			<title>Joining tables</title>
 			
 			<para>
-				TODO: MORE
+				To join another table to the tables you already have specified with
+				<function linkend="funcref.Db_Query_Select-from">Db_Query_Select->from</function>,
+				use <function>Db_Query_Select->join</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-join">
+				<funcprototype>
+					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->join</function></funcdef>
+					
+					<paramdef><type>string</type>|<type>array</type>|<type>Db_Query_Select</type> <parameter>$table</parameter></paramdef>
+					<paramdef><type>string</type> <parameter>$condition</parameter></paramdef>
+					<paramdef choice="opt"><type>array</type> <parameter>$columns</parameter> = <symbol>false</symbol></paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$type</parameter> = "<literal>left</literal>"</paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The first parameter is the table name to join, which can be without alias,
+				with alias (in an array where the alias is key, only the first key=>value pair will be joined)
+				and a subquery (just replace the string with the variable containing the subquery).
+			</para>
+			
+			<para>
+				The second parameter, <parameter>$condition</parameter>, is as it sounds,
+				a list of conditions to fulfill for the JOIN.
+				They are in the same syntax as the single parameter variant of
+				<function linkend="funcref.Db_Query-where">Db_Query->where</function>
+				(both the string and array variants),
+				which means that it will be identifier protected if it is a plain string
+				(provided <function linkend="funcref.Db_Query-escape">Db_Query->escape</function>
+				is set to <symbol>true</symbol>).
+			</para>
+			
+			<para>
+				The third parameter is the names of the columns to select.
+				By default <function>Db_Query_Select->join</function> selects all columns
+				(<parameter>$columns</parameter> = <symbol>false</symbol>),
+				but by sending other values it is possible to select some or none
+				(use an empty array for no columns).
+				<parameter>$columns</parameter> will be sent to
+				<function linkend="funcref.Db_Query_Select-column">Db_Query_Select->column</function>
+				(as the first parameter),
+				which means that they can also be aliased or controlled by escaping.
+			</para>
+			
+			<para>
+				And lastly we have the <parameter>$type</parameter> parameter which will determine what
+				type of JOIN will be performed.
+				This string will be uppercased and put before "<literal>JOIN</literal>" in the query
+				(NOTE: It won't be validated, so do not use data from the user without strict validation).
+			</para>
+			
+			<example>
+				<title>Joining tables</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select();
+
+$q->from('tracks');
+$q->join('artists', 'artist.id = tracks.artist_id');
+
+$r = $q->get();
+// SELECT `t1`.*, `t2`.*
+// FROM `tracks` AS `t1`
+// LEFT JOIN `artists` AS `t2` ON `artist´.`id` = `tracks`.`artist_id`
+
+$q2 = Db::getConnection()->select();
+
+$q2->from('tracks', array('track_name' => 'name'));
+$q2->join('artists', 'artists.id = tracks.id', array('artist_name' => 'name'), 'inner');
+
+$r2 = $q2->get();
+// SELECT `t1`.`name` AS `track_name`, `t2`.`name` AS `artist_name`
+// FROM `tracks` AS `t1`
+// INNER JOIN `artists` AS `t2` ON `artist´.`id` = `tracks`.`artist_id`]]></programlisting>
+			</example>
+			
+			<section>
+				<title>No escape() and join()</title>
+				
+				<para>
+					The parameters affected by <function linkend="funcref.Db_Query-escape">Db_Query->escape</function>
+					are <parameter>$condition</parameter> and <parameter>$columns</parameter>.
+					<parameter>$columns</parameter> will behave just like the first parameter of
+					<function linkend="funcref.Db_Query_Select-column">Db_Query_Select->column</function>
+					and <parameter>$condition</parameter> behaves just like the first parameter of
+					<function linkend="funcref.Db_Query-where">Db_Query->where</function>.
+				</para>
+			</section>
+		</section>
+		
+		<section>
+			<title>Filtering columns aggregated by GROUP BY (ie. using HAVING)</title>
+			
+			<para>
+				To add a having clause to the query, use <function>Db_Query_Select->having</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-having">
+				<funcprototype>
+					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->having</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$condition</parameter></paramdef>
+					<paramdef choice="opt"><type>scalar</type> <parameter>$value</parameter> = <symbol>NULL</symbol></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The first parameter is never identifier protected, nor is it escaped.
+				This is because the filter used in HAVING is often an aggregate function,
+				such as <literal>SUM</literal> or <literal>MAX</literal>.
+				<parameter>$condition</parameter> will also be filtered for "<literal>or</literal>"
+				in the beginning of the string (just like the
+				<function linkend="chapter.query_builders.conditions.or">OR filtering of Db_Query->where</function>).
+			</para>
+			
+			<para>
+				If <parameter>$value</parameter> is <symbol>null</symbol>, then the <parameter>$condition</parameter> will
+				be appended to the HAVING clause.
+				But if this parameter is not <symbol>null</symbol> it will be escaped
+				(provided <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> is
+				<symbol>true</symbol>, default) and concatenated with <parameter>$condition</parameter>
+				(if the <parameter>$condition</parameter> does not have a comparison operator, "<literal>=</literal>"
+				will be added between the condition and the value).
 			</para>
 		</section>
 	</section>
