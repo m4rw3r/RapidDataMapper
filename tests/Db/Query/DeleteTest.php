@@ -21,7 +21,7 @@ class Db_Query_DeleteTest extends PHPUnit_Framework_TestCase
 		require_once dirname(__FILE__).'/../../../lib/Db/Query.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Query/Delete.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Exception.php';
-		require_once dirname(__FILE__).'/../../../lib/Db/Exception/QueryIncomplete.php';
+		require_once dirname(__FILE__).'/../../../lib/Db/QueryBuilderException.php';
 	}
 	
 	// ------------------------------------------------------------------------

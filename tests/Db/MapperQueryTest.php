@@ -22,7 +22,7 @@ class Db_MapperQueryTest extends PHPUnit_Framework_TestCase
 		require_once dirname(__FILE__).'/../../lib/Db/Query/Select.php';
 		require_once dirname(__FILE__).'/../../lib/Db/MapperQuery.php';
 		require_once dirname(__FILE__).'/../../lib/Db/Exception.php';
-		require_once dirname(__FILE__).'/../../lib/Db/Exception/QueryIncomplete.php';
+		require_once dirname(__FILE__).'/../../lib/Db/QueryBuilderException.php';
 	}
 	
 	// ------------------------------------------------------------------------

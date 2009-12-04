@@ -32,7 +32,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassName()
 	{
@@ -41,7 +41,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getClass();
 	}
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassName2()
 	{
@@ -50,7 +50,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getSingular();
 	}
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassName3()
 	{
@@ -59,7 +59,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getTable();
 	}
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassName4()
 	{
@@ -71,7 +71,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassNameButSingular()
 	{
@@ -90,7 +90,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($desc->getTable(), 'tests');
 	}
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassNameButSingular3()
 	{
@@ -103,7 +103,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassNameButTable()
 	{
@@ -113,7 +113,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getClass();
 	}
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassNameButTable2()
 	{
@@ -130,7 +130,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($desc->getTable(), 'tests');
 	}
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassNameButTable4()
 	{
@@ -143,7 +143,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassNameButFactory()
 	{
@@ -153,7 +153,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getClass();
 	}
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassNameButFactory2()
 	{
@@ -163,7 +163,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getSingular();
 	}
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testNoClassNameButFactory3()
 	{
@@ -651,7 +651,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingClassName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testGetBuilder()
 	{
@@ -660,7 +660,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getBuilder();
 	}
 	/**
-	 * @expectedException Db_Exception_MissingPrimaryKey
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testGetBuilder2()
 	{
@@ -731,8 +731,9 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 			
 			$this->fail('An expected Db_Exception_MissingPrimaryKey exception has not been raised.');
 		}
-		catch(Db_Exception_MissingPrimaryKey $e)
+		catch(Db_Descriptor_MissingValueException $e)
 		{
+			$this->assertEquals('primary key', $e->getValueName());
 			// just continue
 		}
 		
@@ -820,7 +821,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksInvalidArray()
 	{
@@ -830,7 +831,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getHookCode('test');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksInvalidArray2()
 	{
@@ -840,7 +841,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getHookCode('test');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksInvalidArray3()
 	{
@@ -850,7 +851,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getHookCode('test');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksInvalidArray4()
 	{
@@ -860,7 +861,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getHookCode('test');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksInvalidArray5()
 	{
@@ -881,7 +882,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksStaticWhenNonIsRequired()
 	{
@@ -894,7 +895,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksMissingMethod()
 	{
@@ -974,7 +975,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksProtected()
 	{
@@ -983,7 +984,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getHookCode('ptest', '$obj');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksProtected2()
 	{
@@ -992,7 +993,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getHookCode('test_pstatic');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksProtected3()
 	{
@@ -1001,7 +1002,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getHookCode('private_test', '$obj');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksProtected4()
 	{
@@ -1010,7 +1011,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getHookCode('test_private_static');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksProtected5()
 	{
@@ -1019,7 +1020,7 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 		$desc->getHookCode('otest_pstatic');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidCallable
+	 * @expectedException Db_DescriptorException
 	 */
 	public function testHooksProtected6()
 	{

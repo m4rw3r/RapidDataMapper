@@ -47,14 +47,14 @@ class DbTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @expectedException Db_Exception_MissingConfig
+	 * @expectedException Db_Connection_ConfigurationException
 	 */
 	public function testNoConnection()
 	{
 		Db::getConnection();
 	}
 	/**
-	 * @expectedException Db_Exception_MissingConfig
+	 * @expectedException Db_Connection_ConfigurationException
 	 */
 	public function testNoConnection2()
 	{
@@ -63,21 +63,21 @@ class DbTest extends PHPUnit_Framework_TestCase
 		Db::getConnection();
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidConfiguration
+	 * @expectedException Db_Connection_ConfigurationException
 	 */
 	public function testSetConnectionConfigInvalid()
 	{
 		Db::setConnectionConfig('testing');
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidConfiguration
+	 * @expectedException Db_Connection_ConfigurationException
 	 */
 	public function testSetConnectionConfigInvalid2()
 	{
 		Db::setConnectionConfig(null);
 	}
 	/**
-	 * @expectedException Db_Exception_InvalidConfiguration
+	 * @expectedException Db_Connection_ConfigurationException
 	 */
 	public function testSetConnectionConfigInvalid3()
 	{
@@ -93,7 +93,7 @@ class DbTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue(Db::getConnection() instanceof Db_Driver_Mock_Connection);
 	}
 	/**
-	 * @expectedException Db_Exception_MissingConfig
+	 * @expectedException Db_Connection_ConfigurationException
 	 */
 	public function testSetDefaultConnectionName()
 	{

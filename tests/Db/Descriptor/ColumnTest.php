@@ -16,13 +16,14 @@ class Db_Descriptor_ColumnTest extends PHPUnit_Framework_TestCase
 	{
 		require_once dirname(__FILE__).'/../../../lib/Db/Descriptor/Column.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Exception.php';
-		require_once dirname(__FILE__).'/../../../lib/Db/Exception/Descriptor/MissingColumnName.php';
+		require_once dirname(__FILE__).'/../../../lib/Db/DescriptorException.php';
+		require_once dirname(__FILE__).'/../../../lib/Db/Descriptor/MissingValueException.php';
 	}
 	
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingColumnName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testGetColumn()
 	{
@@ -38,7 +39,7 @@ class Db_Descriptor_ColumnTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('foo', $desc->getColumn());
 	}
 	/**
-	 * @expectedException Db_Exception_Descriptor_MissingColumnName
+	 * @expectedException Db_Descriptor_MissingValueException
 	 */
 	public function testGetProperty()
 	{

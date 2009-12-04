@@ -10,7 +10,7 @@ require_once 'PHPUnit/Framework.php';
 require_once dirname(__FILE__).'/../../../lib/Db/Query.php';
 require_once dirname(__FILE__).'/../../../lib/Db/Query/Update.php';
 require_once dirname(__FILE__).'/../../../lib/Db/Exception.php';
-require_once dirname(__FILE__).'/../../../lib/Db/Exception/QueryIncomplete.php';
+require_once dirname(__FILE__).'/../../../lib/Db/QueryBuilderException.php';
 
 /**
  * @covers Db_Query_Update
@@ -22,7 +22,7 @@ class Db_Query_UpdateTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 
 	/**
-	 * @expectedException Db_Exception_QueryIncomplete
+	 * @expectedException Db_QueryBuilderException
 	 */
 	public function testNoData()
 	{

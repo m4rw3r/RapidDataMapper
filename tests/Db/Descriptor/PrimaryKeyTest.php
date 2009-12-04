@@ -21,7 +21,8 @@ class Db_Descriptor_PrimaryKeyTest extends PHPUnit_Framework_TestCase
 		require_once dirname(__FILE__).'/../../../lib/Db/Descriptor/Column.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Descriptor/PrimaryKey.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Exception.php';
-		require_once dirname(__FILE__).'/../../../lib/Db/Exception/Descriptor/MissingColumnName.php';
+		require_once dirname(__FILE__).'/../../../lib/Db/DescriptorException.php';
+		require_once dirname(__FILE__).'/../../../lib/Db/Descriptor/MissingValueException.php';
 	}
 	
 	// ------------------------------------------------------------------------

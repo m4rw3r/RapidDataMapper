@@ -20,7 +20,7 @@ class Db_Query_SelectTest extends PHPUnit_Framework_TestCase
 	{
 		
 		require_once dirname(__FILE__).'/../../../lib/Db/Exception.php';
-		require_once dirname(__FILE__).'/../../../lib/Db/Exception/QueryIncomplete.php';
+		require_once dirname(__FILE__).'/../../../lib/Db/QueryBuilderException.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Query.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Query/Select.php';
 	}
@@ -35,7 +35,7 @@ class Db_Query_SelectTest extends PHPUnit_Framework_TestCase
 		$q = new Db_Query_Select();
 	}
 	/**
-	 * @expectedException Db_Exception_QueryIncomplete
+	 * @expectedException Db_QueryBuilderException
 	 */
 	public function testEmpty2()
 	{

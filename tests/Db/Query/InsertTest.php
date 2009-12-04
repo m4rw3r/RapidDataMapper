@@ -21,13 +21,13 @@ class Db_Query_InsertTest extends PHPUnit_Framework_TestCase
 		require_once dirname(__FILE__).'/../../../lib/Db/Query.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Query/Insert.php';
 		require_once dirname(__FILE__).'/../../../lib/Db/Exception.php';
-		require_once dirname(__FILE__).'/../../../lib/Db/Exception/QueryIncomplete.php';
+		require_once dirname(__FILE__).'/../../../lib/Db/QueryBuilderException.php';
 	}
 	
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * @expectedException Db_Exception_QueryIncomplete
+	 * @expectedException Db_QueryBuilderException
 	 */
 	public function testEmpty()
 	{
@@ -41,7 +41,7 @@ class Db_Query_InsertTest extends PHPUnit_Framework_TestCase
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * @expectedException Db_Exception_QueryIncomplete
+	 * @expectedException Db_QueryBuilderException
 	 */
 	public function testNoValues()
 	{
