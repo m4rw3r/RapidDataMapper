@@ -77,7 +77,7 @@ class Db_Descriptor_Relation
 	{
 		if(empty($this->desc_parent))
 		{
-			throw new Db_Exception_Descriptor_MissingDescriptor('parent');
+			throw new Db_DescriptorException('parent', 'No parent exception for instance of Db_Descriptor_Relation.');
 		}
 		
 		return $this->desc_parent;
@@ -110,7 +110,7 @@ class Db_Descriptor_Relation
 	{
 		if(empty($this->name))
 		{
-			throw new Db_Exception_Descriptor_MissingName();
+			throw new Db_Descriptor_MissingValueException('relation name', $this->getParentDescriptor()->getClass());
 		}
 		
 		return $this->name;

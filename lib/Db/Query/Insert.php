@@ -160,7 +160,7 @@ class Db_Query_Insert
 	{
 		if(empty($this->columns))
 		{
-			throw new Db_Exception_QueryIncomplete('Columns missing in INSERT statement');
+			throw new Db_QueryBuilderException('Columns missing in INSERT statement');
 		}
 		
 		$columns = $this->_instance->protectIdentifiers(implode(', ', array_keys($this->columns)));

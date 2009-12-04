@@ -225,7 +225,7 @@ abstract class Db_Connection
 	/**
 	 * Initializes the database handle.
 	 * 
-	 * @throws Db_Exception_ConnectionError
+	 * @throws Db_ConnectionException
 	 * 
 	 * @return bool
 	 */
@@ -240,7 +240,7 @@ abstract class Db_Connection
 			if( ! $this->dbh)
 			{
 				// failed connection, report
-				throw new Db_Exception_ConnectionError($this->error());
+				throw new Db_ConnectionException($this->error());
 			}
 			
 			$this->setCharset($this->char_set, $this->dbcollat);
@@ -255,7 +255,7 @@ abstract class Db_Connection
 	 * Runs the query and returns the result object.
 	 * 
 	 * @see Db_Connection::replaceBinds()
-	 * @throws Db_Exception_QueryError
+	 * @throws Db_QueryException
 	 * 
 	 * @param  string
 	 * @param  array
@@ -265,7 +265,7 @@ abstract class Db_Connection
 	{
 		if(empty($sql))
 		{
-			throw new Db_Exception_QueryError('Invalid query, the query is empty');
+			throw new Db_QueryException('Invalid query, the query is empty');
 		}
 		
 		if( ! empty($binds))
@@ -293,7 +293,7 @@ abstract class Db_Connection
 				
 				return $ret;
 			}
-			catch(Db_Exception_Cache_NoValue $e)
+			catch(Db_Cache_NoValueException $e)
 			{
 				// just continue
 			}
@@ -310,7 +310,7 @@ abstract class Db_Connection
 			// failed query, log
 			$query_times[] = false;
 			
-			throw new Db_Exception_QueryError('ERROR: '.$this->error().', SQL: "'.$sql.'"');
+			throw new Db_QueryException('ERROR: '.$this->error().', SQL: "'.$sql.'"');
 		}
 		
 		if($this->cache_on && $is_write)
@@ -543,7 +543,7 @@ abstract class Db_Connection
 	 * - Only the bound data will be escaped!
 	 * - Escaping of values for LIKE condition does not escape % and _ !
 	 *
-	 * @throws Db_Exception_MissingBindParameter
+	 * @throws Db_Connection_MissingBindParameterException
 	 *
 	 * @param  string
 	 * @param  array
@@ -563,7 +563,7 @@ abstract class Db_Connection
 			{
 				if( ! isset($binds[$id]))
 				{
-					throw new Db_exception_MissingBindParameter($id);
+					throw new Db_Connection_MissingBindParameterException($id);
 				}
 				
 				// add the part before the name and then the escaped data
@@ -584,7 +584,7 @@ abstract class Db_Connection
 			
 			if($c > count($binds))
 			{
-				throw new Db_Exception_MissingBindParameter($c);
+				throw new Db_Connection_MissingBindParameterException($c);
 			}
 			
 			$res = '';
@@ -686,7 +686,7 @@ abstract class Db_Connection
 	 * pconnect (persistent connection? true/false)
 	 * database (which database to select)
 	 * 
-	 * @throws Db_Exception_ConnectionError
+	 * @throws Db_ConnectionException
 	 * @return resource|false
 	 */
 	abstract protected function connect();

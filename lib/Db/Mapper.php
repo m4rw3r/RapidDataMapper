@@ -118,7 +118,7 @@ abstract class Db_Mapper
 					// no just primary key
 					if(count($conditions) != count($this->primary_keys))
 					{
-						throw new Db_Exception_Mapper_WrongNumberOfPks('Wrong number of primary keys specified when trying to find a '.$this->class.' object.');
+						throw new Db_Exception('Wrong number of primary keys specified when trying to find a '.$this->class.' object.');
 					}
 					
 					// TODO: prefix primary key(s) with singular?

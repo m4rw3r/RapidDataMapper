@@ -136,14 +136,14 @@ class Db_Descriptor
 	/**
 	 * Returns the class name which this descriptor describes.
 	 * 
-	 * @throws Db_Exception_Descriptor_MissingClassName
+	 * @throws Db_Descriptor_MissingValueException
 	 * @return string
 	 */
 	public function getClass()
 	{
 		if(empty($this->class))
 		{
-			throw new Db_Exception_Descriptor_MissingClassName();
+			throw new Db_Descriptor_MissingValueException('class name', '');
 		}
 		
 		return $this->class;
@@ -344,11 +344,21 @@ class Db_Descriptor
 	 * Adds a descriptor object to this descriptor.
 	 * 
 	 * @throws InvalidArgumentException
-	 * @param  Db_Descriptor_Column|Db_Descriptor_PrimaryKey|Db_Descriptor_Relation
+	 * @param  Db_Descriptor_Column|Db_Descriptor_PrimaryKey|Db_Descriptor_Relation|array
 	 * @return self
 	 */
 	public function add($object)
 	{
+		if(is_array($object))
+		{
+			foreach($object as $obj)
+			{
+				$this->add($obj);
+			}
+			
+			return $this;
+		}
+		
 		// is it of allowed type?
 		foreach(array(
 				'relations' => 'Db_Descriptor_Relation',
@@ -623,7 +633,7 @@ class Db_Descriptor
 	/**
 	 * Returns a new instance of a mapper builder.
 	 * 
-	 * @throws Db_Exception_MissingPrimaryKey
+	 * @throws Db_Descriptor_MissingValue
 	 * @return Db_Mapper_Builder
 	 */
 	public final function getBuilder()
@@ -634,7 +644,7 @@ class Db_Descriptor
 		$pks = $this->getPrimaryKeys();
 		if(empty($pks))
 		{
-			throw new Db_Exception_MissingPrimaryKey($this->getClass());
+			throw new Db_Descriptor_MissingValueException('primary key', $this->getClass());
 		}
 		
 		$b = $this->createBuilder();
@@ -683,22 +693,22 @@ class Db_Descriptor
 			{
 				if(count($this->hooks[$name]) > 2)
 				{
-					throw new Db_Exception_InvalidCallable('Hook: "'.$name.'", the array has too many values.');
+					throw new Db_DescriptorException($this->getClass(), 'Hook: "'.$name.'", the array has too many values.');
 				}
 				
 				if( ! (isset($this->hooks[$name][0]) && is_string($this->hooks[$name][0])))
 				{
-					throw new Db_Exception_InvalidCallable('Hook: "'.$name.'", the first value in the array is not a string.');
+					throw new Db_DescriptorException($this->getClass(), 'Hook: "'.$name.'", the first value in the array is not a string.');
 				}
 				
 				if(isset($this->hooks[$name][1]) && ! is_string($this->hooks[$name][1]))
 				{
-					throw new Db_Exception_InvalidCallable('Hook: "'.$name.'", the first value in the array is not a string.');
+					throw new Db_DescriptorException($this->getClass(), 'Hook: "'.$name.'", the first value in the array is not a string.');
 				}
 			}
 			elseif( ! is_string($this->hooks[$name]))
 			{
-				throw new Db_Exception_InvalidCallable('Hook: "'.$name.'", the callable must be either a string or an array containing one or two strings.');
+				throw new Db_DescriptorException($this->getClass(), 'Hook: "'.$name.'", the callable must be either a string or an array containing one or two strings.');
 			}
 			
 			$hook = array();
@@ -729,7 +739,7 @@ class Db_Descriptor
 				}
 				else
 				{
-					throw new Db_Exception_InvalidCallable('Callable supplied for hook "'.$name.'", callable "'.$hook.'".');
+					throw new Db_DescriptorException($this->getClass(), 'Callable supplied for hook "'.$name.'", callable "'.$hook.'".');
 				}
 			}
 			else
@@ -737,7 +747,7 @@ class Db_Descriptor
 				// we need a string
 				if(is_array($hook))
 				{
-					throw new Db_Exception_InvalidCallable('The hook "'.$name.'" requires a method placed on the described class, not a static method placed on some other class.');
+					throw new Db_DescriptorException($this->getClass(), 'The hook "'.$name.'" requires a method placed on the described class, not a static method placed on some other class.');
 				}
 				
 				// check if it is a method on the object
@@ -753,11 +763,11 @@ class Db_Descriptor
 						// we need to be able to invoke it outside the class
 						if( ! $m->isPublic())
 						{
-							throw new Db_Exception_InvalidCallable('The "'.$this->getClass().'::'.$hook.'" method is not public, it cannot be used as a hook.');
+							throw new Db_DescriptorException($this->getClass(), 'The "'.$this->getClass().'::'.$hook.'" method is not public, it cannot be used as a hook.');
 						}
 						elseif($m->isStatic())
 						{
-							throw new Db_Exception_InvalidCallable('The "'.$this->getClass().'::'.$hook.'" method is static but a non-static method is required.');
+							throw new Db_DescriptorException($this->getClass(), 'The "'.$this->getClass().'::'.$hook.'" method is static but a non-static method is required.');
 						}
 						else
 						{
@@ -771,7 +781,7 @@ class Db_Descriptor
 					}
 					else
 					{
-						throw new Db_Exception_InvalidCallable('A method with the name "'.$hook.'" is required by a hook to be placed in the class "'.$this->getClass().'".');
+						throw new Db_DescriptorException($this->getClass(), 'A method with the name "'.$hook.'" is required by a hook to be placed in the class "'.$this->getClass().'".');
 					}
 				}
 				catch(ReflectionException $e)

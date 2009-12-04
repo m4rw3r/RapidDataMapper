@@ -470,7 +470,7 @@ class Db_Query_Select extends Db_Query
 	{
 		if(empty($this->from))
 		{
-			throw new Db_Exception_QueryIncomplete('Missing FROM part');
+			throw new Db_QueryBuilderException('Missing FROM part');
 		}
 		
 		$str = 'SELECT ' . ($this->distinct ? 'DISTINCT ' : '') . implode(', ', $this->columns) . "\nFROM " . implode(', ', $this->from);

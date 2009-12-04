@@ -36,7 +36,7 @@ class Db_IdentityMap
 		
 		if(isset(self::$map[$class][$id]))
 		{
-			throw new Db_Exception('Key "'.$key.'" is already populated.');
+			throw new RuntimeException('Key "'.$key.'" is already populated.');
 		}
 		
 		self::$map[$class][$id] = $object;

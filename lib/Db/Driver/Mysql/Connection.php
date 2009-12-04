@@ -20,7 +20,7 @@ class Db_Driver_Mysql_Connection extends Db_Connection
 		
 		if( ! $conn)
 		{
-			throw new Db_Exception_ConnectionError($this->error());
+			throw new Db_ConnectionException($this->error());
 		}
 		else
 		{
@@ -31,7 +31,7 @@ class Db_Driver_Mysql_Connection extends Db_Connection
 			}
 			else
 			{
-				throw new Db_Exception_ConnectionError('Cannot select database "'.$this->database.'".');
+				throw new Db_ConnectionException('Cannot select database "'.$this->database.'".');
 			}
 		}
 	}

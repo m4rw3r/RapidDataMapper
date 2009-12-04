@@ -71,14 +71,15 @@ class Db_Descriptor_Column
 	/**
 	 * Returns the column name this object describes.
 	 * 
-	 * @throws Db_Exception_Descriptor_MissingColumnName
+	 * @throws Db_Descriptor_MissingValueException
 	 * @return string
 	 */
 	public function getColumn()
 	{
 		if(empty($this->column))
 		{
-			throw new Db_Exception_Descriptor_MissingColumnName();
+			// TODO: Add the name of the parent descriptor?
+			throw new Db_Descriptor_MissingValueException('column', '');
 		}
 		
 		return $this->column;

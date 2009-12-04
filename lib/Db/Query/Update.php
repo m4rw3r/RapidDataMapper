@@ -123,7 +123,7 @@ class Db_Query_Update extends Db_Query
 	{
 		if(empty($this->data))
 		{
-			throw new Db_Exception_QueryIncomplete('Missing data for update');
+			throw new Db_QueryBuilderException('Missing data for update');
 		}
 		
 		$str = 'UPDATE ' . $this->_instance->protectIdentifiers(implode(', ', array_map(array($this->_instance, 'prefix'), (Array)$this->table))) . "\nSET ";

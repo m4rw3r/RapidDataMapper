@@ -1,14 +1,14 @@
 <?php
 /*
- * Created by Martin Wernståhl on 2009-08-07.
+ * Created by Martin Wernståhl on 2009-08-15.
  * Copyright (c) 2009 Martin Wernståhl.
  * All rights reserved.
  */
 
 /**
- * Exception for the event that a database connection error occurs.
+ * Exception for the event that a database query error occurs.
  */
-class Db_Exception_ConnectionError extends Db_Exception
+class Db_QueryException extends Db_Exception
 {
 	/**
 	 * The error message.
@@ -19,7 +19,7 @@ class Db_Exception_ConnectionError extends Db_Exception
 	
 	function __construct($error_message)
 	{
-		parent::__construct('Connection Error: "'.$error_message.'".');
+		parent::__construct($error_message);
 		
 		$this->error_message = $error_message;
 	}
@@ -27,7 +27,7 @@ class Db_Exception_ConnectionError extends Db_Exception
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the error message.
+	 * Returns the query error message.
 	 * 
 	 * @return string
 	 */
@@ -38,5 +38,5 @@ class Db_Exception_ConnectionError extends Db_Exception
 }
 
 
-/* End of file ConnectionError.php */
-/* Location: ./lib/Db/Exception */
+/* End of file QueryException.php */
+/* Location: ./lib/Db */

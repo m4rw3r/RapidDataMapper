@@ -228,7 +228,7 @@ class Db_MapperQuery extends Db_Query_Select
 			{
 				if( ! isset($mapper->relations[$relation]))
 				{
-					throw new Db_Exception_MissingRelation("'".$mapper->class.'.'.$relation.'"');
+					throw new Db_Descriptor_MissingValueException('Relation with name "'.$relation.'"', $mapper->class);
 				}
 				
 				if( ! isset($this->mapped_objects[$old_alias.'-'.$relation]))
@@ -316,7 +316,7 @@ class Db_MapperQuery extends Db_Query_Select
 	{
 		if(empty($this->from))
 		{
-			throw new Db_Exception_QueryIncomplete('Missing FROM part');
+			throw new Db_QueryBuilderException('Missing FROM part');
 		}
 		
 		$str = 'SELECT ' . ($this->distinct ? 'DISTINCT ' : '') . implode(', ', $this->columns) . "\nFROM " . implode(', ', $this->from);

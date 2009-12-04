@@ -1,14 +1,14 @@
 <?php
 /*
- * Created by Martin Wernståhl on 2009-09-05.
+ * Created by Martin Wernståhl on 2009-08-15.
  * Copyright (c) 2009 Martin Wernståhl.
  * All rights reserved.
  */
 
 /**
- * Exception for the event that a query is incomplete when it is built.
+ * Exception for the event that an error occurs during query building.
  */
-class Db_Exception_QueryIncomplete extends Db_Exception
+class Db_QueryBuilderException extends Db_Exception
 {
 	/**
 	 * The error message.
@@ -19,7 +19,7 @@ class Db_Exception_QueryIncomplete extends Db_Exception
 	
 	function __construct($error_message)
 	{
-		parent::__construct('Query Incomplete: '.$error_message.'.');
+		parent::__construct($error_message);
 		
 		$this->error_message = $error_message;
 	}
@@ -27,7 +27,7 @@ class Db_Exception_QueryIncomplete extends Db_Exception
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the name of the missing part.
+	 * Returns the query error message.
 	 * 
 	 * @return string
 	 */
@@ -38,5 +38,5 @@ class Db_Exception_QueryIncomplete extends Db_Exception
 }
 
 
-/* End of file QueryIncomplete.php */
-/* Location: ./lib/Db/Exception */
+/* End of file QueryBuilderException.php */
+/* Location: ./lib/Db */

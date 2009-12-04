@@ -168,7 +168,7 @@ final class Db
 		}
 		elseif( ! $configuration)
 		{
-			throw new Db_Exception_InvalidConfiguration($name);
+			throw new Db_Connection_ConfigurationException($name, 'Invalid configuration.');
 		}
 		else
 		{
@@ -209,12 +209,12 @@ final class Db
 		{
 			if(empty(self::$conn_configs[$name]) OR ! is_array(self::$conn_configs[$name]))
 			{
-				throw new Db_Exception_MissingConfig($name);
+				throw new Db_Connection_ConfigurationException($name, 'Configuration is missing.');
 			}
 			
 			if(empty(self::$conn_configs[$name]['dbdriver']))
 			{
-				throw new Db_Exception_InvalidConfiguration($name);
+				throw new Db_Connection_ConfigurationException($name, 'Configuration is malformed.');
 			}
 			
 			$class = 'Db_Driver_'.ucfirst(strtolower(self::$conn_configs[$name]['dbdriver'])).'_Connection';
@@ -326,7 +326,7 @@ final class Db
 	 *   ClassName.php, which will contain a ClassNameDescriptor class (no autoloader).
 	 * 
 	 * @param  string
-	 * @throws Db_Exception_MissingDescriptor
+	 * @throws Db_DescriptorException
 	 * @return Db_Descriptor
 	 */
 	public static function getDescriptor($class)
@@ -361,7 +361,7 @@ final class Db
 			// check if any class was loaded, do not use autoload this time
 			if( ! class_exists($klass, false))
 			{
-				throw new Db_Exception_MissingDescriptor($class);
+				throw new Db_DescriptorException($class, 'Descriptor is missing.');
 			}
 		}
 		
@@ -548,7 +548,7 @@ final class Db
 		
 		if( ! isset($m->relations[$relation]))
 		{
-			throw new Db_Exception_MissingRelation($reltion, get_class($object));
+			throw new Db_Descriptor_MissingRelationException(get_class($object), $relation);
 		}
 		
 		$rm = self::getMapper($m->relations[$relation]);
