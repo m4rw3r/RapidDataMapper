@@ -314,7 +314,7 @@
 			</orderedlist>
 			
 			<para>
-				If all the attempts above fails when loading a descriptor, a <classname>Db_Exception_MissingDescriptor</classname>
+				If all the attempts above fails when loading a descriptor, a <classname>Db_DescriptorException</classname>
 				<glossterm>exception</glossterm> is thrown.
 			</para>
 			

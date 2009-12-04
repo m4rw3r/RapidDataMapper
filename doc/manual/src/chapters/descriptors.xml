@@ -104,7 +104,7 @@ class BazDescriptor extends Lib_Descriptor
 		</para>
 		
 		<para>
-			If all tries to load a descriptor fails, a <classname>Db_Exception_MissingDescriptor</classname>
+			If all tries to load a descriptor fails, a <classname>Db_DescriptorException</classname>
 			is thrown.
 		</para>
 		
@@ -287,7 +287,7 @@ echo Db::find('Foobar')->count();]]></programlisting>
 		</funcsynopsis>
 		
 		<para>
-			If a descriptor is not found, a <classname>Db_Exception_MissingDescriptor</classname>
+			If a descriptor is not found, a <classname>Db_DescriptorException</classname>
 			will be thrown.
 		</para>
 		
@@ -300,7 +300,7 @@ echo Db::find('Foobar')->count();]]></programlisting>
 	
 	echo sprintf('Class Foobar is mapped to the table %s.', $d->getTable());
 }
-catch(Db_Exception_MissingDescriptor $e)
+catch(Db_DescriptorException $e)
 {
 	echo sprintf('Failed to get a descriptor for the class %s', $e->getClassName());
 }]]></programlisting>
