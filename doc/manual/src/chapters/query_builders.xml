@@ -102,7 +102,7 @@
 				</funcsynopsis>
 				
 				<para>
-					The <varname>$columns</varname> parameter is there for selecting special columns
+					The <parameter>$columns</parameter> parameter is there for selecting special columns
 					that might not be bound to a special table, or some other thing that should be placed in
 					the <token>SELECT</token> part of the query.
 				</para>
@@ -134,7 +134,7 @@
 				
 				<para>
 					The <function>Db_Connection->insert</function> method requires a table name which would
-					be the name of the table to insert data into. If the <varname>$data</varname> is specified,
+					be the name of the table to insert data into. If the <parameter>$data</parameter> is specified,
 					the row will be inserted with the supplied data and a boolean value will be returned
 					(<symbol>true</symbol> equals a successful query).
 				</para>
@@ -161,19 +161,20 @@
 				</funcsynopsis>
 				
 				<para>
-					Like the <classname>Db_Connection->insert</classname> this method has two variants:
+					Like the <function>Db_Connection->insert</function> this method has two variants:
 					one to create a query object and another to create the object, populate it the
 					supplied data and finally execute the query and returning the results.
-					Both variants uses <varname>$data</varname> to populate the update object, sending
+					Both variants uses <parameter>$data</parameter> to populate the update object, sending
 					it to <function linkend="funcref.Db_Query_Update-set">Db_Query_Update->set</function>.
 				</para>
 				
 				<para>
-					The <varname>$conditions</varname> array is sent to the
+					The <parameter>$conditions</parameter> array is sent to the
 					<function linkend="chapter.query_builders.conditions">Db_Query_Update->where</function> method.
 					But if you require some fancy conditions, it might not be satisfactory — it would
 					be better to use the first variant of <function>Db_Connection->update</function> and
-					then apply them using <function>Db_Query->where</function>
+					then apply them using
+					<function linkend="chapter.query_builders.conditions">Db_Query->where</function>
 					(which <classname>Db_Query_Update</classname> has inherited).
 				</para>
 			</section>
@@ -199,8 +200,8 @@
 				<para>
 					As you probably already guessed, the first variant is for creating the query object
 					and the second is to execute the query directly.
-					<varname>$table</varname> is the table name of the table to delete rows from and
-					<varname>$conditions</varname> work in the same way as the <varname>$conditions</varname>
+					<parameter>$table</parameter> is the table name of the table to delete rows from and
+					<parameter>$conditions</parameter> work in the same way as the <parameter>$conditions</parameter>
 					parameter of <function>Db_Connection->update</function>.
 				</para>
 			</section>
@@ -283,7 +284,7 @@ foreach($result as $row)
 			</funcsynopsis>
 			
 			<para>
-				The <varname>$tables</varname> parameter is very versatile, it can be just contain a string
+				The <parameter>$tables</parameter> parameter is very versatile, it can be just contain a string
 				with the table name — making it generate an "anonymous" alias (internally it names them using
 				the "<literal>t</literal>" prefix and then a number).
 				Or it can contain an array with several table names, aliasing all with different "anonymous" aliases.
@@ -361,7 +362,7 @@ var_dump($q->getSQL());
 			</example>
 			
 			<para>
-				The second parameter of <function>Db_Query_Select->from</function>, <varname>$columns</varname>,
+				The second parameter of <function>Db_Query_Select->from</function>, <parameter>$columns</parameter>,
 				is used to control which columns to fetch from the database.
 				Limiting the number of columns which are fetched from the database increases performance,
 				especially when joining other tables which you only filter by (or when using subqueries).
@@ -376,7 +377,7 @@ var_dump($q->getSQL());
 			</para>
 			
 			<para>
-				Essentially, the <varname>$columns</varname> parameter is sent to the
+				Essentially, the <parameter>$columns</parameter> parameter is sent to the
 				<function linkend="funcref.Db_Query_Select-column">Db_Query_Select->columns</function> method.
 				See its behaviour for more in-depth information.
 			</para>
@@ -404,8 +405,8 @@ var_dump($q2->getSQL());
 			</example>
 			
 			<para>
-				If two tables are specified in the <varname>$tables</varname> array, both will have the
-				columns specified in <varname>$columns</varname> SELECTed.
+				If two tables are specified in the <parameter>$tables</parameter> array, both will have the
+				columns specified in <parameter>$columns</parameter> SELECTed.
 			</para>
 			
 			<section>
@@ -413,7 +414,7 @@ var_dump($q2->getSQL());
 				
 				<para>
 					If <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> is set to
-					<symbol>false</symbol>, then the <varname>$columns</varname> parameter won't be escaped,
+					<symbol>false</symbol>, then the <parameter>$columns</parameter> parameter won't be escaped,
 					just like the <function linkend="funcref.Db_Query_Select-column">Db_Query_Select->column</function>
 					works when escaping is turned off.
 				</para>
@@ -441,26 +442,26 @@ var_dump($q2->getSQL());
 			</funcsynopsis>
 			
 			<para>
-				The first parameter <varname>$columns</varname> contains columns
+				The first parameter <parameter>$columns</parameter> contains columns
 				which will be appended to the SELECT part of the query.
-				If <varname>$columns</varname> is a string, it will just be <glossterm>identifier protected</glossterm>
+				If <parameter>$columns</parameter> is a string, it will just be <glossterm>identifier protected</glossterm>
 				and then appended.
 				And if it is an array, the non-numeric keys will be used as aliases for the columns.
 			</para>
 			
 			<para>
-				The <varname>$table</varname> parameter is the name of the table from which the columns
+				The <parameter>$table</parameter> parameter is the name of the table from which the columns
 				should be selected.
 				This is used to prevent unambiguous column names inside the SELECT.
 				If it is non-empty, this table name will be prepended to all the specified columns
 				(with a dot in between).
-				The <varname>$table</varname> will also be <glossterm>identifier protected</glossterm>.
+				The <parameter>$table</parameter> will also be <glossterm>identifier protected</glossterm>.
 			</para>
 			
 			<para>
-				<varname>$table_is_aliased</varname> controls whether the
+				<parameter>$table_is_aliased</parameter> controls whether the
 				<link linkend="database_connection_objects.database_prefix">Database Prefix</link>
-				will be prepended to <varname>$table</varname> before it is added to the query.
+				will be prepended to <parameter>$table</parameter> before it is added to the query.
 				This is used when you refer to columns from eg. an alias.
 			</para>
 			
@@ -690,7 +691,7 @@ $r2 = $q2->get();
 			<para>
 				By default, <function>count</function> sends a "<literal>COUNT(1)</literal>" query,
 				which counts all rows in a result set.
-				This might not be satisfactory, so the <parameter>$column</parameter> is there
+				This might not be satisfactory, so the <parameter>$column</parameter> parameter is there
 				to replace the "<literal>1</literal>" within the COUNT() function (you can also
 				add multiple columns by separating them by commas), <parameter>$columns</parameter>
 				will be <glossterm>identifier protected</glossterm>.
@@ -963,7 +964,7 @@ $r = $q->get();
 				<title>Conditions between two columns</title>
 				
 				<para>
-					The second variant is a lot simpler, it will simply append the <varname>$condition</varname>
+					The second variant is a lot simpler, it will simply append the <parameter>$condition</parameter>
 					to the WHERE stack (but it will still parse the OR condition if present, and also
 					protect the identifiers provided escaping is on):
 				</para>
@@ -984,12 +985,12 @@ $r = $q->get();]]></programlisting>
 				
 				<para>
 					To add a condition which compares a column with a specified value, you just supply a
-					column name as the first parameter (<varname>$condition</varname>, with optional
-					comparison operator) and the value to compare with as the <varname>$value</varname> parameter.
+					column name as the first parameter (<parameter>$condition</parameter>, with optional
+					comparison operator) and the value to compare with as the <parameter>$value</parameter> parameter.
 				</para>
 				
 				<para>
-					If the <varname>$condition</varname> does not have a condition at the end, an equal
+					If the <parameter>$condition</parameter> does not have a condition at the end, an equal
 					sign ("<literal>=</literal>") will be appended. The check for a boolean <token>OR</token>
 					operator will also be made (see
 					<link linkend="chapter.query_builders.conditions.or">Replacing AND with OR boolean operators</link>).
@@ -997,10 +998,10 @@ $r = $q->get();]]></programlisting>
 				
 				<para>
 					If <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> is set to <symbol>false</symbol>,
-					<varname>$condition</varname> will not be identifier protected (conditions will still be
+					<parameter>$condition</parameter> will not be identifier protected (conditions will still be
 					appended and <token>OR</token> will also be parsed, and if a condition is missing at the
-					end of <varname>$condition</varname>, an "<literal>=</literal>" will still be appended)
-					and <varname>$value</varname> will be concatenated (no escaping) and then appended to the WHERE
+					end of <parameter>$condition</parameter>, an "<literal>=</literal>" will still be appended)
+					and <parameter>$value</parameter> will be concatenated (no escaping) and then appended to the WHERE
 					stack.
 				</para>
 				
@@ -1117,7 +1118,7 @@ $r = $q->get();]]></programlisting>
 			
 			<para>
 				If the <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> method
-				has set escaping to <symbol>false</symbol>, <varname>$column</varname> will not be identifier
+				has set escaping to <symbol>false</symbol>, <parameter>$column</parameter> will not be identifier
 				protected (but "<literal>OR </literal>" is still parsed).
 			</para>
 			
@@ -1177,15 +1178,15 @@ $r = $q->get();]]></programlisting>
 			</funcsynopsis>
 			
 			<para>
-				The <varname>$column</varname> parameter is filtered for "<literal>or </literal>" and also identifier
+				The <parameter>$column</parameter> parameter is filtered for "<literal>or </literal>" and also identifier
 				protected.
-				<varname>$match</varname> is escaped, with the addition that LIKE wildcards also are escaped
+				<parameter>$match</parameter> is escaped, with the addition that LIKE wildcards also are escaped
 				(eg. in MySQL are "<literal>%</literal>" and "<literal>_</literal>" escaped), to prevent
 				a too high workload on the server.
 			</para>
 			
 			<para>
-				The <varname>$side</varname> parameter dictates on which side the "<literal>%</literal>"
+				The <parameter>$side</parameter> parameter dictates on which side the "<literal>%</literal>"
 				wildcards should be placed ("<literal>%</literal>" matches any number of characters of any type).
 				The possible values are "<literal>left</literal>", "<literal>right</literal>"
 				and "<literal>both</literal>".
@@ -1221,10 +1222,10 @@ $r = $q->get();]]></programlisting>
 			</para>
 			
 			<para>
-				This works like the <varname>$binds</varname> parameter to
+				This works like the <parameter>$binds</parameter> parameter to
 				<function linkend="funcref.Db_Connection-query">Db_Connection->query</function>,
 				with the exception that it only appends it to the WHERE part of the query.
-				It also parses any prepended "<literal>or </literal>" on the <varname>$condition</varname>
+				It also parses any prepended "<literal>or </literal>" on the <parameter>$condition</parameter>
 				parameter.
 			</para>
 			
