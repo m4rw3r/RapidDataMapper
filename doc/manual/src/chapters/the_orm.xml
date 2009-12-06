@@ -153,8 +153,10 @@ echo $t->id;]]></programlisting>
 			
 			<para>
 				The first variant of <function>Db::find()</function> creates a new pre–populated
-				<classname>Db_Query_MapperSelect</classname> (see
-				<link linkend="chapter.the_orm.mapper_queries">Mapper Queries</link> for more information):
+				<classname>Db_MapperQuery</classname> instance (see
+				<link linkend="chapter.the_orm.mapper_queries">Mapper Queries</link> for more information).
+				This object behaves a lot like a normal <classname>Db_Query_Select</classname>
+				and lets you create custom queries to fetch objects from the database:
 			</para>
 			
 			<example>
