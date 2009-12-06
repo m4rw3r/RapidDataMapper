@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter
+	version="5.0"
+	xml:id="change_log"
+	xml:lang="en"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:db="http://docbook.org/ns/docbook"
+	>
+	
+	<title>Change Log</title>
+	
+	<section>
+		<title>Version 0.5</title>
+		
+		<segmentedlist>
+			<?dbhtml list-presentation="list"?>
+			
+			<segtitle>Release Date</segtitle>
+			
+			<segtitle>Git commit</segtitle>
+			
+			<seglistitem>
+				<seg>In Development</seg>
+				
+				<seg>In Development</seg>
+			</seglistitem>
+		</segmentedlist>
+		
+		<para>
+			<itemizedlist>
+				<listitem>
+					Initial Release
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+</chapter>

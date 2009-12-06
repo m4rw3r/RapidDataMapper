@@ -67,6 +67,7 @@
 	<xi:include href="references/autoloader.xml" />
 	<xi:include href="references/design_patterns.xml" />
 	<xi:include href="references/links.xml" />
+	<xi:include href="references/change_log.xml" />
 	<xi:include href="references/copyrights.xml" />
 	
 	<xi:include href="references/glossary.xml" />
