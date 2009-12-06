@@ -134,4 +134,24 @@
 			</listitem>
 		</itemizedlist>
 	</section>
+	
+	<section xml:id="design_patterns.strategy">
+		<title>Strategy</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					<classname>Db</classname> as it uses different <classname>Db_Driver_*</classname> classes
+					depending on the database which it should connect to.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					<classname>Db_Descriptor_Relation</classname> as it aggregates a different object depending
+					on the type of relation (<classname>Db_Descriptor_Relation_*</classname>).
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
 </appendix>
