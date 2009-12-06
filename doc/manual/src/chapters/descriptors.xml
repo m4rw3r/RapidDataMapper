@@ -517,7 +517,7 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 			
 			<para>
 				To add the <classname>Db_Descriptor_Column</classname> instance to the
-				<classname>Db_Descriptor</classname> instance's column list, use the
+				<classname>Db_Descriptor</classname> instance's column list, use
 				<function linkend="funcref.Db_Descriptor-add">Db_Descriptor->add</function>:
 			</para>
 			
@@ -534,24 +534,190 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 	}
 }]]></programlisting>
 			</example>
+			
+			<para>
+				The <function>Db_Descriptor->add</function> method is used for adding not only columns
+				(<classname>Db_Descriptor_Column</classname>), but also <glossterm>primary keys</glossterm>
+				(<classname>Db_Descriptor_PrimaryKey</classname>) and reltions
+				(<classname>Db_Descriptor_Relation</classname>).
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor-add">
+				<funcprototype>
+					<funcdef><type>Db_Descriptor</type> <function>Db_Descriptor->add</function></funcdef>
+					
+					<paramdef>
+						<type>Db_Descriptor_Column</type>|<type>Db_Descriptor_PrimaryKey</type>|<type>Db_Descriptor_Relation</type>|<type>array</type> <parameter>$object</parameter>
+					</paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				It enables <glossterm>method chaining</glossterm> as it returns the same instance as the one
+				used in the call to <function>Db_Descriptor->add</function>.
+				It can also take an array of the previously mentioned three classes.
+			</para>
 		</section>
 		
 		<section>
 			<title>Configuring a property - column mapping</title>
 			
 			<para>
+				
+			</para>
+			
+			<table>
+				<title>Settings for a column descriptor (<classname>Db_Descriptor_Column</classname>)</title>
+				
+				<tgroup cols="5">
+					<thead>
+						<row>
+							<entry>Name</entry>
+							<entry>Setter</entry>
+							<entry>Getter</entry>
+							<entry>Default</entry>
+							<entry>Description</entry>
+						</row>
+					</thead>
+
+					<tbody>
+						<row>
+							<entry>column</entry>
+							<entry><function>setColumn</function>(<type>string</type> <parameter>$column</parameter>)</entry>
+							<entry><type>string</type> <function>getColumn</function></entry>
+							<entry>REQUIRED</entry>
+							<entry>
+								The column name to which the property is mapped to.
+							</entry>
+						</row>
+						
+						<row>
+							<entry>property</entry>
+							<entry><function>setProperty</function>(<type>string</type> <parameter>$property</parameter>)</entry>
+							<entry><type>string</type> <function>getProperty</function></entry>
+							<entry>name of the column</entry>
+							<entry>
+								The name of the property to which the database column is mapped to.
+							</entry>
+						</row>
+						
+						<row>
+							<entry>is_insertable</entry>
+							<entry><function>setInsertable</function>(<type>boolean</type> <parameter>$value</parameter>)</entry>
+							<entry><type>boolean</type> <function>isInsertable</function></entry>
+							<entry><symbol>true</symbol></entry>
+							<entry>
+								If the column should be allowed to be used when constructing INSERT statements
+								in <function linkend="funcref.Db-save">Db::save</function>.
+							</entry>
+						</row>
+						
+						<row>
+							<entry>is_updatable</entry>
+							<entry><function>setUpdatable</function>(<type>boolean</type> <parameter>$value</parameter>)</entry>
+							<entry><type>boolean</type> <function>isUpdatable</function></entry>
+							<entry><symbol>true</symbol></entry>
+							<entry>
+								If the column should be allowed to be used when constructing UPDATE statements
+								in <function linkend="funcref.Db-save">Db::save</function>.
+							</entry>
+						</row>
+					</tbody>
+				</tgroup>
+			</table>
+			
+			<note>
+				Datatype and type-casting features are not done as of version 0.5.
+				It will be added at a later stage and then it will convert it from and to correct PHP datatypes.
+			</note>
+		</section>
+		
+		<section>
+			<title>Replacing the <classname>Db_Descriptor_Column</classname></title>
+			
+			<para>
+				The <classname>Db_Descriptor</classname> uses the
+				<link linkend="design_patterns.template_method">Template Method</link> design pattern combined
+				with <link linkend="design_patterns.factory_method">Factory Method</link> which makes it very
+				easy to move the original descriptor code to a new descendant of <classname>Db_Descriptor</classname>
+				which uses alternative classes for describing the columns (eg. for replacing the default
+				naming conventions).
+			</para>
+			
+			<para>
+				To replace the <classname>Db_Descritor_Column</classname> class with a custom descendant class,
+				override the <function>Db_Descriptor->newColumn</function>:
+			</para>
+			
+			<example>
+				<title>Replacing the <classname>Db_Descriptor_Column</classname> class used by a descriptor</title>
+				
+				<programlisting language="php"><![CDATA[class MyDescriptor extends Db_Descriptor
+{
+	public function newColumn($name)
+	{
+		$c = new MyColumn(); // this is the class name of the column descriptor
+		$c->setColumn($name);
+		
+		return $c;
+	}
+}]]></programlisting>
+			</example>
+		</section>
+	</section>
+	
+	<section>
+		<title>The primary keys</title>
+		
+		<para>
+			The primary keys are described almost like normal columns are, with the exception that they
+			use another descriptor class: <classname>Db_Descriptor_PrimaryKey</classname>.
+			This class is a descendant of <classname>Db_Descriptor_Column</classname>, but contains some
+			extra logic and changed default values just for primary keys.
+		</para>
+		
+		<para>
+			To create a primary key object, use <function>Db_Descriptor->newPrimaryKey</function>:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Descriptor-newPrimaryKey">
+			<funcprototype>
+				<funcdef><type>Db_Descriptor_Column</type> <function>Db_Descriptor->newPrimaryKey</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$column_name</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			Then you use <function linkend="funcref.Db_Descriptor-add">Db_Descriptor->add</function> to add the
+			primary key descriptor to the descriptor.
+		</para>
+		
+		<section>
+			<title>Differences between <classname>Db_Descriptor_Column</classname> and <classname>Db_Descriptor_PrimaryKey</classname></title>
+			
+			<para>
 				TODO: MORE
 			</para>
 		</section>
 		
-		<para>
-			The <classname>Db_Descriptor</classname> uses the
-			<link linkend="design_patterns.template_method">Template Method</link> design pattern combined
-			with <link linkend="design_patterns.factory_method">Factory Method</link> which makes it very
-			easy to move the original descriptor code to a new descendant of <classname>Db_Descriptor</classname>
-			which uses alternative classes for describing the columns (eg. for replacing the default
-			naming conventions).
-		</para>
+		<section>
+			<title>Multi-Primary key support</title>
+			
+			<para>
+				RapidDataMapper has full support for multiple primary keys per table.
+				The only thing you have to do is to add two or more <classname>Db_Descriptor_PrimaryKey</classname>
+				instances to the descriptor.
+			</para>
+			
+			<para>
+				TODO: ADD EXAMPLE
+			</para>
+		</section>
+	</section>
+	
+	<section>
+		<title>Adding hooks to the objects</title>
 		
 		<para>
 			TODO: MORE
