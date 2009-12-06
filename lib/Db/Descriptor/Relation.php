@@ -455,8 +455,12 @@ class Db_Descriptor_Relation
 			
 			try
 			{
-				// TODO: Add multi-pk support, not just '_id'
-				$prop = $cls->getProperty($this->getRelatedDescriptor()->getSingular().'_id');
+				// Check if all the primary keys has a corresponding foreign key
+				// expects that the default naming of the *property* is relationName_PrimaryKeyName
+				foreach($this->getParentDescriptor()->getPrimaryKeys() as $col)
+				{
+					$prop = $cls->getProperty($this->getRelatedDescriptor()->getSingular().'_'.$col->getProperty());
+				}
 			}
 			catch(ReflectionException $e)
 			{
@@ -464,7 +468,7 @@ class Db_Descriptor_Relation
 				return Db_Descriptor::HAS_ONE;
 			}
 			
-			// Found property
+			// Found property(ies)
 			return Db_Descriptor::BELONGS_TO;
 		}
 	}
