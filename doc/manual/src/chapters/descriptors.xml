@@ -682,7 +682,7 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 		
 		<funcsynopsis xml:id="funcref.Db_Descriptor-newPrimaryKey">
 			<funcprototype>
-				<funcdef><type>Db_Descriptor_Column</type> <function>Db_Descriptor->newPrimaryKey</function></funcdef>
+				<funcdef><type>Db_Descriptor_PrimaryKey</type> <function>Db_Descriptor->newPrimaryKey</function></funcdef>
 				
 				<paramdef><type>string</type> <parameter>$column_name</parameter></paramdef>
 			</funcprototype>
@@ -696,9 +696,162 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 		<section>
 			<title>Differences between <classname>Db_Descriptor_Column</classname> and <classname>Db_Descriptor_PrimaryKey</classname></title>
 			
+			<itemizedlist>
+				<listitem>
+					<para>
+						By default are primary keys not updatable.
+					</para>
+					
+					<para>
+						Once you have inserted a row into the database, it is not meant that you should be
+						able to change the value of the primary key.
+					</para>
+					
+					<para>
+						To change this, use <function>Db_Descriptor_PrimaryKey->setUpdatable</function>.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						The keys can populate themselves upon insert, depending on the key type.
+						For example, the AUTO_INCREMENT variant uses the
+						<function linkend="funcref.Db_Connection-insertId">Db_Connection->insertId()</function>
+						method to fetch the generated int from the database. 
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						The code generated to handle inserting and updating the row in the database can be
+						radically different in several aspects, as specific logic applies to primary keys.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</section>
+		
+		<section>
+			<title>Setting type of primary key</title>
+			
 			<para>
-				TODO: MORE
+				The <classname>Db_Descriptor_PrimaryKey</classname> class has support for several types of
+				primary keys, which perform different logic during row creation.
 			</para>
+			
+			<para>
+				To change the type of primary key, use <function>Db_Descriptor_PrimaryKey->setPkType</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_PrimaryKey-setPkType">
+				<funcprototype>
+					<funcdef><type>Db_Descriptor_PrimaryKey</type> <function>Db_Descriptor_PrimaryKey->setPkType</function></funcdef>
+					
+					<paramdef><type>int</type> <parameter>$type</parameter></paramdef>
+					<paramdef choice="opt"><type>mixed</type> <parameter>$options</parameter> = <symbol>false</symbol></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				This method takes a constant defined in the <classname>Db_Descriptor</classname> class as
+				the first parameter (a list of the constants can be found below in this section).
+				The second parameter (<parameter>$options</parameter>) is for use with not yet
+				created primary key types.
+			</para>
+			
+			<para>
+				Currently there are two types of primary keys supported:
+			</para>
+			
+			<section>
+				<title>Db_Descriptor::AUTO_INCREMENT</title>
+				
+				<para>
+					This type uses the AUTO_INCREMENT setting in the database to retrieve a new value
+					for the primary key on insert.
+					The key is usually declared as an "<literal>unsigned int</literal>" in the database.
+				</para>
+				
+				<note>
+					If the property which contain the primary key has a value, it will be overwritten
+					with the new value when the object is inserted.
+				</note>
+				
+				<para>
+					This is the default setting.
+				</para>
+				
+				<example>
+					<title>Adding an AUTO_INCREMENT primary key</title>
+					
+					<programlisting language="php"><![CDATA[class FooDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		// ...
+		// self can be used in this case instead of Db_Descriptor
+		$this->add($this->newPrimaryKey('id')->setPkType(self::AUTO_INCREMENT));
+		// ...
+	}
+}]]></programlisting>
+				</example>
+				
+				<warning>
+					Only one key per table can be declared as AUTO_INCREMENT as the database have a restriction
+					of one AUTO_INCREMENT column per table.
+				</warning>
+			</section>
+			
+			<section>
+				<title>Db_Descriptor::MANUAL</title>
+				
+				<para>
+					This type enables the manual control of the primary key value.
+					Because of this, it does not really matter what type the primary key has in the database.
+				</para>
+				
+				<warning>
+					<para>
+						You have to assert that the primary key is unique before inserting,
+						RapidDataMapper does not do checks for existing primary keys.
+					</para>
+					
+					<para>
+						(It is, however, possible with identical primary keys if they are part of a composite
+						with multiple primary keys, provided that the combination of them all is unique.)
+					</para>
+				</warning>
+				
+				<example>
+					<title>Adding and using a manually set primary key</title>
+					
+					<programlisting language="php"><![CDATA[class FooDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		// ...
+		$this->add($this->newPrimaryKey('name')->setPkType(self::MANUAL));
+		// ...
+	}
+}
+
+// usage:
+
+$o = new Foo();
+// ...
+
+// set primary key:
+$o->name = 'This is some name';
+
+Db::save($o);
+
+echo $o->name; // This is some name]]></programlisting>
+				</example>
+				
+				<note>
+					If the primary key property is missing a value, an <classname>Db_Exception</classname> exception
+					will be thrown when <function>Db::save</function> attempts to save the object.
+				</note>
+			</section>
 		</section>
 		
 		<section>
@@ -710,9 +863,29 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 				instances to the descriptor.
 			</para>
 			
-			<para>
-				TODO: ADD EXAMPLE
-			</para>
+			<example>
+				<title>Using multiple primary keys with RapidDataMapper</title>
+				
+				<programlisting language="php"><![CDATA[class FooDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		// ...
+		$this->add($this->newPrimaryKey('id')->setType(self::MANUAL));
+		$this->add($this->newPrimaryKey('lang')->setType(self::MANUAL));
+	}
+}
+
+$en = Db::find('foo', array(1, 'en')); // get English object with the id 1
+
+$sv = new Foo(); // create a Swedish translation
+$sv->id = 1;
+$sv->lang = 'sv';
+
+// ...
+
+Db::save($sv);]]></programlisting>
+			</example>
 		</section>
 	</section>
 	
