@@ -1183,12 +1183,4 @@ class Foo
 			</note>
 		</section>
 	</section>
-	
-	<section>
-		<title>Using Plugins</title>
-		
-		<para>
-			TODO: MORE
-		</para>
-	</section>
 </chapter>
