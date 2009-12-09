@@ -30,8 +30,8 @@ class Db_Mapper_Part_Delete extends Db_CodeBuilder_Method
 		
 		$this->addPart('$ret = $this->db->delete(\''.$descriptor->getTable().'\', $object->__id);');
 		
-		// HOOK: on_delete
-		$this->addPart($descriptor->getHookCode('post_delete', '$object'));
+		// HOOK: post_delete
+		$this->addPart($descriptor->getHookCode('post_delete', '$object', '$ret'));
 		
 		$this->addPart('if($ret)
 {
