@@ -48,7 +48,7 @@ class Db_Plugin_Sluggable extends Db_Plugin
 		// validate the callable
 		if( ! is_callable($callable))
 		{
-			throw new Db_Exception('Erroneous callable format');
+			throw new Db_Exception('Db_Plugin_Sluggable: Erroneous callable format');
 		}
 		
 		if( ! is_array($callable))
@@ -62,7 +62,7 @@ class Db_Plugin_Sluggable extends Db_Plugin
 			
 			if( ! $ref->isStatic() OR ! $ref->isPublic())
 			{
-				throw new Db_Exception('Callable is not possible to call from the generated mapper.');
+				throw new Db_Exception('Db_Plugin_Sluggable: Callable is not possible to call from the generated mapper.');
 			}
 			
 			$callable = $ref->class.'::'.$ref->name;
@@ -73,7 +73,7 @@ class Db_Plugin_Sluggable extends Db_Plugin
 			
 			if( ! $ref->isStatic() OR ! $ref->isPublic())
 			{
-				throw new Db_Exception('Callable is not possible to call from the generated mapper.');
+				throw new Db_Exception('Db_Plugin_Sluggable: Callable is not possible to call from the generated mapper.');
 			}
 			
 			$callable = $ref->class.'::'.$ref->name;
@@ -84,7 +84,7 @@ class Db_Plugin_Sluggable extends Db_Plugin
 		}
 		else
 		{
-			throw new Db_Exception('Callable can not be found.');
+			throw new Db_Exception('Db_Plugin_Sluggable: Callable can not be found.');
 		}
 		
 		if(version_compare(PHP_VERSION, '5.3', '>='))
