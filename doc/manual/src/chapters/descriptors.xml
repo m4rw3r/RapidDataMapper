@@ -893,8 +893,295 @@ Db::save($sv);]]></programlisting>
 		<title>Adding hooks to the objects</title>
 		
 		<para>
-			TODO: MORE
+			RapidDataMapper has support for hooks, which are points in the library code where you
+			can trigger events in the object code.
+			For example you can have an object-method which automatically validates the object and
+			does some default stuff before the object is saved.
 		</para>
+		
+		<para>
+			To register a hook, use <function>Db_Descriptor->addHook</function>:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Descriptor-setHook">
+			<funcprototype>
+				<funcdef><type>Db_Descriptor</type> <function>Db_Descriptor->setHook</function></funcdef>
+				
+				<paramdef><type>string</type> <parameter>$name</parameter></paramdef>
+				<paramdef choice="opt"><type>mixed</type> <parameter>$callback</parameter> = <symbol>false</symbol></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			The <parameter>$name</parameter> parameter is the name of the hook to register with.
+			A list of hooks is provided later in this section.
+		</para>
+		
+		<para>
+			By default is the <parameter>$callback</parameter> parameter set to the name of the hook
+			(<parameter>$name</parameter>), but otherwise its format depends on the type of hook:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					If it is a hook which require static methods it can be any of the following:
+				</para>
+				
+				<itemizedlist>
+					<listitem>
+						<para>
+							An <type>array</type> with class name and method name.
+						</para>
+					</listitem>
+					
+					<listitem>
+						<para>
+							A <type>string</type> with a class and method name separated with double colons
+							(<token>T_PAAMAYIM_NEKUDOTAYIM</token>, "<literal>::</literal>").
+						</para>
+					</listitem>
+					
+					<listitem>
+						<para>
+							A <type>string</type> containing the method name of a static method to
+							call on the described object.
+						</para>
+					</listitem>
+					
+					<listitem>
+						<para>
+							A <type>string</type> with a function name.
+						</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+			
+			<listitem>
+				<para>
+					If the hook is instead an instance method, with a run on a per-object basis
+					(eg. the on_save hook),
+					then the <parameter>$callback</parameter> parameter needs to be a single
+					<type>string</type> with the method name to call.
+					The method needs to be located on the described object.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<note>
+			Only one callback can be registered per hook (and descriptor).
+		</note>
+		
+		<warning>
+			All the methods which are to be used as hooks are required to be declared as public.
+		</warning>
+		
+		<tip>
+			RapidDataMapper also accepts non-existing methods as the <parameter>$callback</parameter>
+			parameter, provided the class which is to be called either has a <function>__callStatic</function>
+			or a <function>__call</function> method (depending on if the hook is static or not).
+		</tip>
+		
+		<example>
+			<title>Registering a hook which automatically adds a default value</title>
+			
+			<programlisting language="php"><![CDATA[class FooDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		// ...
+		$this->setHook('on_save');
+	}
+}
+
+class Foo
+{
+	// ...
+	public function on_save()
+	{
+		if(empty($this->display_name))
+		{
+			// reset:
+			$this->display_name = $this->username;
+		}
+	}
+}]]></programlisting>
+		</example>
+		
+		<section>
+			<title>Available Hooks</title>
+			
+			<para>
+				Here is a list of the available hooks, ordered by event:
+			</para>
+			
+			<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Name</entry>
+						<entry>Type</entry>
+						<entry>Parameters</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+
+				<tbody>
+					<row>
+						<entry>on_delete</entry>
+						<entry>instance</entry>
+						<entry></entry>
+						<entry>
+							Triggered just before <function linkend="funcref.Db-delete">Db::delete</function>
+							checks if the object has been saved in the database.
+							Return values does not affect execution, instead, either throw an exception
+							or set "<literal>$this->__id</literal>" to an empty array
+							(= an unsaved object).
+						</entry>
+					</row>
+					
+					<row>
+						<entry>post_delete</entry>
+						<entry>instance</entry>
+						<entry><type>int</type>|<type>false</type> <parameter>$delete_query_status</parameter></entry>
+						<entry>
+							Triggered just after <function linkend="funcref.Db-delete">Db::delete</function>
+							has deleted the corresponding row from the database
+							(but before "<literal>$this->__id</literal>" is emptied).
+						</entry>
+					</row>
+					
+					<row>
+						<entry>post_objectify</entry>
+						<entry>instance</entry>
+						<entry></entry>
+						<entry>
+							Triggered after the object has been instantiated and populated with data.
+							Here you can add specific code which will automatically eg. create composite
+							fields (like concatenating first and last name into another property).
+						</entry>
+					</row>
+					
+					<row>
+						<entry>on_save</entry>
+						<entry>instance</entry>
+						<entry></entry>
+						<entry>
+							Triggered just after <function linkend="funcref.Db-save">Db::save</function>
+							receives the object.
+							Suitable to perform logic which is applicable to all saves (both updates and inserts).
+						</entry>
+					</row>
+					
+					<row>
+						<entry>on_insert</entry>
+						<entry>instance</entry>
+						<entry></entry>
+						<entry>
+							Triggered just after <function linkend="funcref.Db-save">Db::save</function> has
+							determined that an INSERT query should be performed.
+							Here it is good to add logic which should be run for all new rows in the
+							database before they are created.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>pre_insert</entry>
+						<entry>instance</entry>
+						<entry><type>array</type> <parameter>$data_to_insert</parameter></entry>
+						<entry>
+							This is triggered after the data has been extracted from the object.
+							Here you can eg. do preprocessing of the data before it will be inserted
+							(or passing through the escaping before insertion).
+							
+							<note>
+								You need to declare the <parameter>$data_to_insert</parameter>
+								parameter as a reference (prefix it with "<literal>&amp;</literal>")
+								to make it possible to edit it.
+							</note>
+						</entry>
+					</row>
+					
+					<row>
+						<entry>post_insert</entry>
+						<entry>instance</entry>
+						<entry></entry>
+						<entry>
+							Triggered after the object has been inserted into the database.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>on_update</entry>
+						<entry>instance</entry>
+						<entry></entry>
+						<entry>
+							Triggered just after <function linkend="funcref.Db-save">Db::save</function> has
+							determined that an INSERT query should be performed.
+							Here it is good to add logic which should be run for all updated rows in the
+							database before they are created.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>pre_update</entry>
+						<entry>instance</entry>
+						<entry><type>array</type> <parameter>$data_to_update</parameter></entry>
+						<entry>
+							This is triggered after the data has been extracted from the object
+							and <function>Db_Mapper->save</function> has determined what needs to be
+							updated (no need to update data which has not been changed).
+							Here you can eg. do preprocessing of the data before it will be updated
+							(or passing through the escaping before update).
+							
+							<note>
+								You need to declare the <parameter>$data_to_update</parameter>
+								parameter as a reference (prefix it with "<literal>&amp;</literal>")
+								to make it possible to edit it.
+							</note>
+						</entry>
+					</row>
+					
+					<row>
+						<entry>post_update</entry>
+						<entry>instance</entry>
+						<entry></entry>
+						<entry>
+							Triggered after <function linkend="funcref.Db-save">Db::save</function>
+							has updated the database row.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>post_save</entry>
+						<entry>instance</entry>
+						<entry></entry>
+						<entry>
+							Triggered after <function linkend="funcref.Db-save">Db::save</function>
+							is done saving the object.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>on_find</entry>
+						<entry>static</entry>
+						<entry><type>Db_MapperQuery</type></entry>
+						<entry>
+							This is triggered during the creation of a new <classname>Db_MapperQuery</classname>
+							which means that it is possible to manipulate the object before it is returned
+							by <function linkend="funcref.Db-find">Db::find</function>.
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+			
+			<note>
+				More hook points will be added later.
+				If you require a hook on a specific point which does not yet exist,
+				either contact me or add a ticket and I will see what can be done
+				(hooks can't be all over the place, because in some instances it is better
+				to replace parts of the code-builder composite(s)).
+			</note>
+		</section>
 	</section>
 	
 	<section>
