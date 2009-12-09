@@ -322,15 +322,102 @@ Db::save($t);]]></programlisting>
 		<title>Sluggable (<classname>Db_Plugin_Sluggable</classname>)</title>
 		
 		<para>
-			TODO: MORE
+			The sluggable behaviour is a behaviour made to make it easy to automatically apply an
+			automatic conversion of eg. a title field to a slug field which in turn is used to refer
+			to the database row in URIs.
 		</para>
+		
+		<para>
+			The principle works like this:
+		</para>
+		
+		<procedure>
+			<step>
+				<para>
+					A column is defined as the source and another column as the destination
+					(the column which is to hold the filtered string).
+				</para>
+			</step>
+			
+			<step>
+				<para>
+					The plugin adds a tiny bit of extra logic to the generated mapper which will
+					call the filter method at appropriate times.
+				</para>
+			</step>
+			
+			<step>
+				<para>
+					The filter method filters the source column and then populates the destination
+					column with the filtered value.
+					(This only happens when the source column has been changed.)
+				</para>
+			</step>
+			
+			<step>
+				<para>
+					Save proceeds as normal after that, resulting in one column (the source column)
+					containing the original string, and the other (the destination column) containing
+					the filtered string.
+				</para>
+			</step>
+		</procedure>
+		
+		<para>
+			Usage:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Plugin_Sluggable">
+			<funcprototype>
+				<funcdef><literal>new</literal> <function>Db_Plugin_Sluggable</function></funcdef>
+				
+				<paramdef><type>associative array</type> <parameter>$columns</parameter></paramdef>
+				<paramdef choice="opt"><type>string</type>|<type>array</type> <parameter>$callback</parameter>
+				= '<literal>Db_Plugin_Sluggable::filterString</literal></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			The <parameter>$columns</parameter> array is an associative array which contains
+			the column name of the source column as key and the destination column as the value.
+			Also several source => destination pairs is supported.
+		</para>
+		
+		<example>
+			<title>Using the Sluggable behaviour (<classname>Db_Plugin_Sluggable</classname>)</title>
+			
+			<programlisting language="php"><![CDATA[class FooDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		// ...
+		$this->add($this->newColumn('title'));
+		$this->add($this->newColumn('slug'));
+		
+		$this->applyPlugin(new Db_Plugin_Sluggable(array('title' => 'slug')));
+		// ...
+	}
+}]]></programlisting>
+		</example>
+		
+		<note>
+			The Sluggable behavior was mostly a test-plugin at first, to see what needed to be done
+			to make the plugin interface in RapidDataMapper capable to handle the required dynamic
+			modification (which are made to the code builder composite and column descriptors
+			before the final mapper class is rendered).
+			This does NOT diminish the quality of the behaiour, though.
+		</note>
 	</section>
 	
 	<section>
 		<title>Making a plugin</title>
 		
 		<para>
-			TODO: MORE
+			Currently you have to look at the existing plugins and the API documentation on how
+			to create your own plugin.
+			The proper documentation for creation of plugins will be created when I have the time.
 		</para>
+		
+		<!-- TODO: Finish this section -->
 	</section>
 </chapter>
