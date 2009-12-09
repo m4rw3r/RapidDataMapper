@@ -65,6 +65,8 @@
 	<section xml:id="chapter.alternatives_to_the_db_descriptor.xml">
 		<title>XML</title>
 		
+		<!-- TODO: Update when the parser is available -->
+		
 		<note>
 			This type of configuration parser is not yet created.
 		</note>
@@ -72,6 +74,8 @@
 	
 	<section xml:id="chapter.alternatives_to_the_db_descriptor.yaml">
 		<title>YAML</title>
+		
+		<!-- TODO: Update when the parser is available -->
 		
 		<note>
 			This type of configuration parser is not yet created.
