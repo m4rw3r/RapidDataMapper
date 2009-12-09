@@ -123,24 +123,27 @@ else
 }]]></programlisting>
 		</example>
 		
-		<para>
-			Binds are placeholders in the query which will be replaced with an escaped value which
-			is supplied in the <varname>$binds</varname> parameter. The format for anonymous bind placeholders
-			are question marks ("<literal>?</literal>"), they will take the bind parameters in the order
-			of appearance in the <varname>$binds</varname> array. To use named binds, use a colon followed
-			by whitespace, then it will fetch the values from the key with that name in <varname>$binds</varname>.
-		</para>
-		
-		<para>
-			If a bind parameter is not found, a <classname>Db_Connection_MissingBindParameterException</classname> is thrown.
-			That can be used as a simple validation feature, as it will complain if a parameter is missing.
-			(It will also send the name of the missing parameter if it is a  named bind parameter.)
-		</para>
-		
-		<example>
-			<title>Using the binds in a SQL query</title>
+		<section>
+			<title>Bound parameters</title>
 			
-			<programlisting language="php"><![CDATA[$db = Db::getConnection();
+			<para>
+				Binds are placeholders in the query which will be replaced with an escaped value which
+				is supplied in the <varname>$binds</varname> parameter. The format for anonymous bind placeholders
+				are question marks ("<literal>?</literal>"), they will take the bind parameters in the order
+				of appearance in the <varname>$binds</varname> array. To use named binds, use a colon followed
+				by whitespace, then it will fetch the values from the key with that name in <varname>$binds</varname>.
+			</para>
+			
+			<para>
+				If a bind parameter is not found, a <classname>Db_Connection_MissingBindParameterException</classname> is thrown.
+				That can be used as a simple validation feature, as it will complain if a parameter is missing.
+				(It will also send the name of the missing parameter if it is a  named bind parameter.)
+			</para>
+			
+			<example>
+				<title>Using the binds in a SQL query</title>
+				
+				<programlisting language="php"><![CDATA[$db = Db::getConnection();
 
 // anonymous binds
 $r = $db->query('SELECT * FROM users WHERE name = ? AND password = ?', array($_POST['name'], md5(SALT.$_POST['password'])));
@@ -149,7 +152,39 @@ $r = $db->query('SELECT * FROM users WHERE name = ? AND password = ?', array($_P
 $r = $db->query('SELECT * FROM users WHERE name = :name AND password = :passwd', $_POST);
 // Requested array: array('name' => 'Foo', 'passwd' => 'bar')
 ]]></programlisting>
-		</example>
+			</example>
+		</section>
+		
+		<section>
+			<title>Getting the generated id during INSERT queries</title>
+			
+			<para>
+				If a column in a table is marked as auto_increment, then that column will
+				receive an auto-generated id when an INSERT query is performed on that table.
+				To fetch that id after an INSERT query has been executed, <function>Db_Connection->insertId</function>
+				will return the new id:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Connection-insertId">
+				<funcprototype>
+					<funcdef><type>int</type>|<type>false</type> <function>Db_Connection->insertId</function></funcdef>
+					
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+			
+			<example>
+				<title>Fetching the id generated during an insert</title>
+				
+				<programlisting language="php"><![CDATA[$db = Db::getConnection();
+
+$db->query('INSERT INTO `tracks` SET `name` = \'The Divine Conspiracy\'');
+
+$id = $db->insertId();
+
+echo $id;]]></programlisting>
+			</example>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.database_connection_objects.Db_Result">
