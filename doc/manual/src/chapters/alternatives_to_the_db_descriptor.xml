@@ -65,16 +65,16 @@
 	<section xml:id="chapter.alternatives_to_the_db_descriptor.xml">
 		<title>XML</title>
 		
-		<para>
-			TODO: MAKE "PLUGIN"
-		</para>
+		<note>
+			This type of configuration parser is not yet created.
+		</note>
 	</section>
 	
 	<section xml:id="chapter.alternatives_to_the_db_descriptor.yaml">
 		<title>YAML</title>
 		
-		<para>
-			TODO: MAKE "PLUGIN"
-		</para>
+		<note>
+			This type of configuration parser is not yet created.
+		</note>
 	</section>
 </chapter>
