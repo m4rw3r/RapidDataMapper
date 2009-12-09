@@ -45,7 +45,7 @@ class Db_Descriptor
 	/**
 	 * Constant telling Db_Descriptor_Relation that it should restrict ON DELETE.
 	 */
-	const RESTRICT = 8;
+	const RESTRICT = 9;
 	
 	/**
 	 * The class this object describes.

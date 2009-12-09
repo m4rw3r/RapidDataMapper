@@ -33,7 +33,7 @@ class Db_Connection_MissingBindParameterException extends Db_Exception
 	 */
 	public function getParameterName()
 	{
-		return $this->config_name;
+		return $this->name;
 	}
 }
 
