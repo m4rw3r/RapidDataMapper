@@ -11,11 +11,70 @@
 	
 	<title>Framework Usage</title>
 	
+	<para>
+		This is a chapter dedicated to useful information which is specific to the framework you are using.
+	</para>
+	
+	<!-- TODO: Add more information -->
+	
 	<section>
 		<title>CodeIgniter</title>
 		
 		<para>
-			TODO: MORE
+			The CodeIgniter compatibility files (located in <filename>compat/</filename> directory)
+			replace the "<literal>$this->db</literal>" object with the default database connection
+			(the value of <function linkend="funcref.Db-getConnection">Db::getConnection</function>).
+			This makes it fairly straightforward to utilize the database connection and query building
+			objects.
 		</para>
+		
+		<para>
+			The main differences compared to the default CodeIgniter database abstraction are:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					The method naming, CodeIgniter uses <function>underscored_names</function> while
+					RapidDataMapper uses <function>camelCaseNames</function>.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					The connection object of RapidDataMapper creates query building instances instead
+					of being the query builder itself (as CodeIgniter's "ActiveRecord" does).
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					The code builders have to explicitly be switched to a "no-escape" mode with a method
+					(<function linkend="funcref.Db_Query-escape">Db_Query->escape</function>)
+					instead of passing a boolean switch to the method as CodeIgniter does.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					A different syntax is used to construct sql queries with the query building objects.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			The object-relational-mapper of RapidDataMapper is NOT a replacement for the models,
+			instead it is to be used as a powerful tool by the models, making it a lot easier with
+			the database interaction.
+			The purpose of the models is to fetch what the controller is asking for,
+			it is not the task of the controller to adjust what is to be included or not when
+			performing a database request.
+		</para>
+		
+		<!-- TODO: More information about the specific usage of RDM and CI -->
+		
+		<note>
+			This section will be expanded with more material when something comes up.
+		</note>
 	</section>
 </chapter>
