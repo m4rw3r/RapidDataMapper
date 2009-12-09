@@ -18,9 +18,43 @@
 		but also as concrete real-life examples.
 	</para>
 	
+	<note>
+		I cannot say that I follow every pattern to the letter, but I'm fairly sure that they're a close match ;)
+	</note>
+	
 	<para>
 		Here is a list of (almost) all design patterns used in RapidDataMapper:
 	</para>
+	
+	<section xml:id="design_patterns.abstract_factory">
+		<title>Abstract Factory</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Used by <classname>Db_Mapper</classname> as the extending classes
+					(ie. the classes compiled by <classname>Db_Mapper_Builder</classname>)
+					create different classes of <classname>Db_MapperQuery</classname>.
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section xml:id="design_patterns.builder">
+		<title>Builder</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					<classname>Db_Descriptor</classname> (director)
+					<classname>Db_CodeBuilder_Composite</classname> (sort-of-builder).
+					<classname>Db_CompositeBuilder</classname>, <classname>Db_Mapper_*</classname> classes
+					and <classname>Db_MapperQuery_*</classname> classes (except for
+					<classname>Db_MapperQuery_Where</classname>) (concrete builders).
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
 	
 	<section xml:id="design_patterns.composite">
 		<title>Composite</title>
@@ -63,6 +97,19 @@
 			<listitem>
 				<para>
 					<classname>Db_Plugin_Sluggable</classname> use it to add the conversion logic.
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section xml:id="design_patterns.facade">
+		<title>Façade</title>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					The <classname>Db</classname> class is sort of a façade because it hides the mappers
+					for the common usage.
 				</para>
 			</listitem>
 		</itemizedlist>
@@ -143,6 +190,14 @@
 				<para>
 					<classname>Db</classname> as it uses different <classname>Db_Driver_*</classname> classes
 					depending on the database which it should connect to.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					<!-- TODO: Remove "will" when the cache system is made -->
+					
+					<classname>Db_Connection</classname> will have different cache drivers for query caching.
 				</para>
 			</listitem>
 			
