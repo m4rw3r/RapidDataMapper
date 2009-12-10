@@ -147,7 +147,7 @@
 					<funcprototype>
 						<funcdef><type>Db_Query_Update</type> <function>Db_Connection->update</function></funcdef>
 						
-						<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+						<paramdef><type>string</type>|<type>array</type> <parameter>$table</parameter></paramdef>
 						<paramdef choice="opt"><type>associative array</type> <parameter>$data</parameter></paramdef>
 					</funcprototype>
 					
@@ -842,7 +842,7 @@ $r = $q->from('tracks')->get();]]></programlisting>
 				<funcprototype>
 					<funcdef><type>int</type>|<type>false</type> <function>Db_Query_Insert->execute</function></funcdef>
 					
-					<paramdef><type>array</type> <parameter>$data</parameter></paramdef>
+					<void />
 				</funcprototype>
 			</funcsynopsis>
 		</section>
@@ -870,8 +870,125 @@ $r = $q->from('tracks')->get();]]></programlisting>
 		<title>UPDATE Queries</title>
 		
 		<para>
-			TODO: MORE
+			This object is just like the <classname>Db_Query_Insert</classname> objects,
+			already pre-populated with the table to store the data in (made by
+			<function linkend="Db_Connection-update">Db_Connection->update</function>).
+			The greatest difference between the <classname>Db_Query_Insert</classname> and
+			<classname>Db_Query_Update</classname> is that <classname>Db_Query_Update</classname>
+			inherits from <classname>Db_Query</classname>; making it inherit all
+			<link linkend="chapter.query_builders.conditions">Condition creating methods</link>.
 		</para>
+		
+		<section>
+			<title>Setting data</title>
+			
+			<para>
+				The <function>Db_Query_Update->set</function> method works just like
+				the equivalent method found in <classname>Db_Query_Insert</classname>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Update-set">
+				<funcprototype>
+					<funcdef><type>Db_Query_Update</type> <function>Db_Query_Update->set</function></funcdef>
+
+					<paramdef><type>associative array</type> <parameter>$data</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query_Update</type> <function>Db_Query_Update->set</function></funcdef>
+
+					<paramdef><type>string</type> <parameter>$column</parameter></paramdef>
+					<paramdef><type>scalar</type>|<type>Db_Query_Select</type> <parameter>$value</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The exception is that <classname>Db_Query_Update</classname> does not have an
+				<function linkend="funcref.Db_Query_Insert-add">Db_Query_Insert->add</function> method.
+				This means that the <function>Db_Query_Update->set</function> method always
+				add the data to the same "row".
+			</para>
+		</section>
+		
+		<section>
+			<title>Limiting the updates</title>
+			
+			<para>
+				Limiting is made by calling the <function>Db_Query_Update->limit</function> method:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Update-limit">
+				<funcprototype>
+					<funcdef><type>Db_Query_Update</type> <function>Db_Query_Update->limit</function></funcdef>
+
+					<paramdef><type>int</type> <parameter>$limit</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The <parameter>$limit</parameter> parameter contains the maximum number of rows that
+				will be allowed to be modified by the query.
+			</para>
+		</section>
+		
+		<section>
+			<title>Issuing an UPDATE query</title>
+			
+			<para>
+				Just as with INSERT queries you use the <function>Db_Query_Update->execute</function>
+				method:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Update-execute">
+				<funcprototype>
+					<funcdef><type>int</type>|<type>false</type> <function>Db_Query_Update->execute</function></funcdef>
+					
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+		
+		<section>
+			<title>Updating multiple rows in a single query</title>
+			
+			<warning>
+				<para>
+					This might not be supported in all database servers, check if your database
+					is supporting the correct syntax before use.
+				</para>
+			</warning>
+			
+			<para>
+				To update multiple tables, pass an array of table names as the second parameter
+				to <function linkend="funcref.Db_Connection-update">Db_Connection->update</function>.
+			</para>
+			
+			<example>
+				<title>Updating multiple tables in one query</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->update(array('artist', 'track'));
+
+$q->set('artists.name', $_POST['artist']);
+$q->set('tracks.name', $_POST['track']);
+$q->where('tracks.artist_id = artists.id')->where('tracks.id', $_POST['id']);
+
+if($q->execute())
+{
+	echo 'Update was successful!';
+}
+// UPDATE `artists`, `tracks`
+// SET `artists`.`name` = 'foo', `tracks`.`name` = 'Bar'
+// WHERE `tracks`.`artist_id` = `artists`.`id` AND `tracks`.`id` = 4]]></programlisting>
+			</example>
+			
+			<warning>
+				<para>
+					If you have columns which are identically named in two or more of the tables
+					you are updating you have to prefix each of the columns with the table name
+					in the calls to <function linkend="funcref.Db_Query_Update-set">Db_Query_Update->set</function>.
+				</para>
+			</warning>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.query_builders.delete_queries">
