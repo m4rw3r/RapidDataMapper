@@ -21,7 +21,7 @@
 		<title>CodeIgniter</title>
 		
 		<para>
-			The CodeIgniter compatibility files (located in <filename>compat/</filename> directory)
+			The CodeIgniter compatibility files (located in <filename>compat/CodeIgniter/</filename> directory)
 			replace the "<literal>$this->db</literal>" object with the default database connection
 			(the value of <function linkend="funcref.Db-getConnection">Db::getConnection</function>).
 			This makes it fairly straightforward to utilize the database connection and query building
@@ -63,13 +63,64 @@
 		</itemizedlist>
 		
 		<para>
-			The object-relational-mapper of RapidDataMapper is NOT a replacement for the models,
-			instead it is to be used as a powerful tool by the models, making it a lot easier with
-			the database interaction.
-			The purpose of the models is to fetch what the controller is asking for,
-			it is not the task of the controller to adjust what is to be included or not when
-			performing a database request.
+			The included <classname>MY_Loader</classname> class registers a specific autoloader
+			for classes which tries to load classes from the <filename>application/data_models/</filename>
+			directory.
+			Here it is recommended to place all your data objects and descriptors.
 		</para>
+		
+		<example>
+			<title>Example CodeIgniter application structure</title>
+			
+			<para>
+				This is a simplified picture of how a CodeIgniter application using RapidDataMapper might look like:
+			</para>
+			
+			<programlisting>app/
+  controllers/
+    page.php
+  data_model/
+    page_obj.php
+    page_objdescriptor.php
+  models/
+    page_model.php
+  libraries/	
+    Db/
+      ...
+    Db.php
+    MY_Loader.php
+    MY_Profiler.php
+    MY_Session.php
+  views/
+    page.php</programlisting>
+		</example>
+		
+		<warning>
+			<para>
+				As with almost all other CodeIgniter-files, the files in
+				<filename>application/data_model/</filename> are lowercased.
+			</para>
+		</warning>
+		
+		<note>
+			<para>
+				The object-relational-mapper of RapidDataMapper is NOT a replacement for the models,
+				instead it is to be used as a powerful tool by the models, making it a lot easier with
+				the database interaction.
+				The purpose of the models is to fetch what the controller is asking for,
+				it is not the task of the controller to adjust what is to be included or not when
+				performing a database request.
+			</para>
+		</note>
+		
+		<tip>
+			<para>
+				Name your data objects with either a suffix or a prefix to prevent interference
+				with controller or model names.
+				Then use <function linkend="funcref.Db_Descriptor-setSingular">Db_Descriptor->setSingular</function>
+				to set their correct names.
+			</para>
+		</tip>
 		
 		<!-- TODO: More information about the specific usage of RDM and CI -->
 		
