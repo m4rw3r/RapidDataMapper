@@ -718,14 +718,152 @@ $q->limit(10, $_GET['p'] * 10);
 $r = $q->get();]]></programlisting>
 			</example>
 		</section>
+		
+		<section>
+			<title>Getting the result</title>
+			
+			<para>
+				To get the result, use the <function>Db_Query_Select->get</function> method:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-get">
+				<funcprototype>
+					<funcdef><type>Db_Result</type> <function>Db_Query_Select->get</function></funcdef>
+					
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+			
+			<example>
+				<title>Getting results from a select query</title>
+				
+				<programlisting language="php"><![CDATA[$q = Db::getConnection()->select();
+
+$r = $q->from('tracks')->get();]]></programlisting>
+			</example>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.query_builders.insert_queries">
 		<title>INSERT Queries</title>
 		
 		<para>
-			TODO: MORE
+			For the INSERT query objects, <classname>Db_Query_Insert</classname>,
+			the table to insert the data into is already specified.
+			So the only information that needs to be added to the object is the data
+			to insert.
 		</para>
+		
+		<section>
+			<title>Adding data to insert</title>
+			
+			<para>
+				To add data to the insert object, use <function>Db_Query_Insert->set</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Insert-set">
+				<funcprototype>
+					<funcdef><type>Db_Query_Insert</type> <function>Db_Query_Insert->set</function></funcdef>
+
+					<paramdef><type>associative array</type> <parameter>$data</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query_Insert</type> <function>Db_Query_Insert->set</function></funcdef>
+
+					<paramdef><type>string</type> <parameter>$column</parameter></paramdef>
+					<paramdef><type>scalar</type>|<type>Db_Query_Select</type> <parameter>$value</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The first variant enables you to add an <type>array</type> with data
+				(column => value) which is merged into the current data contained in the object.
+				The second variant just sets a single value to the value of <parameter>$value</parameter>.
+			</para>
+			
+			<para>
+				If <parameter>$value</parameter> (or the value of an associative array) is a
+				<classname>Db_Query_Select</classname> object, then that query will be incorporated
+				as a subquery.
+			</para>
+			
+			<warning>
+				<para>
+					The subquery must only select one column, otherwise the database will raise an error.
+				</para>
+			</warning>
+		</section>
+		
+		<section>
+			<title>Inserting multiple rows simultaneously</title>
+			
+			<warning>
+				<para>
+					This might not be supported in all database servers, check if your database
+					is supporting the correct syntax before use.
+				</para>
+			</warning>
+			
+			<para>
+				RapidDataMapper has support for multi-row insertions by using the method
+				<function>Db_Query_Insert->add</function> to add additional rows:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Insert-add">
+				<funcprototype>
+					<funcdef><type>Db_Query_Insert</type> <function>Db_Query_Insert->add</function></funcdef>
+
+					<paramdef choice="opt"><type>associative array</type> <parameter>$data</parameter> = <initializer>false</initializer></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				This adds another internal row, which means that all subsequent calls to
+				<function linkend="funcref.Db_Query_Insert-set">Db_Query_Insert->set</function>
+				will populate the new row.
+			</para>
+			
+			<para>
+				The <parameter>$data</parameter> parameter is sent to
+				<function linkend="funcref.Db_Query_Insert-set">Db_Query_Insert->set</function> if it is
+				populated (after the new row has been created).
+			</para>
+		</section>
+		
+		<section>
+			<title>Issuing an INSERT query</title>
+			
+			<para>
+				An INSERT query is run by calling <function>Db_Query_Insert->execute</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Insert-execute">
+				<funcprototype>
+					<funcdef><type>int</type>|<type>false</type> <function>Db_Query_Insert->execute</function></funcdef>
+					
+					<paramdef><type>array</type> <parameter>$data</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+		
+		<section>
+			<title><classname>Db_Query_Insert</classname> and no-escape</title>
+			
+			<para>
+				If <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> is set to
+				false, then the <function linkend="Db_Query_Insert-set">Db_Query_Insert->set</function>
+				method will not escape the <parameter>$value</parameter>, instead it will just be
+				concatenated into the <token>VALUES</token> part of the INSERT query.
+			</para>
+			
+			<note>
+				<para>
+					<classname>Db_Query_Insert</classname> does not inherit from <classname>Db_Query</classname>
+					as it does not need the majority of the functionality.
+				</para>
+			</note>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.query_builders.update_queries">
