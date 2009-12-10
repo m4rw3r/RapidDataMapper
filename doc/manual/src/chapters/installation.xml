@@ -49,7 +49,10 @@ Db::initAutoload();]]></programlisting>
 			</step>
 			
 			<step>
-				Configure RapidDataMapper, see the <link linkend="chapter.configuration">Configuration</link> chapter.
+				<para>
+					Configure RapidDataMapper, see the <link linkend="chapter.configuration">Configuration</link>
+					chapter.
+				</para>
 			</step>
 		</procedure>
 		
@@ -130,7 +133,10 @@ $cache_mappers = FALSE;]]></programlisting>
 		</para>
 		
 		<note>
-			I have not tried to use RapidDataMapper together with CodeIgniter's built-in abstraction, but should be possible.
+			<para>
+				I have not tried to use RapidDataMapper together with CodeIgniter's built-in abstraction,
+				but should be possible.
+			</para>
 		</note>
 	</section>
 	

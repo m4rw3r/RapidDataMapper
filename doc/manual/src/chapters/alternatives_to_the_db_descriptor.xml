@@ -68,7 +68,9 @@
 		<!-- TODO: Update when the parser is available -->
 		
 		<note>
-			This type of configuration parser is not yet created.
+			<para>
+				This type of configuration parser is not yet created.
+			</para>
 		</note>
 	</section>
 	
@@ -78,7 +80,9 @@
 		<!-- TODO: Update when the parser is available -->
 		
 		<note>
-			This type of configuration parser is not yet created.
+			<para>
+				This type of configuration parser is not yet created.
+			</para>
 		</note>
 	</section>
 </chapter>

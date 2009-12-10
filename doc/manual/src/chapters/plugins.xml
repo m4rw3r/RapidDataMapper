@@ -56,12 +56,14 @@
 		</para>
 		
 		<note>
-			The I18n plugin's <function>Db_Mapper->setLang</function> method is a "mapper global" variant
-			which means that all objects fetched after the call to <function>Db_Mapper->setLang</function>
-			will use that language.
-			But the plugin also keeps track of which language a previously loaded object has, which means
-			that you can still save an object containing eg. English language even when you've changed the
-			language to fetch other objects in to eg. French.
+			<para>
+				The I18n plugin's <function>Db_Mapper->setLang</function> method is a "mapper global" variant
+				which means that all objects fetched after the call to <function>Db_Mapper->setLang</function>
+				will use that language.
+				But the plugin also keeps track of which language a previously loaded object has, which means
+				that you can still save an object containing eg. English language even when you've changed the
+				language to fetch other objects in to eg. French.
+			</para>
 		</note>
 		
 		<para>
@@ -369,11 +371,11 @@ Db::save($t);]]></programlisting>
 		
 		<funcsynopsis xml:id="funcref.Db_Plugin_Sluggable">
 			<funcprototype>
-				<funcdef><literal>new</literal> <function>Db_Plugin_Sluggable</function></funcdef>
+				<funcdef><function>new Db_Plugin_Sluggable</function></funcdef>
 				
 				<paramdef><type>associative array</type> <parameter>$columns</parameter></paramdef>
 				<paramdef choice="opt"><type>string</type>|<type>array</type> <parameter>$callback</parameter>
-				= '<literal>Db_Plugin_Sluggable::filterString</literal></paramdef>
+				= '<initializer>Db_Plugin_Sluggable::filterString</initializer></paramdef>
 			</funcprototype>
 		</funcsynopsis>
 		
@@ -401,11 +403,13 @@ Db::save($t);]]></programlisting>
 		</example>
 		
 		<note>
-			The Sluggable behavior was mostly a test-plugin at first, to see what needed to be done
-			to make the plugin interface in RapidDataMapper capable to handle the required dynamic
-			modification (which are made to the code builder composite and column descriptors
-			before the final mapper class is rendered).
-			This does NOT diminish the quality of the behaiour, though.
+			<para>
+				The Sluggable behavior was mostly a test-plugin at first, to see what needed to be done
+				to make the plugin interface in RapidDataMapper capable to handle the required dynamic
+				modification (which are made to the code builder composite and column descriptors
+				before the final mapper class is rendered).
+				This does NOT diminish the quality of the behaiour, though.
+			</para>
 		</note>
 	</section>
 	

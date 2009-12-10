@@ -436,8 +436,8 @@ var_dump($q2->getSQL());
 					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->column</function></funcdef>
 					
 					<paramdef><type>string</type>|<type>array</type>|<type>Db_Query_Select</type> <parameter>$columns</parameter></paramdef>
-					<paramdef choice="opt"><type>string</type> <parameter>$table</parameter> = <symbol>false</symbol></paramdef>
-					<paramdef choice="opt"><type>bool</type> <parameter>$table_is_aliased</parameter> = <symbol>false</symbol></paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$table</parameter> = <initializer>false</initializer></paramdef>
+					<paramdef choice="opt"><type>bool</type> <parameter>$table_is_aliased</parameter> = <initializer>false</initializer></paramdef>
 				</funcprototype>
 			</funcsynopsis>
 			
@@ -504,8 +504,8 @@ $number_of_tracks = $q->get()->val();]]></programlisting>
 					
 					<paramdef><type>string</type>|<type>array</type>|<type>Db_Query_Select</type> <parameter>$table</parameter></paramdef>
 					<paramdef><type>string</type> <parameter>$condition</parameter></paramdef>
-					<paramdef choice="opt"><type>array</type> <parameter>$columns</parameter> = <symbol>false</symbol></paramdef>
-					<paramdef choice="opt"><type>string</type> <parameter>$type</parameter> = "<literal>left</literal>"</paramdef>
+					<paramdef choice="opt"><type>array</type> <parameter>$columns</parameter> = <initializer>false</initializer></paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$type</parameter> = "<initializer>left</initializer>"</paramdef>
 				</funcprototype>
 			</funcsynopsis>
 			
@@ -595,7 +595,7 @@ $r2 = $q2->get();
 					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->having</function></funcdef>
 					
 					<paramdef><type>string</type> <parameter>$condition</parameter></paramdef>
-					<paramdef choice="opt"><type>scalar</type> <parameter>$value</parameter> = <symbol>NULL</symbol></paramdef>
+					<paramdef choice="opt"><type>scalar</type> <parameter>$value</parameter> = <initializer>NULL</initializer></paramdef>
 				</funcprototype>
 			</funcsynopsis>
 			
@@ -631,8 +631,8 @@ $r2 = $q2->get();
 					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->groupBy</function></funcdef>
 					
 					<paramdef><type>string</type>|<type>array</type> <parameter>$columns</parameter></paramdef>
-					<paramdef choice="opt"><type>string</type> <parameter>$table</parameter> = <symbol>false</symbol></paramdef>
-					<paramdef choice="opt"><type>boolean</type> <parameter>$table_is_aliased</parameter> = <symbol>false</symbol></paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$table</parameter> = <initializer>false</initializer></paramdef>
+					<paramdef choice="opt"><type>boolean</type> <parameter>$table_is_aliased</parameter> = <initializer>false</initializer></paramdef>
 				</funcprototype>
 			</funcsynopsis>
 			
@@ -657,7 +657,7 @@ $r2 = $q2->get();
 					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->limit</function></funcdef>
 					
 					<paramdef><type>int</type> <parameter>$limit</parameter></paramdef>
-					<paramdef choice="opt"><type>int</type> <parameter>$offset</parameter> = <symbol>false</symbol></paramdef>
+					<paramdef choice="opt"><type>int</type> <parameter>$offset</parameter> = <initializer>false</initializer></paramdef>
 				</funcprototype>
 			</funcsynopsis>
 			
@@ -759,7 +759,7 @@ $r = $q->get();]]></programlisting>
 			<funcprototype>
 				<funcdef><type>Db_Query</type> <function>Db_Query->escape</function></funcdef>
 				
-				<paramdef choice="opt"><type>bool</type> <parameter>$escape</parameter> = <symbol>true</symbol></paramdef>
+				<paramdef choice="opt"><type>bool</type> <parameter>$escape</parameter> = <initializer>true</initializer></paramdef>
 			</funcprototype>
 		</funcsynopsis>
 		
@@ -898,7 +898,13 @@ foreach($_POST['artists'] as $artist)
 				<funcprototype>
 					<funcdef><type>Db_Query</type> <function>Db_Query->where</function></funcdef>
 					
-					<paramdef choice="opt"><type>string</type> <parameter>$condition</parameter> = 'or'</paramdef>
+					<void />
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->where</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$condition</parameter> = 'or'</paramdef>
 				</funcprototype>
 				
 				<funcprototype>
@@ -1173,7 +1179,7 @@ $r = $q->get();]]></programlisting>
 					
 					<paramdef><type>string</type> <parameter>$column</parameter></paramdef>
 					<paramdef><type>array</type> <parameter>$match</parameter></paramdef>
-					<paramdef choice="opt"><type>string</type> <parameter>$side</parameter> = "<literal>both</literal>"</paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$side</parameter> = "<initializer>both</initializer>"</paramdef>
 				</funcprototype>
 			</funcsynopsis>
 			

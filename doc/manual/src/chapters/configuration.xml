@@ -197,12 +197,16 @@
 		</table>
 		
 		<note>
-			Keep in mind that the configuration options might vary depending on the type of database driver.
+			<para>
+				Keep in mind that the configuration options might vary depending on the type of database driver.
+			</para>
 		</note>
 		
 		<warning>
-			The <option>dbdriver</option> option must be set, otherwise RapidDataMapper will not know what driver to use
-			and an <firstterm linkend="glossary.exception">exception</firstterm> will be thrown.
+			<para>
+				The <option>dbdriver</option> option must be set, otherwise RapidDataMapper will not know what driver to use
+				and an <firstterm linkend="glossary.exception">exception</firstterm> will be thrown.
+			</para>
 		</warning>
 		
 		<example>
