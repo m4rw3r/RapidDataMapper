@@ -904,7 +904,13 @@ foreach($_POST['artists'] as $artist)
 				<funcprototype>
 					<funcdef><type>Db_Query</type> <function>Db_Query->where</function></funcdef>
 					
-					<paramdef><type>string</type> <parameter>$condition</parameter> = 'or'</paramdef>
+					<paramdef><parameter>'or'</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query</type> <function>Db_Query->where</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$condition</parameter></paramdef>
 				</funcprototype>
 				
 				<funcprototype>
@@ -932,9 +938,10 @@ foreach($_POST['artists'] as $artist)
 				<title>Nesting WHERE conditions</title>
 				
 				<para>
-					The first variant creates a nested list of conditions that will be wrapped in parenthesis.
-					If the first parameter is empty, it will be preceded by <token>AND</token> if there are
-					conditions before it. If the first parameter is equal to "<literal>or</literal>" it will
+					The first and second variants creates a nested list of conditions that will be wrapped in parenthesis.
+					If the first parameter is empty (first variant), it will be preceded by <token>AND</token>
+					if there are conditions before it.
+					If the first parameter is equal to "<literal>or</literal>" (second variant) it will
 					instead be preceded by <token>OR</token>.
 				</para>
 				
@@ -970,7 +977,7 @@ $r = $q->get();
 				<title>Conditions between two columns</title>
 				
 				<para>
-					The second variant is a lot simpler, it will simply append the <parameter>$condition</parameter>
+					The third variant is a lot simpler, it will simply append the <parameter>$condition</parameter>
 					to the WHERE stack (but it will still parse the OR condition if present, and also
 					protect the identifiers provided escaping is on):
 				</para>
