@@ -16,6 +16,11 @@ clean:
 	rm -f chunked.zip
 
 
+# Validate the DocBook XML
+doc-validate:
+	java -jar jing/bin/jing.jar doc/docbook.rng doc/manual/src/chapters/*.xml doc/manual/src/references/*.xml
+
+
 # Create all documentation, not including API
 doc: doc-html doc-chunk
 
