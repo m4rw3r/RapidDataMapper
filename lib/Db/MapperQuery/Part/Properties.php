@@ -23,7 +23,7 @@ class Db_MapperQuery_Part_Properties extends Db_CodeBuilder_Container
 		// get the column names which the PHP variants should be translated into to create correct SQL
 		$php_names = array();
 		$sql_names = array();
-		foreach($desc->getColumns() as $col)
+		foreach(array_merge($desc->getPrimaryKeys(), $desc->getColumns()) as $col)
 		{
 			$p = $col->getLocalColumn($desc->getSingular());
 			$s = $col->getSourceColumn($desc->getSingular());

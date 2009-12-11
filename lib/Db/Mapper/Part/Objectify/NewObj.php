@@ -52,7 +52,10 @@ else
 		$arr = array();
 		foreach(array_merge($descriptor->getColumns(), $descriptor->getPrimaryKeys()) as $col)
 		{
-			$arr[] = '$obj->__data[\''.$col->getColumn().'\'] = '.$col->getFromObjectCode('$obj').';';
+			if($col->isUpdatable())
+			{
+				$arr[] = '$obj->__data[\''.$col->getColumn().'\'] = '.$col->getFromObjectCode('$obj').';';
+			}
 		}
 		$this->addPart(implode("\n", $arr));
 		
