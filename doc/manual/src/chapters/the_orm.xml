@@ -264,7 +264,86 @@ Db::delete($object);]]></programlisting>
 		<title>Mapper Queries</title>
 		
 		<para>
-			TODO: MORE
+			The mapper queries are basically pre-populated <classname>Db_Query_Select</classname>
+			objects.
+			They contain the data for selecting and aliasing the proper columns correctly,
+			choosing the correct table(s) using from and maybe a join to a related row —
+			exactly like a prefabricated <classname>Db_Query_Select</classname>.
 		</para>
+		
+		<para>
+			There are a few differences though:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					<classname>Db_MapperQuery</classname> is not directly used, instead it has child classes unique
+					to each mapper which automatically populates themselves accordingly.
+					This also means that they are built by the code builders, making it possible for
+					a plugin to both modify the logic, but also possible to add new methods to it.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Property names will automatically be translated to their proper alias and column name
+					(defined by the <link linkend="chapter.descriptors">Descriptor</link>).
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					It can join related data into the query, creating an object graph (or tree, if you'd like),
+					using <function linkend="funcref.Db_MapperQuery-related">Db_MapperQuery->related</function>.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<section>
+			<title>Automatic rewriting of column names</title>
+			
+			<para>
+				Take this as an example; you've written a large part of a web app, but then suddenly for
+				some unexplainable reason you need to change a database column name.
+				This would usually involve searching through the whole codebase for all occurrences of the
+				column.
+			</para>
+			
+			<para>
+				Instead, RapidDataMapper can do this on the fly, completely automatically.
+			</para>
+			
+			<para>
+				The <classname>Db_MapperQuery</classname> contains two arrays, one with PHP property-names
+				and one with column names.
+				These arrays only contains the columns/properties which differ in names, making it efficient.
+				It will then use this array to replace the proper columns.
+			</para>
+			
+			<warning>
+				<para>
+					The translation only works if the columns are prefixed with their alias name
+					(which by default is the value of
+					<function linkend="funcref.Db_Descriptor-getSingular">Db_Descriptor->getSingular</function>,
+					related objects will have slightly different naming, see
+					<link linkend="chapter.relations">Relations</link> for information about
+					relation-naming).
+				</para>
+				
+				<para>
+					For example: <literal>track.id</literal>
+				</para>
+			</warning>
+			
+			<note>
+				This can also apply to plugins.
+				So if you create a plugin which moves a column or aliases it in a different way,
+				just modify the <function>Db_Descriptor_Column->getLocalColumn</function>
+				and <function>Db_Descriptor_Column->getSourceColumn</function>
+				(usually the source column name/alias is modified) to make
+				RapidDataMapper automatically perform the translation.
+			</note>
+		</section>
 	</section>
 </chapter>
