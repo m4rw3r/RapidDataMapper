@@ -1050,10 +1050,6 @@ var_dump($q->getSQL());
 // JOIN `tracks` AS `t2` ON `tracks`.`artist_id` = `artists`.`id`
 // GROUP BY `artists`.`name`]]></programlisting>
 		</example>
-		
-		<para>
-			TODO: MORE?
-		</para>
 	</section>
 	
 	<section xml:id="chapter.query_builders.conditions">
