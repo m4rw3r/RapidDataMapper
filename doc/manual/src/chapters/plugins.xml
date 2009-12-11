@@ -28,7 +28,7 @@
 		Here is a list of officially supported plugins, including instructions for using them:
 	</para>
 	
-	<section>
+	<section xml:id="chapter.plugins.i18n">
 		<title>Internationalization (<classname>Db_Plugin_I18n</classname>)</title>
 		
 		<para>

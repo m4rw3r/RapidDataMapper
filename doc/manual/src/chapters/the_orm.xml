@@ -337,12 +337,22 @@ Db::delete($object);]]></programlisting>
 			</warning>
 			
 			<note>
-				This can also apply to plugins.
-				So if you create a plugin which moves a column or aliases it in a different way,
-				just modify the <function>Db_Descriptor_Column->getLocalColumn</function>
-				and <function>Db_Descriptor_Column->getSourceColumn</function>
-				(usually the source column name/alias is modified) to make
-				RapidDataMapper automatically perform the translation.
+				<para>
+					This can also apply to plugins.
+				</para>
+				
+				<para>
+					So if you create a plugin which alters the standard naming of the column/property/alias,
+					just modify the <function>Db_Descriptor_Column->getLocalColumn</function>
+					and <function>Db_Descriptor_Column->getSourceColumn</function>
+					(usually the source column name/alias is modified) to make
+					RapidDataMapper automatically perform the translation.
+				</para>
+				
+				<para>
+					An example of this is the <classname linkend="chapter.plugins.i18n">Db_Plugin_I18n</classname>
+					plugin.
+				</para>
 			</note>
 		</section>
 	</section>
