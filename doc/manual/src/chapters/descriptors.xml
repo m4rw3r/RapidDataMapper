@@ -359,7 +359,7 @@ catch(Db_DescriptorException $e)
 					<row>
 						<entry>class</entry>
 						<entry><function>setClass</function>(<type>string</type> <parameter>$class_name</parameter>)</entry>
-						<entry><type>string</type> <function>getClass</function>()</entry>
+						<entry xml:id="funcref.Db_Descriptor-getClass"><type>string</type> <function>getClass</function>()</entry>
 						<entry>REQUIRED</entry>
 						<entry>
 							The class name the current descriptor describes.
@@ -368,8 +368,8 @@ catch(Db_DescriptorException $e)
 					
 					<row>
 						<entry>singular</entry>
-						<entry><function>setSingular</function>(<type>string</type> <parameter>$singular</parameter>)</entry>
-						<entry><type>string</type> <function>getSingular</function>()</entry>
+						<entry xml:id="funcref.Db_Descriptor-setSingular"><function>setSingular</function>(<type>string</type> <parameter>$singular</parameter>)</entry>
+						<entry xml:id="funcref.Db_Descriptor-getSingular"><type>string</type> <function>getSingular</function>()</entry>
 						<entry>lowercase of classname</entry>
 						<entry>
 							The name which is use to refer to the class in a singular fashion in queries and
@@ -379,8 +379,8 @@ catch(Db_DescriptorException $e)
 					
 					<row>
 						<entry>table</entry>
-						<entry><function>setTable</function> (<type>string</type> <parameter>$table</parameter>)</entry>
-						<entry><type>string</type> <function>getTable</function>()</entry>
+						<entry xml:id="funcref.Db_Descriptor-setTable"><function>setTable</function> (<type>string</type> <parameter>$table</parameter>)</entry>
+						<entry xml:id="funcref.Db_Descriptor-getTable"><type>string</type> <function>getTable</function>()</entry>
 						<entry>plural of the singular setting</entry>
 						<entry>
 							The table name of the database table to which the class should be mapped to.
@@ -389,8 +389,8 @@ catch(Db_DescriptorException $e)
 					
 					<row>
 						<entry>factory</entry>
-						<entry><function>setFactory</function> (<type>string</type> <parameter>$factory</parameter>)</entry>
-						<entry><type>string</type> <function>getFactory</function>()</entry>
+						<entry xml:id="funcref.Db_Descriptor-setFactory"><function>setFactory</function> (<type>string</type> <parameter>$factory</parameter>)</entry>
+						<entry xml:id="funcref.Db_Descriptor-getFactory"><type>string</type> <function>getFactory</function>()</entry>
 						<entry>"<literal>new</literal> " + class name</entry>
 						<entry>
 							The code piece to add after an equal sign ("<literal>=</literal>") but before the
@@ -400,8 +400,8 @@ catch(Db_DescriptorException $e)
 					
 					<row>
 						<entry>database connection name</entry>
-						<entry><function>setConnectionName</function> (<type>string</type> <parameter>$connection_name</parameter>)</entry>
-						<entry><type>string</type> <function>getConnectionName</function>()</entry>
+						<entry xml:id="funcref.Db_Descriptor-setConnectionName"><function>setConnectionName</function> (<type>string</type> <parameter>$connection_name</parameter>)</entry>
+						<entry xml:id="funcref.Db_Descriptor-getConnectionName"><type>string</type> <function>getConnectionName</function>()</entry>
 						<entry>
 							"" (ie. the default database connection or if a connection has been specified by
 							<function>setConnection</function>, that is used.
@@ -413,8 +413,8 @@ catch(Db_DescriptorException $e)
 					
 					<row>
 						<entry>database connection</entry>
-						<entry><function>setConnection</function> (<type>Db_Connection</type> <parameter>$connection_object</parameter>)</entry>
-						<entry><type>Db_Connection</type> <function>getConnection</function>()</entry>
+						<entry xml:id="funcref.Db_Descriptor-setConnection"><function>setConnection</function> (<type>Db_Connection</type> <parameter>$connection_object</parameter>)</entry>
+						<entry xml:id="funcref.Db_Descriptor-getConnection"><type>Db_Connection</type> <function>getConnection</function>()</entry>
 						<entry>
 							Default connection or the connection specified by <function>setConnectionName</function>.
 						</entry>
@@ -583,8 +583,8 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 					<tbody>
 						<row>
 							<entry>column</entry>
-							<entry><function>setColumn</function>(<type>string</type> <parameter>$column</parameter>)</entry>
-							<entry><type>string</type> <function>getColumn</function></entry>
+							<entry xml:id="funcref.Db_Descriptor_Column-setColumn"><function>setColumn</function>(<type>string</type> <parameter>$column</parameter>)</entry>
+							<entry xml:id="funcref.Db_Descriptor_Column-getColumn"><type>string</type> <function>getColumn</function></entry>
 							<entry>REQUIRED</entry>
 							<entry>
 								The column name to which the property is mapped to.
@@ -593,8 +593,8 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 						
 						<row>
 							<entry>property</entry>
-							<entry><function>setProperty</function>(<type>string</type> <parameter>$property</parameter>)</entry>
-							<entry><type>string</type> <function>getProperty</function></entry>
+							<entry xml:id="funcref.Db_Descriptor_Column-setProperty"><function>setProperty</function>(<type>string</type> <parameter>$property</parameter>)</entry>
+							<entry xml:id="funcref.Db_Descriptor_Column-getProperty"><type>string</type> <function>getProperty</function></entry>
 							<entry>name of the column</entry>
 							<entry>
 								The name of the property to which the database column is mapped to.
@@ -603,8 +603,8 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 						
 						<row>
 							<entry>is_insertable</entry>
-							<entry><function>setInsertable</function>(<type>boolean</type> <parameter>$value</parameter>)</entry>
-							<entry><type>boolean</type> <function>isInsertable</function></entry>
+							<entry xml:id="funcref.Db_Descriptor_Column-setInsertable"><function>setInsertable</function>(<type>boolean</type> <parameter>$value</parameter>)</entry>
+							<entry xml:id="funcref.Db_Descriptor_Column-isInsertable"><type>boolean</type> <function>isInsertable</function></entry>
 							<entry><symbol>true</symbol></entry>
 							<entry>
 								If the column should be allowed to be used when constructing INSERT statements
@@ -614,8 +614,8 @@ echo $d->getFactory();  // Track_obj::create()]]></programlisting>
 						
 						<row>
 							<entry>is_updatable</entry>
-							<entry><function>setUpdatable</function>(<type>boolean</type> <parameter>$value</parameter>)</entry>
-							<entry><type>boolean</type> <function>isUpdatable</function></entry>
+							<entry xml:id="funcref.Db_Descriptor_Column-setUpdatable"><function>setUpdatable</function>(<type>boolean</type> <parameter>$value</parameter>)</entry>
+							<entry xml:id="funcref.Db_Descriptor_Column-isUpdatable"><type>boolean</type> <function>isUpdatable</function></entry>
 							<entry><symbol>true</symbol></entry>
 							<entry>
 								If the column should be allowed to be used when constructing UPDATE statements
