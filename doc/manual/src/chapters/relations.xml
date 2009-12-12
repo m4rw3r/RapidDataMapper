@@ -667,7 +667,65 @@ foreach($ts as $t)
 			<title>Establishing relations</title>
 			
 			<para>
-				TODO: MORE
+				To establish relations you simply assign an object of the correct class
+				to the relation holding property on a parent object, finally you call
+				<function linkend="funcref.Db-save">Db::save</function>:
+			</para>
+			
+			<example>
+				<title>Establishing Has One relation between objects</title>
+				
+				<programlisting language="php"><![CDATA[// Album has one artwork
+
+// assigning a new artwork to a new album:
+$a = new Album();
+$a->name = 'Absolute Design';
+
+// using existing artist entry
+$a->artist = Db::find('artist')->where('name', 'Engel')->getOne();
+
+$ac = new Artwork();
+$ac->file = 'filename';
+
+$a->artwork = $ac;
+
+Db::save($a);
+
+// saves the album entry, then the artwork entry, establishing relations between them
+// this also applies to the artist (Engel) and the album]]></programlisting>
+			</example>
+			
+			<para>
+				As you can see, it is really easy.
+				It is not as easy with relations which connect to several related object,
+				but almost:
+			</para>
+			
+			<example>
+				<title>Establishing Has Many relations between objects</title>
+				
+				<programlisting language="php"><![CDATA[// Artist has many tracks
+
+$a = new Artist();
+$a->name = 'Trail of Tears';
+
+// tracks is a plain array
+$a->tracks[] = Db::find('track')->where('name', 'My Comfort')->getOne();
+
+$t = new Track();
+$t->name = 'She Weaves Shadows';
+
+$a->tracks[] = $t;
+
+Db::save($a);
+
+// saves the new artist and track, associates them with each other
+// and also the existing track is associated with the new artist]]></programlisting>
+			</example>
+			
+			<para>
+				The plural relations just consists of plain PHP arrays, making it easy to
+				add or remove objects from them. 
 			</para>
 		</section>
 		
@@ -675,24 +733,63 @@ foreach($ts as $t)
 			<title>Removing relations between objects</title>
 			
 			<para>
-				TODO: MORE
+				To remove a singular relation, just set that column to <symbol>null</symbol>.
+				If you'd like to replace it, just replace the existing object.
 			</para>
+			
+			<para>
+				For plural relations, remove them from the array (<function>unset</function> is
+				suitable).
+				To remove all, just set the property to an empty array.
+				To replace a single object, remove one and add another to the array.
+			</para>
+			
+			<example>
+				<title>Removing and replacing related objects</title>
+				
+				<programlisting language="php"><![CDATA[// Album belongs to artist
+// Album has many tracks
+
+// remove the artist
+$a = Db::find('album', 4);
+$a->artist = null;
+
+Db::save($a);
+
+// replace the artist
+$a = Db::find('album', 6);
+$a->artist = new Artist();
+$a->artist->name = 'Wintersun';
+
+Db::save($a);
+
+// remove some tracks
+$a = Db::find('album')->where('id', 5)->related('tracks')->getOne();
+
+// delete something
+unset($a->tracks[$i]);
+
+Db::save($a);
+
+// remove all tracks
+$a = Db::find('album')->where('id', 1)->related('tracks')->getOne();
+$a->tracks = array();
+
+Db::save($a);
+
+// replace some tracks
+$a = Db::find('album')->where('id', 8)->related('tracks')->getOne();
+
+// delete something
+unset($a->tracks[$i]);
+
+// add something
+$t = new Track();
+$t->name = 'Insomnia';
+$a->tracks[] = $t;
+
+Db::save($a);]]></programlisting>
+			</example>
 		</section>
 	</section>
 </chapter>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
