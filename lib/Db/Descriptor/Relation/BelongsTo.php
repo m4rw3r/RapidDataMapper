@@ -28,6 +28,8 @@ class Db_Descriptor_Relation_BelongsTo extends Db_Descriptor_Relation_HasOne
 	
 	';
 		
+		// TODO: Add the extra conditions if present
+		
 		// establish relation
 		$arr = array('// set the propert' . (count($local_keys) > 1 ? 'ies' : 'y'));
 		$c = count($local_keys);

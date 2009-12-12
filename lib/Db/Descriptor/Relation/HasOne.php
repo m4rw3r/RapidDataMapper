@@ -31,6 +31,8 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'
 {
 	';
 		
+		// TODO: Add the extra conditions if present
+		
 		// assign properties for children
 		$arr = array('// set the propert'.(count($foreign_keys) > 1 ? 'ies' : 'y'));
 		$c = count($local_keys);
@@ -84,6 +86,8 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'
 			$where[] = addcslashes($db->protectIdentifiers($fprop->getColumn()), "'").' = \' . $this->db->escape($object->'.$lprop->getProperty().')';
 			
 			$if_conds[] = $object_var.'->'.$this->relation->getProperty().'->'.$fprop->getProperty().' != $object->'.$lprop->getProperty();
+			
+			// TODO: Add the extra conditions if present
 			
 			// assignments to set the related object as a child object
 			$assignments[] = $object_var.'->'.$this->relation->getProperty().'->'.$fprop->getProperty().' = $object->'.$lprop->getProperty().';';

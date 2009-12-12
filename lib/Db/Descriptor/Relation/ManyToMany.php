@@ -275,6 +275,8 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 			
 			';
 		
+		// TODO: Add the extra conditions if present
+		
 		// build foreign key conditions to link
 		$local_cols = array();
 		$c = count($local_keys);
@@ -406,6 +408,8 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().'))
 			
 			$where[] = addcslashes($db->protectIdentifiers($fprop), "'") . ' = \'.$this->db->escape('.$object_var.'->'.$lprop->getProperty().')';
 		}
+		
+		// TODO: Add the extra conditions if present
 		
 		// repeat for the second part of the link
 		$c = count($foreign_keys);

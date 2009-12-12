@@ -197,6 +197,8 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 		{
 			';
 		
+		// TODO: Add the extra conditions if present
+		
 		// assign properties for children
 		$arr = array('// set the propert'.(count($foreign_keys) > 1 ? 'ies' : 'y'));
 		$c = count($local_keys);
@@ -300,7 +302,9 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 		if($related instanceof '.$related->getClass().')
 		{
 			';
-				
+		
+		// TODO: Add the extra conditions if present
+		
 		// assign properties for children
 		$arr = array('// set the propert'.(count($foreign_keys) > 1 ? 'ies' : 'y'));
 		$c = count($local_keys);
