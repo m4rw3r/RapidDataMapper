@@ -448,7 +448,7 @@ class Db_Descriptor_Relation
 	protected function guessType()
 	{
 		// Singular or plural?
-		if(substr($this->getProperty(), -1) == 's')
+		if(substr($this->getName(), -1) == 's')
 		{
 			// plural
 			return Db_Descriptor::HAS_MANY;
@@ -461,9 +461,9 @@ class Db_Descriptor_Relation
 			{
 				// Check if all the primary keys has a corresponding foreign key
 				// expects that the default naming of the *property* is relationName_PrimaryKeyName
-				foreach($this->getParentDescriptor()->getPrimaryKeys() as $col)
+				foreach($this->guessForeignKeyMappings($this->getParentDescriptor()) as $col)
 				{
-					$prop = $cls->getProperty($this->getRelatedDescriptor()->getSingular().'_'.$col->getProperty());
+					$prop = $cls->getProperty($col);
 				}
 			}
 			catch(ReflectionException $e)
