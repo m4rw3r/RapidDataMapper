@@ -852,7 +852,7 @@ $r = $q->from('tracks')->get();]]></programlisting>
 			
 			<para>
 				If <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> is set to
-				false, then the <function linkend="Db_Query_Insert-set">Db_Query_Insert->set</function>
+				false, then the <function linkend="funcref.Db_Query_Insert-set">Db_Query_Insert->set</function>
 				method will not escape the <parameter>$value</parameter>, instead it will just be
 				concatenated into the <token>VALUES</token> part of the INSERT query.
 			</para>
@@ -872,7 +872,7 @@ $r = $q->from('tracks')->get();]]></programlisting>
 		<para>
 			This object is just like the <classname>Db_Query_Insert</classname> objects,
 			already pre-populated with the table to store the data in (made by
-			<function linkend="Db_Connection-update">Db_Connection->update</function>).
+			<function linkend="funcref.Db_Connection-update">Db_Connection->update</function>).
 			The greatest difference between the <classname>Db_Query_Insert</classname> and
 			<classname>Db_Query_Update</classname> is that <classname>Db_Query_Update</classname>
 			inherits from <classname>Db_Query</classname>; making it inherit all
