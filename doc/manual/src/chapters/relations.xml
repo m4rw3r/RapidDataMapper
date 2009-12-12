@@ -329,6 +329,53 @@ class TrackDescriptor extends Db_Descriptor
 		</section>
 		
 		<section>
+			<title>Extra conditions</title>
+			
+			<para>
+				Sometimes you need to specify an additional condition for the relation,
+				like if you have several comments, but not all are approved.
+			</para>
+			
+			<para>
+				These conditions are added with <function>Db_Descriptor_Relation->setExtraConditions</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-setExtraConditions">
+				<funcprototype>
+					<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setExtraConditions</function></funcdef>
+
+					<paramdef><type>string</type> <parameter>$foreign_property_name</parameter></paramdef>
+					<paramdef><type>mixed</type> <parameter>$value</parameter></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setExtraConditions</function></funcdef>
+
+					<paramdef><type>associative array</type> <parameter>$filter</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The first variant filters the <parameter>$foreign_property_name</parameter>
+				by <parameter>$value</parameter>.
+				Consecutive calls will add additional filters.
+			</para>
+			
+			<para>
+				The second variant is much the same, but the key of the array is instead the
+				property name and the value the value to match to.
+			</para>
+			
+			<warning>
+				<para>
+					These extra conditions does not yet reflect when saving a relation.
+					Instead you have to make sure that the condition is fulfilled before
+					saving it.
+				</para>
+			</warning>
+		</section>
+		
+		<section>
 			<title>Relation Type</title>
 			
 			<para>
@@ -385,15 +432,163 @@ class TrackDescriptor extends Db_Descriptor
 			<title>Has Many</title>
 			
 			<para>
-				TODO: MORE
+				This relation type is used when you want an object to be able to link
+				to several other objects of the same type.
+				For example has an artist many tracks.
 			</para>
+			
+			<para>
+				This relation is created by adding a foreign key in the related table
+				The name of the column(s) is by default the name of the singular of the
+				current object + "<literal>_</literal>" + primary key name.
+			</para>
+			
+			<example>
+				<title>Defining a Has Many relation</title>
+				
+				<programlisting language="php"><![CDATA[class ArtistDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->setClass('Artist');
+		
+		$this->add($this->newPrimaryKey('id'));
+		
+		// ...
+		
+		// use the Db_Descriptor::HAS_MANY constant to be sure that it is a has many relation
+		$this->add($this->newRelation('tracks')->setType(self::HAS_MANY));
+	}
+}
+class TrackDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		// ...
+		$this->add($this->newColumn('artist_id'));
+	}
+}
+
+class Artist
+{
+	// ...
+	public $tracks = array();
+}]]></programlisting>
+			</example>
+			
+			<section>
+				<title>Custom foreign key options</title>
+				
+				<para>
+					By default are these links established between the primary keys
+					of this object and the foreign keys in the linked object.
+					The default naming of the foreign key(s) is/are
+					singular + "<literal>_</literal>" + primary key name
+					(seen from the object which has the Has Many relation).
+				</para>
+				
+				<para>
+					To change this, use <function>Db_Descriptor_Relation->setForeignKeys</function>:
+				</para>
+				
+				<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-setForeignKeys">
+					<funcprototype>
+						<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setForeignKeys</function></funcdef>
+            
+						<paramdef><type>string</type> <parameter>$local_property_name</parameter></paramdef>
+						<paramdef><type>string</type> <parameter>$foreign_property_name</parameter></paramdef>
+					</funcprototype>
+					
+					<funcprototype>
+						<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setForeignKeys</function></funcdef>
+            
+						<paramdef><type>array</type> <parameter>$local_property_names</parameter></paramdef>
+						<paramdef><type>array</type> <parameter>$foreign_property_names</parameter></paramdef>
+					</funcprototype>
+					
+					<funcprototype>
+						<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setForeignKeys</function></funcdef>
+            
+						<paramdef><type>associative array</type> <parameter>$links</parameter></paramdef>
+					</funcprototype>
+				</funcsynopsis>
+				
+				<para>
+					The first variant adds a link between the two properties, with
+					<parameter>$local_property_name</parameter> in the local object
+					and <parameter>$foreign_property_name</parameter> in the related object.
+					This variant adds the conditions, it does not remove existing foreign
+					key mappings.
+				</para>
+				
+				<para>
+					The second variant associates row 1 in the
+					<parameter>$local_property_names</parameter> with the first row in
+					<parameter>$foreign_property_names</parameter>.
+					This variant replaces existing primary key mappings.
+				</para>
+				
+				<para>
+					The third variant takes a list of key => value mappings,
+					where the key is the local property name and the value the foreign property name.
+				</para>
+				
+				<note>
+					<para>
+						Technically, the <function>setForeignKeys</function> method is located in
+						<classname>Db_Descriptor_Relation_HasMany</classname>, but it is aggregated
+						into the <classname>Db_Descriptor_Relation</classname> object.
+					</para>
+				</note>
+			</section>
 		</section>
 		
 		<section xml:id="chapter.relations.types.has_one">
 			<title>Has One</title>
 			
 			<para>
-				TODO: MORE
+				This is practically a <link linkend="chapter.relations.types.has_many">Has Many</link>
+				relation but with the restriction on one related object.
+			</para>
+			
+			<example>
+				<title>Defining a Has One relation</title>
+				
+				<programlisting language="php"><![CDATA[class AlbumDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->setClass('Album');
+		
+		$this->add($this->newPrimaryKey('id'));
+		
+		// ...
+		
+		// use the Db_Descriptor::HAS_ONE constant to be sure that it is a has one relation
+		$this->add($this->newRelation('artwork')->setType(self::HAS_ONE));
+	}
+}
+class ArtworkDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		// ...
+		$this->add($this->newColumn('album_id'));
+	}
+}
+
+class Album
+{
+	// ...
+	public $artwork = null;
+}]]></programlisting>
+			</example>
+			
+			<para>
+				This relationship type has inherited the setting for key mappings from
+				Has One, making its syntax identical.
+				See the <link linkend="chapter.relations.types.has_many">Has Many</link>
+				relationship for more information.
 			</para>
 		</section>
 		
@@ -401,7 +596,57 @@ class TrackDescriptor extends Db_Descriptor
 			<title>Belongs To</title>
 			
 			<para>
-				TODO: MORE
+				The Belongs To relationship is often used at the receiving end of a 
+				<link linkend="chapter.relations.types.has_many">Has Many</link> or a
+				<link linkend="chapter.relations.types.has_many">Has One</link>
+				relationship.
+				This means that the object defining the Belongs To relation type contains
+				the foreign keys.
+			</para>
+			
+			<para>
+				Example:
+			</para>
+			
+			<example>
+				<title>Defining a Belongs to relation</title>
+				
+				<programlisting language="php"><![CDATA[class TrackDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->setClass('Track');
+		
+		$this->add($this->newColumn('artist_id'));
+		
+		// ...
+		
+		// use the Db_Descriptor::BELONGS_TO constant to be sure that it is a belongs to relation
+		$this->add($this->newRelation('artist')->setType(self::BELONGS_TO));
+	}
+}
+class ArtistDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->setClass('Artist');
+		$this->add($this->newPrimaryKey('id'));
+		// ...
+	}
+}
+
+class Track
+{
+	// ...
+	public $artist = null;
+}]]></programlisting>
+			</example>
+			
+			<para>
+				This relation type has inherited the ability to set the foreign keys from the
+				Has Many relationship type.
+				See the <link linkend="chapter.relations.types.has_many">Has Many</link>
+				relationship for more information.
 			</para>
 		</section>
 		
