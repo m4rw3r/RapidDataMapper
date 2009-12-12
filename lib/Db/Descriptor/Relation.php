@@ -461,7 +461,7 @@ class Db_Descriptor_Relation
 			{
 				// Check if all the primary keys has a corresponding foreign key
 				// expects that the default naming of the *property* is relationName_PrimaryKeyName
-				foreach($this->guessForeignKeyMappings($this->getParentDescriptor()) as $col)
+				foreach($this->guessForeignKeyMappings($this->getRelatedDescriptor()) as $col)
 				{
 					$prop = $cls->getProperty($col);
 				}
