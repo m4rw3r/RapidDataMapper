@@ -343,7 +343,7 @@ class TrackDescriptor extends Db_Descriptor
 					
 					<para>
 						If it is plural, then it is decided that it is a
-						<link linkend="chapter.relations.has_many">Has Many</link> relation.
+						<link linkend="chapter.relations.types.has_many">Has Many</link> relation.
 						Otherwise it proceeds to step two.
 					</para>
 					
@@ -363,7 +363,7 @@ class TrackDescriptor extends Db_Descriptor
 					
 					<para>
 						If that is the case, then it is a
-						<link linkend="chapter.relations.belongs_to">Belongs To</link>
+						<link linkend="chapter.relations.types.belongs_to">Belongs To</link>
 						relation, because another object has the primary keys which link to the parent
 						object.
 					</para>
@@ -371,43 +371,313 @@ class TrackDescriptor extends Db_Descriptor
 					<para>
 						If it is not the case (note: this applies even if only one of multiple foreign
 						keys are missing (RapidDataMapper has multi primary key support)) then it is deemed to be a
-						<link linkend="chapter.relations.has_one">Has One</link> relation.
+						<link linkend="chapter.relations.types.has_one">Has One</link> relation.
 					</para>
 				</listitem>
 			</orderedlist>
 		</section>
 	</section>
 	
-	<section xml:id="chapter.relations.has_many">
-		<title>Has Many</title>
+	<section>
+		<title>Relation Types</title>
 		
-		<para>
+		<section xml:id="chapter.relations.types.has_many">
+			<title>Has Many</title>
 			
-		</para>
+			<para>
+				TODO: MORE
+			</para>
+		</section>
+		
+		<section xml:id="chapter.relations.types.has_one">
+			<title>Has One</title>
+			
+			<para>
+				TODO: MORE
+			</para>
+		</section>
+		
+		<section xml:id="chapter.relations.types.belongs_to">
+			<title>Belongs To</title>
+			
+			<para>
+				TODO: MORE
+			</para>
+		</section>
+		
+		<section xml:id="chapter.relations.types.has_and_belongs_to_many">
+			<title>Has And Belongs To Many</title>
+			
+			<para>
+				The reason this relation type is not auto-detected is the fact that
+				it requires more advanced checks, including a database query for existing table.
+				This means that we cannot only use PHP to determine the type,
+				meaning that it will pose problems if we're to use the descriptors as a template
+				for the database structure (it is in the plans to create an automatic
+				database table creator/updater for RapidDataMapper).
+			</para>
+			
+			<para>
+				TODO: MORE
+			</para>
+		</section>
 	</section>
 	
-	<section xml:id="chapter.relations.has_one">
-		<title>Has One</title>
+	<section>
+		<title>Using Relations</title>
 		
-		<para>
+		<section>
+			<title>Fetching related objects</title>
 			
-		</para>
-	</section>
+			<para>
+				Usually Object-Relational-Mappers implement "auto-magical" loading
+				of related objects, this means that you can simply try to fetch a related object by
+				referring to its property and the Object-Relational-Mapper will load it automatically.
+			</para>
+			
+			<para>
+				RapidDataMapper does <emphasis>NOT</emphasis> support this.
+				It is an intentional design decision.
+			</para>
+			
+			<para>
+				By not having "auto-magical" loading of related objets you're forced to explicitly call a method
+				to load them for you.
+				This has several benefits:
+			</para>
+			
+			<itemizedlist>
+				<listitem>
+					<para>
+						You get a clear indication that a query is occurring.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						Potential performance issues are easy to spot during development, as you can easily see
+						(part of the statement above) that eg. a query is happening inside a loop.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						It provides a more strict control over what is fetched from the database.
+						What isn't specified is simply not fetched.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						It also encourages you to join the related objects to initial queries,
+						creating larger JOIN queries but they will only be needed to be run once.
+					</para>
+				</listitem>
+			</itemizedlist>
+			
+			<note>
+				<para>
+					"Auto-magical" fetching can still be implemented, but that will have to be made
+					by the the user in the mapped objects
+					(this is another benefit of releasing the control of the mapped objects (almost)
+					completely).
+				</para>
+			</note>
+			
+			<section>
+				<title>Using the join queries</title>
+				
+				<para>
+					The <classname>Db_MapperQuery</classname> objects has the method
+					<function>Db_MapperQuery->related</function> which will join related objects:
+				</para>
+				
+				<funcsynopsis xml:id="funcref.Db_MapperQuery-related">
+					<funcprototype>
+						<funcdef><type>Db_MapperQuery</type> <function>Db_MapperQuery->related</function></funcdef>
+
+						<paramdef><type>string</type> <parameter>$relation_name</parameter></paramdef>
+					</funcprototype>
+				</funcsynopsis>
+				
+				<example>
+					<title>Fetching related objects through a join query</title>
+					
+					<programlisting language="php"><![CDATA[// Artist has many tracks
+$r = Db::find('artist')->related('tracks')->get();
+
+foreach($r as $artist)
+{
+	echo "<h3>{$artist->name}</h3>";
 	
-	<section xml:id="chapter.relations.belongs_to">
-		<title>Belongs To</title>
-		
-		<para>
-			
-		</para>
-	</section>
+	foreach($artist->tracks as $track)
+	{
+		echo "<p>{$track->name}</p>";
+	}
+}
+
+// Produced query:
+// SELECT [a lot of columns here]
+// FROM `artists` AS `artist`
+// LEFT JOIN `tracks` AS `artist-tracks` ON `artist-tracks`.`artist_id` = `artist`.`id`]]></programlisting>
+				</example>
+				
+				<para>
+					The name of the alias the related object receives is the alias of the
+					"parent object" + "<literal>-</literal>" + the relation name.
+					This alias is used to refer to columns of the related objects in the query.
+				</para>
+				
+				<example>
+					<title>Fetching related objects and filtering by them</title>
+					
+					<programlisting language="php"><![CDATA[// Artist has many tracks
+$r = Db::find('artist')->related('tracks')->like('artist-tracks.name', 'Intro')->get();
+
+// ...
+
+// Produced query:
+// SELECT [a lot of columns here]
+// FROM `artists` AS `artist`
+// LEFT JOIN `tracks` AS `artist-tracks` ON `artist-tracks`.`artist_id` = `artist`.`id`
+// WHERE `artist-tracks`.`name` LIKE '%Intro%']]></programlisting>
+				</example>
+				
+				<para>
+					RapidDataMapper also has support for multi-level-JOINs,
+					meaning that you can fetch an artist, his albums and all tracks in a single query:
+				</para>
+				
+				<example>
+					<title>Fetching related objects with a large join query</title>
+					
+					<programlisting language="php"><![CDATA[// Artist has many albums
+// Album has many tracks
+$r = Db::find('artist')->related('albums-tracks')->whereIn('artist.name', array('Delain', 'Epica', 'Stream of Passion'))->get();
+
+foreach($r as $artist)
+{
+	echo "<h2>{$artist->name}</h2>";
 	
-	<section xml:id="chapter.relations.has_and_belongs_to_many">
-		<title>Has And Belongs To Many</title>
+	foreach($artist->albums as $album)
+	{
+		echo "<h4>{$album->name}</h4>";
 		
-		<para>
+		foreach($album->tracks as $track)
+		{
+			echo "<p>{$track->name}</p>";
+		}
+	}
+}
+// note: $artist->tracks is not fetched, as it is not specified nor needed
+
+// Produced Query:
+// SELECT [a lot of columns here]
+// FROM `artists` AS `artist`
+// LEFT JOIN `albums` AS `artist-albums` ON `artist-albums`.`artist_id` = `artist`.`id`
+// LEFT JOIN `tracks` AS `artist-albums-tracks` ON `artist-albums-tracks`.`album_id` = `artist-albums`.`id`
+// WHERE `artist`.`name` IN ('Delain', 'Epica', 'Stream of Passion')]]></programlisting>
+				</example>
+			</section>
 			
-		</para>
+			<section>
+				<title>Explicitly use <function>Db::related</function></title>
+				
+				<para>
+					For some times it might be beneficial to not include a fetch of related
+					objects in the main query, and for those times we have
+					<function>Db::related</function>:
+				</para>
+				
+				<funcsynopsis xml:id="funcref.Db-related">
+					<funcprototype>
+						<funcdef><type>Db_MapperQuery</type> <function>Db::related</function></funcdef>
+						
+						<paramdef><type>object</type> <parameter>$object</parameter></paramdef>
+						<paramdef><type>string</type> <parameter>$relation_name</parameter></paramdef>
+					</funcprototype>
+				</funcsynopsis>
+				
+				<para>
+					The first parameter is the object which we're to fetch related objects for.
+					The second parameter is the relation name.
+				</para>
+				
+				<warning>
+					<para>
+						The alias for the related objects is the same as if
+						<function linkend="funcref.Db-find">Db::find</function> was used.
+						That is, singular of the related object.
+					</para>
+				</warning>
+				
+				<example>
+					<title>Using <function>Db::related</function> to fetch related objects</title>
+					
+					<programlisting language="php"><![CDATA[// Track has one artist
+$t = Db::find('track', 1);
+$a = Db::related($t, 'artist')->getOne();
+
+echo $a->name.' - '.$t->name;
+
+// Produced Query:
+// SELECT [a lot of columns here]
+// FROM `tracks` AS `track`
+// WHERE `track`.`id` = 1
+// LIMIT 1
+
+// Produced Query:
+// SELECT [a lot of columns here]
+// FROM `artists` AS `artist`
+// WHERE `artist`.`id` = 45   (this number is gotten from $t->artist_id)]]></programlisting>
+				</example>
+				
+				<para>
+					Conditions work just as normal (they are wrapped in parenthesis to prevent
+					accidental errors when using "<literal>OR</literal>" in the queries):
+				</para>
+				
+				<example>
+					<title>Using <function>Db::related</function> to fetch related objects</title>
+					
+					<programlisting language="php"><![CDATA[// Track has one artist
+$a = Db::find('artist', 1);
+$ts = Db::related($t, 'tracks')->where('track.name', 'Cathode Ray Sunshine')->get();
+
+foreach($ts as $t)
+{
+	echo $a->name.' - '.$t->name;
+}
+
+// Produced Query:
+// SELECT [a lot of columns here]
+// FROM `artists` AS `artist`
+// WHERE `artist`.`id` = 1
+// LIMIT 1
+
+// Produced Query:
+// SELECT [a lot of columns here]
+// FROM `tracks` AS `track`
+// WHERE `track`.`artist_id` = 1 AND (`track`.`name` = 'Cathode Ray Sunshine')]]></programlisting>
+				</example>
+			</section>
+		</section>
+		
+		<section>
+			<title>Establishing relations</title>
+			
+			<para>
+				TODO: MORE
+			</para>
+		</section>
+		
+		<section>
+			<title>Removing relations between objects</title>
+			
+			<para>
+				TODO: MORE
+			</para>
+		</section>
 	</section>
 </chapter>
 
