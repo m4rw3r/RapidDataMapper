@@ -15,7 +15,414 @@
 		<title>Introduction</title>
 		
 		<para>
-			TODO: MORE
+			As many other Object-Relational-Mappers, RapidDataMapper has built in support for handling
+			relations between objects.
+			These relations are established in the database as usual practice dictates;
+			a foreign key linking to a primary key in another table.
+		</para>
+		
+		<para>
+			The relation handling in RapidDataMapper is also very customizable:
+			by default it guesses everything from the relation name and the descriptors;
+			related class, foreign key, relation type, etc.
+		</para>
+		
+		<para>
+			The relation describing code is contained in <classname>Db_Descriptor_Relation</classname>
+			(common code) and the classes implementing <classname>Db_Descriptor_RelationInterface</classname>
+			(type drivers).
+			The <classname>Db_Descriptor_Relation</classname> class is the only class that you have to deal
+			with directly, by creating instances using <function>Db_Descriptor->newRelation</function>:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Descriptor-newRelation">
+			<funcprototype>
+				<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor->newRelation</function></funcdef>
+
+				<paramdef><type>string</type> <parameter>$relation_name</parameter></paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<warning>
+			<para>
+				The <classname>Db_Descriptor_Relation</classname> instance is bound to the
+				<classname>Db_Descriptor</classname> which created it
+				(because some processing is made in <function>Db_Descriptor->newRelation</function>).
+			</para>
+			
+			<para>
+				This means that you can only assign (using
+				<function linkend="funcref.Db_Descriptor-add">Db_Descriptor->add</function>)
+				the created object to the object which created it.
+			</para>
+		</warning>
+		
+		<para>
+			The object created by <function>Db_Descriptor->newRelation</function> can either
+			be directly assigned to the descriptor, as it will be usable with just a relation
+			name (provided that the standard naming convention is followed),
+			or you can modify it using several configuration methods
+			(differs slightly between different relation types).
+		</para>
+		
+		<example>
+			<title>Creating a Has Many relation using defaults</title>
+			
+			<programlisting language="php"><![CDATA[class ArtistDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->add($this->newPrimaryKey('id'));
+		// ...
+		
+		// The relation name is by default the name of the property which holds the objects
+		// by default this links to the track object
+		$this->add($this->newRelation('tracks'));
+	}
+}
+
+class TrackDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		// ...
+		
+		// Foreign key definition:
+		// by default they are named SingularOfLinkedTable_PrimaryKey
+		$this->add($this->newColumn('artist_id'));
+	}
+}]]></programlisting>
+		</example>
+	</section>
+	
+	<section>
+		<title>Configuring a relation</title>
+		
+		<para>
+			All the relations have a few settings in common,
+			as name, related class mapping, property name,
+			eager loading etc.
+		</para>
+		
+		<para>
+			Here is a list of configuration options and their corresponding setters:
+		</para>
+		
+		<section>
+			<title>Relation name</title>
+			
+			<para>
+				The relation name is already set by the
+				<function linkend="funcref.Db_Descriptor-newRelation">Db_Descriptor->newRelation</function>
+				method.
+			</para>
+		</section>
+		
+		<section>
+			<title>Property name</title>
+			
+			<para>
+				The property name is the name of the property of the described object which is
+				holding the related object(s).
+				This is by default the lowercase version of the relation name.
+			</para>
+			
+			<para>
+				Setter:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-setProperty">
+				<funcprototype>
+					<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setProperty</function></funcdef>
+
+					<paramdef><type>string</type> <parameter>$prop</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				Getter:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-getProperty">
+				<funcprototype>
+					<funcdef><type>string</type> <function>Db_Descriptor_Relation->getProperty</function></funcdef>
+
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+		
+		<section>
+			<title>Related Class Name</title>
+			
+			<para>
+				By default the name of the related class is assumed to be the singular version
+				of the relation name.
+				Eg. "<literal>Tracks</literal>" will be "<literal>Track</literal>".
+			</para>
+			
+			<para>
+				Setter:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-setRelatedClass">
+				<funcprototype>
+					<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setRelatedClass</function></funcdef>
+
+					<paramdef><type>string</type> <parameter>$class_name</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				Getter:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-getRelatedClass">
+				<funcprototype>
+					<funcdef><type>string</type> <function>Db_Descriptor_Relation->getRelatedClass</function></funcdef>
+
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+		</section>
+		
+		<section>
+			<title>Eager Loading</title>
+			
+			<para>
+				This adjusts if this relation should be automatically included in all queries
+				involving the parent descriptor,
+				meaning that if you eg. fetch a <classname>Track</classname> object, the associated
+				<classname>Artist</classname> object will also be fetched.
+			</para>
+			
+			<para>
+				By default is this set to <symbol>false</symbol>.
+			</para>
+			
+			<para>
+				Setter:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-setEagerLoading">
+				<funcprototype>
+					<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setEagerLoading</function></funcdef>
+
+					<paramdef><type>boolean</type> <parameter>$value</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				Getter:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-getEagerLoading">
+				<funcprototype>
+					<funcdef><type>boolean</type> <function>Db_Descriptor_Relation->getEagerLoading</function></funcdef>
+
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+			
+			<note>
+				<para>
+					This is not yet implemented in the mapper builder.
+					So this setting will not yet have any effect at the generated code.
+				</para>
+			</note>
+		</section>
+		
+		<section>
+			<title>On Delete Action</title>
+			
+			<para>
+				This option adjusts the ON DELETE setting.
+				It is a PHP variant of the database constraint which can either delete
+				related rows or hinder the deletion if related rows exist.
+			</para>
+			
+			<para>
+				This method has two choices: <varname>Db_Descriptor::CASCADE</varname> or
+				<varname>Db_Descriptor::RESTRICT</varname>.
+			</para>
+			
+			<para>
+				The <varname>Db_Descriptor::CASCADE</varname> constant tells
+				<classname>Db_Descriptor_Relation</classname> that the related objects
+				also should be deleted when an object is deleted.
+				For example, if you delete an artist you may want to have all his tracks
+				automatically removed from the tracks table.
+			</para>
+			
+			<para>
+				The <varname>Db_Descriptor::RESTRICT</varname> constant tells
+				<classname>Db_Descriptor_Relation</classname> that the object
+				cannot be deleted while still having related objects.
+				For example this can be a good thing when you need to be sure that
+				a user has closed all his orders before removing his account.
+			</para>
+			
+			<para>
+				By default nothing is performed on the delete
+				(well, except for the obvious which is to delete the object and then set
+				all related objects' foreign keys to <symbol>null</symbol>).
+			</para>
+			
+			<para>
+				Setter:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-setOnDeleteAction">
+				<funcprototype>
+					<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setOnDeleteAction</function></funcdef>
+
+					<paramdef><type>int</type> <parameter>$action</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				Getter:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-getOnDeleteAction">
+				<funcprototype>
+					<funcdef><type>int</type> <function>Db_Descriptor_Relation->getOnDeleteAction</function></funcdef>
+
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+			
+			<note>
+				<para>
+					The combination also works and nesting too.
+					This means that if one object has cascading delete to another object
+					which also has a delete cascading, then a multiple cascade will occur.
+				</para>
+				
+				<para>
+					But if a class has a cascade which cascades to a class which has restrict,
+					then the restriction will control if the first object can be deleted or not.
+				</para>
+			</note>
+			
+			<tip>
+				<para>
+					This setting is not recommended to be used if you can use
+					the ON DELETE ... construct in your database.
+					The database will always be faster in this area, even more so when it comes
+					to nested cascades (because it interacts directly with the data,
+					RapidDataMapper needs to perform several queries for the nested ON DELETE
+					actions.)
+				</para>
+			</tip>
+			
+			<note>
+				<para>
+					This is not yet implemented, this setting will not affect the generated code.
+				</para>
+				
+				<para>
+					I have made an old implementation (from early summer) that needs to be
+					ported to the new architecture.
+				</para>
+			</note>
+		</section>
+		
+		<section>
+			<title>Relation Type</title>
+			
+			<para>
+				The relation type is by default guessed based on two factors:
+			</para>
+			
+			<orderedlist>
+				<listitem>
+					<para>
+						If the relation name is plural or not.
+					</para>
+					
+					<para>
+						If it is plural, then it is decided that it is a
+						<link linkend="chapter.relations.has_many">Has Many</link> relation.
+						Otherwise it proceeds to step two.
+					</para>
+					
+					<note>
+						<para>
+							Currently this is only determined by checking for the letter "<literal>s</literal>"
+							at the end of the relation name.
+							This might be improved in the future.
+						</para>
+					</note>
+				</listitem>
+				
+				<listitem>
+					<para>
+						If the parent descriptor has all the foreign keys used by this relation.
+					</para>
+					
+					<para>
+						If that is the case, then it is a
+						<link linkend="chapter.relations.belongs_to">Belongs To</link>
+						relation, because another object has the primary keys which link to the parent
+						object.
+					</para>
+					
+					<para>
+						If it is not the case (note: this applies even if only one of multiple foreign
+						keys are missing (RapidDataMapper has multi primary key support)) then it is deemed to be a
+						<link linkend="chapter.relations.has_one">Has One</link> relation.
+					</para>
+				</listitem>
+			</orderedlist>
+		</section>
+	</section>
+	
+	<section xml:id="chapter.relations.has_many">
+		<title>Has Many</title>
+		
+		<para>
+			
+		</para>
+	</section>
+	
+	<section xml:id="chapter.relations.has_one">
+		<title>Has One</title>
+		
+		<para>
+			
+		</para>
+	</section>
+	
+	<section xml:id="chapter.relations.belongs_to">
+		<title>Belongs To</title>
+		
+		<para>
+			
+		</para>
+	</section>
+	
+	<section xml:id="chapter.relations.has_and_belongs_to_many">
+		<title>Has And Belongs To Many</title>
+		
+		<para>
+			
 		</para>
 	</section>
 </chapter>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
