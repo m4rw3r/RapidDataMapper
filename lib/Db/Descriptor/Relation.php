@@ -223,6 +223,8 @@ class Db_Descriptor_Relation
 	/**
 	 * Sets the relationship type.
 	 * 
+	 * This uses constants from the Db_Descriptor class.
+	 * 
 	 * @param  int
 	 * @return self
 	 */
@@ -277,6 +279,8 @@ class Db_Descriptor_Relation
 
 	/**
 	 * Sets which action to perform ON DELETE.
+	 * 
+	 * This method uses constants defined in Db_Descriptor.
 	 * 
 	 * @param  int
 	 * @return self
