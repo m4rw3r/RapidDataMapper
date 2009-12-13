@@ -128,13 +128,17 @@
 						<entry>The database name of the database to select</entry>
 					</row>
 					
-					<row>
+					<!-- TODO: The ID below is only temporary, move it and create a new section in the
+					database connection objects section -->
+					
+					<row xml:id="database_connection_objects.database_prefix">
 						<entry>dbprefix</entry>
 						<entry><type>string</type></entry>
-						<entry>'<literal></literal>'</entry>
+						<entry>"<literal></literal>"</entry>
 						<entry>
 							The prefix of the database tables the connection should use,
 							automatically used by the <link linkend="chapter.query_builders">Query Builders</link>
+							and <link linkend="chapter.the_orm">ORM</link>.
 						</entry>
 					</row>
 					
