@@ -186,13 +186,13 @@
 					<funcprototype>
 						<funcdef><type>Db_Query_Delete</type> <function>Db_Connection->delete</function></funcdef>
 						
-						<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+						<paramdef><type>string</type>|<type>array</type> <parameter>$table</parameter></paramdef>
 					</funcprototype>
 					
 					<funcprototype>
 						<funcdef><type>boolean</type> <function>Db_Connection->delete</function></funcdef>
 						
-						<paramdef><type>string</type> <parameter>$table</parameter></paramdef>
+						<paramdef><type>string</type>|<type>array</type> <parameter>$table</parameter></paramdef>
 						<paramdef><type>array</type> <parameter>$conditions</parameter></paramdef>
 					</funcprototype>
 				</funcsynopsis>
@@ -204,6 +204,20 @@
 					<parameter>$conditions</parameter> work in the same way as the <parameter>$conditions</parameter>
 					parameter of <function>Db_Connection->update</function>.
 				</para>
+				
+				<para>
+					<parameter>$table</parameter> can also be an array, if you want to do a multi-table
+					delete.
+					If the keys are non-numeric, they will be used as aliases for the table name which
+					is stored in the value.
+				</para>
+				
+				<warning>
+					<para>
+						If you specify multiple tables, make sure that the <parameter>$conditions</parameter>
+						parameter reference the correct table if several tables has the same column names.
+					</para>
+				</warning>
 			</section>
 		</section>
 		
@@ -932,6 +946,17 @@ $r = $q->from('tracks')->get();]]></programlisting>
 		</section>
 		
 		<section>
+			<title>Filtering what to update</title>
+			
+			<para>
+				<classname>Db_Query_Update</classname> inherits all the filtering methods from
+				<classname>Db_Query</classname>, see
+				<link linkend="chapter.query_builders.conditions">SQL Conditions</link> on how
+				to add conditions to the query.
+			</para>
+		</section>
+		
+		<section>
 			<title>Issuing an UPDATE query</title>
 			
 			<para>
@@ -949,7 +974,7 @@ $r = $q->from('tracks')->get();]]></programlisting>
 		</section>
 		
 		<section>
-			<title>Updating multiple rows in a single query</title>
+			<title>Updating multiple tables in a single query</title>
 			
 			<warning>
 				<para>
@@ -995,8 +1020,127 @@ if($q->execute())
 		<title>DELETE Queries</title>
 		
 		<para>
-			TODO: MORE
+			The <classname>Db_Query_Delete</classname> object is already pre-populated with two things
+			when you get it from <function linkend="funcref.Db_Connection-delete">Db_Connection->delete</function>:
+			tables to delete from and their aliases.
 		</para>
+		
+		<section>
+			<title>Adding another table to delete rows from</title>
+			
+			<para>
+				To add another table to the query you can either use <function>Db_Query_Delete->from</function>
+				or <function>Db_Query_Delete->join</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Delete-from">
+				<funcprototype>
+					<funcdef><type>Db_Query_Delete</type> <function>Db_Query_Delete->from</function></funcdef>
+					
+					<paramdef><type>string</type>|<type>array</type>|<type>Db_Query_Select</type> <parameter>$tables</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Delete-join">
+				<funcprototype>
+					<funcdef><type>Db_Query_Delete</type> <function>Db_Query_Delete->join</function></funcdef>
+					
+					<paramdef><type>string</type>|<type>array</type>|<type>Db_Query_Select</type> <parameter>$table</parameter></paramdef>
+					<paramdef><type>string</type> <parameter>$condition</parameter></paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$type</parameter> = "<initializer>left</initializer>"</paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The <function>Db_Query_Delete->join</function> and <function>Db_Query_Delete->from</function>
+				work just like their <classname>Db_Query_Select</classname> counterparts,
+				with the exception that they cannot select columns.
+			</para>
+			
+			<para>
+				These two methods will only add the table(s) to the query, but they will <emphasis>not</emphasis>
+				have rows removed from them.
+				This is useful when you need to filter by a relation or some other value which is not located
+				in the table from which the rows should be deleted.
+			</para>
+			
+			<para>
+				To make the delete query also remove rows from one or several of the added tables,
+				use <function>Db_Query_Delete->addDelete</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Delete-addDelete">
+				<funcprototype>
+					<funcdef><type>Db_Query_Delete</type> <function>Db_Query_Delete->addDelete</function></funcdef>
+					
+					<paramdef><type>string</type>|<type>array</type> <parameter>$tables</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The contents of the <parameter>$tables</parameter> parameter is added to the list of
+				tables/aliases to delete rows from.
+			</para>
+			
+			<warning>
+				<para>
+					Not all databases support multi-table deletes.
+				</para>
+				
+				<para>
+					Check with your database's manual before using them.
+				</para>
+			</warning>
+		</section>
+		
+		<section>
+			<title>Limiting the delete query</title>
+			
+			<para>
+				Limiting is made by calling the <function>Db_Query_Delete->limit</function> method:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Delete-limit">
+				<funcprototype>
+					<funcdef><type>Db_Query_Delete</type> <function>Db_Query_Delete->limit</function></funcdef>
+
+					<paramdef><type>int</type> <parameter>$limit</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The <parameter>$limit</parameter> parameter contains the maximum number of rows that
+				will be allowed to be deleted by the query.
+			</para>
+		</section>
+		
+		<section>
+			<title>Filtering what to delete</title>
+			
+			<para>
+				<classname>Db_Query_Delete</classname> inherits all the filtering methods from
+				<classname>Db_Query</classname>, see
+				<link linkend="chapter.query_builders.conditions">SQL Conditions</link> on how
+				to add conditions to the query.
+			</para>
+		</section>
+		
+		<section>
+			<title>Issuing a DELETE query</title>
+			
+			<para>
+				Just as with INSERT and UPDATE queries you use the <function>Db_Query_Delete->execute</function>
+				method:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Delete-execute">
+				<funcprototype>
+					<funcdef><type>int</type>|<type>false</type> <function>Db_Query_Delete->execute</function></funcdef>
+					
+					<void />
+				</funcprototype>
+			</funcsynopsis>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.query_builders.escaping">
