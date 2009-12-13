@@ -367,8 +367,10 @@ class TrackDescriptor extends Db_Descriptor
 			</para>
 			
 			<para>
-				The column name is just <glossterm>identifier protected</glossterm> and added to the query,
-				so it will not be affected by changes in the descriptor settings of any object or table.
+				The column name is first prefixed by the alias of the related object (the table alias)
+				and then it will be <glossterm>identifier protected</glossterm> and added to the query,
+				so the column name itself will not be affected by changes in the descriptor settings of
+				any object or table.
 			</para>
 			
 			<warning>
@@ -472,6 +474,23 @@ class TrackDescriptor extends Db_Descriptor
 					</para>
 				</listitem>
 			</itemizedlist>
+			
+			<warning>
+				<para>
+					After you use <function>Db_Descriptor_Relation->setType</function>
+					some settings may reset themselves.
+					This is caused by the swap of the internal relationship driver.
+				</para>
+				
+				<para>
+					To prevent this, make a habit of calling <function>Db_Descriptor_Relation->setType</function>
+					before you start setting options.
+				</para>
+				
+				<para>
+					If you are using the automatic relationship detection you need not worry about this.
+				</para>
+			</warning>
 		</section>
 	</section>
 	
