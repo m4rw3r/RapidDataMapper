@@ -158,6 +158,12 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$fprop->getColumn()), "'").' = \'.$this->db->escape('.$object_var.'->'.$lprop->getProperty().')';
 		}
 		
+		// add extra conditions
+		foreach($this->extra_conds as $k => $v)
+		{
+			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$k).' = '.$db->escape($v), "'");
+		}
+		
 		return $query_obj_var.'->where_prefix = \'' . 
 			implode('.\'', $cols).'.\' AND (\';
 '.$query_obj_var.'->where_suffix = \')\';';

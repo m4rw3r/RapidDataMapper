@@ -229,6 +229,12 @@ LEFT JOIN ' . addcslashes($db->protectIdentifiers($db->dbprefix . $related->getT
 				$db->protectIdentifiers($related->getSingular().'.'.$fprop->getColumn());
 		}
 		
+		// add extra conditions
+		foreach($this->extra_conds as $k => $v)
+		{
+			$cols[] = $db->protectIdentifiers($related->getSingular().'.'.$k).' = '.$db->escape($v);
+		}
+		
 		return $query_obj_var.'->join[] = \'LEFT JOIN '.
 			addcslashes($db->protectIdentifiers($db->dbprefix . $this->getLinkTable()), "'") . 
 			' AS ' . addcslashes($db->protectIdentifiers($related->getSingular().'-_l_'.$this->getLinkTable()), "'").'
