@@ -344,7 +344,7 @@ class TrackDescriptor extends Db_Descriptor
 				<funcprototype>
 					<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setExtraConditions</function></funcdef>
 
-					<paramdef><type>string</type> <parameter>$foreign_property_name</parameter></paramdef>
+					<paramdef><type>string</type> <parameter>$column</parameter></paramdef>
 					<paramdef><type>mixed</type> <parameter>$value</parameter></paramdef>
 				</funcprototype>
 				
@@ -356,8 +356,8 @@ class TrackDescriptor extends Db_Descriptor
 			</funcsynopsis>
 			
 			<para>
-				The first variant filters the <parameter>$foreign_property_name</parameter>
-				by <parameter>$value</parameter>.
+				The first variant filters the <parameter>$column</parameter>
+				by <parameter>$value</parameter> (using the equal operator, "<literal>=</literal>").
 				Consecutive calls will add additional filters.
 			</para>
 			
@@ -366,11 +366,16 @@ class TrackDescriptor extends Db_Descriptor
 				property name and the value the value to match to.
 			</para>
 			
+			<para>
+				The column name is just <glossterm>identifier protected</glossterm> and added to the query,
+				so it will not be affected by changes in the descriptor settings of any object or table.
+			</para>
+			
 			<warning>
 				<para>
-					These extra conditions does not yet reflect when saving a relation.
-					Instead you have to make sure that the condition is fulfilled before
-					saving it.
+					These extra conditions does not yet apply when saving a relation which has extra conditions.
+					Instead you have to make sure that the conditions are fulfilled before
+					saving it to make sure that you can fetch them later on.
 				</para>
 			</warning>
 		</section>
@@ -422,6 +427,51 @@ class TrackDescriptor extends Db_Descriptor
 					</para>
 				</listitem>
 			</orderedlist>
+			
+			<para>
+				To explicitly set the relationship type, use
+				<function>Db_Descriptor_Relation->setType</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-setType">
+				<funcprototype>
+					<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setType</function></funcdef>
+
+					<paramdef><type>int</type> <parameter>$relationship_type</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The <parameter>$relationship_type</parameter> parameter should be a constant from the
+				<classname>Db_Descriptor</classname> class.
+				Currently available relationship type constants:
+			</para>
+			
+			<itemizedlist>
+				<listitem>
+					<para>
+						<varname>Db_Descriptor::BELONGS_TO</varname>
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						<varname>Db_Descriptor::HAS_MANY</varname>
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						<varname>Db_Descriptor::HAS_ONE</varname>
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						<varname>Db_Descriptor::MANY_TO_MANY</varname>
+					</para>
+				</listitem>
+			</itemizedlist>
 		</section>
 	</section>
 	
@@ -645,9 +695,9 @@ class Album
 );
 
 CREATE TABLE `artists` (
-`id` int(11) NOT NULL AUTO_INCREMENT, -- Primary key
-`name` varchar(255) NOT NULL,
-PRIMARY KEY (`id`)
+  `id` int(11) NOT NULL AUTO_INCREMENT, -- Primary key
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
 );]]></programlisting>
 			</example>
 			
@@ -701,18 +751,144 @@ class Track
 		<section xml:id="chapter.relations.types.has_and_belongs_to_many">
 			<title>Has And Belongs To Many</title>
 			
+			<note>
+				<para>
+					The reason this relation type is not auto-detected is the fact that
+					it requires more advanced checks, including a database query for an existing table.
+					This means that we cannot only use PHP to determine the type,
+					meaning that it will pose problems if we're to use the descriptors as a template
+					for the database structure (it is in the plans to create an automatic
+					database table creator/updater for RapidDataMapper).
+				</para>
+			</note>
+			
 			<para>
-				The reason this relation type is not auto-detected is the fact that
-				it requires more advanced checks, including a database query for existing table.
-				This means that we cannot only use PHP to determine the type,
-				meaning that it will pose problems if we're to use the descriptors as a template
-				for the database structure (it is in the plans to create an automatic
-				database table creator/updater for RapidDataMapper).
+				This relationship type enables both ends on the relation to relate to multiple objects,
+				for example can a book have several authors but an author can also have several books.
+				This is impossible to achieve using the previously mentioned relationship types
+				(provided you don't combine them and use linking objects, but that will be cumbersome
+				as the object structure will not be optimal).
 			</para>
 			
 			<para>
-				TODO: MORE
+				The Has And Belongs To Many relationship type does not store the foreign keys in any
+				of the tables containing object data.
+				Instead they are all stored in a so called link-table (or join-table),
+				where every row has links to one object of each type.
 			</para>
+			
+			<para>
+				This means that the link-table only consists of foreign keys,
+				some linking to one table and the others linking to the other table
+				(normally the table will only contain two columns, but when multiple primary keys
+				are used there will be more).
+			</para>
+			
+			<para>
+				To tell <classname>Db_Descriptor_Relation</classname> that a Has And Belongs TO
+				Many relation should be used, use
+				<function linkend="funcref.Db_Descriptor_Relation-setType">Db_Descriptor_Relation->setType</function>
+				with the <varname>Db_Descriptor::MANY_TO_MANY</varname> constant as the parameter.
+			</para>
+			
+			<para>
+				The default naming of the link-table is the name of the two tables which are to be
+				linked, separated by "<literal>_</literal>".
+				The tables are ordered in alphabetical order (eg. "<literal>author_books</literal>").
+			</para>
+			
+			<example>
+				<title>Database structure for a Has And Belongs To Many relation</title>
+				
+				<programlisting language="sql"><![CDATA[CREATE TABLE `authors` (
+  `id` int(11) NOT NULL AUTO_INCREMENT, -- Primary Key
+  `name` varchar(255) NOT NULL
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `books` (
+  `id` int(11) NOT NULL AUTO_INCREMENT, -- Primary key
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- Link-table
+CREATE TABLE `author_books` (
+  `author_id` int(11) NOT NULL,        -- links to authors.id
+  `book_id`int(11) NOT NULL,           -- links to books.id
+  PRIMARY KEY (`author_id`, `book_id`) -- To make sure that we won't get any duplicates + we're getting indexes
+);]]></programlisting>
+			</example>
+			
+			<example>
+				<title>Defining a Has And Belongs To Many relationship</title>
+				
+				<programlisting language="php"><![CDATA[class AuthorDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->setClass('author');
+		
+		$this->add($this->newPrimaryKey('id'));
+		// ...
+		
+		$this->add($this->newRelation('books')->setType(self::MANY_TO_MANY));
+	}
+}
+
+class BookDescriptor extends Db_Descriptor
+{
+	public function __construct()
+	{
+		$this->setClass('book');
+		
+		$this->add($this->newPrimaryKey('id'));
+		// ...
+		
+		$this->add($this->newRelation('authors')->setType(self::MANY_TO_MANY));
+	}
+}]]></programlisting>
+			</example>
+			
+			<para>
+				Settings for the Has And Belongs To relationship type:
+			</para>
+			
+			<note>
+				<para>
+					The foreign keys can not yet be changed for this relationship type.
+				</para>
+				
+				<para>
+					The reason is that I'm still wondering how I should create the syntax,
+					and mixing of column names and property names can be confusing.
+				</para>
+			</note>
+			
+			<section>
+				<title>Setting the link-table</title>
+				
+				<para>
+					The name of the link table can be changed, just as many other parameters.
+					Use <function>Db_Desriptor_Relation->setLinkTable</function> to change it:
+				</para>
+				
+				<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-setLinkTable">
+					<funcprototype>
+						<funcdef><type>Db_Descriptor_Relation</type> <function>Db_Descriptor_Relation->setLinkTable</function></funcdef>
+
+						<paramdef><type>string</type> <parameter>$link_table_name</parameter></paramdef>
+					</funcprototype>
+				</funcsynopsis>
+				
+				<funcsynopsis xml:id="funcref.Db_Descriptor_Relation-getLinkTable">
+					<funcprototype>
+						<funcdef><type>string</type> <function>Db_Descriptor_Relation->getLinkTable</function></funcdef>
+
+						<void />
+					</funcprototype>
+				</funcsynopsis>
+			</section>
 		</section>
 	</section>
 	
