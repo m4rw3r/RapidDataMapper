@@ -18,11 +18,11 @@ clean:
 
 # Validate the DocBook XML
 doc-validate:
-	java -jar jing/bin/jing.jar doc/docbook.rng doc/manual/src/chapters/*.xml doc/manual/src/references/*.xml
+	java -jar jing/bin/jing.jar -i doc/docbook.rng doc/manual/src/chapters/*.xml doc/manual/src/references/*.xml
 
 
 # Create all documentation, not including API
-doc: doc-html doc-chunk
+doc: doc-validate doc-html doc-chunk
 
 
 # Generate documentation from Docbook
