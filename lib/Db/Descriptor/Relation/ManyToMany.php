@@ -22,12 +22,16 @@ class Db_Descriptor_Relation_ManyToMany implements Db_Descriptor_RelationInterfa
 	/**
 	 * Contains the foreign key mappings which maps the object to a row in the link table.
 	 * 
+	 * owning object prop name => link table column name.
+	 * 
 	 * @var array
 	 */
 	protected $foreign_keys_to_link = array();
 	
 	/**
 	 * Contains the foreign key mappings which maps a row in the link table to the related object.
+	 * 
+	 * related object prop name => link table column name.
 	 * 
 	 * @var array
 	 */
@@ -447,6 +451,8 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().'))
 	/**
 	 * Returns a list of the keys to use linking the object to the link table.
 	 * 
+	 * parent table column => link table column.
+	 * 
 	 * @return array	array(Db_Descriptor_Column, string)
 	 */
 	protected function getKeysToLink()
@@ -468,6 +474,8 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().'))
 
 	/**
 	 * Returns a list of the keys to use linking the related object to the link table.
+	 * 
+	 * link table column => related table column.
 	 * 
 	 * @return array	array(string, Db_Descriptor_Column)
 	 */

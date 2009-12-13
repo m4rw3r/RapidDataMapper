@@ -353,6 +353,8 @@ class Db_Descriptor_Relation
 	/**
 	 * Returns a list of Db_Descriptor_Column objects from the passed descriptor.
 	 * 
+	 * The keys are the property names.
+	 * 
 	 * @param  array
 	 * @param  Db_Descriptor
 	 * @return array
