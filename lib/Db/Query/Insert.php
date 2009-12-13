@@ -77,6 +77,11 @@ class Db_Query_Insert
 			$column = array($column => $value);
 		}
 		
+		if( ! is_array($column))
+		{
+			throw new InvalidArgumentException(gettype($column));
+		}
+		
 		$current =& $this->rows[count($this->rows) - 1];
 		
 		foreach($column as $k => $v)

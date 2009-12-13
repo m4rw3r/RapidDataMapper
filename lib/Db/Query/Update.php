@@ -61,6 +61,11 @@ class Db_Query_Update extends Db_Query
 			$column = array($column => $value);
 		}
 		
+		if( ! is_array($column))
+		{
+			throw new InvalidArgumentException(gettype($column));
+		}
+		
 		foreach($column as $k => $v)
 		{
 			if($v instanceof Db_Query_Select)
