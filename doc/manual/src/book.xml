@@ -29,7 +29,7 @@
 		
 		<pubdate><?dbtimestamp format="Y-m-d"?></pubdate>
 		
-		<edition>0.5 dev</edition>
+		<edition>0.5</edition>
 		
 		<copyright>
 			<year><?dbtimestamp format="Y"?></year>

@@ -19,12 +19,12 @@
 			
 			<segtitle>Release Date</segtitle>
 			
-			<segtitle>Git commit</segtitle>
+			<segtitle>Git tag</segtitle>
 			
 			<seglistitem>
-				<seg>In Development</seg>
+				<seg>2009-12-13</seg>
 				
-				<seg>In Development</seg>
+				<seg>0.5</seg>
 			</seglistitem>
 		</segmentedlist>
 		
