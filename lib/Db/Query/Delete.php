@@ -228,7 +228,8 @@ class Db_Query_Delete extends Db_Query
 	{
 		if(empty($this->where))
 		{
-			Db::log(Db::WARNING, 'Executing delete query without filter.');
+			// Alert the user that we're running a delete without filter
+			trigger_error('Executing delete query without filter.', E_USER_NOTICE);
 		}
 		
 		$sql = $this->__toString();

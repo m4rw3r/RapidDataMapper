@@ -414,10 +414,11 @@ final class Db
 					// did the write work?
 					if( ! $res)
 					{
-						// TODO: Trigger USER_WARNING
-						self::log(self::WARNING, 'Cannot write to the "'.self::$mapper_cache_dir.'" directory');
+						// we need to tell the user that he needs to make the folder writable
+						// therefore he will know why it is slow
+						trigger_error('Cannot write to the "'.self::$mapper_cache_dir.'" directory', E_USER_WARNING);
 						
-						// eval the code in case it didn't
+						// eval the code in case it didn't get written
 						eval((String) $code);
 					}
 					else
