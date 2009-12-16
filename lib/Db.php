@@ -12,12 +12,6 @@ final class Db
 {
 	const VERSION = '0.5';
 	
-	const ERROR = 1;
-	const WARNING = 2;
-	const NOTICE = 4;
-	const DEBUG = 8;
-	const ALL = 15;
-	
 	/**
 	 * The path to this file, so the autoloader loads the file properly.
 	 * 
@@ -89,13 +83,6 @@ final class Db
 	 * @var string
 	 */
 	protected static $mapper_cache_dir = '';
-	
-	/**
-	 * A list of attached loggers.
-	 * 
-	 * @var array
-	 */
-	protected static $loggers = array();
 	
 	// ------------------------------------------------------------------------
 
@@ -611,38 +598,8 @@ final class Db
 			}
 		}
 	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Logs an event.
-	 * 
-	 * @param  int		Error level
-	 * @param  string
-	 * @return void
-	 */
-	public static function log($level, $message)
-	{
-		foreach(self::$loggers as $logger)
-		{
-			call_user_func($logger, $level, $message);
-		}
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Adds a callable which will receive the log messages ($level, $message).
-	 * 
-	 * @param  callable
-	 * @return void
-	 */
-	public static function attachLogger($callable)
-	{
-		self::$loggers[] = $callable;
-	}
 }
 
 
 /* End of file Db.php */
-/* Location: . */
+/* Location: ./lib */
