@@ -583,17 +583,16 @@ final class Db
 		
 		if($property === false)
 		{
-			// no property, iterate all
-			$ret = false;
-			
+			// no property, iterate all and bail out if we find a changed one
 			foreach($m->properties as $property => $column)
 			{
-				$r = isset($object->__data[$column]) && ( ! isset($object->$property) OR $object->$property != $object->__data[$column]);
-				
-				$ret = ($ret OR $r);
+				if(isset($object->__data[$column]) && ( ! isset($object->$property) OR $object->$property != $object->__data[$column]))
+				{
+					return true;
+				}
 			}
 			
-			return $ret;
+			return false;
 		}
 		else
 		{

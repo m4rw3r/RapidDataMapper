@@ -220,13 +220,16 @@ class DbTest extends PHPUnit_Framework_TestCase
 	 */
 	public function initIsChangedTest()
 	{
-		eval("class Db_Compiled_stdClassMapper
+		if( ! class_exists('Db_Compiled_stdClassMapper'))
 		{
-			public \$properties = array(
-				'title' => 'ctitle',
-				'slug' => 'cslug'
-				);
-		}");
+			eval("class Db_Compiled_stdClassMapper
+			{
+				public \$properties = array(
+					'title' => 'ctitle',
+					'slug' => 'cslug'
+					);
+			}");
+		}
 	}
 }
 
