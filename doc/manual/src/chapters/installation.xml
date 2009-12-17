@@ -127,10 +127,15 @@ $cache_mappers = FALSE;]]></programlisting>
 		<para>
 			This also includes a special autoloader for the classes placed in the
 			<filename>application/data_model/</filename> folder.
-			The filenames are the lowercase of the class name and then add "<literal>.php</literal>".
-			(This makes for autoloading of both the data classes and the descriptor classes if the
-			descriptor classes are named as data object class name + "<literal>Descriptor</literal>".)
 		</para>
+		
+		<warning>
+			<para>
+				The filenames are the lowercase of the class name and then add "<literal>.php</literal>".
+				(This makes for autoloading of both the data classes and the descriptor classes if the
+				descriptor classes are named as data object class name + "<literal>Descriptor</literal>".)
+			</para>
+		</warning>
 		
 		<note>
 			<para>
