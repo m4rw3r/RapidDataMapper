@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<chapter
+<appendix
 	version="5.0"
 	xml:id="change_log"
 	xml:lang="en"
@@ -10,6 +10,46 @@
 	>
 	
 	<title>Change Log</title>
+	
+	<section>
+		<title>Version 0.6</title>
+		
+		<segmentedlist>
+			<?dbhtml list-presentation="list"?>
+			
+			<segtitle>Release Date</segtitle>
+			
+			<segtitle>Git tag</segtitle>
+			
+			<seglistitem>
+				<seg>In Development</seg>
+				
+				<seg>In Development</seg>
+			</seglistitem>
+		</segmentedlist>
+		
+		<para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						Increased performance of <function linkend="funcref.Db-isChanged">Db::isChanged</function>.
+					</para>
+				</listitem>
+				
+				<listitem>
+					<para>
+						Removed logging methods.
+					</para>
+					
+					<para>
+						It is better to let a framework / user code catch the errors using PHP instead of
+						having to push them to the framework / user.
+						Also, exceptions are used in almost all cases, making a logger obsolete.
+					</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
 	
 	<section>
 		<title>Version 0.5</title>
@@ -38,4 +78,4 @@
 			</itemizedlist>
 		</para>
 	</section>
-</chapter>
+</appendix>
