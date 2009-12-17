@@ -1364,7 +1364,17 @@ $nested->where('or artist', 'Skyfire');
 $q->like('name', 'intro');
 
 $r = $q->get();
-// SELECT t1.* FROM tracks WHERE (`artist` = 'Within Temptation' OR `artist` = 'Skyfire') AND `name` LIKE '%intro%']]></programlisting>
+// SELECT t1.* FROM tracks WHERE (`artist` = 'Within Temptation' OR `artist` = 'Skyfire') AND `name` LIKE '%intro%'
+
+// Or the same query using method-chaining (end() returns the parent object):
+$r = Db::getConnection()->select()
+		->from('tracks')
+		->where()
+			->where('artist', 'Within Temptation')
+			->where('or artist', 'Skyfire')
+		->end()
+		->like('name', 'intro')
+	->get();]]></programlisting>
 				</example>
 			</section>
 			
