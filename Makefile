@@ -1,4 +1,16 @@
 
+# paths to binaries
+java_bin     = java
+jing_bin_jar = jing/bin/jing.jar
+xsltproc_bin = xsltproc
+phpdoc_bin   = phpdoc
+phpunit_bin  = PHPUnit
+phpcompatinfo_bin = pci
+
+# docbook constants
+docbook_rng = doc/docbook.rng
+docbook_dir = doc/docbook-xsl
+
 # needed to make the phpdoc and tests to start properly
 empty: ;
 
@@ -16,40 +28,40 @@ clean:
 	rm -f chunked.zip
 
 
-# Validate the DocBook XML
-doc-validate:
-	java -jar jing/bin/jing.jar -i doc/docbook.rng doc/manual/src/chapters/*.xml doc/manual/src/references/*.xml
-
-
 # Create all documentation, not including API
 doc: doc-validate doc-html doc-chunk
 
 
+# Validate the DocBook XML
+doc-validate:
+	$(java_bin) -jar $(jing_bin_jar) -i $(docbook_rng) doc/manual/src/chapters/*.xml doc/manual/src/references/*.xml
+
+
 # Generate documentation from Docbook
 doc-html: empty
-	xsltproc --xinclude --stringparam html.stylesheet manual.css --output doc/manual.html doc/docbook-xsl/xhtml/docbook.xsl doc/manual/src/book.xml
+	$(xsltproc_bin) --xinclude --stringparam html.stylesheet manual.css --output doc/manual.html $(docbook_dir)/xhtml/docbook.xsl doc/manual/src/book.xml
 
 
 # Generate multiple html files
-doc-chunk:
+doc-chunk: empty
 	mkdir -p doc/chunked
-	xsltproc --xinclude --stringparam html.stylesheet manual.css --stringparam base.dir doc/chunked/ doc/docbook-xsl/xhtml/chunk.xsl doc/manual/src/book.xml
+	$(xsltproc_bin) --xinclude --stringparam html.stylesheet manual.css --stringparam base.dir doc/chunked/ $(docbook_dir)/xhtml/chunk.xsl doc/manual/src/book.xml
 	cp doc/manual.css doc/chunked/manual.css
 
 
-# Generate
+# Generate API documentation
 phpdoc: empty
-	phpdoc -t ./doc/api -d ./lib,./compat -j -o HTML:frames:DOM/earthli -s -ti "RapidDataMapper API Documentation"
+	$(phpdoc_bin) -t ./doc/api -d ./lib,./compat -j -o HTML:frames:DOM/earthli -s -ti "RapidDataMapper API Documentation"
 
 
 # Test PHP compatibility
 report-compatinfo:
-	pci -d lib
+	$(phpcompatinfo_bin) -d lib
 
 
 # Run all unit tests and generate code coverage report
 tests: empty
-	PHPUnit --coverage-html report tests
+	$(phpunit_bin) --coverage-html report tests
 
 
 # Package for distribution, run tests
