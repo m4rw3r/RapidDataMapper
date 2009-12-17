@@ -27,7 +27,7 @@ class Db_Descriptor_Relation_HasOne extends Db_Descriptor_Relation_HasMany
 		
 		// check if we have a correct related object
 		$str = '// The Has One relation '.$this->relation->getName().', relates to '.$related->getClass().'
-if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.' instanceof '.$related->getClass().')
+if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'->'.$this->relation->getProperty().' instanceof '.$related->getClass().')
 {
 	';
 		
@@ -65,7 +65,7 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'
 		list($local_keys, $foreign_keys) = $this->getKeys();
 		
 		$str = '// The Has One relation '.$this->relation->getName().', relates to '.$related->getClass().'
-if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.' instanceof '.$related->getClass().')
+if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'->'.$this->relation->getProperty().' instanceof '.$related->getClass().')
 {
 	';
 		
