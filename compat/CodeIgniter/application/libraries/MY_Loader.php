@@ -67,22 +67,6 @@ class MY_Loader extends CI_Loader
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Log adapter for RapidDataMapper, calls CodeIgniter's logging feature.
-	 * 
-	 * @param  mixed
-	 * @param  string
-	 * @return void
-	 */
-	public static function db_log_message($severity, $message)
-	{
-		$severity = $severity == Db::WARNING ? 'warning' : 'error';
-		
-		log_message($severity, $message);
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Not supported by RapidDataMapper.
 	 *
 	 * @return void
@@ -153,9 +137,6 @@ class MY_Loader extends CI_Loader
 			Db::setMapperCacheDir(APPPATH.'mappercache');
 			
 			Db::initAutoload();
-			
-			// let CodeIgniter handle the logging
-			Db::attachLogger(array('MY_Loader', 'db_log_message'));
 			
 			// register a loader for the data objects and their descriptors
 			spl_autoload_register(array('MY_Loader', 'load_data_object'));
