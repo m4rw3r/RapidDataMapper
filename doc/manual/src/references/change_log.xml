@@ -29,26 +29,92 @@
 		</segmentedlist>
 		
 		<para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						Increased performance of <function linkend="funcref.Db-isChanged">Db::isChanged</function>.
-					</para>
-				</listitem>
-				
-				<listitem>
-					<para>
-						Removed logging methods.
-					</para>
-					
-					<para>
-						It is better to let a framework / user code catch the errors using PHP instead of
-						having to push them to the framework / user.
-						Also, exceptions are used in almost all cases, making a logger obsolete.
-					</para>
-				</listitem>
-			</itemizedlist>
+			New Features:
 		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Added specialized <function linkend="funcref.Db_MapperQuery-count">Db_MapperQuery->count</function>
+					method which overrides the
+					<function linkend="funcref.Db_Query_Select-count">Db_Query_Select->count</function>
+					with a variant which uses proper key names to count by.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			Improvements:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Increased performance of <function linkend="funcref.Db-isChanged">Db::isChanged</function>.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Removed logging methods.
+				</para>
+				
+				<para>
+					It is better to let a framework / user code catch the errors using PHP instead of
+					having to push them to the framework / user.
+					Also, exceptions are used in almost all cases, making a logger obsolete.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			Bug fixes:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Fixed faulty property name used in the <token>instanceof</token> <varname>$classname</varname>
+					check in the save part for the <emphasis>Has One</emphasis> relationship type.
+				</para>
+				
+				<para>
+					It generated "<literal>$object </literal>" instead of "<literal>$object->property</literal>".
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			Updates to this manual:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Added a more readable example of the nested where conditions, using method-chaining.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Added documentation for:
+				</para>
+				
+				<itemizedlist>
+					<listitem>
+						<para>
+							<function linkend="funcref.Db_MapperQuery-count">Db_MapperQuery->count</function>
+						</para>
+					</listitem>
+					
+					<listitem>
+						<para>
+							<function linkend="funcref.Db-isChanged">Db::isChanged</function>
+						</para>
+					</listitem>
+				</itemizedlist>
+			</listitem>
+		</itemizedlist>
 	</section>
 	
 	<section>
@@ -68,14 +134,12 @@
 			</seglistitem>
 		</segmentedlist>
 		
-		<para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						Initial Release
-					</para>
-				</listitem>
-			</itemizedlist>
-		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					Initial Release
+				</para>
+			</listitem>
+		</itemizedlist>
 	</section>
 </appendix>
