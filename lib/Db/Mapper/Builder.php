@@ -22,43 +22,7 @@ class Db_Mapper_Builder extends Db_CodeBuilder_Class
 		
 		$this->addPart(new Db_CodeBuilder_Property('class', $desc->getClass()));
 		
-		$this->addProperties($desc);
-		
 		$this->addMethods($desc);
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Adds the required properties to the mapper.
-	 * 
-	 * @return void
-	 */
-	protected function addProperties(Db_Descriptor $descriptor)
-	{
-		// create a list of the relations
-		$rel_arr = array();
-		foreach($descriptor->getRelations() as $rel)
-		{
-			$rel_arr[$rel->getName()] = $rel->getRelatedClass();
-		}
-		$this->addPart(new Db_CodeBuilder_Property('relations', $rel_arr));
-		
-		// create a list of the properties
-		$prop_arr = array();
-		foreach($descriptor->getColumns() as $prop)
-		{
-			$prop_arr[$prop->getProperty()] = $prop->getColumn();
-		}
-		$this->addPart(new Db_CodeBuilder_Property('properties', $prop_arr));
-		
-		// create a list of the primary keys
-		$pk_arr = array();
-		foreach($descriptor->getPrimaryKeys() as $prop)
-		{
-			$pk_arr[$prop->getProperty()] = $prop->getColumn();
-		}
-		$this->addPart(new Db_CodeBuilder_Property('primary_keys', $pk_arr));
 	}
 	
 	// ------------------------------------------------------------------------
@@ -70,6 +34,8 @@ class Db_Mapper_Builder extends Db_CodeBuilder_Class
 	 */
 	public function addMethods(Db_Descriptor $descriptor)
 	{
+		$this->addPart(new Db_Mapper_Part_Properties($descriptor));
+		
 		$this->addPart(new Db_Mapper_Part_Constructor($descriptor));
 		
 		$this->addPart(new Db_Mapper_Part_CreateMapperQuery($descriptor));

@@ -255,6 +255,41 @@ class Db_MapperQuery extends Db_Query_Select
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Counts all the main objects contained in this query.
+	 * 
+	 * Behaves like the Db_Query_Select::count() method if a parameter is supplied.
+	 * 
+	 * @param  string
+	 * @return int|false
+	 */
+	public function count($column = false)
+	{
+		// if we don't have a specific string to count, use default
+		if( ! $column)
+		{
+			$column = $this->mapper->count_str;
+			
+			// Turn off escaping, keep the original value
+			$tmp = $this->escape;
+			$this->escape = false;
+			
+			$r = parent::count($column);
+			
+			// reset
+			$this->escape = $tmp;
+		}
+		else
+		{
+			// Use the standard method
+			$r = parent::count($column);
+		}
+		
+		return $r;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the result of this query.
 	 * 
 	 * @return array
