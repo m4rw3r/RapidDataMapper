@@ -131,7 +131,7 @@ echo $t->id;]]></programlisting>
 			
 			<funcsynopsis xml:id="funcref.Db-find">
 				<funcprototype>
-					<funcdef><type>Db_Query_MapperSelect</type> <function>Db::find</function></funcdef>
+					<funcdef><type>Db_MapperQuery</type> <function>Db::find</function></funcdef>
 					
 					<paramdef><type>string</type> <parameter>$class_name</parameter></paramdef>
 				</funcprototype>
@@ -258,6 +258,41 @@ Db::delete($object);]]></programlisting>
 				</funcprototype>
 			</funcsynopsis>
 		</section>
+		
+		<section>
+			<title>Checking if an object has been changed</title>
+			
+			<para>
+				Sometimes you would like to know if an object has been changed or not,
+				it is for these occasions that <function>Db::isChanged</function> has been written:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db-isChanged">
+				<funcprototype>
+					<funcdef><type>boolean</type> <function>Db::isChanged</function></funcdef>
+					
+					<paramdef><type>object</type> <parameter>$object</parameter></paramdef>
+					<paramdef choice="opt">$property</paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				This method will return <symbol>true</symbol> if the object has been changed
+				and false if it hasn't.
+			</para>
+			
+			<para>
+				The <parameter>$property</parameter> is for checking if a specific property has
+				been changed.
+			</para>
+			
+			<warning>
+				<para>
+					<function>Db::isChanged</function> does not yet check for changed related objects
+					or changes in the relationships (ie. the contents of the relation properties).
+				</para>
+			</warning>
+		</section>
 	</section>
 	
 	<section xml:id="chapter.the_orm.mapper_queries">
@@ -354,6 +389,59 @@ Db::delete($object);]]></programlisting>
 					plugin.
 				</para>
 			</note>
+		</section>
+		
+		<section>
+			<title>Counting objects before fetching them from the database</title>
+			
+			<para>
+				For this, you will use a slightly modified variant of
+				<function linkend="funcref.Db_Query_Select-count">Db_Query_Select->count</function>.
+				This variant uses the primary key(s) to count the rows instead, which means that by
+				default it will count all the <emphasis>main objects</emphasis> (ie. the objects which
+				are located in the root of the "join tree").
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_MapperQuery-count">
+				<funcprototype>
+					<funcdef><type>int</type>|<type>false</type> <function>Db_MapperQuery->count</function></funcdef>
+					
+					<void />
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>int</type>|<type>false</type> <function>Db_MapperQuery->count</function></funcdef>
+					
+					<paramdef><type>string</type> <parameter>$columns</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				The first variant counts all the root objects of the "join tree" (ie. the Track objects if
+				you run "<literal>Db::find('track')->related('album')->count();</literal>").
+			</para>
+			
+			<para>
+				The second variant behaves like the old
+				<function linkend="funcref.Db_Query_Select-count">Db_Query_Select->count</function>.
+			</para>
+			
+			<example>
+				<title>Counting objects and paginating them</title>
+				
+				<programlisting language="php"><![CDATA[// The query
+$q = Db::find('artist')->related('tracks')->like('artist-tracks.name', 'dark');
+// Do not issue the query yet
+
+// get count
+$count = $q->count();
+
+// $q is still containing the original query
+
+// calculate the offset from $count
+
+$artists = $q->offset($offset)->limit(10)->get();]]></programlisting>
+			</example>
 		</section>
 	</section>
 </chapter>
