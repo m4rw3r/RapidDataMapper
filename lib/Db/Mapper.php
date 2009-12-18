@@ -10,12 +10,32 @@
  */
 abstract class Db_Mapper
 {
+	/**
+	 * The class this mapper is mapping.
+	 * 
+	 * @var string
+	 */
 	public $class = '';
 	
+	/**
+	 * A list of the relations of this mapper, property => class.
+	 * 
+	 * @var array
+	 */
 	public $relations = array();
 	
+	/**
+	 * A list of the properties and their corresponding column (property => column).
+	 * 
+	 * @var array
+	 */
 	public $properties = array();
 	
+	/**
+	 * A list of the primary keys of the mapped object, (property => column).
+	 * 
+	 * @var array
+	 */
 	public $primary_keys = array();
 	
 	/**
@@ -25,7 +45,7 @@ abstract class Db_Mapper
 	 */
 	protected $db;
 	
-	function __construct(Db_Connection $connection)
+	public function __construct(Db_Connection $connection)
 	{
 		$this->db = $connection;
 	}
