@@ -89,6 +89,13 @@
 					when the <link linkend="database_connection_objects.database_prefix">dbprefix</link> was used.
 				</para>
 			</listitem>
+			
+			<listitem>
+				<para>
+					Fixed broken <function linkend="funcref.Db-related">Db::related</function> method,
+					it resulted in a PHP error because of a call to a missing method.
+				</para>
+			</listitem>
 		</itemizedlist>
 		
 		<para>
