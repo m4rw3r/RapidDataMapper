@@ -10,7 +10,7 @@
  */
 final class Db
 {
-	const VERSION = '0.5';
+	const VERSION = '0.5.1';
 	
 	/**
 	 * The path to this file, so the autoloader loads the file properly.
