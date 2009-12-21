@@ -175,6 +175,13 @@ class Db_MapperQuery extends Db_Query_Select
 	}
 	
 	// ------------------------------------------------------------------------
+
+	public function whereIsNull($column, $yes = true)
+	{
+		return parent::whereIsNull($this->translateColumns($column), $yes);
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	public function like($column, $value, $side = 'both')
 	{

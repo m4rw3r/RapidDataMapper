@@ -1079,6 +1079,56 @@ class Db_QueryTest extends PHPUnit_Framework_TestCase
 		$q->whereNotIn('or b', array('ba', 'bb'));
 		$this->assertEquals((String) $q, $q->getSQL());
 	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testIsNull()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->never())->method('escape');
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"aa"'));
+			$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"bb"'));
+				$mock->expects($this->at(2))->method('protectIdentifiers')->with($this->equalTo('c'))->will($this->returnValue('"cc"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->whereIsNull('a'));
+		$this->assertEquals(array('"aa" IS NULL'), $q->where);
+		$this->assertSame($q, $q->whereIsNull('b'));
+		$this->assertEquals(array('"aa" IS NULL', 'AND "bb" IS NULL'), $q->where);
+		$this->assertSame($q, $q->whereIsNull('or c'));
+		$this->assertEquals(array('"aa" IS NULL', 'AND "bb" IS NULL', 'OR "cc" IS NULL'), $q->where);
+	}
+	public function testIsNull2()
+	{
+		$mock = $this->getMock('Db_Connection', array('protectIdentifiers', 'escape'));
+		
+		$mock->expects($this->never())->method('escape');
+		$mock->expects($this->at(0))->method('protectIdentifiers')->with($this->equalTo('a'))->will($this->returnValue('"aa"'));
+			$mock->expects($this->at(1))->method('protectIdentifiers')->with($this->equalTo('b'))->will($this->returnValue('"bb"'));
+				$mock->expects($this->at(2))->method('protectIdentifiers')->with($this->equalTo('c'))->will($this->returnValue('"cc"'));
+		
+		$q = new Db_Query($mock);
+		
+		$this->assertSame($q, $q->whereIsNull('a', false));
+		$this->assertEquals(array('"aa" IS NOT NULL'), $q->where);
+		$this->assertSame($q, $q->whereIsNull('b', false));
+		$this->assertEquals(array('"aa" IS NOT NULL', 'AND "bb" IS NOT NULL'), $q->where);
+		$this->assertSame($q, $q->whereIsNull('or c', false));
+		$this->assertEquals(array('"aa" IS NOT NULL', 'AND "bb" IS NOT NULL', 'OR "cc" IS NOT NULL'), $q->where);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testWhereIsNotNull()
+	{
+		$q = $this->getMock('Db_Query', array('whereIsNull'), array(new stdClass));
+		
+		$q->expects($this->once())->method('whereIsNull')->with('a', false)->will($this->returnValue('aa'));
+		
+		$this->assertEquals('aa', $q->whereIsNotNull('a'));
+	}
 }
 
 

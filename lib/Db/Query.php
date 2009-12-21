@@ -78,7 +78,6 @@ class Db_Query
 	 * This function can do:
 	 * - Nested where parts (in parenthesis, use where()->...->end()... or where('or')->...->end()->...)
 	 * - Non-escaped where parts (uses only $condition, call escape(false) to enable)
-	 * - Bound statements (use array in $value)
 	 * - Column conditions / comparisons (leave $value empty, $condition is identifier protected)
 	 * - Column-value comparisons ($condition is identifier protected and $value is escaped)
 	 * 
@@ -228,6 +227,42 @@ class Db_Query
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Adds a IS NULL condition to the where part of the query.
+	 * 
+	 * @param  string
+	 * @param  bool		If to filter by IS NULL or IS NOT NULL
+	 * @return self
+	 */
+	public function whereIsNull($column, $yes = true)
+	{
+		$pre = self::getLogicalOperator($column, $this->where);
+    	
+		if($this->escape)
+		{
+			$column = $this->_instance->protectIdentifiers($column);
+		}
+		
+		$this->where[] = $pre.$column.($yes ? ' IS NULL' : ' IS NOT NULL');
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Adds a IS NOT NULL condition to the where part of the query.
+	 * 
+	 * @param  string
+	 * @return self
+	 */
+	public function whereIsNotNull($column)
+	{
+		return $this->whereIsNull($column, false);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Adds a LIKE condition to the WHERE part of the query.
 	 * 
 	 * @param  string
@@ -360,7 +395,6 @@ class Db_Query
 	 * 
 	 * This method creates:
 	 * - Non-escaped where parts (uses only $condition, $value = null, call escape(false) to enable)
-	 * - Bound statements (use array in $value)
 	 * - Column conditions / comparisons ($value = null, $condition is identifier protected)
 	 * - Column-value comparisons ($condition is identifier protected and $value is escaped)
 	 * - Subqueries, $condition is string, $value is Db_Query_Select
