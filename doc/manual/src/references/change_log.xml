@@ -82,6 +82,13 @@
 					It generated "<literal>$object </literal>" instead of "<literal>$object->property</literal>".
 				</para>
 			</listitem>
+			
+			<listitem>
+				<para>
+					Fixed malfunctioning FROM part in some <abbrev>ORM</abbrev> queries which occurred
+					when the <link linkend="database_connection_objects.database_prefix">dbprefix</link> was used.
+				</para>
+			</listitem>
 		</itemizedlist>
 		
 		<para>
