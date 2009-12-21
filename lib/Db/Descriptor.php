@@ -143,7 +143,16 @@ class Db_Descriptor
 	{
 		if(empty($this->class))
 		{
-			throw new Db_Descriptor_MissingValueException('class name', '');
+			$c = get_class($this);
+			
+			if($c != 'Db_Descriptor' && preg_match('/^([A-Za-z0-9]+)Descriptor$/i', $c, $r))
+			{
+				$this->setClass($r[1]);
+			}
+			else
+			{
+				throw new Db_Descriptor_MissingValueException('class name', '');
+			}
 		}
 		
 		return $this->class;

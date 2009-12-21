@@ -194,6 +194,24 @@ class Db_DescriptorTest extends PHPUnit_Framework_TestCase
 	}
 	
 	// ------------------------------------------------------------------------
+	
+	public function testAutoSetClass()
+	{
+		if( ! class_exists('DummyTestAutoSetClassDescriptor'))
+		{
+			eval('class DummyTestAutoSetClassDescriptor extends Db_Descriptor {}');
+		}
+		
+		$desc = new DummyTestAutoSetClassDescriptor();
+		
+		$this->assertEquals('DummyTestAutoSetClass', $desc->getClass());
+		$this->assertEquals('dummytestautosetclass', $desc->getSingular());
+		
+		$desc->setClass('Test');
+		$this->assertEquals('test', $desc->getSingular());
+	}
+	
+	// ------------------------------------------------------------------------
 
 	/**
 	 * @expectedException InvalidArgumentException
