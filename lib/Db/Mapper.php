@@ -184,7 +184,7 @@ abstract class Db_Mapper
 	 * 
 	 * <code>
 	 * // User relates to posts:
-	 * $q = $post_model->populateFindQuery();
+	 * $q = $post_model->createMapperQuery();
 	 * $user_model->applyRelatedConditions($q, 'posts', $some_user_object);
 	 * </code>
 	 * 

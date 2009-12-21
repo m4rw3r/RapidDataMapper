@@ -541,7 +541,7 @@ final class Db
 		
 		$rm = self::getMapper($m->relations[$relation]);
 		
-		$q = $rm->populateFindQuery();
+		$q = $rm->createMapperQuery();
 		$m->applyRelatedConditions($q, $relation, $object);
 		
 		return $q;
