@@ -12,7 +12,7 @@
 	<title>Change Log</title>
 	
 	<section>
-		<title>Version 0.6</title>
+		<title>Version 0.5.1</title>
 		
 		<segmentedlist>
 			<?dbhtml list-presentation="list"?>
@@ -22,9 +22,9 @@
 			<segtitle>Git tag</segtitle>
 			
 			<seglistitem>
-				<seg>In Development</seg>
+				<seg>2009-12-21</seg>
 				
-				<seg>In Development</seg>
+				<seg>0.5.1</seg>
 			</seglistitem>
 		</segmentedlist>
 		
@@ -40,6 +40,26 @@
 					<function linkend="funcref.Db_Query_Select-count">Db_Query_Select->count</function>
 					with a variant which uses proper key names to count by.
 				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Added the methods:
+				</para>
+				
+				<itemizedlist>
+					<listitem>
+						<para>
+							<function linkend="funcref.Db_Query-whereIsNull">Db_Query->whereIsNull</function>
+						</para>
+					</listitem>
+					
+					<listitem>
+						<para>
+							<function linkend="funcref.Db_Query-whereIsNotNull">Db_Query->whereIsNotNull</function>
+						</para>
+					</listitem>
+				</itemizedlist>
 			</listitem>
 		</itemizedlist>
 		
