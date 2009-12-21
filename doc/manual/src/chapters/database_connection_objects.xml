@@ -363,7 +363,7 @@ while($row = $result->next())
 		<title>Database Drivers</title>
 		
 		<para>
-			
+			Currently only MySQL is supported.
 		</para>
 	</section>
 </chapter>
