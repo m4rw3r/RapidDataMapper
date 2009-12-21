@@ -232,7 +232,8 @@ class FoobarDescriptor extends Db_Descriptor
 {
 	public function __construct()
 	{
-		$this->setClass('Foobar');
+		// Not strictly needed, as the descriptor is named the same as the class with the addition of "Descriptor"
+		// $this->setClass('Foobar');
 		
 		$this->add($this->newPrimaryKey('id'));
 		$this->add($this->newColumn('title'));
@@ -330,6 +331,13 @@ catch(Db_DescriptorException $e)
 			(This method, an many other setter-methods of the <classname>Db_Descriptor</classname> supports
 			<glossterm>method-chaining</glossterm>.)
 		</para>
+		
+		<tip>
+			<para>
+				If your class is named like this: classname + "<literal>Descriptor</literal>", then you don't
+				have to use <function>setClass</function>, RapidDataMapper will figure it out automatically.
+			</para>
+		</tip>
 		
 		<para>
 			By default is the class attribute used as a base for the following settings:
