@@ -18,7 +18,7 @@ class Db_MapperQuery_Part_Properties extends Db_CodeBuilder_Container
 		
 		$this->addPart(new Db_CodeBuilder_Property('columns', array($desc->getSelectCode($desc->getSingular(), $desc->getSingular()))));
 		
-		$this->addPart(new Db_CodeBuilder_Property('from', array($db->protectIdentifiers($desc->getTable()).' AS '.$db->protectIdentifiers($desc->getSingular()))));
+		$this->addPart(new Db_CodeBuilder_Property('from', array($db->protectIdentifiers($db->dbprefix.$desc->getTable()).' AS '.$db->protectIdentifiers($desc->getSingular()))));
 		
 		// get the column names which the PHP variants should be translated into to create correct SQL
 		$php_names = array();
