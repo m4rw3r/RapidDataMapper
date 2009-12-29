@@ -90,7 +90,7 @@ class MY_Session extends CI_Session
 			//////////////////////////////////////////
 			
 			// get the active database object ($CI->db is not always the same as db())
-			$query = $this->CI->db->select();
+			$q = $this->CI->db->select();
 			
 			// set table and session id to fetch
 			$q->from($this->sess_table_name);
