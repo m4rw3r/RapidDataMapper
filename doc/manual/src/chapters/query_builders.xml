@@ -664,6 +664,49 @@ $r2 = $q2->get();
 		</section>
 		
 		<section>
+			<title>Ordering rows (ORDER BY)</title>
+			
+			<para>
+				To order the rows by column values, use <function>Db_Query_Select->orderBy</function>:
+			</para>
+			
+			<funcsynopsis xml:id="funcref.Db_Query_Select-orderBy">
+				<funcprototype>
+					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->orderBy</function></funcdef>
+					
+					<paramdef><type>string</type>|<type>array</type> <parameter>$columns</parameter></paramdef>
+					<paramdef choice="opt"><type>string</type> <parameter>$direction</parameter> = <initializer>''</initializer></paramdef>
+				</funcprototype>
+				
+				<funcprototype>
+					<funcdef><type>Db_Query_Select</type> <function>Db_Query_Select->orderBy</function></funcdef>
+					
+					<paramdef><parameter>'random'</parameter></paramdef>
+				</funcprototype>
+			</funcsynopsis>
+			
+			<para>
+				<parameter>$columns</parameter> is a list of columns to order by, in their order of importance.
+				<parameter>$direction</parameter> is the direction which is either "<literal>ASC</literal>"
+				(ascending) or´"<literal>DESC</literal>" (descending).
+			</para>
+			
+			<para>
+				If <parameter>$direction</parameter> is not supplied, then no direction will be present in the
+				query, meaning the database will determine the order direction.
+			</para>
+			
+			<para>
+				If <function linkend="funcref.Db_Query-escape">Db_Query->escape</function> is false, then the
+				<parameter>$columns</parameter> parameter will be appended to the ORDER BY part of the query.
+			</para>
+			
+			<para>
+				The second variant does random ordering, using the database's RANDOM keyword (depends on db).
+			</para>
+		</section>
+		
+		<section>
 			<title>Limit and Offset</title>
 			
 			<funcsynopsis xml:id="funcref.Db_Query_Select-limit">
