@@ -184,7 +184,7 @@ class Db_Plugin_Sluggable extends Db_Plugin
 	 */
 	public static function filterString($str)
 	{
-		$charset = 'UTF8';
+		$charset = 'UTF-8';
 		$str = strtolower(htmlentities($str, ENT_COMPAT, $charset));
 		$str = preg_replace('/&(.)(acute|cedil|circ|lig|grave|ring|tilde|uml);/', "$1", $str);
 		$str = preg_replace('/([^a-z0-9]+)/', '-', html_entity_decode($str, ENT_COMPAT, $charset));
