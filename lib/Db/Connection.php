@@ -112,6 +112,13 @@ abstract class Db_Connection
 	protected $dbh;
 	
 	/**
+	 * If a transaction is on.
+	 * 
+	 * @var bool
+	 */
+	protected $transaction = false;
+	
+	/**
 	 * Stores the time for each query.
 	 * 
 	 * Links with the key to the queries array.
@@ -299,7 +306,7 @@ abstract class Db_Connection
 			}
 		}
 		
-		$this->initDbh();
+		is_null($this->dbh) && $this->initDbh();
 		
 		// log
 		$this->queries[] = $sql;
@@ -337,6 +344,61 @@ abstract class Db_Connection
 		}
 		
 		return $result;
+	}
+	
+	
+	// --------------------------------------------------------------------
+	// --  TRANSACTION METHODS                                           --
+	// --------------------------------------------------------------------
+	
+	/**
+	 * Starts a transaction.
+	 * 
+	 * @return bool
+	 */
+	public function transactionStart()
+	{
+		if($this->transaction)
+		{
+			throw new Db_Connection_TransactionNestingException();
+		}
+		
+		// Load database handle to be able to start a transaction
+		is_null($this->dbh) && $this->initDbh();
+		
+		return $this->startTransaction();
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Commits a transaction.
+	 * 
+	 * @return bool
+	 */
+	public function transactionCommit()
+	{
+		is_null($this->dbh) && $this->initDbh();
+		
+		$this->transaction = false;
+		
+		return $this->commitTransaction();
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Rolls back a transaction.
+	 * 
+	 * @return bool
+	 */
+	public function transactionRollback()
+	{
+		is_null($this->dbh) && $this->initDbh();
+		
+		$this->transaction = false;
+		
+		return $this->rollbackTransaction();
 	}
 	
 	// --------------------------------------------------------------------
@@ -725,6 +787,24 @@ abstract class Db_Connection
 	 * @return resource
 	 */
 	abstract protected function executeSql($sql);
+	/**
+	 * Starts a transaction.
+	 * 
+	 * @return bool
+	 */
+	abstract protected function startTransaction();
+	/**
+	 * Commits a transaction.
+	 * 
+	 * @return bool
+	 */
+	abstract protected function commitTransaction();
+	/**
+	 * Rolls back a transaction.
+	 * 
+	 * @return bool
+	 */
+	abstract protected function rollbackTransaction();
 	/**
 	 * Returns the error number and error message from the latest error.
 	 *

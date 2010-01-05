@@ -61,6 +61,27 @@ class Db_Driver_Mysql_Connection extends Db_Connection
 	
 	// ------------------------------------------------------------------------
 
+	protected function startTransaction()
+	{
+		return mysql_query('START TRANSACTION', $this->dbh) && mysql_query('SET autocommit = 0', $this->dbh);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	protected function commitTransaction()
+	{
+		return mysql_query('COMMIT', $this->dbh) && mysql_query('SET autocommit = 1', $this->dbh);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	protected function rollbackTransaction()
+	{
+		return mysql_query('ROLLBACK', $this->dbh) && mysql_query('SET autocommit = 1', $this->dbh);
+	}
+	
+	// ------------------------------------------------------------------------
+
 	public function error()
 	{
 		// dbh may not be loaded
