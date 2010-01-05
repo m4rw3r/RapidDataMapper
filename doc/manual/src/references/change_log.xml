@@ -12,6 +12,48 @@
 	<title>Change Log</title>
 	
 	<section>
+		<title>Version 0.6</title>
+		
+		<segmentedlist>
+			<?dbhtml list-presentation="list"?>
+			
+			<segtitle>Release Date</segtitle>
+			
+			<segtitle>Git tag</segtitle>
+			
+			<seglistitem>
+				<seg>In Development</seg>
+				
+				<seg>In Development</seg>
+			</seglistitem>
+		</segmentedlist>
+		
+		<para>
+			New Features:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Transaction support for the connection object.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			Improvements:
+		</para>
+		
+		<para>
+			Bug fixes:
+		</para>
+		
+		<para>
+			Updates to this manual:
+		</para>
+	</section>
+	
+	<section>
 		<title>Version 0.5.1</title>
 		
 		<segmentedlist>
