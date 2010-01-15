@@ -24,7 +24,13 @@ class Db_Mapper_Part_Delete extends Db_CodeBuilder_Method
 	return false;
 }');
 		
-		// TODO: Add calls to cascades
+		// Check if we are allowed to delete this row
+		$this->addPart('if( ! $this->allowDelete($object))
+{
+	return false;
+}');
+		
+		// TODO: Add delete cascade
 		
 		// TODO: Call the unlink relation code for the relations which haven't been affected by the cascades
 		

@@ -49,6 +49,8 @@ class Db_Mapper_Builder extends Db_CodeBuilder_Class
 		$this->addPart(new Db_Mapper_Part_Save($descriptor));
 		
 		$this->addPart(new Db_Mapper_Part_Delete($descriptor));
+		
+		$this->addPart(new Db_Mapper_Part_AllowDelete($descriptor));
 	}
 	
 	// ------------------------------------------------------------------------
