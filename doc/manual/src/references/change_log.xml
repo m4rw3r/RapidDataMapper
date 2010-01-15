@@ -38,6 +38,13 @@
 					Transaction support for the connection object.
 				</para>
 			</listitem>
+			
+			<listitem>
+				<para>
+					ON DELETE RESTRICT support for the relations using
+					<function linkend="funcref.Db_Descriptor_Relation-setOnDeleteAction">Db_Descriptor_Relation->setOnDeleteAction</function>.
+				</para>
+			</listitem>
 		</itemizedlist>
 		
 		<para>
@@ -51,6 +58,14 @@
 		<para>
 			Updates to this manual:
 		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					ON DELETE RESTRICT is now marked as functional.
+				</para>
+			</listitem>
+		</itemizedlist>
 	</section>
 	
 	<section>

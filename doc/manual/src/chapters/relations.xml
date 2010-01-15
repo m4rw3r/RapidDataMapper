@@ -318,7 +318,7 @@ class TrackDescriptor extends Db_Descriptor
 			
 			<note>
 				<para>
-					This is not yet implemented, this setting will not affect the generated code.
+					ON DELETE CASCADE is not implemented, this setting will not affect the generated code.
 				</para>
 				
 				<para>
