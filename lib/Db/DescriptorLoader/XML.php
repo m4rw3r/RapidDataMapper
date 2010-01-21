@@ -10,7 +10,26 @@
  */
 class Db_DescriptorLoader_XML
 {
-	protected $path;
+	/**
+	 * Path to the directory for the XML files.
+	 * 
+	 * @var string
+	 */
+	protected $base_path;
+	
+	/**
+	 * Descriptor which is being populated.
+	 * 
+	 * @var Db_Descriptor
+	 */
+	protected $desc;
+	
+	/**
+	 * Root node of the XML document.
+	 * 
+	 * @var SimpleXMLElement
+	 */
+	protected $doc;
 	
 	function __construct($path = '.')
 	{
@@ -30,8 +49,36 @@ class Db_DescriptorLoader_XML
 		
 		$this->doc = simplexml_load_file($this->file);
 		
-		$this->desc = new Db_Descriptor();
+		if($this->doc->getName() != 'mapper')
+		{
+			throw new Db_Exception('An XML file describing a mapper must use the root tag <mapper>.');
+		}
 		
+		if(isset($this->doc['mapperclass']))
+		{
+			$class = $this->doc['mapperclass'];
+		}
+		else
+		{
+			$class = 'Db_Descriptor';
+		}
+		
+		$this->desc = new $class();
+		
+		$this->parseSimpleXMLElements($this->doc);
+		
+		return $this->desc;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Goes through all the children of the 
+	 * 
+	 * @return 
+	 */
+	public function parseSimpleXMLElements(SimpleXMLElement $node)
+	{
 		foreach($this->doc->children() as $node)
 		{
 			$method = 'basetag'.ucfirst(strtolower($node->getName()));
@@ -41,8 +88,6 @@ class Db_DescriptorLoader_XML
 				$this->$method($node);
 			}
 		}
-		
-		return $this->desc;
 	}
 	
 	public function basetagClass($node)
@@ -80,13 +125,13 @@ class Db_DescriptorLoader_XML
 			// Only allow primary_key tags as direct descendants
 			if($n->getName() != 'primary_key')
 			{
-				throw new Db_Exception('A primary_keys tag can only contain primary_key tags, '.$n->getName().' tag encountered in file "'.$this->file.'".');
+				throw new Db_Exception('A primary_keys tag can only contain primary_key tags, <'.$n->getName().'> tag encountered in file "'.$this->file.'".');
 			}
 			
 			$this->basetagPrimary_key($n);
 		}
 	}
-	public function basetagColumn($node)
+	public function tagColumn($node)
 	{
 		$k = $this->desc->newColumn((String) $node);
 		
@@ -101,11 +146,23 @@ class Db_DescriptorLoader_XML
 			// Only allow column tags
 			if($n->getName() != 'column')
 			{
-				throw new Db_Exception('A columns tag can only contain column tags, '.$n->getName().' tag encountered in file "'.$this->file.'".');
+				throw new Db_Exception('A columns tag can only contain column tags, <'.$n->getName().'> tag encountered in file "'.$this->file.'".');
 			}
 			
-			$this->basetagColumn($n);
+			$this->tagColumn($n);
 		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * 
+	 * 
+	 * @return 
+	 */
+	public function __call($method, $params = array())
+	{
+		throw new Exception('Unexpected tag <'.$method.'>.');
 	}
 }
 
