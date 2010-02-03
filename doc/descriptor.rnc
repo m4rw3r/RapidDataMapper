@@ -1,0 +1,37 @@
+element mapper
+{
+	element class { text } &
+	element table { text }? &
+	element singular { text }? &
+	element factory { text }? &
+	(
+		element primary_key { text } |
+		element primary_keys
+		{
+			element primary_key { text }+
+		}
+	) &
+	element columns
+	{
+		element column { text }+
+	} &
+	element relations
+	{
+		element relation
+		{
+			text |
+			(
+				element name { text } &
+				element keys
+				{
+					element key
+					{
+						element local { text } &
+						element foreign { text }
+					}+
+				}? &
+				element related_class { text }?
+			)
+		}
+	}?
+}
