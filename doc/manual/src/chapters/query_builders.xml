@@ -1704,7 +1704,7 @@ $r = $q->get();]]></programlisting>
 			
 			<para>
 				This variant just adds a IS NOT NULL condition, behaves exactly like <function>Db_Query->whereIsNull</function>
-				with <parameter>$yes</parameter> set to <symbol>true</symbol>.
+				with <parameter>$yes</parameter> set to <symbol>false</symbol>.
 			</para>
 		</section>
 		

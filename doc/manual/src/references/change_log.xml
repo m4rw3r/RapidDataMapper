@@ -55,6 +55,15 @@
 			Bug fixes:
 		</para>
 		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Fixed typo in the <filename>/compat/CodeIgniter/application/libraries/MY_Session.php</filename>
+					file which resulted in a fatal error.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
 		<para>
 			Updates to this manual:
 		</para>

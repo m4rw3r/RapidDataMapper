@@ -15,6 +15,26 @@
 		<title>RapidDataMapper Resources</title>
 		<variablelist>
 			<varlistentry>
+				<term>Website</term>
+				
+				<listitem>
+					<para>
+						<link xlink:href="http://www.rapiddatamapper.com">http://www.rapiddatamapper.com</link>
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
+				<term>Forum</term>
+				
+				<listitem>
+					<para>
+						<link xlink:href="http://www.rapiddatamapper.com/forum">http://www.rapiddatamapper.com/forum</link>
+					</para>
+				</listitem>
+			</varlistentry>
+			
+			<varlistentry>
 				<term>GitHub repository</term>
 				
 				<listitem>
