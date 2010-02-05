@@ -32,7 +32,7 @@ class Db_Mapper_Part_AllowDelete extends Db_CodeBuilder_Method
 			
 			$this->addPart(new Db_Mapper_Part_AllowDelete_IsObject($descriptor));
 			
-			// TODO: Add IsQuery which will be used by the cascade to check if the cascades has any restricts
+			$this->addPart(new Db_Mapper_Part_AllowDelete_IsQuery($descriptor));
 		}
 		
 		if( ! $has_restrict)
