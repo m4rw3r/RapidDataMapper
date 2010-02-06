@@ -46,6 +46,10 @@ class Db_Descriptor
 	 * Constant telling Db_Descriptor_Relation that it should restrict ON DELETE.
 	 */
 	const RESTRICT = 9;
+	/**
+	 * Constant telling Db_Descriptor_Relation that it should set foreign keys to NULL ON DELETE.
+	 */
+	const SET_NULL = 10;
 	
 	/**
 	 * The class this object describes.

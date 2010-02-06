@@ -50,7 +50,7 @@ class Db_Descriptor_Relation
 	 * 
 	 * @var int
 	 */
-	protected $on_delete = 0;
+	protected $on_delete;
 	
 	/**
 	 * The parent descriptor.
@@ -272,7 +272,7 @@ class Db_Descriptor_Relation
 	 */
 	public function getOnDeleteAction()
 	{
-		return $this->on_delete;
+		return $this->on_delete ? $this->on_delete : Db_Descriptor::SET_NULL;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -281,6 +281,8 @@ class Db_Descriptor_Relation
 	 * Sets which action to perform ON DELETE.
 	 * 
 	 * This method uses constants defined in Db_Descriptor.
+	 *
+	 * Default: Db_Descriptor::SET_NULL
 	 * 
 	 * @param  int
 	 * @return self
@@ -452,6 +454,8 @@ class Db_Descriptor_Relation
 		// Singular or plural?
 		if(substr($this->getName(), -1) == 's')
 		{
+			// TODO: Refine the process of determining if a word is plural
+			
 			// plural
 			return Db_Descriptor::HAS_MANY;
 		}
