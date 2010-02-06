@@ -480,8 +480,55 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().'))
 
 	public function getUnlinkQueryRelationCode($query_var)
 	{
-		// TODO: Code
-		return '';
+		$db = $this->relation->getParentDescriptor()->getConnection();
+		$local = $this->relation->getParentDescriptor();
+		$related = $this->relation->getRelatedDescriptor();
+		
+		list($local_keys, $link_local_keys) = $this->getKeysToLink();
+		
+		// filter by the owning object's primary keys
+		$cols = array();
+		$c = count($local_keys);
+		for($i = 0; $i < $c; $i++)
+		{
+			$lprop = $local_keys[$i];
+			$fprop = $link_local_keys[$i];
+			
+			$cols[] = addcslashes($db->protectIdentifiers($db->dbprefix.$this->getLinkTable().'.'.$fprop.' = '.$local->getTable().'.'.$lprop->getColumn()), "'");
+		}
+		
+		// Check if we need additional columns
+		$pks = array();
+		foreach($local->getPrimaryKeys() as $pk)
+		{
+			$pks[] = $pk->getColumn();
+		}
+		$fks = array();
+		foreach($local_keys as $lk)
+		{
+			$fks[] = $lk->getColumn();
+		}
+		if(array_diff($fks, $fks))
+		{
+			// Primary keys are not sufficient for WHERE FILTER
+			
+			// Build the filter which will delete the objects determined by the subquery
+			$filter = array();
+			foreach($local->getPrimaryKeys() as $key)
+			{
+				$filter[] = $db->protectIdentifiers('n.'.$key->getColumn().' = o.'.$key->getColumn());
+			}
+			
+			return '$this->db->query(\'DELETE '.addcslashes($db->protectIdentifiers($db->dbprefix.$this->getLinkTable()), "'").' FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$this->getLinkTable()), "'").',
+(SELECT n.* FROM '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' AS n,
+(\'.'.$query_var.'->getSQL().\') AS o WHERE '.implode(' AND', $filter).')) AS '.addcslashes($db->protecIdentifiers($local->getTable()), "'").' WHERE ' . implode(' AND ', $cols).');';
+		}
+		else
+		{
+			// Primary keys are sufficient
+			return '$this->db->query(\'DELETE '.addcslashes($db->protectIdentifiers($db->dbprefix.$this->getLinkTable()), "'").' FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$this->getLinkTable()), "'").',
+(\'.'.$query_var.'->getSQL().\') AS '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' WHERE ' . implode(' AND ', $cols).'\');';
+		}
 	}
 	
 	// ------------------------------------------------------------------------
