@@ -370,7 +370,68 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$k).' = '.$db->escape($v), "'");
 		}
 		
-		return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode(' AND ', $cols). ');';
+		return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode('.\' AND ', $cols). ');';
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function getUnlinkQueryRelationCode($query_var)
+	{
+		$db = $this->relation->getParentDescriptor()->getConnection();
+		$local = $this->relation->getParentDescriptor();
+		$related = $this->relation->getRelatedDescriptor();
+		
+		list($local_keys, $foreign_keys) = $this->getKeys();
+		
+		// build foreign key conditions
+		$cols = array();
+		$set = array();
+		$c = count($local_keys);
+		for($i = 0; $i < $c; $i++)
+		{
+			$lprop = $local_keys[$i];
+			$fprop = $foreign_keys[$i];
+			
+			$cols[] = addcslashes($db->protectIdentifiers($related->getTable().'.'.$fprop->getColumn().' = '.$local->getTable().'.'.$lprop->getColumn()), "'");
+			$set[] = addcslashes($db->protectIdentifiers($related->getTable().'.'.$fprop->getColumn()), "'").' = NULL';
+		}
+		
+		// add extra conditions
+		foreach($this->extra_conds as $k => $v)
+		{
+			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$k).' = '.$db->escape($v), "'");
+		}
+		
+		// Check if we need additional columns
+		$pks = array();
+		foreach($local->getPrimaryKeys() as $pk)
+		{
+			$pks[] = $pk->getColumn();
+		}
+		$fks = array();
+		foreach($local_keys as $lk)
+		{
+			$fks[] = $lk->getColumn();
+		}
+		
+		if(array_diff($pks, $fks) OR array_diff($pks, $fks))
+		{
+			// Primary keys are not sufficient for WHERE FILTER
+			
+			// Build the filter which will delete the objects determined by the subquery
+			$filter = array();
+			foreach($local->getPrimaryKeys() as $key)
+			{
+				$filter[] = $db->protectIdentifiers('n.'.$key->getColumn().' = o.'.$key->getColumn());
+			}
+			
+			return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").', (SELECT n.* FROM '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' AS n, (\'.'.$query_var.'->getSQL().\') AS o WHERE '.implode(' AND', $filter).') AS  '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode(' AND ', $cols). '\');';
+		}
+		else
+		{
+			// Primary keys are sufficient for WHERE filter
+			return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").', (\'.'.$query_var.'->getSQL().\') AS  '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode(' AND ', $cols). '\');';
+		}
 	}
 	
 	// ------------------------------------------------------------------------

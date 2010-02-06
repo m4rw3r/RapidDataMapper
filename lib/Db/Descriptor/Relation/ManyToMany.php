@@ -477,6 +477,14 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().'))
 	}
 	
 	// ------------------------------------------------------------------------
+
+	public function getUnlinkQueryRelationCode($query_var)
+	{
+		// TODO: Code
+		return '';
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Returns a list of the keys to use linking the object to the link table.

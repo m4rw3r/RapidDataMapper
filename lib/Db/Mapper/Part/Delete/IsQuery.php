@@ -18,7 +18,7 @@ class Db_Mapper_Part_Delete_IsQuery extends Db_CodeBuilder_Container
 		{
 			if($rel->getOnDeleteAction() == Db_Descriptor::SET_NULL)
 			{
-				
+				$this->addPart($rel->getUnlinkQueryRelationCode('$object'));
 			}
 		}
 		

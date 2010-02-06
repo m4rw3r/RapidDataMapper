@@ -71,6 +71,13 @@ class Db_Descriptor_Relation_BelongsTo extends Db_Descriptor_Relation_HasOne
 	}
 	
 	// ------------------------------------------------------------------------
+
+	public function getUnlinkQueryRelationCode($query_var)
+	{
+		return '';
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	protected function getKeys()
 	{
