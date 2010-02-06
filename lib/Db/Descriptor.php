@@ -50,6 +50,10 @@ class Db_Descriptor
 	 * Constant telling Db_Descriptor_Relation that it should set foreign keys to NULL ON DELETE.
 	 */
 	const SET_NULL = 10;
+	/**
+	 * Constant telling Db_Descriptor_Relation that it should do nothing with related rows ON DELETE.
+	 */
+	const NOTHING = 11;
 	
 	/**
 	 * The class this object describes.
