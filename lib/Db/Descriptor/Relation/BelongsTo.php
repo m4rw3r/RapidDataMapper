@@ -64,6 +64,13 @@ class Db_Descriptor_Relation_BelongsTo extends Db_Descriptor_Relation_HasOne
 	}
 	
 	// ------------------------------------------------------------------------
+
+	public function getUnlinkObjectRelationCode($object_var)
+	{
+		return '';
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	protected function getKeys()
 	{

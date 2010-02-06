@@ -38,27 +38,11 @@ class Db_Mapper_Part_Delete extends Db_CodeBuilder_Method
 	return false;
 }');
 		
-		// TODO: Call the unlink relation code for the relations which haven't been affected by the cascades
-		
 		// TODO: Add plugin support for extra deletes
 		
-		$filter = array();
-		foreach($descriptor->getPrimaryKeys() as $key)
-		{
-			$filter[] = $db->protectIdentifiers('td.'.$key->getColumn().' = rel.'.$key->getColumn());
-		}
+		$this->addPart(new Db_Mapper_Part_Delete_IsObject($descriptor));
 		
-		$this->addPart('if($object instanceof '.$descriptor->getClass().')
-{
-	$ret = $this->db->delete(\''.$descriptor->getTable().'\', $object->__id);
-}
-else
-{
-	$ret = $this->db->delete(array(\'td\' => \''.$descriptor->getTable().'\'))
-		->from(array(\'rel\' => $object))
-		->escape(false)->where(\''.implode('AND', $filter).'\')
-		->execute();
-}');
+		$this->addPart(new Db_Mapper_Part_Delete_IsQuery($descriptor));
 		
 		// HOOK: post_delete
 		$this->addPart($descriptor->getHookCode('post_delete', '$object', '$ret'));

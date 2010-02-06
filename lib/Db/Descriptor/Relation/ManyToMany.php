@@ -454,6 +454,30 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().'))
 	
 	// ------------------------------------------------------------------------
 
+	public function getUnlinkObjectRelationCode($object_var)
+	{
+		$db = $this->relation->getParentDescriptor()->getConnection();
+		$local = $this->relation->getParentDescriptor();
+		$related = $this->relation->getRelatedDescriptor();
+		
+		list($local_keys, $link_local_keys) = $this->getKeysToLink();
+		
+		// filter by the owning object's primary keys
+		$cols = array();
+		$c = count($local_keys);
+		for($i = 0; $i < $c; $i++)
+		{
+			$lprop = $local_keys[$i];
+			$fprop = $link_local_keys[$i];
+			
+			$cols[] = addcslashes($db->protectIdentifiers($fprop), "'").' = \'.$this->db->escape('.$object_var.'->'.$lprop->getProperty().')';
+		}
+		
+		return '$this->db->query(\'DELETE FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$this->getLinkTable()), "'").' WHERE ' . implode('.\' AND ', $cols).');';
+	}
+	
+	// ------------------------------------------------------------------------
+	
 	/**
 	 * Returns a list of the keys to use linking the object to the link table.
 	 * 

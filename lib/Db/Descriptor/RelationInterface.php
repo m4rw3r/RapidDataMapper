@@ -87,6 +87,14 @@ interface Db_Descriptor_RelationInterface
 	 * @return object|string
 	 */
 	public function getSaveUpdateRelationCode($object_var);
+	
+	/**
+	 * Returns the code which sets the related objects' foreign keys to null.
+	 * 
+	 * @param  string
+	 * @return object|string
+	 */
+	public function getUnlinkObjectRelationCode($object_var);
 }
 
 /* End of file RelationInterface.php */
