@@ -242,8 +242,9 @@ class TrackDescriptor extends Db_Descriptor
 			</para>
 			
 			<para>
-				This method has two choices: <varname>Db_Descriptor::CASCADE</varname> or
-				<varname>Db_Descriptor::RESTRICT</varname>.
+				This method has three choices: <varname>Db_Descriptor::CASCADE</varname>,
+				<varname>Db_Descriptor::RESTRICT</varname> or
+				<varname>Db_Descriptor::SET_NULL</varname>.
 			</para>
 			
 			<para>
@@ -263,9 +264,17 @@ class TrackDescriptor extends Db_Descriptor
 			</para>
 			
 			<para>
-				By default nothing is performed on the delete
-				(well, except for the obvious which is to delete the object and then set
-				all related objects' foreign keys to <symbol>null</symbol>).
+				<varname>Db_Descriptor::SET_NULL</varname> is the default action performed
+				on delete.
+				And as it says, it sets the foreign keys of the related rows to
+				<symbol>null</symbol> instead of deleting them as
+				<varname>Db_Descriptor::CASCADE</varname> does.
+			</para>
+			
+			<para>
+				If you would like to avoid all types of actions performed on save
+				(except for the delete of the row in question, of course),
+				use the <varname>Db_Descriptor::NOTHING</varname>.
 			</para>
 			
 			<para>
@@ -315,17 +324,6 @@ class TrackDescriptor extends Db_Descriptor
 					actions.)
 				</para>
 			</tip>
-			
-			<note>
-				<para>
-					ON DELETE CASCADE is not implemented, this setting will not affect the generated code.
-				</para>
-				
-				<para>
-					I have made an old implementation (from early summer) that needs to be
-					ported to the new architecture.
-				</para>
-			</note>
 		</section>
 		
 		<section>

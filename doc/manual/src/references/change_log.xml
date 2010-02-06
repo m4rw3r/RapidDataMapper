@@ -45,6 +45,29 @@
 					<function linkend="funcref.Db_Descriptor_Relation-setOnDeleteAction">Db_Descriptor_Relation->setOnDeleteAction</function>.
 				</para>
 			</listitem>
+			
+			<listitem>
+				<para>
+					ON DELETE CASCADE support for the relations using
+					<function linkend="funcref.Db_Descriptor_Relation-setOnDeleteAction">Db_Descriptor_Relation->setOnDeleteAction</function>.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					ON DELETE SET NULL support for the relationships using
+					<function linkend="funcref.Db_Descriptor_Relation-setOnDeleteAction">Db_Descriptor_Relation->setOnDeleteAction</function>.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Added new constant <var>Db_Descriptor::NOTHING</var>, to use with
+					<function linkend="funcref.Db_Descriptor_Relation-setOnDeleteAction">Db_Descriptor_Relation->setOnDeleteAction</function>,
+					it will prevent it from doing anything.
+					It will not cascade or restrict nor set null.
+				</para>
+			</listitem>
 		</itemizedlist>
 		
 		<para>
@@ -72,6 +95,20 @@
 			<listitem>
 				<para>
 					ON DELETE RESTRICT is now marked as functional.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					ON DELETE CASCADE is now marked as functional.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					<function linkend="funcref.Db_Descriptor_Relation-setOnDeleteAction">Db_Descriptor_Relation->setOnDeleteAction</function>
+					now has two new settings: <var>Db_Descriptor::SET_NULL</var> and
+					<var>Db_Descriptor::NOTHING</var>.
 				</para>
 			</listitem>
 		</itemizedlist>
