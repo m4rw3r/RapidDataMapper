@@ -414,7 +414,7 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 			$fks[] = $lk->getColumn();
 		}
 		
-		if(array_diff($pks, $fks) OR array_diff($pks, $fks))
+		if(array_diff($fks, $pks))
 		{
 			// Primary keys are not sufficient for WHERE FILTER
 			
