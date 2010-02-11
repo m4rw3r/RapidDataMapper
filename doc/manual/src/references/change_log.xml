@@ -62,7 +62,7 @@
 			
 			<listitem>
 				<para>
-					Added new constant <var>Db_Descriptor::NOTHING</var>, to use with
+					Added new constant <varname>Db_Descriptor::NOTHING</varname>, to use with
 					<function linkend="funcref.Db_Descriptor_Relation-setOnDeleteAction">Db_Descriptor_Relation->setOnDeleteAction</function>,
 					it will prevent it from doing anything.
 					It will not cascade or restrict nor set null.
@@ -107,8 +107,8 @@
 			<listitem>
 				<para>
 					<function linkend="funcref.Db_Descriptor_Relation-setOnDeleteAction">Db_Descriptor_Relation->setOnDeleteAction</function>
-					now has two new settings: <var>Db_Descriptor::SET_NULL</var> and
-					<var>Db_Descriptor::NOTHING</var>.
+					now has two new settings: <varname>Db_Descriptor::SET_NULL</varname> and
+					<varname>Db_Descriptor::NOTHING</varname>.
 				</para>
 			</listitem>
 		</itemizedlist>
