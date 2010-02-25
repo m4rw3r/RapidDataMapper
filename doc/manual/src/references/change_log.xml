@@ -35,7 +35,9 @@
 		<itemizedlist>
 			<listitem>
 				<para>
-					Transaction support for the connection object.
+					Transaction support for the connection object, see
+					<link linkend="chapter.database_connection_objects.transactions">Database
+						Connection Objects: Transactions</link> for more information.
 				</para>
 			</listitem>
 			
@@ -74,6 +76,16 @@
 			Improvements:
 		</para>
 		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Made it possible to insert <symbol>NULL</symbol> in the database with
+					the ORM, this by removing <function>isset()</function> calls,
+					as the properties all should be declared in classes at compile-time.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
 		<para>
 			Bug fixes:
 		</para>
@@ -100,6 +112,14 @@
 		</para>
 		
 		<itemizedlist>
+			<listitem>
+				<para>
+					Added section
+					<link linkend="chapter.database_connection_objects.transactions">
+					Database Connection Objects: Transactions</link>
+				</para>
+			</listitem>
+			
 			<listitem>
 				<para>
 					ON DELETE RESTRICT is now marked as functional.
