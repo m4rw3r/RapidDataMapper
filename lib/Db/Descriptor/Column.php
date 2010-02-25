@@ -349,7 +349,7 @@ class Db_Descriptor_Column
 		// only assign the columns which are allowed to be updated
 		if(( ! $is_update && $this->isInsertable()) OR $is_update && $this->isUpdatable())
 		{
-			return 'isset('.$object_var.'->'.$this->getProperty().') && '.$dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFromObjectCode($object_var)).';';
+			return $dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFromObjectCode($object_var)).';';
 		}
 		else
 		{
