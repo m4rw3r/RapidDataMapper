@@ -41,13 +41,13 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'
 			$lprop = $local_keys[$i];
 			$fprop = $foreign_keys[$i];
 		
-			$arr[] = '$related->'.$fprop->getProperty().' = '.$object_var.'->'.$lprop->getProperty().';';
+			$arr[] = $object_var.'->'.$this->relation->getProperty().'->'.$fprop->getProperty().' = '.$object_var.'->'.$lprop->getProperty().';';
 		}
 		$str .= implode("\n\t", $arr);
 	
 		$str .= '
 		
-	Db::save($related);
+	Db::save('.$object_var.'->'.$this->relation->getProperty().');
 }';
 		
 		return $str;
