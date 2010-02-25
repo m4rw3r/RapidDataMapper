@@ -359,11 +359,100 @@ while($row = $result->next())
 		</section>
 	</section>
 	
+	<section xml:id="chapter.database_connection_objects.transactions">
+		<title>Transactions</title>
+		
+		<para>
+			Transactions are groupings of queries which can be done as so called
+			atomic-operations; either all goes through correctly or none does.
+			The operations are still sent to the database, and the database determines
+			if the transaction can be carried through or not.
+			If an error occurs, RapidDataMapper will throw an exception.
+		</para>
+		
+		<para>
+			To use transactions in RapidDataMapper, first wrap the code
+			which is to be made in a single transaction in a
+			<token>try</token>-<token>catch</token> block.
+			At the beginning of the <token>try</token> block, call
+			<function>transactionStart</function> on the appropriate connection object
+			(the object you are going to use when issuing the queries) to start
+			a transaction:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Connection-transactionStart">
+			<funcprototype>
+				<funcdef><type>bool</type> <function>Db_Connection->transactionStart</function></funcdef>
+				
+				<void />
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			Then after all the queries inside the <token>try</token>-block has been
+			made and the result is validated as correct (ie. the db contents are correct,
+			this is not strictly required as if no exceptions occurred then the db should
+			contain the correct data), call <function>transactionCommit</function> to
+			commit the operations to the database:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Connection-transactionCommit">
+			<funcprototype>
+				<funcdef><type>bool</type> <function>Db_Connection->transactionCommit</function></funcdef>
+				
+				<void />
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			If a database error occurs (for example writes or something similar,
+			also note that you can use other exceptions to jump to the <token>catch</token>
+			block), then the <token>catch</token>-block will be run, and here we need
+			to tell the database to throw away our changes, that is made with
+			<function>transactionRollback</function>:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db_Connection-transactionCommit">
+			<funcprototype>
+				<funcdef><type>bool</type> <function>Db_Connection->transactionCommit</function></funcdef>
+				
+				<void />
+			</funcprototype>
+		</funcsynopsis>
+		
+		<example>
+			<title>Common transaction usage</title>
+			
+			<programlisting language="php"><![CDATA[$db = Db::getConnection();
+
+try
+{
+	$db->transactionStart();
+	
+	// Issue some queries:
+	$db->query(...);
+	
+	// Everything went fine as we didn't get any exceptions
+	$db->transactionCommit();
+}
+catch(Db_Exception $e) // Only database exceptions this time, change to be able to use a more general scope of error
+{
+	// Something went wrong, revert our changes:
+	$db->transactionRollback();
+	
+	// Let the rest of the application handle the error:
+	throw $e;
+}]]></programlisting>
+		</example>
+	</section>
+	
 	<section xml:id="chapter.database_connection_objects.database_drivers">
 		<title>Database Drivers</title>
 		
 		<para>
 			Currently only MySQL is supported.
 		</para>
+		
+		<!-- TODO: Add more information here -->
 	</section>
 </chapter>
