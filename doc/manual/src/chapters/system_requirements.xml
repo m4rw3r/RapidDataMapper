@@ -20,6 +20,7 @@
 					PHP version 5.2 or better
 				</para>
 			</listitem>
+			
 			<listitem>
 				<para>
 					PHP Extensions:
@@ -31,11 +32,13 @@
 							Appropriate database extension for the database you have planned to use.
 						</para>
 					</listitem>
+					
 					<listitem>
 						<para>
 							<acronym>SPL</acronym> (Standard PHP Library), included by default in PHP.
 						</para>
 					</listitem>
+					
 					<listitem>
 						<para>
 							<acronym>PCRE</acronym> (Perl Compatible RegularExpressions), also included by default in PHP.

@@ -412,9 +412,9 @@ while($row = $result->next())
 			<function>transactionRollback</function>:
 		</para>
 		
-		<funcsynopsis xml:id="funcref.Db_Connection-transactionCommit">
+		<funcsynopsis xml:id="funcref.Db_Connection-transactionRollback">
 			<funcprototype>
-				<funcdef><type>bool</type> <function>Db_Connection->transactionCommit</function></funcdef>
+				<funcdef><type>bool</type> <function>Db_Connection->transactionRollback</function></funcdef>
 				
 				<void />
 			</funcprototype>
