@@ -567,23 +567,14 @@ final class Db
 			return true;
 		}
 		
-		$m = self::getMapper(get_class($object));
-		
 		if($property === false)
 		{
-			// no property, iterate all and bail out if we find a changed one
-			foreach($m->properties as $property => $column)
-			{
-				if(isset($object->__data[$column]) && ( ! isset($object->$property) OR $object->$property != $object->__data[$column]))
-				{
-					return true;
-				}
-			}
-			
-			return false;
+			return empty($object->__data) ? false : (Bool) array_diff($object->__data, (Array) $object);
 		}
 		else
 		{
+			$m = self::getMapper(get_class($object));
+			
 			// single property
 			if(isset($m->properties[$property]))
 			{
