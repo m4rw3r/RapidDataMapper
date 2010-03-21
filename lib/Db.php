@@ -61,7 +61,7 @@ final class Db
 	 * 
 	 * @var callable 
 	 */
-	protected static $mapper_descriptor_loader = null;
+	protected static $mapper_descriptor_loader = array();
 	
 	/**
 	 * Directory for containing the descriptors.
@@ -267,6 +267,10 @@ final class Db
 	 * be considered a failure, and RapidDataMapper will search elsewhere for
 	 * a descriptor.
 	 * 
+	 * Multiple descriptor loaders are supported, and they are called in the
+	 * order that they have been registered in. It goes through all of them
+	 * until one of them returns a descriptor.
+	 * 
 	 * @param  callable
 	 * @return void 
 	 */
@@ -277,7 +281,19 @@ final class Db
 			throw new InvalidArgumentException('Faulty syntax in supplied callable.');
 		}
 		
-		self::$mapper_descriptor_loader = $callable;
+		self::$mapper_descriptor_loader[] = $callable;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns an array with the registered descriptor loaders.
+	 * 
+	 * @return array
+	 */
+	public static function getDescriptorLoaders()
+	{
+		return self::$mapper_descriptor_loader;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -318,18 +334,21 @@ final class Db
 	 */
 	public static function getDescriptor($class)
 	{
-		if(isset(self::$mapper_descriptors[$class]))
+		// Strtolower so we're sure that we don't load it twice
+		$c = strtolower($class);
+		
+		if(isset(self::$mapper_descriptors[$c]))
 		{
-			return self::$mapper_descriptors[$class];
+			return self::$mapper_descriptors[$c];
 		}
 		
-		// check if we can call the mapper descriptor loader (also autoload it, and see if it can be called)
-		if(is_callable(self::$mapper_descriptor_loader))
+		// check if we can call a mapper descriptor loader (also autoload it, and see if it can be called)
+		foreach(self::$mapper_descriptor_loader as $loader)
 		{
 			// check that we get a Db_Descriptor object
-			if(($d = call_user_func(self::$mapper_descriptor_loader, $class)) instanceof Db_Descriptor)
+			if(is_callable($loader) && ($d = call_user_func($loader, $class)) instanceof Db_Descriptor)
 			{
-				return self::$mapper_descriptors[$class] = $d;
+				return self::$mapper_descriptors[$c] = $d;
 			}
 		}
 		
@@ -352,7 +371,8 @@ final class Db
 			}
 		}
 		
-		return self::$mapper_descriptors[$class] = new $klass();
+		// Create instance
+		return self::$mapper_descriptors[$c] = new $klass();
 	}
 	
 	// ------------------------------------------------------------------------
@@ -365,9 +385,11 @@ final class Db
 	 */
 	public static function getMapper($class)
 	{
-		if(isset(self::$mapper_list[$class]))
+		$c = strtolower($class);
+		
+		if(isset(self::$mapper_list[$c]))
 		{
-			return self::$mapper_list[$class];
+			return self::$mapper_list[$c];
 		}
 		// do not try to use the autoloader here, as the mappers aren't stored in the lib folder
 		elseif( ! class_exists($klass = 'Db_Compiled_'.$class.'Mapper', false))
@@ -420,7 +442,7 @@ final class Db
 			}
 		}
 		
-		return self::$mapper_list[$class] = new $klass();
+		return self::$mapper_list[$c] = new $klass();
 	}
 	
 	// ------------------------------------------------------------------------
