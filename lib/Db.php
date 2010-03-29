@@ -611,6 +611,113 @@ final class Db
 			}
 		}
 	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Dumps the content of the variable to output, for debugging.
+	 * 
+	 * This is a special clone of print_r() which ignores properties with __.
+	 * 
+	 * If the result is dumped to screen, it is htmlentities()ed and wrapped in <pre> tags.
+	 * 
+	 * @param  mixed
+	 * @param  bool		Determines if the output should be written or not
+	 * @param  int
+	 * @return void|string
+	 */
+	public static function dump($data, $return = false, $indent = 0)
+	{
+		$ind = str_repeat("    ", $indent);
+		
+		switch(gettype($data))
+		{
+			case 'bool':
+			case 'boolean':
+				$str = $data ? 'TRUE' : 'FALSE';
+				break;
+			
+			case 'NULL':
+				$str = 'NULL';
+				break;
+			
+			case 'integer':
+			case 'double':
+			case 'float':
+				$str = $data;
+				break;
+			
+			case 'string':
+				$str = "'$data'";
+				break;
+			
+			default:
+				if(is_object($data))
+				{
+					$keys = array();
+					
+					if( ! empty($data->__id))
+					{
+						foreach($data->__id as $k => $v)
+						{
+							$keys[] = $k.': '.$v;
+						}
+					}
+					else
+					{
+						$keys = array('new');
+					}
+					
+					$keys = implode(', ', $keys);
+					
+					$str = get_class($data) . " Object ($keys)\n$ind{\n";
+				}
+				else
+				{
+					$str = "Array\n$ind(\n";
+				}
+				
+				foreach((Array) $data as $k => $v)
+				{
+					if(strpos($k, '__') === 0)
+					{
+						continue;
+					}
+					
+					$modflag = is_object($data) && isset($data->__data[$k]) ? ($data->__data[$k] != $v ? '*' : '') : '';
+					
+					$str .= $ind . "    [$k]$modflag => " . self::dump($v, true, $indent + 1);
+				}
+				
+				if(is_object($data))
+				{
+					$str .= "$ind}";
+				}
+				else
+				{
+					$str .= "$ind)";
+				}
+		}
+		
+		$str .= "\n";
+		
+		if( ! $return)
+		{
+			if(strtolower(PHP_SAPI) == 'cli')
+			{
+				echo $str;
+			}
+			else
+			{
+				// prepare for output into HTML
+				echo '<pre>' . htmlentities($str) . '</pre>';
+			}
+		}
+		else
+		{
+			return $str;
+		}
+	}
 }
 
 
