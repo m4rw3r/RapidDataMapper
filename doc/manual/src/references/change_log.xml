@@ -12,6 +12,56 @@
 	<title>Change Log</title>
 	
 	<section>
+		<title>Version 0.6.1</title>
+		
+		<segmentedlist>
+			<?dbhtml list-presentation="list"?>
+			
+			<segtitle>Release Date</segtitle>
+			
+			<segtitle>Git tag</segtitle>
+			
+			<seglistitem>
+				<seg>In Development</seg>
+				
+				<seg>In Development</seg>
+			</seglistitem>
+		</segmentedlist>
+		
+		<para>New Features:</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Added a new method: <function linkend="funcref.Db-dump">Db::dump</function>
+					which dumps the content of objects and arrays of objects without their __*
+					properties.
+					It also displays a marker for changed properties on objects.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>Bug fixes:</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Fixed bug occurring when <function>Db_MapperQuery::related</function>
+					was called consecutively on the same object with relations sharing parts
+					of the same branch in the join tree (eg. "<literal>foo-bar</literal>" and
+					"<literal>foo-baz</literal>").
+				</para>
+				
+				<para>
+					This would cause an overwrite of the previous calls for the parts where they
+					share branches (so in the example above, "<literal>foo-*</literal>" would
+					disappear when calling "<literal>-&gt;related("foo-bar")</literal>").
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section>
 		<title>Version 0.6</title>
 		
 		<segmentedlist>
