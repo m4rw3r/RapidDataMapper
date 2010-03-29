@@ -244,7 +244,7 @@ class Db_MapperQuery extends Db_Query_Select
 				}
 				
 				// add to the relationship cascade
-				$curr_alias[$relation] = array();
+				isset($curr_alias[$relation]) OR $curr_alias[$relation] = array();
 				
 				// save the relationship class name
 				$this->mapped_objects[$old_alias.'-'.$relation] = $mapper->relations[$relation];
