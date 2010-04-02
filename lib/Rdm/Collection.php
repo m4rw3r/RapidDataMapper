@@ -51,7 +51,10 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * 
 	 * @return Rdm_Collection
 	 */
-	abstract public static function create();
+	public static function create()
+	{
+		throw new Exception('This method (Rdm_Collection::create()) has not been implemented. It should be implemented in child classes.');
+	}
 	
 	// ------------------------------------------------------------------------
 
@@ -63,7 +66,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public static function persist($object)
 	{
-		// TODO: Code, or abstract?
+		throw new Exception('This method (Rdm_Collection::persist()) has not been implemented. It should be implemented in child classes.');
 	}
 	
 	// ------------------------------------------------------------------------
@@ -76,7 +79,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public static function delete($object)
 	{
-		// TODO: Code, or abstract?
+		throw new Exception('This method (Rdm_Collection::delete()) has not been implemented. It should be implemented in child classes.');
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
