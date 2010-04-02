@@ -5,13 +5,11 @@
  * All rights reserved.
  */
 
-namespace Rdm\Util;
-
 /**
  * Utility class which handles the default RapidDataMapper class autoloading,
  * use if you do not have a compatible autoloader, see manual.
  */
-class Autoloader
+class Rdm_Util_Autoloader
 {
 	private static $library_dir;
 	
@@ -44,12 +42,12 @@ class Autoloader
 	 */
 	public static function autoload($class)
 	{
-		if(strpos($class, 'Rdm\\') !== 0)
+		if(strpos($class, 'Rdm_') !== 0)
 		{
 			return false;
 		}
 		
-		$file = self::$library_dir.strtr($class, '\\_', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR).'.php';
+		$file = self::$library_dir.strtr($class, '_', DIRECTORY_SEPARATOR).'.php';
 		
 		if(file_exists($file))
 		{

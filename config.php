@@ -5,9 +5,11 @@
  * All rights reserved.
  */
 
+error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
+
 // Register RapidDataMapper's default autoloader implementation
 require 'lib/Rdm/Util/Autoloader.php';
-\Rdm\Util\Autoloader::init();
+Rdm_Util_Autoloader::init();
 
 // Register the example loader
 spl_autoload_register('exampleloader');

@@ -5,12 +5,10 @@
  * All rights reserved.
  */
 
-namespace Rdm\Collection;
-
 /**
- * Object handling filter generation for \Rdm\Collection objects.
+ * Object handling filter generation for Rdm_Collection objects.
  */
-class Filter
+class Rdm_Collection_Filter
 {
 	/**
 	 * A list of filters which are to be imploded to a filter string.
@@ -22,7 +20,7 @@ class Filter
 	/**
 	 * The parent object, used for method chaining.
 	 * 
-	 * @var \Rdm\Collection\Base|\Rdm\Collection\Filter
+	 * @var Rdm_Collection|Rdm_Collection_Filter
 	 */
 	protected $parent = null;
 	
@@ -51,7 +49,7 @@ class Filter
 	/**
 	 * Ends the current filter block.
 	 * 
-	 * @return \Rdm\Collection\Base|\Rdm\Collection\Filter
+	 * @return Rdm_Collection|Rdm_Collection_Filter
 	 */
 	public function end()
 	{
@@ -64,7 +62,7 @@ class Filter
 	 * Starts a subfilter, it will be of the same class as this filter and it will
 	 * be nested inside a parenthesis.
 	 * 
-	 * @return \Rdm\Collection\Filter
+	 * @return Rdm_Collection_Filter
 	 */
 	public function has()
 	{
@@ -74,7 +72,7 @@ class Filter
 			throw new \Exception('Object is locked');
 		}
 		
-		$c = get_called_class();
+		$c = get_class($this);
 		
 		empty($this->filters) OR $this->filters[] = 'AND';
 		
@@ -87,7 +85,7 @@ class Filter
 	 * Starts a subfilter, it will be of the same class as this filter and it will
 	 * be nested inside a parenthesis, it will be preceded by OR if there is a previous condition.
 	 * 
-	 * @return \Rdm\Collection\Filter
+	 * @return Rdm_Collection_Filter
 	 */
 	public function orHas()
 	{
@@ -97,7 +95,7 @@ class Filter
 			throw new \Exception('Object is locked');
 		}
 		
-		$c = get_called_class();
+		$c = get_class($this);
 		
 		empty($this->filters) OR $this->filters[] = 'OR';
 		
@@ -133,5 +131,5 @@ class Filter
 }
 
 
-/* End of file index.php */
-/* Location: ./experimental/index.php */
+/* End of file Filter.php */
+/* Location: ./lib/Rdm/Collection */

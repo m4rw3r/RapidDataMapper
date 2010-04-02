@@ -8,7 +8,7 @@
 /**
  * 
  */
-class ExampleFilter extends \Rdm\Collection\Filter
+class ExampleFilter extends Rdm_Collection_Filter
 {
 	
 	// ------------------------------------------------------------------------

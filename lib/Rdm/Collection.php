@@ -5,15 +5,11 @@
  * All rights reserved.
  */
 
-namespace Rdm;
-
 /**
  * 
  */
-abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregate
+abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggregate
 {
-	const FILTER_CLASS = '\\Rdm\\Collection\\Filter';
-	
 	/**
 	 * If this flag is true, this object has already been used with entity objects,
 	 * therefore it can no longer use filters.
@@ -37,14 +33,14 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 	/**
 	 * A list of filter objects
 	 * 
-	 * @var array
+	 * @var array(Collection_Filter)
 	 */
 	protected $filters = array();
 	
 	/**
 	 * The array of data objects.
 	 * 
-	 * @var array
+	 * @var array(Object)
 	 */
 	protected $contents = array();
 	
@@ -53,14 +49,9 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 	/**
 	 * Creates a new instance of this class.
 	 * 
-	 * @return \Rdm\Collection\Base
+	 * @return Rdm_Collection
 	 */
-	public static function create()
-	{
-		$c = get_called_class();
-		
-		return new $c();
-	}
+	abstract public static function create();
 	
 	// ------------------------------------------------------------------------
 
@@ -83,57 +74,62 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 	 * @param  Object
 	 * @return Object
 	 */
-	public function delete($object)
+	public static function delete($object)
 	{
-		# code...
+		// TODO: Code, or abstract?
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
 	//  FILTER RELATED METHODS                                               //
 	///////////////////////////////////////////////////////////////////////////
 	
+	/**
+	 * Creates a new instance of the appropriate Rdm_Collection_Filter.
+	 * 
+	 * @return Rdm_Collection_Filter
+	 */
+	abstract protected function createFilterInstance();
+	
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Creates a new filter object which will be filtering the future contents
+	 * of this collection, if there already is a filter, AND will be prepended.
 	 * 
-	 * 
-	 * @return 
+	 * @return Rdm_Collection_Filter
 	 */
 	public function has()
 	{
 		if($this->is_locked)
 		{
 			// TODO: Better exception message and proper exception class
-			throw new \Exception('Object is locked');
+			throw new Exception('Object is locked');
 		}
-		
-		$c = static::FILTER_CLASS;
 		
 		empty($this->filters) OR $this->filters[] = 'AND';
 		
-		return $this->filters[] = new $c($this);
+		return $this->filters[] = $this->createFilterInstance();
 	}
 	
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Creates a new filter object which will be filtering the future contents
+	 * of this collection, if there already is a filter, OR will be prepended.
 	 * 
-	 * 
-	 * @return 
+	 * @return Rdm_Collection_Filter
 	 */
 	public function orHas()
 	{
 		if($this->is_locked)
 		{
 			// TODO: Better exception message and proper exception class
-			throw new \Exception('Object is locked');
+			throw new Exception('Object is locked');
 		}
-		
-		$c = static::FILTER_CLASS;
 		
 		empty($this->filters) OR $this->filters[] = 'OR';
 		
-		return $this->filters[] = new $c($this);
+		return $this->filters[] = $this->createFilterInstance();
 	}
 	
 	// ------------------------------------------------------------------------
@@ -145,6 +141,7 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 	 */
 	public function __toString()
 	{
+		// TODO: Replace or remove, this is currently for debug
 		return implode(' ', $this->filters);
 	}
 	
@@ -220,6 +217,8 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 		return $num;
 	}
 	
+	// ------------------------------------------------------------------------
+	
 	/**
 	 * This method should populate this object with data in respect to the $filters parameter.
 	 * 
@@ -234,9 +233,12 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns true if this collection is empty.
 	 * 
+	 * NOTE: PHP's empty() function will always return true because collections
+	 * are objects.
 	 * 
-	 * @return 
+	 * @return boolean
 	 */
 	public function isEmpty()
 	{
@@ -298,7 +300,8 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 	public function offsetSet($offset, $value)
 	{
 		// TODO: Implement?
-		throw \Exception('Not yet implemented');
+		// $collection[] = value; gives a call with (null, value), can be usable as a shortcut for add()
+		throw new Exception('Not yet implemented');
 	}
 	
 	// ------------------------------------------------------------------------
@@ -310,8 +313,8 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 	 */
 	public function offsetUnset($offset)
 	{
-		// TODO: Implement?
-		throw \Exception('Not yet implemented');
+		// TODO: Implement? Usable as a shortcut for remove()
+		throw new Exception('Not yet implemented');
 	}
 	
 	// ------------------------------------------------------------------------
@@ -323,7 +326,7 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 	 */
 	public function count()
 	{
-		// TODO: COUNT() query instead of populate?
+		// TODO: COUNT() query instead of populate if we haven't loaded objects?
 		$this->is_populated OR $this->populate();
 		
 		return count($this->contents);
@@ -340,7 +343,7 @@ abstract class Collection implements \ArrayAccess, \Countable, \IteratorAggregat
 	{
 		$this->is_populated OR $this->populate();
 		
-		return new \ArrayIterator($this->contents);
+		return new ArrayIterator($this->contents);
 	}
 }
 

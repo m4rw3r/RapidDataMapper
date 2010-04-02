@@ -8,9 +8,17 @@
 /**
  * 
  */
-class ExampleCollection extends \Rdm\Collection
+class ExampleCollection extends Rdm_Collection
 {
-	const FILTER_CLASS = 'ExampleFilter';
+	public static function create()
+	{
+		return new ExampleCollection();
+	}
+	
+	public function createFilterInstance()
+	{
+		return new ExampleFilter($this);
+	}
 	
 	public function populate()
 	{
