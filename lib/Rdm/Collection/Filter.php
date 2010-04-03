@@ -69,7 +69,7 @@ class Rdm_Collection_Filter
 		if($this->is_locked)
 		{
 			// TODO: Better exception message and proper exception class
-			throw new \Exception('Object is locked');
+			throw new Exception('Object is locked');
 		}
 		
 		$c = get_class($this);
@@ -92,7 +92,7 @@ class Rdm_Collection_Filter
 		if($this->is_locked)
 		{
 			// TODO: Better exception message and proper exception class
-			throw new \Exception('Object is locked');
+			throw new Exception('Object is locked');
 		}
 		
 		$c = get_class($this);
