@@ -1,0 +1,73 @@
+<?php
+/*
+ * Created by Martin Wernståhl on 2009-09-02.
+ * Copyright (c) 2009 Martin Wernståhl.
+ * All rights reserved.
+ */
+
+/**
+ * A decorator, to decorate an arbitrary object with new methods.
+ */
+abstract class Rdm_Util_Decorator
+{
+	/**
+	 * The object which is decorated.
+	 * 
+	 * @var object
+	 */
+	protected $decorated_object = null;
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets the object to decorate.
+	 * 
+	 * @param  object
+	 * @return void
+	 */
+	final public function setDecoratedObject($object)
+	{
+		$this->decorated_object = $object;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the object which is decorated.
+	 * 
+	 * @throws UnexpectedValueException
+	 * @return object
+	 */
+	final public function getDecoratedObject()
+	{
+		if( ! is_object($this->decorated_object))
+		{
+			throw new RuntimeException('No Object to decorate.');
+		}
+		
+		return $this->decorated_object;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Forwards uncatched method calls to the decorated object.
+	 * 
+	 * @param  string
+	 * @param  array
+	 * @return mixed
+	 */
+	public function __call($method, $params)
+	{
+		if(method_exists($this->decorated_object, $method) OR method_exists($this->decorated_object, '__call'))
+		{
+			return call_user_func_array(array($this->decorated_object, $method), $params);
+		}
+		
+		throw new BadMethodCallException($method);
+	}
+}
+
+
+/* End of file Decorator.php */
+/* Location: ./lib/Rdm/Util.php */

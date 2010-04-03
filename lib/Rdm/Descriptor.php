@@ -289,7 +289,7 @@ class Rdm_Descriptor
 	 */
 	public function getConnectionName()
 	{
-		return empty($this->db_conn) ? $this->db_conn_name : $this->getConnection()->getName();
+		return empty($this->db_conn) ? $this->db_conn_name : $this->db_conn->getName();
 	}
 	
 	// ------------------------------------------------------------------------
@@ -316,8 +316,7 @@ class Rdm_Descriptor
 	 */
 	public function getConnection()
 	{
-		// TODO: Change method on Rdm_Adapter
-		return empty($this->db_conn) ? Rdm_Adapter::getConnection($this->getConnectionName()) : $this->db_conn;
+		return empty($this->db_conn) ? Rdm_Adapter::getInstance($this->getConnectionName()) : $this->db_conn;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -565,10 +564,10 @@ class Rdm_Descriptor
 	 * // but $d2 decorates $d which in turn decorates $column
 	 * </code>
 	 * 
-	 * @param  Rdm_Decorator		A decorator decorating the object to replace
+	 * @param  Rdm_Util_Decorator		A decorator decorating the object to replace
 	 * @return bool
 	 */
-	public function addDecorator(Rdm_Decorator $decorator)
+	public function addDecorator(Rdm_Util_Decorator $decorator)
 	{
 		// TODO: Support adding a chain of decorators without having to call addDecorator() for each decorator in the chain?
 		$o = $decorator->getDecoratedObject();
@@ -606,10 +605,10 @@ class Rdm_Descriptor
 	 * // $a -> $c -> $column
 	 * </code>
 	 * 
-	 * @param  Rdm_Decorator
+	 * @param  Rdm_Util_Decorator
 	 * @return bool
 	 */
-	public function removeDecorator(Rdm_Decorator $decorator)
+	public function removeDecorator(Rdm_Util_Decorator $decorator)
 	{
 		$o = $decorator->getDecoratedObject();
 		
@@ -621,7 +620,7 @@ class Rdm_Descriptor
 				$old = null;
 				
 				// iterate the decorator chain
-				while($p instanceof Rdm_Decorator && $p !== $decorator)
+				while($p instanceof Rdm_Util_Decorator && $p !== $decorator)
 				{
 					$old = $p;
 					$p = $p->getDecoratedObject();

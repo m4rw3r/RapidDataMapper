@@ -66,7 +66,7 @@ class Rdm_Config
 	{
 		if(is_array($name))
 		{
-			self::$adapter_configs = array_merge(self::$conn_configs, $name);
+			self::$adapter_configs = array_merge(self::$adapter_configs, $name);
 		}
 		elseif(empty($configuration))
 		{

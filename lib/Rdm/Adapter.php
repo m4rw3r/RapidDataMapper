@@ -36,7 +36,9 @@ abstract class Rdm_Adapter
 		{
 			$config = Rdm_Config::getAdapterConfiguration($name);
 			
-			self::$instances[$name] = new {$config['class']}($name, $config);
+			$c = $config['class'];
+			
+			self::$instances[$name] = new $c($name, $config);
 			
 			if( ! self::$instances[$name] instanceof Rdm_Adapter)
 			{
@@ -54,10 +56,17 @@ abstract class Rdm_Adapter
 	 * 
 	 * @return array(Rdm_Adapter)
 	 */
-	public function getAllInstances()
+	public static function getAllInstances()
 	{
 		return self::$instances;
 	}
+	
+	/**
+	 * The name of this database connection configuration.
+	 * 
+	 * @var string
+	 */
+	protected $name;
 	
 	// ------------------------------------------------------------------------
 
@@ -70,7 +79,20 @@ abstract class Rdm_Adapter
 	 */
 	protected function __construct($name, array $options)
 	{
-		# code...
+		$this->name = $name;
+		// TODO: Code
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name of this database connection's configuration.
+	 * 
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
 	}
 }
 
