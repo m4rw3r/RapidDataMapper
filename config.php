@@ -7,6 +7,14 @@
 
 error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
 
+$mapper_cache_dir = dirname(__FILE__).DIRECTORY_SEPARATOR.'cache';
+
+// Remove all the cached mappers
+foreach(glob($mapper_cache_dir.DIRECTORY_SEPARATOR.'*.php') as $f)
+{
+	@unlink($f);
+}
+
 // Register RapidDataMapper's default autoloader implementation
 require 'lib/Rdm/Util/Autoloader.php';
 Rdm_Util_Autoloader::init();
@@ -28,6 +36,9 @@ Rdm_Config::setAdapterConfiguration('default', array(
 	'database' => 'test',
 	'class' => 'Rdm_Adapter_MySQL'
 	));
+
+Rdm_Config::setCacheMappers(true);
+Rdm_Config::setMapperCacheDir($mapper_cache_dir);
 
 /* End of file config.php */
 /* Location: . */

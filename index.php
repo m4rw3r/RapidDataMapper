@@ -17,7 +17,7 @@ class ExampleDescriptor extends Rdm_Descriptor
 	}
 }
 
-$c = new \ExampleCollection;
+$c = ExampleCollection::create();
 
 $c->has()
 		->a('b')
