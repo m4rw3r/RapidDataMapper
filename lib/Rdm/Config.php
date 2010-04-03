@@ -138,7 +138,7 @@ class Rdm_Config
 	 */
 	public static function setCacheMappers($value = true)
 	{
-		self::$mappers_compile = $value;
+		self::$mappers_cache = $value;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -163,7 +163,7 @@ class Rdm_Config
 	 */
 	public static function setMapperCacheDir($path)
 	{
-		self::$mapper_cache_dir = $path;
+		self::$mappers_cache_dir = $path;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -175,7 +175,7 @@ class Rdm_Config
 	 */
 	public static function getMapperCacheDir()
 	{
-		return self::$mapper_cache_dir;
+		return self::$mappers_cache_dir;
 	}
 	
 	// ------------------------------------------------------------------------
