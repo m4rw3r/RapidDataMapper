@@ -8,7 +8,7 @@
 /**
  * Exception for the event that an error occurs during query building.
  */
-class Rdm_Query_BuilderException extends Rdm_Exception
+class Rdm_Query_BuilderException extends Exception implements Rdm_Exception
 {
 	/**
 	 * The error message.

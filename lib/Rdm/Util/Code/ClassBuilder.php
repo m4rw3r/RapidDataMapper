@@ -8,7 +8,7 @@
 /**
  * A class which generates code for a class.
  */
-class Rdm_Util_Code_ClassBuilder extends Container
+class Rdm_Util_Code_ClassBuilder extends Rdm_Util_Code_Container
 {
 	public $name = '';
 	
