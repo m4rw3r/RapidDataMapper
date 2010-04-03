@@ -12,6 +12,10 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 {
 	public $name;
 	
+	protected $is_static = false;
+	
+	protected $is_public = true;
+	
 	protected $param_list;
 	
 	
@@ -42,6 +46,33 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets the visibility of the generated method, true = public, false = protected,
+	 * default = true;
+	 * 
+	 * @param  boolean
+	 * @return void
+	 */
+	public function setPublic($value = true)
+	{
+		$this->is_public = $value;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets if the generated method is static or not, default = false.
+	 * 
+	 * @param  boolean
+	 * @return void
+	 */
+	public function setStatic($value = true)
+	{
+		$this->is_static = $value;
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	public function getName()
 	{
@@ -52,7 +83,11 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	
 	public function __toString()
 	{
-		$head = "public function $this->name($this->param_list)\n{";
+		$head = $this->is_public ? 'public' : 'protected';
+		
+		$head .= $this->is_static ? ' static' : '';
+		
+		$head .= " function $this->name($this->param_list)\n{";
 		
 		$contents = implode("\n\n", $this->content);
 		
