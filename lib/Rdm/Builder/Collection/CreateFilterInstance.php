@@ -14,7 +14,7 @@ class Rdm_Builder_Collection_CreateFilterInstance extends Rdm_Util_Code_MethodBu
 	{
 		$this->setMethodName('createFilterInstance');
 		
-		$this->addPart('return new '.$desc->getClass().'CollectionFilter;');
+		$this->addPart('return new '.$desc->getClass().'CollectionFilter($this);');
 	}
 }
 
