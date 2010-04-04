@@ -18,5 +18,5 @@ class Rdm_Builder_CollectionFilter extends Rdm_Util_Code_ClassBuilder
 }
 
 
-/* End of file Collection.php */
+/* End of file CollectionFilter.php */
 /* Location: ./lib/Rdm/Builder */

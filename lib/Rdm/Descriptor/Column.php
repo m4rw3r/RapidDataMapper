@@ -339,22 +339,27 @@ class Rdm_Descriptor_Column
 	 * isset($obj->id) && $data['PK_id'] = (Int) $obj->id;
 	 * </code>
 	 * 
+	 * Note: Only assign the columns which are allowed to be updated!
+	 * 
 	 * @param  string	The name of the variable holding an instance of the described object.
 	 * @param  string	The name of the variable holding an associative array to assign the data to.
-	 * @param  bool		If it is an update which the code is fetching data for
 	 * @return string
 	 */
-	public function getFromObjectToDataCode($object_var, $dest_var, $is_update = false)
+	public function getFromObjectToDataCode($object_var, $dest_var)
 	{
-		// only assign the columns which are allowed to be updated
-		if(( ! $is_update && $this->isInsertable()) OR $is_update && $this->isUpdatable())
-		{
-			return $dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFromObjectCode($object_var)).';';
-		}
-		else
-		{
-			return '';
-		}
+		return $dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFromObjectCode($object_var)).';';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * 
+	 * 
+	 * @return 
+	 */
+	public function getFromObjectToSetSQLValueCode($object_var)
+	{
+		return $this->getCastFromPhpCode($this->getFromObjectCode($object_var));
 	}
 	
 	// ------------------------------------------------------------------------

@@ -14,6 +14,9 @@ class Rdm_Builder_Main extends Rdm_Util_Code_Container
 	{
 		$this->addPart(new Rdm_Builder_Collection($descriptor));
 		$this->addPart(new Rdm_Builder_CollectionFilter($descriptor));
+		$this->addPart(new Rdm_Builder_UnitOfWork($descriptor));
+		
+		$this->addPart($descriptor->getClass().'Collection::setUnitOfWork(new '.$descriptor->getClass().'UnitOfWork);');
 	}
 	
 	// ------------------------------------------------------------------------

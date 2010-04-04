@@ -156,6 +156,19 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Sets the unit of work instance to use for this collection.
+	 * 
+	 * @param  Rdm_UnitOfWork
+	 * @return void
+	 */
+	public static function setUnitOfWork(Rdm_UnitOfWork $u)
+	{
+		throw new Exception('This method (Rdm_Collection::setUnitOfWork()) has not been implemented. It should be implemented in child classes.');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Creates a new instance of this class.
 	 * 
 	 * @return Rdm_Collection

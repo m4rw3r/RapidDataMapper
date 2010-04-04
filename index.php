@@ -14,8 +14,37 @@ class ExampleDescriptor extends Rdm_Descriptor
 	public function __construct()
 	{
 		$this->add($this->newPrimaryKey('id'));
+		
+		$this->add($this->newColumn('title'));
 	}
 }
+
+class Example
+{
+	public $id;
+	public $title;
+}
+
+// just create an instance to force reload of the generated objects
+ExampleCollection::create();
+
+// Create a dummy object
+$e = new Example;
+$e->id = 34;
+$e->title = 'foobar';
+$e->__id = array('id' => 34);
+$e->__data['title'] = 'folbar';
+
+// Create a unit of work to test
+$u = new ExampleUnitOfWork;
+
+$u->addEntity($e, 'someuid');
+$u->addForDelete($e, 'some2');
+
+$u->commit();
+
+// Show the object data
+var_dump($e);
 
 $c = ExampleCollection::create();
 
