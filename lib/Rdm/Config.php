@@ -286,8 +286,8 @@ class Rdm_Config
 		// check if we can call a mapper descriptor loader (also autoload it, and see if it can be called)
 		foreach(self::$descriptor_loaders as $loader)
 		{
-			// check that we get a Db_Descriptor object
-			if(is_callable($loader) && ($d = call_user_func($loader, $class)) instanceof Db_Descriptor)
+			// check that we get a Rdm_Descriptor object
+			if(is_callable($loader) && ($d = call_user_func($loader, $class)) instanceof Rdm_Descriptor)
 			{
 				// We've got a working instance, save and return
 				return self::$descriptors[$c] = $d;
