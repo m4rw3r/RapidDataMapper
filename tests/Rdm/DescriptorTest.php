@@ -5,8 +5,6 @@
  * All rights reserved.
  */
 
-require_once 'PHPUnit/Framework.php';
-
 /**
  * @covers Rdm_Descriptor
  * @runTestsInSeparateThreads
@@ -332,43 +330,43 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 	
 	// ------------------------------------------------------------------------
 	
-	public function testGetConnectionName()
+	public function testGetAdapterName()
 	{
 		$desc = new Rdm_Descriptor();
 		
-		$this->assertFalse($desc->getConnectionName(), 'Default value of getConnectionName() is false');
+		$this->assertFalse($desc->getAdapterName(), 'Default value of getAdapterName() is false');
 		
-		$desc->setConnectionName('default');
+		$desc->setAdapterName('default');
 		
-		$this->assertSame('default', $desc->getConnectionName());
+		$this->assertSame('default', $desc->getAdapterName());
 	}
-	public function testGetConnectionName2()
+	public function testGetAdapterName2()
 	{
 		$desc = new Rdm_Descriptor();
 		
 		$c = $this->getMock('Rdm_Adapter', array('getName'), array(), '', false);
 		$c->expects($this->once())->method('getName')->will($this->returnValue('mock'));
-		$desc->setConnection($c);
+		$desc->setAdapter($c);
 		
-		$this->assertEquals('mock', $desc->getConnectionName());
+		$this->assertEquals('mock', $desc->getAdapterName());
 	}
 	
 	// ------------------------------------------------------------------------
 	
-	public function testGetConnection()
+	public function testGetAdapter()
 	{
 		$desc = new Rdm_Descriptor();
 		
-		$this->assertTrue($desc->getConnection() instanceof Rdm_Adapter, 'Assert that we get a connection object');
-		$this->assertEquals('default', $desc->getConnection()->getName());
-		$this->assertSame(Rdm_Adapter::getInstance(), $desc->getConnection());
+		$this->assertTrue($desc->getAdapter() instanceof Rdm_Adapter, 'Assert that we get a connection object');
+		$this->assertEquals('default', $desc->getAdapter()->getName());
+		$this->assertSame(Rdm_Adapter::getInstance(), $desc->getAdapter());
 		
 		$c = $this->getMock('Rdm_Adapter', null, array('mock', array()), '', false);
-		$desc->setConnection($c);
+		$desc->setAdapter($c);
 		
-		$this->assertSame($c, $desc->getConnection());
+		$this->assertSame($c, $desc->getAdapter());
 	}
-	public function testGetConnection2()
+	public function testGetAdapter2()
 	{
 		$desc = new Rdm_Descriptor();
 		
@@ -380,10 +378,10 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 				)
 			);
 		
-		$desc->setConnectionName('Mock');
+		$desc->setAdapterName('Mock');
 		
-		$this->assertEquals('Mock', $desc->getConnection()->getName());
-		$this->assertSame(Rdm_Adapter::getInstance('Mock'), $desc->getConnection());
+		$this->assertEquals('Mock', $desc->getAdapter()->getName());
+		$this->assertSame(Rdm_Adapter::getInstance('Mock'), $desc->getAdapter());
 	}
 	
 	// ------------------------------------------------------------------------

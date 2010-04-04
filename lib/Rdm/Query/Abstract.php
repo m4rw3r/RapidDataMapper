@@ -36,7 +36,7 @@ class Rdm_Query_Abstract
 	/**
 	 * The database driver instance.
 	 * 
-	 * @var Rdm_Connection
+	 * @var Rdm_Adapter
 	 */
 	protected $_instance;
 	

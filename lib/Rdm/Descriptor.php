@@ -287,7 +287,7 @@ class Rdm_Descriptor
 	 * 
 	 * @return string
 	 */
-	public function getConnectionName()
+	public function getAdapterName()
 	{
 		return empty($this->db_conn) ? $this->db_conn_name : $this->db_conn->getName();
 	}
@@ -300,7 +300,7 @@ class Rdm_Descriptor
 	 * @param  string
 	 * @return self
 	 */
-	public function setConnectionName($name)
+	public function setAdapterName($name)
 	{
 		$this->db_conn_name = $name;
 		
@@ -314,9 +314,9 @@ class Rdm_Descriptor
 	 * 
 	 * @return Rdm_Adapter
 	 */
-	public function getConnection()
+	public function getAdapter()
 	{
-		return empty($this->db_conn) ? Rdm_Adapter::getInstance($this->getConnectionName()) : $this->db_conn;
+		return empty($this->db_conn) ? Rdm_Adapter::getInstance($this->getAdapterName()) : $this->db_conn;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -327,7 +327,7 @@ class Rdm_Descriptor
 	 * @param  Rdm_Adapter
 	 * @return self
 	 */
-	public function setConnection(Rdm_Adapter $conn)
+	public function setAdapter(Rdm_Adapter $conn)
 	{
 		$this->db_conn = $conn;
 		
@@ -893,7 +893,7 @@ class Rdm_Descriptor
 		foreach(array_merge($this->getColumns(), $this->getPrimaryKeys()) as $col)
 		{
 			// get select code, trim() to get rid of unnecessary spaces
-			$code = $col->getSelectCode($table, $alias, $this->getConnection());
+			$code = $col->getSelectCode($table, $alias, $this->getAdapter());
 			$code = trim($code, ' ');
 			
 			// do we have some code to add? (to prevent repeated commas)

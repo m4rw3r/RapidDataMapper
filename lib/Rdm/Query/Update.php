@@ -32,7 +32,7 @@ class Rdm_Query_Update extends Rdm_Query_Abstract
 	public $data = array();
 	
 	/**
-	 * @param Rdm_Connection
+	 * @param Rdm_Adapter
 	 * @param string|array
 	 */
 	function __construct($db_instance, $table)
