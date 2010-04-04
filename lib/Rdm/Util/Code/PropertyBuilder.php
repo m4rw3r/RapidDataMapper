@@ -10,10 +10,15 @@
  */
 class Rdm_Util_Code_PropertyBuilder extends Rdm_Util_Code_Container
 {
-	function __construct($name, $data = null)
+	protected $name;
+	protected $data;
+	protected $visibility;
+	
+	function __construct($name, $data = null, $visibility = 'public')
 	{
 		$this->name = $name;
 		$this->data = $data;
+		$this->visibility = $visibility;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -27,7 +32,7 @@ class Rdm_Util_Code_PropertyBuilder extends Rdm_Util_Code_Container
 	
 	public function __toString()
 	{
-		return "public \$$this->name".(is_null($this->data) ? ';' : " = ".self::dump_variable($this->data));
+		return "{$this->visibility} \$$this->name".(is_null($this->data) ? ';' : " = ".self::dump_variable($this->data));
 	}
 	
 	// ------------------------------------------------------------------------
