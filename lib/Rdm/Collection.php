@@ -356,6 +356,50 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	///////////////////////////////////////////////////////////////////////////
 	
 	/**
+	 * Converts the supplied entity to an XML fragment.
+	 * 
+	 * Format:
+	 * <code>
+	 * <singular>
+	 *     <property>value</property>
+	 * </singular>
+	 * </code>
+	 * 
+	 * @param  object
+	 * @return string
+	 */
+	public static function entityToXML($entity)
+	{
+		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Converts this collection's data into XML.
+	 * 
+	 * Format:
+	 * <code>
+	 * <plural>
+	 *     <singular>
+	 *         <property>value</property>
+	 *     </singular>
+	 *     <singular>
+	 *         <property>value</property>
+	 *     </singular>
+	 * </plural>
+	 * </code>
+	 * 
+	 * @return string
+	 */
+	public function toXML()
+	{
+		// TODO: Code
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
 	 * Adds an entity to this collection, this collection will be locked and
 	 * the entity will assume data which matches the filters of this collection.
 	 * 

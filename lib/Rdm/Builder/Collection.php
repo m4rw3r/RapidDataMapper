@@ -24,6 +24,7 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 		$this->addPart(new Rdm_Builder_Collection_Delete($desc));
 		$this->addPart(new Rdm_Builder_Collection_CreateFilterInstance($desc));
 		$this->addPart(new Rdm_Builder_Collection_Populate($desc));
+		$this->addPart(new Rdm_Builder_Collection_EntityToXML($desc));
 	}
 }
 
