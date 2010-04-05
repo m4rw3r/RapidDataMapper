@@ -14,6 +14,8 @@ class Rdm_Builder_CollectionFilter extends Rdm_Util_Code_ClassBuilder
 	{
 		$this->setClassName($desc->getClass().'CollectionFilter');
 		$this->setExtends('Rdm_Collection_Filter');
+		
+		$this->addPart(new Rdm_Builder_CollectionFilter_FilterEqual($desc));
 	}
 }
 
