@@ -8,18 +8,17 @@
 /**
  * 
  */
-class Rdm_Builder_Collection_Persist extends Rdm_Util_Code_MethodBuilder
+class Rdm_Builder_Collection_GetUnitOfWork extends Rdm_Util_Code_MethodBuilder
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->setMethodName('persist');
+		$this->setMethodName('getUnitOfWork');
 		$this->setStatic(true);
-		$this->setParamList('$object');
 		
-		$this->addPart('self::$unit_of_work->addNewEntity($object);');
+		$this->addPart('return self::$unit_of_work;');
 	}
 }
 
 
-/* End of file Persist.php */
+/* End of file GetUnitOfWork.php */
 /* Location: ./lib/Rdm/Builder/Collection */

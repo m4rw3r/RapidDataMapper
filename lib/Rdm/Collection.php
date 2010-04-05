@@ -15,6 +15,15 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	///////////////////////////////////////////////////////////////////////////
 	
 	/**
+	 * A list containing loaded collection class names.
+	 * 
+	 * @var array(string)
+	 */
+	static protected $loaded_collection_classes = array();
+	
+	// ------------------------------------------------------------------------
+	
+	/**
 	 * Initializes the RapidDataMapper ORM.
 	 * 
 	 * @param  boolean	If to register the Rdm_Collection::flush() method to run
@@ -106,13 +115,73 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Flushes all changes to the database.
+	 * Registers a class name as a collection object, used by flush() to get all
+	 * collections' unit of work objects.
 	 * 
+	 * @param  string
 	 * @return void
 	 */
-	public static function flush()
+	public static function registerCollectionClassName($class_name)
 	{
-		// TODO: Code
+		self::$loaded_collection_classes[] = $class_name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Flushes all changes to the database.
+	 * 
+	 * @param  boolean  If to only flush the current collection
+	 * @return void
+	 */
+	public static function flush($private_flush = false)
+	{
+		if($private_flush)
+		{
+			throw new Exception('Rdm_Collection::flush() with $private_flush = true is not implemented, call a subclass instead.');
+		}
+		else
+		{
+			// TODO: How to do with multiple database connections?
+			$db = Rdm_Adapter::getInstance();
+			$units = array();
+			
+			// Get the unit of works from the loaded collections
+			foreach(self::$loaded_collection_classes as $c)
+			{
+				$units[] = call_user_func($c.'::getUnitOfWork');
+			}
+			
+			try
+			{
+				$db->transactionStart();
+				
+				// Send database calls
+				foreach($units as $u)
+				{
+					$u->process();
+				}
+				
+				// All done, now we clean up
+				foreach($units as $u)
+				{
+					$u->cleanup();
+				}
+				
+				// Done!
+				$db->transactionCommit();
+			}
+			catch(Exception $e)
+			{
+				// Oops, error, reset objects now
+				foreach($units as $u)
+				{
+					$u->reset();
+				}
+				
+				throw $e;
+			}
+		}
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -163,7 +232,19 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public static function setUnitOfWork(Rdm_UnitOfWork $u)
 	{
-		throw new Exception('This method (Rdm_Collection::setUnitOfWork()) has not been implemented. It should be implemented in child classes.');
+		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets the unit of work instance to use for this collection.
+	 * 
+	 * @return Rdm_UnitOfWork
+	 */
+	public static function getUnitOfWork()
+	{
+		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -175,7 +256,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public static function create()
 	{
-		throw new Exception('This method (Rdm_Collection::create()) has not been implemented. It should be implemented in child classes.');
+		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -188,7 +269,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public static function persist($object)
 	{
-		throw new Exception('This method (Rdm_Collection::persist()) has not been implemented. It should be implemented in child classes.');
+		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -201,7 +282,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public static function delete($object)
 	{
-		throw new Exception('This method (Rdm_Collection::delete()) has not been implemented. It should be implemented in child classes.');
+		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
