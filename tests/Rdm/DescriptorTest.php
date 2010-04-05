@@ -7,7 +7,6 @@
 
 /**
  * @covers Rdm_Descriptor
- * @runTestsInSeparateThreads
  */
 class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 {
@@ -15,6 +14,7 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 	{	
 		require_once dirname(__FILE__).'/../../lib/Rdm/Config.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Adapter.php';
+		require_once dirname(__FILE__).'/../../lib/Rdm/Adapter/MySQL.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Exception.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Descriptor.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Descriptor/Column.php';
@@ -25,7 +25,14 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 		require_once dirname(__FILE__).'/../../lib/Rdm/Util/Decorator.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Util/Inflector.php';
 		
-		class_exists('MockAdapter') OR $this->getMock('Rdm_Adapter', null, array(), 'MockAdapter', false);
+		class_exists('MockAdapter') OR eval('class MockAdapter extends Rdm_Adapter_MySQL
+		{
+			// Override to allow instantiation by mock objects
+			public function __construct($name = "mock", array $options = array())
+			{
+				parent::__construct($name, $options);
+			}
+		}');
 		class_exists('Rdm_Builder_Main') OR $this->getMock('Rdm_Builder_Main');
 		
 		Rdm_Config::setAdapterConfiguration('default', array('class' => 'MockAdapter'));
@@ -344,7 +351,7 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 	{
 		$desc = new Rdm_Descriptor();
 		
-		$c = $this->getMock('Rdm_Adapter', array('getName'), array(), '', false);
+		$c = $this->getMock('MockAdapter', array('getName'));
 		$c->expects($this->once())->method('getName')->will($this->returnValue('mock'));
 		$desc->setAdapter($c);
 		
@@ -361,7 +368,7 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('default', $desc->getAdapter()->getName());
 		$this->assertSame(Rdm_Adapter::getInstance(), $desc->getAdapter());
 		
-		$c = $this->getMock('Rdm_Adapter', null, array('mock', array()), '', false);
+		$c = $this->getMock('MockAdapter');
 		$desc->setAdapter($c);
 		
 		$this->assertSame($c, $desc->getAdapter());
