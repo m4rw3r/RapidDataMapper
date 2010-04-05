@@ -66,6 +66,14 @@ class Rdm_Descriptor_Column
 	 */
 	protected $updatable = true;
 	
+	/**
+	 * If to fetch this column from the database after insert has been performed
+	 * to update eg. an ON INSERT data.
+	 * 
+	 * @var boolean
+	 */
+	protected $load_after_insert = false;
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -242,6 +250,50 @@ class Rdm_Descriptor_Column
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Sets if this column should be fetched from the database after an insert
+	 * has been run.
+	 * 
+	 * By default, setting this switch to true will change the status of this
+	 * column to disallow inserts.
+	 * To avoid this, call setInsertable(true) after the call to setLoadAfterInsert().
+	 * 
+	 * @param  boolean|int  Boolean yes or no, or an integer constant from Rdm_Descriptor
+	 *                      Boolean yes gives Rdm_Descriptor::PLAIN_COLUMN.
+	 * @return self
+	 */
+	public function setLoadAfterInsert($value = true)
+	{
+		if($value === true)
+		{
+			$value = Rdm_Descriptor::PLAIN_COLUMN;
+		}
+		
+		// Set insertable to false, to prevent inserting it because we're going to fetch it after insert
+		if($value === Rdm_Descriptor::PLAIN_COLUMN)
+		{
+			$this->insertable = false;
+		}
+		
+		$this->load_after_insert = $value;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the value of the load after insert setting.
+	 * 
+	 * @return boolean
+	 */
+	public function getLoadAfterInsert()
+	{
+		return $this->load_after_insert;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the name of the column as it is named in PHP (NOT IN THE FINAL SQL), including the table alias.
 	 * 
 	 * @param  string
@@ -301,7 +353,7 @@ class Rdm_Descriptor_Column
 	 */
 	public function getFromDataToObjectCode($object_var, $data_var, $data_prefix_var)
 	{
-		return $object_var.'->'.$this->getProperty().' = '.$this->getCastToPhpCode($this->getFromDataCode($data_var, $data_prefix_var)).';';
+		return $this->getAssignToObjectCode($object_var, $this->getCastToPhpCode($this->getFromDataCode($data_var, $data_prefix_var))).';';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -347,7 +399,7 @@ class Rdm_Descriptor_Column
 	 */
 	public function getFromObjectToDataCode($object_var, $dest_var)
 	{
-		return $dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFromObjectCode($object_var)).';';
+		return $dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFetchFromObjectCode($object_var)).';';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -359,7 +411,7 @@ class Rdm_Descriptor_Column
 	 */
 	public function getFromObjectToSetSQLValueCode($object_var)
 	{
-		return $this->getCastFromPhpCode($this->getFromObjectCode($object_var));
+		return $this->getCastFromPhpCode($this->getFetchFromObjectCode($object_var));
 	}
 	
 	// ------------------------------------------------------------------------
@@ -376,7 +428,7 @@ class Rdm_Descriptor_Column
 	 * @param  string
 	 * @return string
 	 */
-	public function getFromObjectCode($object_var)
+	public function getFetchFromObjectCode($object_var)
 	{
 		return $object_var.'->'.$this->getProperty();
 	}
@@ -384,13 +436,32 @@ class Rdm_Descriptor_Column
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the code which does assignments to columns before insert and/or performs validation.
+	 * Returns a piece of a statement which will assign data to the object.
 	 * 
-	 * @param  string
+	 * Example of generated code:
+	 * <code>
+	 * // params $object_var = '$obj', $data_code = '$foo['test']'
+	 * $obj->property = $foo['test'];
+	 * </code>
+	 * 
+	 * @param  string	The object variable
+	 * @param  string	The partial statement which returns the data (no ending semicolon)
+	 * @return 
+	 */
+	public function getAssignToObjectCode($object_var, $data_code)
+	{
+		return $object_var.'->'.$this->getProperty().' = '.$data_code.';';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the code which does assignments to columns and/or performs validation before insert.
+	 * 
 	 * @param  string
 	 * @return string
 	 */
-	public function getInsertPopulateColumnCode($data_var, $object_var)
+	public function getPreInsertCode($data_var, $object_var)
 	{
 		// TODO: Add an option to generate columns with a callable (eg. dates)
 		return '';
@@ -402,10 +473,9 @@ class Rdm_Descriptor_Column
 	 * Returns the code which does assignments to columns after insert.
 	 * 
 	 * @param  string
-	 * @param  string
 	 * @return string
 	 */
-	public function getInsertReadColumnCode($data_var, $object_var)
+	public function getPostInsertCode($object_var)
 	{
 		// TODO: Add the generated option
 		return '';

@@ -14,6 +14,9 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInsertions extends Rdm_Util_Code_Metho
 	{
 		$this->setMethodName('processSingleInsertions');
 		$this->setPublic(false);
+		
+		// TODO: Add an if which chooses if to use the dynamic id fetcher (ie. a piece of generated code that runs one query per inserted row and then fetches the auto generated id column) or the static id inserter (which does one query for all rows)
+		$this->addPart(new Rdm_Builder_UnitOfWork_ProcessSingleInsertions_DynamicData($desc));
 	}
 }
 

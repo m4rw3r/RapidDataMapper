@@ -92,7 +92,7 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	 */
 	public function getFromDataToObjectCode($object_var, $data_var, $data_prefix_var)
 	{
-		return $object_var.'->'.$this->getProperty().' = '.$object_var.'->__id[\''.$this->getColumn().'\'] = '.$this->getCastToPhpCode($this->getFromDataCode($data_var, $data_prefix_var)).';';
+		return $this->getAssignToObjectCode($object_var, $object_var.'->__id[\''.$this->getColumn().'\'] = '.$this->getCastToPhpCode($this->getFromDataCode($data_var, $data_prefix_var))).';';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -114,7 +114,7 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	 * @param  string
 	 * @return string
 	 */
-	public function getInsertPopulateColumnCode($data_var, $object_var)
+	public function getPreInsertCode($data_var, $object_var)
 	{
 		switch($this->getPkType())
 		{
@@ -127,7 +127,7 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 				break;
 				
 			default:
-				return parent::getInsertPopulateColumnCode($data_var, $object_var);
+				return parent::getPreInsertCode($data_var, $object_var);
 		}
 	}
 	
@@ -140,15 +140,15 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	 * @param  string
 	 * @return string
 	 */
-	public function getInsertReadColumnCode($data_var, $object_var)
+	public function getPostInsertCode($object_var)
 	{
 		if($this->getPkType() == Rdm_Descriptor::AUTO_INCREMENT)
 		{
-			return $object_var.'->'.$this->getProperty().' = '.$data_var.'[\''.$this->getColumn().'\'] = $object->__id[\''.$this->getColumn().'\'] = $this->db->insertId();';
+			return $this->getAssignToObjectCode($object_var, $object_var.'->__id[\''.$this->getColumn().'\'] = $this->db->insertId()');
 		}
 		elseif($this->getPkType() == Rdm_Descriptor::MANUAL)
 		{
-			return $object_var.'->'.$this->getProperty().' = '.$object_var.'->__id[\''.$this->getColumn().'\'] = '.$data_var.'[\''.$this->getColumn().'\'];';
+			return $object_var.'->__id[\''.$this->getColumn().'\'] = '.$this->getFetchFromObjectCode($object_var);
 		}
 	}
 }

@@ -6,7 +6,7 @@
  */
 
 /**
- * 
+ * Generates code which updates the objects' __data property.
  */
 class Rdm_Builder_UnitOfWork_UpdateShadowData extends Rdm_Util_Code_MethodBuilder
 {
@@ -22,7 +22,7 @@ class Rdm_Builder_UnitOfWork_UpdateShadowData extends Rdm_Util_Code_MethodBuilde
 		{
 			if($p->isUpdatable())
 			{
-				$arr[] = $p->getFromObjectToDataCode('$e', '$e->__data', true);
+				$arr[] = '$e->__data[\''.$p->getColumn().'\'] = '.$p->getFetchFromObjectCode('$e').';';
 			}
 		}
 		

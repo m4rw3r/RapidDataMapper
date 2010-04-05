@@ -25,7 +25,7 @@ class Rdm_Builder_UnitOfWork_ProcessSingleChanges extends Rdm_Util_Code_MethodBu
 		{
 			if($c->isUpdatable())
 			{
-				$arr[] = '$e->__data[\''.$c->getColumn().'\'] !== '.$c->getFromObjectCode('$e').' && $data[] = \''.addcslashes($db->protectIdentifiers($c->getColumn()), "'").' = \'.$this->db->escape('.$c->getFromObjectToSetSQLValueCode('$e').');';
+				$arr[] = '$e->__data[\''.$c->getColumn().'\'] !== '.$c->getFetchFromObjectCode('$e').' && $data[] = \''.addcslashes($db->protectIdentifiers($c->getColumn()), "'").' = \'.$this->db->escape('.$c->getFromObjectToSetSQLValueCode('$e').');';
 			}
 		}
 		
@@ -39,7 +39,7 @@ class Rdm_Builder_UnitOfWork_ProcessSingleChanges extends Rdm_Util_Code_MethodBu
 {
 	$data = array();
 	
-	'.implode("\n", $arr).'
+	'.implode("\n\t", $arr).'
 	
 	if( ! empty($data))
 	{
