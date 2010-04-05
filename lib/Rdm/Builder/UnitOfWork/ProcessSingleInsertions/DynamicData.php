@@ -30,12 +30,14 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInsertions_DynamicData extends Rdm_Uti
 				$pre[] = $code;
 			}
 			
+			// If we can insert stuff, add the code
 			if($c->isInsertable())
 			{
 				$columns[] = $db->protectIdentifiers($c->getColumn());
 				$assignments[] = $c->getFromObjectToDataCode('$entity', '$data');
 			}
 			
+			// Shall we load data from the database after we've inserted this?
 			if($c->getLoadAfterInsert() === Rdm_Descriptor::PLAIN_COLUMN)
 			{
 				// Plain column to fetch from the database
@@ -52,6 +54,7 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInsertions_DynamicData extends Rdm_Uti
 			}
 		}
 		
+		// Construct a Primary key filter for the case that we have to fetch parts of the new row after insert
 		$pks = array();
 		foreach($desc->getPrimaryKeys() as $k)
 		{
@@ -59,26 +62,32 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInsertions_DynamicData extends Rdm_Uti
 		}
 		
 		
+		// Foreach loop for all new entities
 		$str = 'foreach($this->new_entities as $entity)
 {
 	$data = array();
 	
 	'.implode("\n\t", $assignments);
 		
+		// Add pre insert code for columns, so they can do stuff with their data
 		if( ! empty($pre))
 		{
 			$str .= "\n\n\t".implode("\n\t", $pre);
 		}
 		
+		// Add Insert query
 		$str .= '
 	
 	$this->db->query(\'INSERT INTO '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), '\'').' ('.addcslashes(implode(', ', $columns), "'").') VALUES (\'.implode(\', \', array_map(array($this->db, \'escape\'), $data)).\')\');';
 		
+		
+		// Add post insert code for columns (eg. primary keys and other more fancy stuff)
 		if( ! empty($post))
 		{
 			$str .= "\n\n\t".implode("\n\t", $post);
 		}
 		
+		// Load database generated columns, if we have any
 		if( ! empty($loaded_column_selects))
 		{
 			$str .= "\n\n\t".'$this->db->query(\'SELECT '.addcslashes(implode(', ', $loaded_column_selects), "'").' FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($desc->getSingular()), "'").' WHERE '.implode('.\' AND ', $pks).');
