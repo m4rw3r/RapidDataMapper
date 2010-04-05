@@ -16,7 +16,9 @@ class Rdm_Builder_UnitOfWork_UpdateShadowData extends Rdm_Util_Code_MethodBuilde
 		$this->setPublic(false);
 		
 		$arr = array('foreach($this->entities as $e)
-{');
+{
+	$e->__data = array();
+	');
 		
 		foreach($desc->getColumns() as $p)
 		{

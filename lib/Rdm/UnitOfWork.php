@@ -147,8 +147,8 @@ abstract class Rdm_UnitOfWork
 		$this->processSingleChanges();
 		$this->processSingleDeletions();
 		
+		$this->moveInserted();
 		$this->updateShadowData();
-		// $this->moveInserted();
 		
 		// Reset this Unit of Work
 		$this->new_entities =
@@ -190,6 +190,21 @@ abstract class Rdm_UnitOfWork
 	 * @return void
 	 */
 	abstract protected function processSingleDeletions();
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Moves the inserted rows to the $entities array with the uid as key.
+	 * 
+	 * @return void
+	 */
+	protected function moveInserted()
+	{
+		foreach($this->new_entities as $e)
+		{
+			$this->entities[implode('$', $e->__id)] = $e;
+		}
+	}
 	
 	// ------------------------------------------------------------------------
 

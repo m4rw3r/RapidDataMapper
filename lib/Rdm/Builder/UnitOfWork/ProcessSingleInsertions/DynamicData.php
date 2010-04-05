@@ -72,7 +72,7 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInsertions_DynamicData extends Rdm_Uti
 		
 		$str .= '
 	
-	var_dump(\'INSERT INTO '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), '\'').' ('.addcslashes(implode(', ', $columns), "'").') VALUES (\'.implode(\', \', array_map(array($this->db, \'escape\'), $data)).\')\');';
+	$this->db->query(\'INSERT INTO '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), '\'').' ('.addcslashes(implode(', ', $columns), "'").') VALUES (\'.implode(\', \', array_map(array($this->db, \'escape\'), $data)).\')\');';
 		
 		if( ! empty($post))
 		{
@@ -81,7 +81,7 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInsertions_DynamicData extends Rdm_Uti
 		
 		if( ! empty($loaded_column_selects))
 		{
-			$str .= "\n\n\t".'var_dump(\'SELECT '.addcslashes(implode(', ', $loaded_column_selects), "'").' FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($desc->getSingular()), "'").' WHERE '.implode('.\' AND ', $pks).');
+			$str .= "\n\n\t".'$this->db->query(\'SELECT '.addcslashes(implode(', ', $loaded_column_selects), "'").' FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($desc->getSingular()), "'").' WHERE '.implode('.\' AND ', $pks).');
 	
 	$prefix = \''.$desc->getSingular().'\';';
 		}
