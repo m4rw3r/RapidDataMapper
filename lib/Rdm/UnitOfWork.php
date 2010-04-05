@@ -84,7 +84,9 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function addNewEntity($object)
 	{
-		$this->new_entities[] = $object;
+		$oid = spl_object_hash($object);
+		
+		isset($this->new_entities[$oid]) OR $this->new_entities[$oid] = $object;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -141,15 +143,61 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function commit()
 	{
+		try
+		{
+			$this->process();
+			
+			$this->cleanup();
+		}
+		catch(Exception $e)
+		{
+			$this->reset();
+			
+			throw $e;
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Processes all the changes registered in this unit of work.
+	 * 
+	 * @return void
+	 */
+	public function process()
+	{
 		isset($this->db) OR $this->db = Rdm_Adapter::getInstance($this->adapter_name);
 		
 		$this->processSingleInsertions();
 		$this->processSingleChanges();
 		$this->processSingleDeletions();
-		
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Cleans the data and updates the objects of this unit of work after
+	 * process() has been run.
+	 * 
+	 * @return void
+	 */
+	public function cleanup()
+	{
 		$this->moveInserted();
 		$this->updateShadowData();
 		
+		$this->reset();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Resets this unit of work.
+	 * 
+	 * @return void
+	 */
+	public function reset()
+	{
 		// Reset this Unit of Work
 		$this->new_entities =
 			$this->deleted_entities =
