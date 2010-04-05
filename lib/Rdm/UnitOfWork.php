@@ -84,6 +84,12 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function addNewEntity($object)
 	{
+		if( ! empty($object->__id))
+		{
+			// TODO: Replace exception with another exception or return false?
+			throw new Exception('Object has already been saved.');
+		}
+		
 		$oid = spl_object_hash($object);
 		
 		isset($this->new_entities[$oid]) OR $this->new_entities[$oid] = $object;
@@ -153,6 +159,7 @@ abstract class Rdm_UnitOfWork
 		{
 			$this->reset();
 			
+			// Rethrow
 			throw $e;
 		}
 	}
@@ -184,6 +191,7 @@ abstract class Rdm_UnitOfWork
 	public function cleanup()
 	{
 		$this->moveInserted();
+		$this->removeDeletedIds();
 		$this->updateShadowData();
 		
 		$this->reset();
@@ -203,6 +211,36 @@ abstract class Rdm_UnitOfWork
 			$this->deleted_entities =
 			$this->multi_delete =
 			$this->multi_update = array();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Moves the inserted rows to the $entities array with the uid as key.
+	 * 
+	 * @return void
+	 */
+	protected function moveInserted()
+	{
+		foreach($this->new_entities as $e)
+		{
+			$this->entities[implode('$', $e->__id)] = $e;
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Resets the __id array of the deleted objects.
+	 * 
+	 * @return void
+	 */
+	public function removeDeletedIds()
+	{
+		foreach($this->deleted_entities as $entity)
+		{
+			$entity->__id = array();
+		}
 	}
 	
 	// ------------------------------------------------------------------------
@@ -238,21 +276,6 @@ abstract class Rdm_UnitOfWork
 	 * @return void
 	 */
 	abstract protected function processSingleDeletions();
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Moves the inserted rows to the $entities array with the uid as key.
-	 * 
-	 * @return void
-	 */
-	protected function moveInserted()
-	{
-		foreach($this->new_entities as $e)
-		{
-			$this->entities[implode('$', $e->__id)] = $e;
-		}
-	}
 	
 	// ------------------------------------------------------------------------
 
