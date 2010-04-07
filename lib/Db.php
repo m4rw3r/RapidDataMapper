@@ -10,7 +10,7 @@
  */
 final class Db
 {
-	const VERSION = '0.6';
+	const VERSION = '0.6.1';
 	
 	/**
 	 * The path to this file, so the autoloader loads the file properly.
@@ -626,7 +626,7 @@ final class Db
 	 * @param  int
 	 * @return void|string
 	 */
-	public static function dump($data, $return = false, $indent = 0)
+	public static function dump($data, $max_nesting = 5, $return = false, $indent = 0)
 	{
 		$ind = str_repeat("    ", $indent);
 		
@@ -677,16 +677,23 @@ final class Db
 					$str = "Array\n$ind(\n";
 				}
 				
-				foreach((Array) $data as $k => $v)
+				if($indent >= $max_nesting)
 				{
-					if(strpos($k, '__') === 0)
+					$str .= "{$ind}    MAX NESTING REACHED\n";
+				}
+				else
+				{
+					foreach((Array) $data as $k => $v)
 					{
-						continue;
+						if(strpos($k, '__') === 0)
+						{
+							continue;
+						}
+						
+						$modflag = is_object($data) && isset($data->__data[$k]) ? ($data->__data[$k] != $v ? '*' : '') : '';
+						
+						$str .= $ind . "    [$k]$modflag => " . self::dump($v, $max_nesting, true, $indent + 1);
 					}
-					
-					$modflag = is_object($data) && isset($data->__data[$k]) ? ($data->__data[$k] != $v ? '*' : '') : '';
-					
-					$str .= $ind . "    [$k]$modflag => " . self::dump($v, true, $indent + 1);
 				}
 				
 				if(is_object($data))

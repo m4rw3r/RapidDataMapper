@@ -444,4 +444,84 @@ $artists = $q->offset($offset)->limit(10)->get();]]></programlisting>
 			</example>
 		</section>
 	</section>
+	
+	<section xml:id="chapter.the_orm.dumping_objects">
+		<title>Dumping object contents</title>
+		
+		<para>
+			Sometimes you might ask yourself: What does this object contain?
+			And the obvious answer is to use things like <function>var_dump</function>
+			and <function>print_r</function> which work well, up to a point.
+		</para>
+		
+		<para>
+			And here is where <function>Db::dump</function> comes in; it will skip the
+			<varname>__id</varname> and <varname>__data</varname> properties of the objects,
+			it will only dump a maximum number of sub-objects, it will display if a property
+			has been changed or not and finally also the object's primary key.
+			All in a format which is similar to PHP's built-in function <function>print_r</function>:
+		</para>
+		
+		<funcsynopsis xml:id="funcref.Db-dump">
+			<funcprototype>
+				<funcdef><type>string|void</type> <function>Db::dump</function></funcdef>
+				
+				<paramdef><type>mixed</type> <parameter>$data</parameter></paramdef>
+				<paramdef choice="opt"><parameter>$max_nesting</parameter> = 5</paramdef>
+				<paramdef choice="opt"><parameter>$return</parameter> = false</paramdef>
+			</funcprototype>
+		</funcsynopsis>
+		
+		<para>
+			<function>Db::dump</function> will show data almost like <function>print_r</function>,
+			but with the exception that if it is run in a browser (ie. PHP is not run in CLI mode),
+			then <function>Db::dump</function> will automatically surround the printed data with
+			<literal>"&lt;pre&gt;"</literal> tags to preserve newlines and indentation.
+		</para>
+		
+		<para>
+			The <varname>$max_nesting</varname> parameter adjusts how deeply into the tree structure
+			<function>Db::dump</function> will dump, provided the data to dump has that many levels.
+		</para>
+		
+		<example>
+			<title>Example output of <function>Db::dump</function></title>
+			
+			<programlisting><![CDATA[Array
+(
+    [1] => Artist Object (id: 1)
+    {
+        [id] => '1'
+        [name]* => 'this is a changed property'
+        [tracks] => Array
+        (
+        )
+        [albums] => Album Object (id: 1)
+        {
+            [id] => '1'
+            [name] => 'Turning Season Within'
+            [artist_id] => '1'
+            [artist] => Artist Object (id: 1)
+            {
+                [id] => '1'
+                [name]* => 'this is a changed property'
+                [tracks] => Array
+                (
+                )
+                [albums] => Album Object (id: 1)
+                {
+                    [id] => '1'
+                    [name] => 'Turning Season Within'
+                    [artist_id] => '1'
+                    [artist] => Artist Object (id: 1)
+                    {
+                        MAX NESTING REACHED
+                    }
+                    [tracks] => Array
+                    (
+                        MAX NESTING REACHED
+                    )
+// ...]]></programlisting>
+		</example>
+	</section>
 </chapter>
