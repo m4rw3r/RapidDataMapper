@@ -65,6 +65,15 @@ class Rdm_Descriptor
 	 */
 	const SPECIAL_COLUMN = 32;
 	
+	
+	/**
+	 * Global relation creation counter, used to create unique integer keys for relation
+	 * descriptor instances.
+	 * 
+	 * @var int
+	 */
+	static protected $relation_id = 1;
+	
 	/**
 	 * The class this object describes.
 	 * 
@@ -489,6 +498,9 @@ class Rdm_Descriptor
 		$r = new Rdm_Descriptor_Relation($this);
 		$r->setName($name);
 		$r->setParentDescriptor($this);
+		
+		// Add the unique relation id to the created relation
+		$r->setIntegerIdentifier(self::calcRelationId($this, $r));
 		
 		return $r;
 	}
@@ -974,6 +986,29 @@ class Rdm_Descriptor
 	protected function createBuilder()
 	{
 		return new Rdm_Builder_Main($this);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Calculates an id for the relationship, uses the class name + the relationship
+	 * name to calculate a unique id.
+	 * 
+	 * @param  Rdm_Descriptor
+	 * @param  Rdm_Descriptor_Relation
+	 * @return int
+	 */
+	public static function calcRelationId(Rdm_Descriptor $desc, Rdm_Descriptor_Relation $rel)
+	{
+		$str = $desc->getClass().'::'.$rel->getName();
+		$ret = 1;
+		
+		for($i = 0, $c = strlen($str); $i < $c; $i++)
+		{
+			$ret += ord($str[$i]);
+		}
+		
+		return $ret;
 	}
 }
 

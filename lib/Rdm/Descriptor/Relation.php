@@ -134,6 +134,31 @@ class Rdm_Descriptor_Relation
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns this relation's unique identifier id.
+	 * 
+	 * @return int
+	 */
+	public function getIntegerIdentifier()
+	{
+		return $this->int_identifier;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Used internally to assign this relation an unique id.
+	 * 
+	 * @param  int
+	 * @return void
+	 */
+	public function setIntegerIdentifier($int)
+	{
+		$this->int_identifier = $int;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the property to place the related data in.
 	 * 
 	 * Default:
