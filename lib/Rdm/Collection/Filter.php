@@ -31,6 +31,13 @@ class Rdm_Collection_Filter
 	 */
 	public $is_locked = false;
 	
+	/**
+	 * The database adapter used by this filter instance to escape filter data.
+	 * 
+	 * @var Rdm_Adapter
+	 */
+	public $db = null;
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -41,6 +48,7 @@ class Rdm_Collection_Filter
 	public function __construct($parent = null)
 	{
 		$this->parent = $parent;
+		$this->db = $parent->db;
 		$this->is_locked =& $parent->is_locked;
 	}
 	

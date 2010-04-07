@@ -9,10 +9,10 @@
  * 
  */
 abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggregate
-{
-	///////////////////////////////////////////////////////////////////////////
-	//  CHILD INSTANCE MANAGEMENT RELATED METHODS                            //
-	///////////////////////////////////////////////////////////////////////////
+{	
+	// ------------------------------------------------------------------------
+	// --  CHILD INSTANCE MANAGEMENT RELATED METHODS                         --
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * A list containing loaded collection class names.
@@ -184,9 +184,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		}
 	}
 	
-	///////////////////////////////////////////////////////////////////////////
-	//  CHILD INSTANCE CODE                                                  //
-	///////////////////////////////////////////////////////////////////////////
+	// ------------------------------------------------------------------------
+	// --  CHILD INSTANCE CODE                                               --
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * If this flag is true, this object has already been used with entity objects,
@@ -221,6 +221,13 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * @var array(Object)
 	 */
 	protected $contents = array();
+	
+	/**
+	 * The adapter instance used by this collection object.
+	 * 
+	 * @var Rdm_Adapter
+	 */
+	public $db = null;
 	
 	// ------------------------------------------------------------------------
 
@@ -285,9 +292,36 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
 	}
 	
-	///////////////////////////////////////////////////////////////////////////
-	//  FILTER RELATED METHODS                                               //
-	///////////////////////////////////////////////////////////////////////////
+	// ------------------------------------------------------------------------
+	// --  FETCH RELATED METHODS                                             --
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * 
+	 * 
+	 * @return 
+	 */
+	public function __construct()
+	{
+		// TODO: Enable syntax like this: new TrackCollection($artist); where $artist owns a set of tracks
+		
+		// TODO: Move load of the adapter
+		$this->db = Rdm_Adapter::getInstance();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Joins the relation with the supplied identifier.
+	 * 
+	 * @param  int  Integer from a class constant identifying the relation
+	 * @return self
+	 */
+	//abstract public function with($relation_name);
+	
+	// ------------------------------------------------------------------------
+	// --  FILTER RELATED METHODS                                            --
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Creates a new instance of the appropriate Rdm_Collection_Filter.
@@ -351,9 +385,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		return implode(' ', $this->filters);
 	}
 	
-	///////////////////////////////////////////////////////////////////////////
-	//  ENTITY RELATED METHODS                                               //
-	///////////////////////////////////////////////////////////////////////////
+	// ------------------------------------------------------------------------
+	// --  ENTITY RELATED METHODS                                            --
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Converts the supplied entity to an XML fragment.
