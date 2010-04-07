@@ -15,6 +15,8 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 		$this->setClassName($desc->getClass().'Collection');
 		$this->setExtends('Rdm_Collection');
 		
+		$this->addPart(new Rdm_Builder_Collection_RelationConstants($desc));
+		
 		$this->addPart('protected static $unit_of_work = null;');
 		
 		$this->addPart(new Rdm_Builder_Collection_Flush($desc));
