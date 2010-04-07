@@ -13,6 +13,11 @@ class Rdm_Builder_Collection_Populate extends Rdm_Util_Code_MethodBuilder
 	public function __construct(Rdm_Descriptor $desc)
 	{
 		$this->setMethodName('populate');
+		
+		// TODO: Code
+		
+		$this->addPart('$this->is_populated = true;');
+		$this->addPart('$this->is_locked = true;');
 	}
 }
 

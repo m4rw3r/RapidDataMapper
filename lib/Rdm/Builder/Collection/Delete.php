@@ -15,6 +15,8 @@ class Rdm_Builder_Collection_Delete extends Rdm_Util_Code_MethodBuilder
 		$this->setMethodName('delete');
 		$this->setStatic(true);
 		$this->setParamList('$object');
+		
+		// TODO: Code
 	}
 }
 
