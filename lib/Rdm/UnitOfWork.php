@@ -71,7 +71,7 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function addEntity($object, $key)
 	{
-		$this->entities[] = $object;
+		$this->entities[$key] = $object;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -86,8 +86,7 @@ abstract class Rdm_UnitOfWork
 	{
 		if( ! empty($object->__id))
 		{
-			// TODO: Replace exception with another exception or return false?
-			throw new Exception('Object has already been saved.');
+			throw Rdm_UnitOfWork_Exception::alreadyPersisted($object);
 		}
 		
 		$oid = spl_object_hash($object);
@@ -133,11 +132,24 @@ abstract class Rdm_UnitOfWork
 	/**
 	 * Returns the entity with the key $key.
 	 * 
+	 * @param  string
 	 * @return object
 	 */
 	public function getEntity($key)
 	{
-		return $this->entites;
+		return $this->entites[$key];
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Used internally as identity-map.
+	 * 
+	 * @return array(Object)
+	 */
+	public function &getEntitiesList()
+	{
+		return $this->entities;
 	}
 	
 	// ------------------------------------------------------------------------
