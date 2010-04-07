@@ -161,7 +161,7 @@ class Db_Descriptor_Relation_HasMany implements Db_Descriptor_RelationInterface
 		// add extra conditions
 		foreach($this->extra_conds as $k => $v)
 		{
-			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$k).' = '.$db->escape($v), "'");
+			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$k).' = '.$db->escape($v), "'").'\'';
 		}
 		
 		return $query_obj_var.'->where_prefix = \'' . 
@@ -367,7 +367,7 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 		// add extra conditions
 		foreach($this->extra_conds as $k => $v)
 		{
-			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$k).' = '.$db->escape($v), "'");
+			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$k).' = '.$db->escape($v), "'").'\'';
 		}
 		
 		return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode('.\' AND ', $cols). ');';
