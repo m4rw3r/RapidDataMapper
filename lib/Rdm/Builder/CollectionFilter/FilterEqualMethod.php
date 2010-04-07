@@ -12,7 +12,18 @@ class Rdm_Builder_CollectionFilter_FilterEqualMethod extends Rdm_Util_Code_Metho
 {
 	function __construct(Rdm_Descriptor_Column $column, Rdm_Descriptor $desc)
 	{
-		$this->setMethodName($column->getProperty());
+		$property = $column->getProperty();
+		$db       = $desc->getAdapter();
+		
+		$this->setMethodName($property);
+		$this->setParamList("$$property");
+		
+		$col = addcslashes($db->protectIdentifiers($column->getColumn()), "'");
+		
+		$this->addPart("\$this->filters[] = '$col = '.\$this->db->escape(\$$property);");
+		
+		// TODO: Validation for type
+		// TODO: Set data so we can repopulate objects inserted into the collection using Rdm_Collection->add()
 		
 		$this->addPart('return $this;');
 	}
