@@ -58,6 +58,26 @@
 					disappear when calling "<literal>-&gt;related("foo-bar")</literal>").
 				</para>
 			</listitem>
+			
+			<listitem>
+				<para>
+					Fixed syntax error (a stray single quote) which arose if the
+					<function linkend="Db_Descriptor_Relation-setExtraConditions">Db_Descriptor_Relation->setExtraConditions</function>
+					was used.
+				</para>
+			</listitem>
+		</itemizedlist>
+		
+		<para>
+			Updates to this manual:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Added manual section for <function linkend="funcref.Db-dump">Db::dump</function>.
+				</para>
+			</listitem>
 		</itemizedlist>
 	</section>
 	
