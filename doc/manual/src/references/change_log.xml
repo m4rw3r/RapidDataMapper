@@ -12,6 +12,38 @@
 	<title>Change Log</title>
 	
 	<section>
+		<title>Version :next</title>
+		
+		<segmentedlist>
+			<?dbhtml list-presentation="list"?>
+			
+			<segtitle>Release Date</segtitle>
+			
+			<segtitle>Git tag</segtitle>
+			
+			<seglistitem>
+				<seg>In Development</seg>
+				
+				<seg>In Development</seg>
+			</seglistitem>
+		</segmentedlist>
+		
+		<para>
+			Improvements:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Changed the default value of the
+					<function linkend="funcref.Db_Descriptor_Relation-setOnDeleteAction">Db_Descriptor_Relation->setOnDeleteAction</function>
+					to <varname>Db_Descriptor::NOTHING</varname>.
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	
+	<section>
 		<title>Version 0.6.1</title>
 		
 		<segmentedlist>
