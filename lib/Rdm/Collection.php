@@ -74,8 +74,21 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		
 		$desc = Rdm_Config::getDescriptor($entity_class);
 		
-		// Build the new class
-		$builder = $desc->getBuilder();
+		try
+		{
+			// Build the new class
+			$builder = $desc->getBuilder();
+		}
+		catch(Exception $e)
+		{
+			// Handle errors, we cannot just let exceptions pass through,
+			// because then autoload falls back on the other autoloaders
+			
+			// TODO: Handle errors in a better way
+			trigger_error(get_class($e).': '.$e->getMessage().' Trace: '.$e->getTraceAsString(), E_USER_ERROR);
+			
+			throw $e;
+		}
 		
 		// Do we write a compiled file?
 		if(Rdm_Config::getCacheMappers())
@@ -216,6 +229,13 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	protected $filters = array();
 	
 	/**
+	 * A list of joined relation names and their collection objects.
+	 * 
+	 * @var array(string => Rdm_Collection)
+	 */
+	protected $with = array();
+	
+	/**
 	 * The array of data objects.
 	 * 
 	 * @var array(Object)
@@ -228,6 +248,20 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * @var Rdm_Adapter
 	 */
 	public $db = null;
+	
+	/**
+	 * Parent collection when they are joined.
+	 * 
+	 * @var Rdm_Collection
+	 */
+	protected $parent = null;
+	
+	/**
+	 * Relation id of the parent's relation with this collection.
+	 * 
+	 * @var int
+	 */
+	protected $relation_id = null;
 	
 	// ------------------------------------------------------------------------
 
@@ -301,12 +335,35 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * 
 	 * @return 
 	 */
-	public function __construct()
+	public function __construct($parent = null, $relation_id = null)
 	{
 		// TODO: Enable syntax like this: new TrackCollection($artist); where $artist owns a set of tracks
 		
-		// TODO: Move load of the adapter
-		$this->db = Rdm_Adapter::getInstance();
+		if($parent)
+		{
+			$this->parent = $parent;
+			$this->db = $parent->db;
+			$this->is_locked =& $parent->is_locked;
+			$this->relation_id = $relation_id;
+		}
+		else
+		{
+			// TODO: Move load of the adapter
+			$this->db = Rdm_Adapter::getInstance();
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the parent collection object in case this collection was creted
+	 * as a join to the first using with().
+	 * 
+	 * @return Rdm_Collection
+	 */
+	public function end()
+	{
+		return $this->parent;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -315,9 +372,81 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * Joins the relation with the supplied identifier.
 	 * 
 	 * @param  int  Integer from a class constant identifying the relation
-	 * @return self
+	 * @return Rdm_Collection  <Class>Collection
 	 */
-	//abstract public function with($relation_name);
+	abstract public function with($relation_id);
+	
+	/**
+	 * Returns a select part with all the columns aliased to their property names.
+	 * 
+	 * @param  string
+	 * @return string
+	 */
+	abstract public function getSelectPart($this_alias, $alias_np);
+	
+	/**
+	 * Returns the JOIN part if this is part of a joined select.
+	 * 
+	 * @param  string
+	 * @return string
+	 */
+	abstract public function getJoinPart($this_alias, $alias_np, $parent_table);
+	
+	/**
+	 * Creates the conditions for joining this table to the next.
+	 * 
+	 * @param  string
+	 * @param  string
+	 */
+	abstract public function createRelationConditions($alias, $parent_alias, $relation_id);
+	
+	/**
+	 * Creates a select query for this Collection object.
+	 * 
+	 * @return string
+	 */
+	public function createSelectQuery()
+	{
+		$this->is_locked = true;
+		
+		$select = array();
+		
+		// TODO: Get rid of static keyword, only PHP 5.3
+		$from = array(static::$sql_from);
+		$joins = array();
+		
+		if(empty($this->with))
+		{
+			$select[] = '*';
+		}
+		else
+		{
+			// TODO: Get rid of static keyword, only PHP 5.3
+			$select[] = static::$sql_alias.'.*';
+			
+			foreach($this->with as $alias => $join)
+			{
+				$palias = $this->db->protectIdentifiers($alias);
+				
+				$select = array_merge($select, $join->getSelectPart($palias, $alias));
+				$joins  += $join->getJoinPart($palias, $alias, static::$sql_alias);
+			}
+		}
+		
+		$sql = 'SELECT '.implode(', ', $select)."\nFROM ".implode(', ', $from);
+		
+		if( ! empty($joins))
+		{
+			$sql .= "\n".implode("\n", $joins);
+		}
+		
+		if( ! empty($this->filters))
+		{
+			$sql .= "\nWHERE ".implode(' ', $this->filters);
+		}
+		
+		return $sql;
+	}
 	
 	// ------------------------------------------------------------------------
 	// --  FILTER RELATED METHODS                                            --
@@ -382,7 +511,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	public function __toString()
 	{
 		// TODO: Replace or remove, this is currently for debug
-		return implode(' ', $this->filters);
+		return $this->createSelectQuery();
 	}
 	
 	// ------------------------------------------------------------------------
