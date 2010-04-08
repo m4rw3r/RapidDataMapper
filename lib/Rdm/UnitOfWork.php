@@ -13,9 +13,9 @@ abstract class Rdm_UnitOfWork
 	/**
 	 * Registered entities which have been fetched from the database.
 	 * 
-	 * @var array(Object)
+	 * @var array(string => Object)
 	 */
-	protected $entities = array();
+	public $entities = array();
 	
 	/**
 	 * Entities which are to be inserted into the database.
@@ -138,18 +138,6 @@ abstract class Rdm_UnitOfWork
 	public function getEntity($key)
 	{
 		return $this->entites[$key];
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Used internally as identity-map.
-	 * 
-	 * @return array(Object)
-	 */
-	public function &getEntitiesList()
-	{
-		return $this->entities;
 	}
 	
 	// ------------------------------------------------------------------------
