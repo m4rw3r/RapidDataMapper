@@ -17,14 +17,14 @@ foreach($this->with as $join_alias => $join)
 {
 	if($join->join_type == Rdm_Descriptor::HAS_MANY OR $join->join_type == Rdm_Descriptor::MANY_TO_MANY)
 	{
-		if(empty($n->$join_alias))
+		if(empty($e->$join_alias))
 		{
 			// Clone the object
 			$e->$join_alias = clone $join;
 			$e->$join_alias->setPopulated();
 		}
 		
-		$join->hydrateObject($row, $n->$join_alias->getContentReference(), $map, $parent_alias ? $alias.\'_\'.$join_alias : $join_alias);
+		$join->hydrateObject($row, $e->$join_alias->getContentReference(), $map, $parent_alias ? $alias.\'_\'.$join_alias : $join_alias);
 	}
 	else
 	{
