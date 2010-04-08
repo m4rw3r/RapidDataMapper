@@ -586,6 +586,11 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public function populate()
 	{
+		if( ! is_null($this->parent))
+		{
+			throw Rdm_Collection_Exception::notRootObject(get_class($this));
+		}
+		
 		$this->is_locked = true;
 		
 		list($sql, $map) = $this->createSelectQuery();

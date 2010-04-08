@@ -24,6 +24,20 @@ class Rdm_Collection_Exception extends Exception implements Rdm_Exception
 	{
 		return new Rdm_Collection_Exception(sprintf('This method (%s) has not been implemented. It should be implemented in child classes.', $method));
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates an exception telling the user that the collection he tries to
+	 * populate is a part of another collection.
+	 * 
+	 * @param  string  The class name of the collection which isn't the root obejct
+	 * @return Rdm_Collection_Exception
+	 */
+	public static function notRootObject($class_name = false)
+	{
+		return new Rdm_Collection_Exception(sprintf('The %s object you are trying to populate is not a root Collection object, it is probably used by another collection. Ensure that you have the correct number of end() calls.', $class_name ? $class_name : 'Collection'));
+	}
 }
 
 
