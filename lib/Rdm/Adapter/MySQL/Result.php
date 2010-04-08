@@ -31,9 +31,14 @@ class Rdm_Adapter_MySQL_Result extends Rdm_Adapter_Result
 		return mysql_fetch_object($this->resource);
 	}
 
-	public function nextArray()
+	public function nextHash()
 	{
 		return mysql_fetch_assoc($this->resource);
+	}
+	
+	public function nextArray()
+	{
+		return mysql_fetch_array($this->resource, MYSQL_NUM);
 	}
 	
 	public function metadata()

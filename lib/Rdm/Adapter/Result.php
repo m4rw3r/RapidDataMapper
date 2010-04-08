@@ -337,7 +337,15 @@ abstract class Rdm_Adapter_Result implements IteratorAggregate, Countable
 	 */
 	abstract public function next();
 	/**
-	 * Returns the next row in the result set.
+	 * Returns the next row in the result set, associative array.
+	 *
+	 * Returns the data on the position of the result set pointer, then increases the pointer.
+	 * 
+	 * @return array
+	 */
+	abstract public function nextHash();
+	/**
+	 * Returns the next row in the result set, numeric key array.
 	 *
 	 * Returns the data on the position of the result set pointer, then increases the pointer.
 	 * 
