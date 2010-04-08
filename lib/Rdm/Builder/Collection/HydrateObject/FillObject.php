@@ -20,8 +20,8 @@ class Rdm_Builder_Collection_HydrateObject_FillObject extends Rdm_Util_Code_Cont
 		{
 			// TODO: Typecasts
 			$value = '$row[$map[$alias.\'.'.$pk->getProperty().'\']]';
-			$shadow_id[] = '\''.$pk->getColumn().'\' => '.$value;
-			$properties[] = '$e->'.$pk->getProperty().' = $e->__id[\''.$pk->getColumn().'\'];';
+			$shadow_id[] = '\''.$pk->getColumn().'\' => '.$pk->getCastToPhpCode($value);
+			$properties[] = $pk->getAssignToObjectCode('$e', '$e->__id[\''.$pk->getColumn().'\']');
 		}
 		
 		$this->addPart('$e->__id = array('.implode(', ', $shadow_id).');');
@@ -32,8 +32,8 @@ class Rdm_Builder_Collection_HydrateObject_FillObject extends Rdm_Util_Code_Cont
 		foreach($desc->getColumns() as $c)
 		{
 			// TODO: Typecasts
-			$properties[] = '$e->'.$c->getProperty().' = $row[$map[$alias.\'.'.$c->getProperty().'\']];';
-			$shadow_data[] = '\''.$c->getColumn().'\' => $e->'.$c->getProperty();
+			$properties[] = $c->getAssignToObjectCode('$e', $c->getCastToPhpCode('$row[$map[$alias.\'.'.$c->getProperty().'\']]'));
+			$shadow_data[] = '\''.$c->getColumn().'\' => '.$c->getFetchFromObjectCode('$e');
 		}
 		
 		$this->addPart(implode("\n", $properties));
