@@ -41,8 +41,8 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	{
 		if($this->getPkType() == Rdm_Descriptor::AUTO_INCREMENT && stripos(strtolower($this->data_type), 'int') === false)
 		{
-			// TODO: Warning about an int column needed for auto increment
-			return 'unsigned int';
+			// TODO: Change when we have a new system for converting values
+			return 'integer';
 		}
 		else
 		{
