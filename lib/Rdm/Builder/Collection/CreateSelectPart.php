@@ -31,7 +31,7 @@ class Rdm_Builder_Collection_CreateSelectPart extends Rdm_Util_Code_MethodBuilde
 		
 		$this->addPart('foreach($this->with as $join_alias => $join)
 {
-	$join->createSelectPart($join_alias, $list, $column_mappings);
+	$join->createSelectPart($parent_alias ? $parent_alias.\'_\'.$join_alias : $join_alias, $list, $column_mappings);
 }');
 	}
 }
