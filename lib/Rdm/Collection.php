@@ -663,9 +663,34 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public function add($object)
 	{
-		// TODO: Code
-		
 		$this->is_locked = true;
+		
+		// OR cannot decide what side of the filters we need to modify
+		if(array_search('OR', $this->filters) !== false)
+		{
+			throw Rdm_Collection_Exception::filterCannotModify();
+		}
+		
+		// Check that the subfilters doesn't contain anything similar
+		$is_possible = true;
+		foreach($this->filters as $filter)
+		{
+			$is_possible = $is_possible && $filter->canModifyToMatch();
+		}
+		
+		if( ! $is_possible)
+		{
+			throw Rdm_Collection_Exception::filterCannotModify();
+		}
+		
+		// Modify the object
+		foreach($this->filters as $filter)
+		{
+			$filter->modifyToMatch($object);
+		}
+		
+		// TODO: Code for adding the object to this collection
+		
 		return $this;
 	}
 	

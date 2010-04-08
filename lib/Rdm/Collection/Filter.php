@@ -8,7 +8,7 @@
 /**
  * Object handling filter generation for Rdm_Collection objects.
  */
-class Rdm_Collection_Filter
+class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 {
 	/**
 	 * A list of filters which are to be imploded to a filter string.
@@ -16,6 +16,13 @@ class Rdm_Collection_Filter
 	 * @var array
 	 */
 	protected $filters = array();
+	
+	/**
+	 * If this object contains dynamic filters, like id < 34.
+	 * 
+	 * @var boolean
+	 */
+	protected $is_dynamic = false;
 	
 	/**
 	 * The parent object, used for method chaining.
@@ -103,6 +110,8 @@ class Rdm_Collection_Filter
 			throw new Exception('Object is locked');
 		}
 		
+		$this->is_dynamic = true;
+		
 		$c = get_class($this);
 		
 		empty($this->filters) OR $this->filters[] = 'OR';
@@ -121,6 +130,22 @@ class Rdm_Collection_Filter
 	 * @return self
 	 */
 	public function fragment($sql, $binds = array())
+	{
+		$this->is_dynamic = true;
+		
+		// TODO: Code
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function canModifyToMatch()
+	{
+		return ! $this->is_dynamic;
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function modifyToMatch($object)
 	{
 		// TODO: Code
 	}

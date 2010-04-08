@@ -10,9 +10,6 @@
  */
 class Rdm_Collection_Exception extends Exception implements Rdm_Exception
 {
-	
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Creates an exception telling the user that the called method should be
 	 * implemented in a child class.
@@ -37,6 +34,19 @@ class Rdm_Collection_Exception extends Exception implements Rdm_Exception
 	public static function notRootObject($class_name = false)
 	{
 		return new Rdm_Collection_Exception(sprintf('The %s object you are trying to populate is not a root Collection object, it is probably used by another collection. Ensure that you have the correct number of end() calls.', $class_name ? $class_name : 'Collection'));
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates an exception telling the user that the collection contains filters
+	 * which are dynamic and hence they cannot set the values on the supplied object.
+	 * 
+	 * @return Rdm_Collection_Exception
+	 */
+	public static function filterCannotModify()
+	{
+		return new Rdm_Collection_Exception('Filters does not only contain fixed values, cannot apply changes to the supplied object. (This can be caused by filters like id < 34 or OR conditionals.)');
 	}
 }
 
