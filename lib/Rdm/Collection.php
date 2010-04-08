@@ -222,18 +222,18 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	protected $is_populated = false;
 	
 	/**
-	 * A list of filter objects
+	 * Internal: A list of filter objects
 	 * 
 	 * @var array(Collection_Filter)
 	 */
-	protected $filters = array();
+	public $filters = array();
 	
 	/**
-	 * A list of joined relation names and their collection objects.
+	 * Internal: A list of joined relation names and their collection objects.
 	 * 
 	 * @var array(string => Rdm_Collection)
 	 */
-	protected $with = array();
+	public $with = array();
 	
 	/**
 	 * The array of data objects.
@@ -257,11 +257,18 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	protected $parent = null;
 	
 	/**
-	 * Relation id of the parent's relation with this collection.
+	 * Internal: Relation id of the parent's relation with this collection.
 	 * 
 	 * @var int
 	 */
-	protected $relation_id = null;
+	public $relation_id = null;
+	
+	/**
+	 * Internal: An integer telling which type of relation this collection has with parent.
+	 * 
+	 * @var int
+	 */
+	public $join_type = null;
 	
 	// ------------------------------------------------------------------------
 
@@ -335,7 +342,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * 
 	 * @return 
 	 */
-	public function __construct($parent = null, $relation_id = null)
+	public function __construct($parent = null, $relation_id = null, $relation_type = null)
 	{
 		// TODO: Enable syntax like this: new TrackCollection($artist); where $artist owns a set of tracks
 		
@@ -345,6 +352,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			$this->db = $parent->db;
 			$this->is_locked =& $parent->is_locked;
 			$this->relation_id = $relation_id;
+			$this->join_type = $relation_type;
 		}
 		else
 		{
@@ -369,6 +377,20 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the relationship type which this collection has been joined with.
+	 * 
+	 * @return int
+	 */
+	public function getJoinType()
+	{
+		return $this->join_type;
+	}
+	
+	// ------------------------------------------------------------------------
+	// --  SELECT QUERY RELATED METHODS                                      --
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Joins the relation with the supplied identifier.
 	 * 
 	 * @param  int  Integer from a class constant identifying the relation
@@ -377,28 +399,58 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	abstract public function with($relation_id);
 	
 	/**
-	 * Returns a select part with all the columns aliased to their property names.
-	 * 
-	 * @param  string
-	 * @return string
-	 */
-	abstract public function getSelectPart($this_alias, $alias_np);
-	
-	/**
-	 * Returns the JOIN part if this is part of a joined select.
-	 * 
-	 * @param  string
-	 * @return string
-	 */
-	abstract public function getJoinPart($this_alias, $alias_np, $parent_table);
-	
-	/**
 	 * Creates the conditions for joining this table to the next.
+	 * 
+	 * TODO: Replace with a filter instance which adds a relation filter for the
+	 * joined rows. This filter should also assign the values to the entities
+	 * if an entity is added like this: $user->posts->add($post). The filter
+	 * also has to deduce which user instance it has to link to, but it might
+	 * be best to set that in hydrateObject()'s GotoRelated codw within
+	 * if(empty($n->$join_alias)) where a new collection is created.
 	 * 
 	 * @param  string
 	 * @param  string
 	 */
 	abstract public function createRelationConditions($alias, $parent_alias, $relation_id);
+	
+	/**
+	 * Creates the SELECT part of the query, does not include the SELECT keyword.
+	 * 
+	 * @param  string  An alias determined by the parent object if it exists
+	 *                 Used when this object is joined onto another, then $parent_alias
+	 *                 will dictate which alias to prefix the column names with
+	 * @param  array   The list of columns, these will later be joined with ", " between them
+	 * @param  array   A list to keep track of which column goes where, aliases are not
+	 *                 used, so therefore storing the columns integer index is important.
+	 *                 To add a column there, just add it at the end with
+	 *                 $column_mappings[] = 'column';
+	 * @return void
+	 */
+	abstract public function createSelectPart($parent_alias, &$list, &$column_mappings);
+	
+	/**
+	 * Creates the FROM and JOIN part of the query, does not includes the FROM keyword.
+	 * 
+	 * @param  string  The alias of the table for this collection, if it is joined
+	 * @param  string  The alias of the parent table, if this collection is joined onto another
+	 * @param  array   The list of parts which is to be inserted into the space where
+	 *                 the FROM clause will be, they will be joined with "\n" as the separator
+	 * @return void
+	 */
+	abstract public function createFromPart($alias, $parent_alias, &$list);
+	
+	/**
+	 * Hydrates the result row into objects.
+	 * 
+	 * @param  array       The result row with integer indexed columns
+	 * @param  array       The result array with primary keys as the keys
+	 * @param  array       The column map which describes which column resides in which index
+	 * @param  string      The parent alias, if this row is not part of the root nodes
+	 * @return void|false  False if there is no object to hydrate
+	 */
+	abstract public function hydrateObject(&$row, &$result, &$map, $parent_alias = false);
+	
+	// ------------------------------------------------------------------------
 	
 	/**
 	 * Creates a select query for this Collection object.
@@ -410,30 +462,13 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		$this->is_locked = true;
 		
 		$select = array();
+		$from = array();
+		$column_mappings = array();
 		
-		// TODO: Get rid of static keyword, only PHP 5.3
-		$from = array(static::$sql_from);
-		$joins = array();
+		$this->createSelectPart(false, $select, $column_mappings);
+		$this->createFromPart(false, false, $from);
 		
-		if(empty($this->with))
-		{
-			$select[] = '*';
-		}
-		else
-		{
-			// TODO: Get rid of static keyword, only PHP 5.3
-			$select[] = static::$sql_alias.'.*';
-			
-			foreach($this->with as $alias => $join)
-			{
-				$palias = $this->db->protectIdentifiers($alias);
-				
-				$select = array_merge($select, $join->getSelectPart($palias, $alias));
-				$joins  += $join->getJoinPart($palias, $alias, static::$sql_alias);
-			}
-		}
-		
-		$sql = 'SELECT '.implode(', ', $select)."\nFROM ".implode(', ', $from);
+		$sql = 'SELECT '.implode(', ', $select)."\n".implode("\n", $from);
 		
 		if( ! empty($joins))
 		{
@@ -445,7 +480,33 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			$sql .= "\nWHERE ".implode(' ', $this->filters);
 		}
 		
-		return $sql;
+		return array($sql, $column_mappings);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Internal: Fetches a reference to the contents of this Colleciton.
+	 * 
+	 * Used to be able to directly assign subcollections' data.
+	 * 
+	 * @return array
+	 */
+	public function &getContentReference()
+	{
+		return $this->contents;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Internal: Flags this collection as populated.
+	 * 
+	 * @return void
+	 */
+	public function setPopulated()
+	{
+		$this->is_populated = true;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -516,6 +577,32 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	
 	// ------------------------------------------------------------------------
 	// --  ENTITY RELATED METHODS                                            --
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Populates this object with entities which match the specified filters.
+	 * 
+	 * @return void
+	 */
+	public function populate()
+	{
+		$this->is_locked = true;
+		
+		list($sql, $map) = $this->createSelectQuery();
+		
+		// Flip so that the columns becomes the keys, faster column index lookup
+		$map = array_flip($map);
+		
+		$result = $this->db->query($sql);
+		
+		while($row = $result->nextArray())
+		{
+			$this->hydrateObject($row, $this->contents, $map);
+		}
+		
+		$this->is_populated = true;
+	}
+	
 	// ------------------------------------------------------------------------
 	
 	/**
@@ -629,19 +716,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		$this->is_locked = false;
 		return $num;
 	}
-	
-	// ------------------------------------------------------------------------
-	
-	/**
-	 * This method should populate this object with data in respect to the $filters parameter.
-	 * 
-	 * !!! ATTENTION:
-	 * 
-	 * THIS METHOD MUST SET THE LOCAL INSTANCE VARIABLES is_populated AND is_locked TO true!!!
-	 * 
-	 * @return void
-	 */
-	public abstract function populate();
 	
 	// ------------------------------------------------------------------------
 

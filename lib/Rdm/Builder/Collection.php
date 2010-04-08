@@ -15,8 +15,6 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 		$this->setClassName($desc->getClass().'Collection');
 		$this->setExtends('Rdm_Collection');
 		
-		$db = $desc->getAdapter();
-		
 		$this->addPart(new Rdm_Builder_Collection_RelationConstants($desc));
 		
 		// Unit of work storage common to only the generated <Class>Collection
@@ -30,21 +28,13 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 		$this->addPart(new Rdm_Builder_Collection_Persist($desc));
 		$this->addPart(new Rdm_Builder_Collection_Delete($desc));
 		
-		// Prepared SQL fragments
-		$this->addPart('protected static $sql_from = \''.
-			addcslashes($db->protectIdentifiers($desc->getTable()).' AS '.
-			$db->protectIdentifiers($desc->getClass()), "'").'\';');
-		
-		$this->addPart('protected static $sql_alias = \''.
-			addcslashes($db->protectIdentifiers($desc->getClass()), "'").'\';');
-		
 		// Instance methods
 		$this->addPart(new Rdm_Builder_Collection_With($desc));
-		$this->addPart(new Rdm_Builder_Collection_GetSelectPart($desc));
-		$this->addPart(new Rdm_Builder_Collection_GetJoinPart($desc));
 		$this->addPart(new Rdm_Builder_Collection_CreateRelationConditions($desc));
+		$this->addPart(new Rdm_Builder_Collection_CreateSelectPart($desc));
+		$this->addPart(new Rdm_Builder_Collection_CreateFromPart($desc));
+		$this->addPart(new Rdm_Builder_Collection_HydrateObject($desc));
 		$this->addPart(new Rdm_Builder_Collection_CreateFilterInstance($desc));
-		$this->addPart(new Rdm_Builder_Collection_Populate($desc));
 		$this->addPart(new Rdm_Builder_Collection_EntityToXML($desc));
 	}
 }

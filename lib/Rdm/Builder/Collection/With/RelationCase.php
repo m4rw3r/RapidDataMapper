@@ -22,6 +22,11 @@ class Rdm_Builder_Collection_With_RelationCase extends Rdm_Util_Code_Container
 		$this->relation_id   = $rel->getIntegerIdentifier();
 		$this->is_first      = $first;
 		
+		$this->addPart('if(isset($this->with[\''.$rel->getName().'\']))
+{
+	return $this->with[\''.$rel->getName().'\'];
+}');
+		
 		$this->addPart('$c = new '.$rel->getRelatedDescriptor()->getClass().'Collection($this, '.$this->relation_id.');');
 		
 		$this->addPart('$this->with[\''.$rel->getName().'\'] = $c;');
