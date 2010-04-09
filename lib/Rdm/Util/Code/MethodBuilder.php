@@ -18,6 +18,13 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	
 	protected $param_list;
 	
+	/**
+	 * The PHP doc contents which should go into a PHPdoc before this method.
+	 * 
+	 * @var string
+	 */
+	protected $php_doc = '';
+	
 	
 	// ------------------------------------------------------------------------
 
@@ -73,6 +80,20 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Set the PHPdoc of this generated method, the comment will automatically be
+	 * formatted into a PHPdoc comment.
+	 * 
+	 * @param  string
+	 * @return void
+	 */
+	public function setPhpDoc($string)
+	{
+		$this->php_doc = "/**\n * ".implode("\n * ", explode("\n", $string))."\n */\n";
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	public function getName()
 	{
@@ -83,7 +104,9 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	
 	public function __toString()
 	{
-		$head = $this->is_public ? 'public' : 'protected';
+		$head = $this->php_doc;
+		
+		$head .= $this->is_public ? 'public' : 'protected';
 		
 		$head .= $this->is_static ? ' static' : '';
 		
