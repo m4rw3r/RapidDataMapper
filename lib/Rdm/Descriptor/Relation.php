@@ -324,13 +324,14 @@ class Rdm_Descriptor_Relation
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the name of the RelationFilter class for this relationship.
+	 * Returns the name of the Relation class for this relationship, generated
+	 * by Rdm_Builder_Relation
 	 * 
 	 * @return string
 	 */
 	public function getRelationFilterClassName()
 	{
-		return $this->desc_parent->getClass().ucfirst($this->getName()).'RelationFilter';
+		return $this->desc_parent->getClass().ucfirst($this->getName()).'Relation';
 	}
 	
 	// ------------------------------------------------------------------------
