@@ -330,7 +330,7 @@ class Rdm_Descriptor_Relation
 	 */
 	public function getRelationFilterClass()
 	{
-		return $this->desc_parent->getClass().$this->getName().'RelationFilter';
+		return $this->desc_parent->getClass().ucfirst($this->getName()).'RelationFilter';
 	}
 	
 	// ------------------------------------------------------------------------
