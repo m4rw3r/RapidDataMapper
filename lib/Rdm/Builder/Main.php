@@ -18,7 +18,7 @@ class Rdm_Builder_Main extends Rdm_Util_Code_Container
 		
 		foreach($descriptor->getRelations() as $rel)
 		{
-			$this->addPart(new Rdm_Builder_RelationFilter($rel, $descriptor));
+			$this->addPart(new Rdm_Builder_Relation($rel, $descriptor));
 		}
 		
 		$this->addPart($descriptor->getCollectionClassName().'::setUnitOfWork(new '.$descriptor->getUnitOfWorkClassName().');');

@@ -8,7 +8,7 @@
 /**
  * 
  */
-class Rdm_Builder_RelationFilter extends Rdm_Util_Code_ClassBuilder
+class Rdm_Builder_Relation extends Rdm_Util_Code_ClassBuilder
 {
 	public function __construct(Rdm_Descriptor_Relation $rel, Rdm_Descriptor $desc)
 	{
