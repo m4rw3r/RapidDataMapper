@@ -41,6 +41,13 @@ public function canModifyToMatch()
 	return ! empty($this->parent_object);
 }
 
+public static function establish('.$rel->getParentDescriptor()->getClass().' $parent, '.$rel->getRelatedDescriptor()->getClass().' $child)
+{
+	$c = new '.$rel->getRelationFilterClassName().';
+	$c->parent_object = $parent;
+	$c->modifyToMatch($child);
+}
+
 public function modifyToMatch($object)
 {
 	'.implode("\n\t", $modcode).'
