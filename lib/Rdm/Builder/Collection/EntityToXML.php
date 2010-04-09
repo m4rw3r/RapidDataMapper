@@ -15,6 +15,17 @@ class Rdm_Builder_Collection_EntityToXML extends Rdm_Util_Code_MethodBuilder
 		$this->setMethodName('entityToXML');
 		$this->setStatic(true);
 		$this->setParamList('$object');
+		$this->setPhpDoc('Converts the supplied entity to an XML fragment.
+
+Format:
+<code>
+<singular>
+    <property>value</property>
+</singular>
+</code>
+
+@param  '.$desc->getClass().'
+@return string');
 		
 		$cols = array();
 		foreach(array_merge($desc->getPrimaryKeys(), $desc->getColumns()) as $c)

@@ -14,6 +14,7 @@ class Rdm_Builder_Collection_Create extends Rdm_Util_Code_MethodBuilder
 	{
 		$this->setMethodName('create');
 		$this->setStatic(true);
+		$this->setPhpDoc('@return '.$desc->getCollectionClassName());
 		
 		$this->addPart('return new '.$desc->getCollectionClassName().';');
 	}
