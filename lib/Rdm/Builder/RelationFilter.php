@@ -12,7 +12,7 @@ class Rdm_Builder_RelationFilter extends Rdm_Util_Code_ClassBuilder
 {
 	public function __construct(Rdm_Descriptor_Relation $rel, Rdm_Descriptor $desc)
 	{
-		$this->setClassName($rel->getRelationFilterClass());
+		$this->setClassName($rel->getRelationFilterClassName());
 		$this->setImplements('Rdm_Collection_FilterInterface');
 		
 		$this->addPart(new Rdm_Util_Code_PropertyBuilder('id', $rel->getIntegerIdentifier()));
