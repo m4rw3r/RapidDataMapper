@@ -21,8 +21,6 @@ class Rdm_Builder_RelationFilter extends Rdm_Util_Code_ClassBuilder
 		$this->addPart(new Rdm_Util_Code_PropertyBuilder('alias'));
 		$this->addPart(new Rdm_Util_Code_PropertyBuilder('parent_alias'));
 		
-		// TODO: WHAT HAPPENS IF WE ADD AN OWNING OBJECT TO A COLLECTION FILTERING ON OWNED OBJECTS? IS THE ASSIGNMENT GOING IN THE CORRECT DIRECTION? IS IT POSSIBLE? CAN WE OVERWRITE PRIMARY KEYS?!?!?!
-		
 		list($local_keys, $foreign_keys) = $rel->getKeys();
 		$modcode = array();
 		while( ! empty($local_keys))
