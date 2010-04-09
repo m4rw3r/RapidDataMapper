@@ -15,62 +15,16 @@ class Rdm_Builder_Relation extends Rdm_Util_Code_ClassBuilder
 		$this->setClassName($rel->getRelationFilterClassName());
 		$this->setImplements('Rdm_Collection_FilterInterface');
 		
-		$this->addPart(new Rdm_Util_Code_PropertyBuilder('id', $rel->getIntegerIdentifier()));
-		$this->addPart(new Rdm_Util_Code_PropertyBuilder('type', $rel->getType()));
-		$this->addPart(new Rdm_Util_Code_PropertyBuilder('parent_object'));
-		$this->addPart(new Rdm_Util_Code_PropertyBuilder('alias'));
-		$this->addPart(new Rdm_Util_Code_PropertyBuilder('parent_alias'));
+		$this->addPart(new Rdm_Builder_Relation_Properties($rel, $desc));
 		
-		list($local_keys, $foreign_keys) = $rel->getKeys();
-		$modcode = array();
-		while( ! empty($local_keys))
-		{
-			list($local, $foreign) = array(array_shift($local_keys), array_shift($foreign_keys));
-			
-			$modcode[] = $foreign->getAssignToObjectCode('$object', $local->getFetchFromObjectCode('$this->parent_object'));
-		}
+		$this->addPart(new Rdm_Builder_Relation_Methods($rel, $desc));
 		
-		$this->addPart('public function setAliases($alias, $parent_alias)
-{
-	$this->alias = $alias;
-	$this->parent_alias = $parent_alias;
-}
-
-public function canModifyToMatch()
-{
-	return ! empty($this->parent_object);
-}
-
-public static function establish('.$rel->getParentDescriptor()->getClass().' $parent, '.$rel->getRelatedDescriptor()->getClass().' $child)
-{
-	$c = new '.$rel->getRelationFilterClassName().';
-	$c->parent_object = $parent;
-	$c->modifyToMatch($child);
-}
-
-public function modifyToMatch($object)
-{
-	'.implode("\n\t", $modcode).'
-}');
+		$this->addPart(new Rdm_Builder_Relation_ModifyToMatch($rel, $desc));
 		
-		$db = $desc->getAdapter();
-		list($local_keys, $foreign_keys) = $rel->getKeys();
-		
-		$columns = array();
-		while( ! empty($local_keys))
-		{
-			list($local, $foreign) = array(array_shift($local_keys), array_shift($foreign_keys));
-			
-			$columns[] = '$this->parent_alias.\'.'.addcslashes($db->protectIdentifiers($local->getColumn()), "'").' = \'.$this->alias.\'.'.addcslashes($db->protectIdentifiers($foreign->getColumn()), "'").'\'';
-		}
-		
-		$this->addPart('public function __toString()
-{
-	return '.implode('.', $columns).';
-}');
+		$this->addPart(new Rdm_Builder_Relation_ToString($rel, $desc));
 	}
 }
 
 
-/* End of file Collection.php */
+/* End of file Relation.php */
 /* Location: ./lib/Rdm/Builder */
