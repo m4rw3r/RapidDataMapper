@@ -27,7 +27,7 @@ class Rdm_Builder_Collection_CreateFromPart extends Rdm_Util_Code_MethodBuilder
 else
 {
 	// If we have conditions for a JOINed collection, then we use INNER JOIN
-	$type = count($this->filters) > 1 ? \'LEFT \' : \'INNER \';
+	$type = isset($this->filters[0]) ? \'INNER \' : \'LEFT \';
 	
 	// Set the aliases for the relation filter
 	$this->relation->setAliases($alias, $parent_alias);
