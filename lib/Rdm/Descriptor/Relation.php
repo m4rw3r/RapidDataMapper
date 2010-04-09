@@ -324,6 +324,18 @@ class Rdm_Descriptor_Relation
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the name of the RelationFilter class for this relationship.
+	 * 
+	 * @return string
+	 */
+	public function getRelationFilterClass()
+	{
+		return $this->desc_parent->getClass().$this->getName().'RelationFilter';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the object which is handling the grunt work.
 	 * 
 	 * TODO: Does it need to be public?

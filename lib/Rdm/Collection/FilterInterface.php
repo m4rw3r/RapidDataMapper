@@ -11,15 +11,6 @@
 interface Rdm_Collection_FilterInterface
 {
 	/**
-	 * Ends the current filter block.
-	 * 
-	 * @return Rdm_Collection|Rdm_Collection_FilterInterface
-	 */
-	public function end();
-	
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Returns true if this filter does not contain values which are impossible
 	 * to determine the exact value of (eg. id > 34).
 	 * 

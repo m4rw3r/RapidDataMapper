@@ -257,6 +257,14 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	protected $parent = null;
 	
 	/**
+	 * Internal: Reference to the relation filter employed by this collection
+	 * if it is a sub-collection (ie. JOINed).
+	 * 
+	 * @var Rdm_Collection_FilterInterface
+	 */
+	public $relation = null;
+	
+	/**
 	 * Internal: Relation id of the parent's relation with this collection.
 	 * 
 	 * @var int
@@ -342,7 +350,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * 
 	 * @return 
 	 */
-	public function __construct($parent = null, $relation_id = null, $relation_type = null)
+	public function __construct($parent = null, $relation = null)
 	{
 		// TODO: Enable syntax like this: new TrackCollection($artist); where $artist owns a set of tracks
 		
@@ -351,8 +359,10 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			$this->parent = $parent;
 			$this->db = $parent->db;
 			$this->is_locked =& $parent->is_locked;
-			$this->relation_id = $relation_id;
-			$this->join_type = $relation_type;
+			$this->relation = $relation;
+			$this->relation_id = $relation->id;
+			$this->join_type = $relation->type;
+			$this->filters[] = $relation;
 		}
 		else
 		{
@@ -397,21 +407,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * @return Rdm_Collection  <Class>Collection
 	 */
 	abstract public function with($relation_id);
-	
-	/**
-	 * Creates the conditions for joining this table to the next.
-	 * 
-	 * TODO: Replace with a filter instance which adds a relation filter for the
-	 * joined rows. This filter should also assign the values to the entities
-	 * if an entity is added like this: $user->posts->add($post). The filter
-	 * also has to deduce which user instance it has to link to, but it might
-	 * be best to set that in hydrateObject()'s GotoRelated codw within
-	 * if(empty($n->$join_alias)) where a new collection is created.
-	 * 
-	 * @param  string
-	 * @param  string
-	 */
-	abstract public function createRelationConditions($alias, $parent_alias, $relation_id);
 	
 	/**
 	 * Creates the SELECT part of the query, does not include the SELECT keyword.
