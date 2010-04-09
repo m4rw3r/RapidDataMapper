@@ -27,7 +27,7 @@ class Rdm_Builder_Collection_With_RelationCase extends Rdm_Util_Code_Container
 	return $this->with[\''.$rel->getName().'\'];
 }');
 		
-		$this->addPart('$c = new '.$rel->getRelatedDescriptor()->getClass().'Collection($this, new '.$rel->getRelationFilterClassName().');');
+		$this->addPart('$c = new '.$rel->getRelatedDescriptor()->getCollectionClassName().'($this, new '.$rel->getRelationFilterClassName().');');
 		
 		$this->addPart('$this->with[\''.$rel->getName().'\'] = $c;');
 		

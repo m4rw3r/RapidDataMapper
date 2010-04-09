@@ -12,7 +12,7 @@ class Rdm_Builder_UnitOfWork extends Rdm_Util_Code_ClassBuilder
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->setClassName($desc->getClass().'UnitOfWork');
+		$this->setClassName($desc->getUnitOfWorkClassName());
 		$this->setExtends('Rdm_UnitOfWork');
 		
 		$this->addPart(new Rdm_Util_Code_PropertyBuilder('adapter_name', $desc->getAdapterName(), 'protected'));

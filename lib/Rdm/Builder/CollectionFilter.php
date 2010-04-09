@@ -12,7 +12,7 @@ class Rdm_Builder_CollectionFilter extends Rdm_Util_Code_ClassBuilder
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->setClassName($desc->getClass().'CollectionFilter');
+		$this->setClassName($desc->getCollectionFilterClassName());
 		$this->setExtends('Rdm_Collection_Filter');
 		
 		$this->addPart(new Rdm_Builder_CollectionFilter_FilterEqual($desc));

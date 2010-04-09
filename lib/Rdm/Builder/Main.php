@@ -21,8 +21,8 @@ class Rdm_Builder_Main extends Rdm_Util_Code_Container
 			$this->addPart(new Rdm_Builder_RelationFilter($rel, $descriptor));
 		}
 		
-		$this->addPart($descriptor->getClass().'Collection::setUnitOfWork(new '.$descriptor->getClass().'UnitOfWork);');
-		$this->addPart('Rdm_Collection::registerCollectionClassName(\''.$descriptor->getClass().'Collection\');');
+		$this->addPart($descriptor->getCollectionClassName().'::setUnitOfWork(new '.$descriptor->getUnitOfWorkClassName().');');
+		$this->addPart('Rdm_Collection::registerCollectionClassName(\''.$descriptor->getCollectionClassName().'\');');
 	}
 	
 	// ------------------------------------------------------------------------
