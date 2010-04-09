@@ -16,6 +16,7 @@ class TrackDescriptor extends Rdm_Descriptor
 		$this->add($this->newPrimaryKey('id'));
 		
 		$this->add($this->newColumn('name'));
+		$this->add($this->newColumn('artist_id')->setDataType('integer'));
 		$this->add($this->newRelation('artist'));
 		$this->add($this->newRelation('album'));
 	}
@@ -29,6 +30,7 @@ class ArtistDescriptor extends Rdm_Descriptor
 		
 		$this->add($this->newColumn('name'));
 		$this->add($this->newRelation('tracks'));
+		$this->add($this->newRelation('albums'));
 	}
 }
 
@@ -39,6 +41,7 @@ class AlbumDescriptor extends Rdm_Descriptor
 		$this->add($this->newPrimaryKey('id'));
 		
 		$this->add($this->newColumn('name'));
+		$this->add($this->newRelation('tracks'));
 	}
 }
 
@@ -67,14 +70,28 @@ class Album
 	public $name;
 }
 
+$a = ArtistCollection::create()->with(ArtistCollection::Tracks)->end();
+
+// Get artist with the id 1:
+$art = $a[1];
+
+var_dump($art);
+
+// Add a track:
+$art->tracks->add($t = new Track());
+
+// Dump it
+var_dump($t);
 
 foreach(ArtistCollection::create()
-	->with(ArtistCollection::Tracks)
+	->with(ArtistCollection::Albums)
+		->with(AlbumCollection::Tracks)
+		->end()
 	->end() as $a)
 {
 	echo "$a->name\n";
 	
-	foreach($a->tracks as $t)
+	foreach($a->albums as $t)
 	{
 		echo "    $t->name\n";
 	}
@@ -100,7 +117,7 @@ foreach(TrackCollection::create()
 	var_dump($r);
 }
 
-/*
+
 for($i = 0; $i < 1000; $i++)
 {
 	foreach(TrackCollection::create()
