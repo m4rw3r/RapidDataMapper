@@ -25,6 +25,8 @@ class Rdm_Builder_Collection_With extends Rdm_Util_Code_MethodBuilder
 				
 				$first = false;
 			}
+			
+			$this->addPart('throw new Exception(\'No matching relation can be found for the class "'.$desc->getClass().'"\');');
 		}
 		else
 		{
