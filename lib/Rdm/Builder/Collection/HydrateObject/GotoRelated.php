@@ -21,6 +21,7 @@ foreach($this->with as $join_alias => $join)
 		{
 			// Clone the object
 			$e->$join_alias = clone $join;
+			$e->$join_alias->relation->parent_object = $e;
 			$e->$join_alias->setPopulated();
 		}
 		

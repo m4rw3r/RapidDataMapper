@@ -359,15 +359,35 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			$this->parent = $parent;
 			$this->db = $parent->db;
 			$this->is_locked =& $parent->is_locked;
+			
+			// The relationship type
 			$this->relation = $relation;
 			$this->relation_id = $relation->id;
 			$this->join_type = $relation->type;
-			$this->filters[] = $relation;
+			// -1 is reserved for the relation filter
+			$this->filters[-1] = $this->relation;
 		}
 		else
 		{
 			// TODO: Move load of the adapter
 			$this->db = Rdm_Adapter::getInstance();
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Clones the possible relation filter.
+	 * 
+	 * @return void
+	 */
+	public function __clone()
+	{
+		if( ! empty($this->relation))
+		{
+			$this->relation = clone $this->relation;
+			// We need to fix the filter too
+			$this->filters[-1] = $this->relation;
 		}
 	}
 	
