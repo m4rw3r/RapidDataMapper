@@ -90,28 +90,28 @@ class Db_MapperQuery_Where extends Db_Query
 
 	public function bindWhere($condition, $binds)
 	{
-		parent::bindWhere($this->translateColumns($condition), $binds);
+		return parent::bindWhere($this->translateColumns($condition), $binds);
 	}
 	
 	// ------------------------------------------------------------------------
 
 	public function whereIn($column, $values)
 	{
-		parent::whereIn($this->translateColumns($column), $values);
+		return parent::whereIn($this->translateColumns($column), $values);
 	}
 	
 	// ------------------------------------------------------------------------
 
 	public function whereNotIn($column, $values)
 	{
-		parent::whereNotIn($this->translateColumns($column), $values);
+		return parent::whereNotIn($this->translateColumns($column), $values);
 	}
 	
 	// ------------------------------------------------------------------------
 	
 	public function like($column, $value, $side = 'both')
 	{
-		parent::like($this->translateColumns($column), $value, $side);
+		return parent::like($this->translateColumns($column), $value, $side);
 	}
 	
 	// ------------------------------------------------------------------------
