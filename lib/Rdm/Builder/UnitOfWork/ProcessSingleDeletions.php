@@ -15,6 +15,8 @@ class Rdm_Builder_UnitOfWork_ProcessSingleDeletions extends Rdm_Util_Code_Method
 		$this->setMethodName('processSingleDeletions');
 		$this->setPublic(false);
 		
+		// TODO: Implement support for ON DELETE
+		
 		$db = $desc->getAdapter();
 		
 		$this->addPart('$ids = array();');
@@ -32,8 +34,7 @@ class Rdm_Builder_UnitOfWork_ProcessSingleDeletions extends Rdm_Util_Code_Method
 
 if( ! empty($ids))
 {
-	// TODO: Call query instead of just dumping it
-	var_dump(\'DELETE FROM '.addcslashes($db->protectIdentifiers($desc->getTable()), "'").' WHERE ('.addcslashes(implode(', ', $pks), "'").') IN (\'.implode(\', \', $ids).\')\');
+	$this->db->query(\'DELETE FROM '.addcslashes($db->protectIdentifiers($desc->getTable()), "'").' WHERE ('.addcslashes(implode(', ', $pks), "'").') IN (\'.implode(\', \', $ids).\')\');
 }');
 	}
 }
