@@ -366,7 +366,16 @@ abstract class Db_Connection
 		// Load database handle to be able to start a transaction
 		is_null($this->dbh) && $this->initDbh();
 		
-		return $this->startTransaction();
+		if($this->startTransaction())
+		{
+			$this->transaction = true;
+			
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	// ------------------------------------------------------------------------
