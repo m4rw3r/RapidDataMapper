@@ -70,7 +70,10 @@ class Album
 	public $name;
 }
 
-$a = ArtistCollection::create()->with(ArtistCollection::Tracks)->end();
+$db = Rdm_Adapter::getInstance();
+var_dump($db->transactionInProgress());
+
+$a = ArtistCollection::create();
 
 // Get artist with the id 1:
 $art = $a[1];
@@ -78,10 +81,12 @@ $art = $a[1];
 var_dump($art);
 
 // Add a track:
-$art->tracks->add($t = new Track());
+ArtistTracksRelation::establish($art, $t = new Track);
 
 // Dump it
 var_dump($t);
+
+$art->name = 'Draconian';
 
 foreach(ArtistCollection::create()
 	->with(ArtistCollection::Albums)
@@ -96,6 +101,10 @@ foreach(ArtistCollection::create()
 		echo "    $t->name\n";
 	}
 }
+
+Rdm_Collection::flush();
+
+$db->transactionRollback();
 
 foreach(Rdm_Adapter::getAllInstances() as $i)
 {
