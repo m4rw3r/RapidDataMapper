@@ -420,7 +420,16 @@ abstract class Rdm_Adapter
 		// Load database handle to be able to start a transaction
 		is_null($this->dbh) && $this->initDbh();
 		
-		return $this->startTransaction();
+		if($this->startTransaction())
+		{
+			$this->transaction = true;
+			
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	// ------------------------------------------------------------------------
@@ -453,6 +462,18 @@ abstract class Rdm_Adapter
 		$this->transaction = false;
 		
 		return $this->rollbackTransaction();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns true if a transaction already is in progress.
+	 * 
+	 * @return boolean
+	 */
+	public function transactionInProgress()
+	{
+		return $this->transaction;
 	}
 	
 	// --------------------------------------------------------------------
