@@ -41,6 +41,29 @@
 				</para>
 			</listitem>
 		</itemizedlist>
+		
+		<para>
+			Bug fixes:
+		</para>
+		
+		<itemizedlist>
+			<listitem>
+				<para>
+					Fixed bug with transaction flag in <classname>Db_Connection</classname> not being
+					triggered in <function linkend="funcref.Db_Connection-transactionStart">Db_Connection->transactionStart</function>.
+					This caused the problem that no exceptions were thrown when nesting transactions
+					(which aren't allowed).
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Added missing <literal>return</literal> statements to <classname>Db_MapperQuery_Where</classname>
+					class, which missed them on <function>bindWhere</function>, <function>whereIn</function>,
+					<function>whereNotIn</function> and <function>like</function>.
+				</para>
+			</listitem>
+		</itemizedlist>
 	</section>
 	
 	<section>
@@ -94,7 +117,7 @@
 			<listitem>
 				<para>
 					Fixed syntax error (a stray single quote) which arose if the
-					<function linkend="Db_Descriptor_Relation-setExtraConditions">Db_Descriptor_Relation->setExtraConditions</function>
+					<function linkend="funcref.Db_Descriptor_Relation-setExtraConditions">Db_Descriptor_Relation->setExtraConditions</function>
 					was used.
 				</para>
 			</listitem>
