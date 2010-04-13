@@ -441,9 +441,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	/**
 	 * Creates the SELECT part of the query, does not include the SELECT keyword.
 	 * 
-	 * @param  string  An alias determined by the parent object if it exists
-	 *                 Used when this object is joined onto another, then $parent_alias
-	 *                 will dictate which alias to prefix the column names with
 	 * @param  array   The list of columns, these will later be joined with ", " between them
 	 * @param  array   A list to keep track of which column goes where, aliases are not
 	 *                 used, so therefore storing the columns integer index is important.
@@ -451,18 +448,18 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 *                 $column_mappings[] = 'column';
 	 * @return void
 	 */
-	abstract public function createSelectPart($parent_alias, &$list, &$column_mappings);
+	abstract public function createSelectPart(&$list, &$column_mappings);
 	
 	/**
 	 * Creates the FROM and JOIN part of the query, does not includes the FROM keyword.
 	 * 
-	 * @param  string  The alias of the table for this collection, if it is joined
 	 * @param  string  The alias of the parent table, if this collection is joined onto another
+	 *                 False if this is the root Collection object
 	 * @param  array   The list of parts which is to be inserted into the space where
 	 *                 the FROM clause will be, they will be joined with "\n" as the separator
 	 * @return void
 	 */
-	abstract public function createFromPart($alias, $parent_alias, &$list);
+	abstract public function createFromPart($parent_alias, &$list);
 	
 	/**
 	 * Hydrates the result row into objects.
@@ -490,8 +487,8 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		$from = array();
 		$column_mappings = array();
 		
-		$this->createSelectPart(false, $select, $column_mappings);
-		$this->createFromPart(false, false, $from);
+		$this->createSelectPart($select, $column_mappings);
+		$this->createFromPart(false, $from);
 		
 		$sql = 'SELECT '.implode(', ', $select)."\n".implode("\n", $from);
 		

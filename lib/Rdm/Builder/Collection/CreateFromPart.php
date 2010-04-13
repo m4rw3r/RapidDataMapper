@@ -13,7 +13,7 @@ class Rdm_Builder_Collection_CreateFromPart extends Rdm_Util_Code_MethodBuilder
 	public function __construct(Rdm_Descriptor $desc)
 	{
 		$this->setMethodName('createFromPart');
-		$this->setParamList('$alias, $parent_alias, &$list');
+		$this->setParamList('$parent_alias, &$list');
 		
 		$db = $desc->getAdapter();
 		
@@ -21,8 +21,6 @@ class Rdm_Builder_Collection_CreateFromPart extends Rdm_Util_Code_MethodBuilder
 {
 	// We\'re the root node, use FROM
 	$list[] = \'FROM '.addcslashes($db->protectIdentifiers($desc->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($desc->getSingular()), "'").'\';
-	
-	$alias = \''.$desc->getSingular().'\';
 }
 else
 {
@@ -30,14 +28,14 @@ else
 	$type = isset($this->filters[0]) ? \'INNER \' : \'LEFT \';
 	
 	// Set the aliases for the relation filter
-	$this->relation->setAliases($alias, $parent_alias);
+	$this->relation->setAliases($this->table_alias, $parent_alias);
 	
-	$list[] = $type.\'JOIN '.addcslashes($db->protectIdentifiers($desc->getTable()), "'").' AS \'.$alias.\' ON \'.implode(\' \', $this->filters);
+	$list[] = $type.\'JOIN '.addcslashes($db->protectIdentifiers($desc->getTable()), "'").' AS \'.$this->table_alias.\' ON \'.implode(\' \', $this->filters);
 }');
 		
 		$this->addPart('foreach($this->with as $join_alias => $join)
 {
-	$join->createFromPart($parent_alias ? $alias.\'_\'.$join_alias : $join_alias, $alias, $list);
+	$join->createFromPart($this->table_alias, $list);
 }');
 	}
 }

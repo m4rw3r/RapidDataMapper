@@ -13,17 +13,15 @@ class Rdm_Builder_Collection_CreateSelectPart extends Rdm_Util_Code_MethodBuilde
 	public function __construct(Rdm_Descriptor $desc)
 	{
 		$this->setMethodName('createSelectPart');
-		$this->setParamList('$parent_alias, &$list, &$column_mappings');
+		$this->setParamList('&$list, &$column_mappings');
 		
 		$db = $desc->getAdapter();
-		
-		$this->addPart('$alias = $parent_alias ? $parent_alias : \''.$desc->getSingular().'\';');
 		
 		$columns = array();
 		foreach(array_merge($desc->getPrimaryKeys(), $desc->getColumns()) as $c)
 		{
-			$columns[] = '$alias.\'.'.addcslashes($db->protectIdentifiers($c->getColumn()), "'");
-			$map[] = '$column_mappings[] = $alias.\'.'.$c->getProperty().'\';';
+			$columns[] = '$this->table_alias.\'.'.addcslashes($db->protectIdentifiers($c->getColumn()), "'");
+			$map[] = '$column_mappings[] = $this->table_alias.\'.'.$c->getProperty().'\';';
 		}
 		
 		$this->addPart('$list[] = '.implode(', \'.', $columns).'\';');
@@ -31,7 +29,7 @@ class Rdm_Builder_Collection_CreateSelectPart extends Rdm_Util_Code_MethodBuilde
 		
 		$this->addPart('foreach($this->with as $join_alias => $join)
 {
-	$join->createSelectPart($parent_alias ? $parent_alias.\'_\'.$join_alias : $join_alias, $list, $column_mappings);
+	$join->createSelectPart($list, $column_mappings);
 }');
 	}
 }
