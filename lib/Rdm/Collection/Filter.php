@@ -25,6 +25,13 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 	protected $is_dynamic = false;
 	
 	/**
+	 * The table alias which should be prepended to the column names.
+	 * 
+	 * @var string
+	 */
+	protected $table_alias;
+	
+	/**
 	 * The parent object, used for method chaining.
 	 * 
 	 * @var Rdm_Collection|Rdm_Collection_Filter
@@ -52,11 +59,12 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 	 * 
 	 * @return 
 	 */
-	public function __construct($parent = null)
+	public function __construct($parent = null, $parent_alias = '')
 	{
 		$this->parent = $parent;
 		$this->db = $parent->db;
 		$this->is_locked =& $parent->is_locked;
+		$this->table_alias = $parent_alias;
 	}
 	
 	// ------------------------------------------------------------------------

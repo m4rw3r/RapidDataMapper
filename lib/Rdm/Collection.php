@@ -222,6 +222,13 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	protected $is_populated = false;
 	
 	/**
+	 * The alias of the current table.
+	 * 
+	 * @var string
+	 */
+	protected $table_alias = '';
+	
+	/**
 	 * Internal: A list of filter objects
 	 * 
 	 * @var array(Collection_Filter)
@@ -350,7 +357,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * 
 	 * @return 
 	 */
-	public function __construct($parent = null, $relation = null)
+	public function __construct($parent = null, $relation = null, $table_alias = '')
 	{
 		// TODO: Enable syntax like this: new TrackCollection($artist); where $artist owns a set of tracks
 		
@@ -366,6 +373,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			$this->join_type = $relation->type;
 			// -1 is reserved for the relation filter
 			$this->filters[-1] = $this->relation;
+			
+			// The alias the parent object tells us to use
+			$this->table_alias = $table_alias;
 		}
 		else
 		{

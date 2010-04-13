@@ -20,6 +20,8 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 		// Unit of work storage common to only the generated <Class>Collection
 		$this->addPart('protected static $unit_of_work = null;');
 		
+		$this->addPart(new Rdm_Util_Code_PropertyBuilder('table_alias', $desc->getSingular()));
+		
 		// Static methods
 		$this->addPart(new Rdm_Builder_Collection_Flush($desc));
 		$this->addPart(new Rdm_Builder_Collection_SetUnitOfWork($desc));
