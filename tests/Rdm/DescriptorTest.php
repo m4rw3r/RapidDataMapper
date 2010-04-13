@@ -331,8 +331,49 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 	public function testNewRelation()
 	{
 		$desc = new Rdm_Descriptor();
+		$desc->setClass('foobar');
 		
 		$this->assertTrue($desc->newRelation('image') instanceof Rdm_Descriptor_Relation);
+	}
+	/**
+	 * @expectedException Rdm_Descriptor_MissingValueException
+	 */
+	public function testNewRelation2()
+	{
+		$desc = new Rdm_Descriptor();
+		
+		$this->assertTrue($desc->newRelation('image') instanceof Rdm_Descriptor_Relation);
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function testCalcRelationId()
+	{
+		$desc = new Rdm_Descriptor();
+		$desc->setClass('foobar');
+		
+		$rel = new Rdm_Descriptor_Relation();
+		$rel->setName('foobar');
+		
+		$this->assertEquals(gettype(Rdm_Descriptor::calcRelationId($desc, $rel)), 'integer', 'calcRelationId returns integer');
+		
+		$tmp = Rdm_Descriptor::calcRelationId($desc, $rel);
+		
+		$this->assertEquals(Rdm_Descriptor::calcRelationId($desc, $rel), $tmp, 'make sure that the value returned by calcRelationId() always is the same');
+		
+		$rel->setName('lol');
+		
+		$this->assertNotEquals(Rdm_Descriptor::calcRelationId($desc, $rel), $tmp, 'make sure that the value returned by calcRelationId() does not depend on PHP object instance id');
+		
+		
+		$desc2 = new Rdm_Descriptor();
+		$desc2->setClass('foobar');
+		
+		$rel2 = new Rdm_Descriptor_Relation();
+		$rel2->setName('foobar');
+		$rel->setName('foobar');
+		
+		$this->assertEquals(Rdm_Descriptor::calcRelationId($desc, $rel), Rdm_Descriptor::calcRelationId($desc2, $rel2));
 	}
 	
 	// ------------------------------------------------------------------------
@@ -490,6 +531,7 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 		eval('class ConcreteRdm_Util_Decorator extends Rdm_Util_Decorator {}');
 		
 		$desc = new Rdm_Descriptor();
+		$desc->setClass('test');
 		
 		$c = $desc->newColumn('col');
 		$r = $desc->newRelation('rel');
@@ -547,6 +589,7 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 		eval('class ConcreteRdm_Util_Decorator extends Rdm_Util_Decorator {}');
 		
 		$desc = new Rdm_Descriptor();
+		$desc->setClass('test');
 		
 		$c = $desc->newColumn('col');
 		$r = $desc->newRelation('rel');
@@ -585,6 +628,7 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 		eval('class ConcreteRdm_Util_Decorator extends Rdm_Util_Decorator {}');
 		
 		$desc = new Rdm_Descriptor();
+		$desc->setClass('test');
 		
 		$c = $desc->newColumn('col');
 		$r = $desc->newRelation('rel');
@@ -634,6 +678,7 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 		eval('class ConcreteRdm_Util_Decorator extends Rdm_Util_Decorator {}');
 		
 		$desc = new Rdm_Descriptor();
+		$desc->setClass('test');
 		
 		$c = $desc->newColumn('col');
 		$r = $desc->newRelation('rel');
