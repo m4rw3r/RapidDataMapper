@@ -288,8 +288,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Sets the unit of work instance to use for this collection.
+	 * Internal: Sets the unit of work instance to use for this collection.
 	 * 
+	 * @internal
 	 * @param  Rdm_UnitOfWork
 	 * @return void
 	 */
@@ -301,8 +302,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Sets the unit of work instance to use for this collection.
+	 * Internal: Returns the UnitOfWork instance used by this collection.
 	 * 
+	 * @internal
 	 * @return Rdm_UnitOfWork
 	 */
 	public static function getUnitOfWork()
@@ -417,8 +419,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the relationship type which this collection has been joined with.
+	 * Internal: Returns the relationship type which this collection has been joined with.
 	 * 
+	 * @internal
 	 * @return int
 	 */
 	public function getJoinType()
@@ -439,8 +442,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	abstract public function with($relation_id);
 	
 	/**
-	 * Creates the SELECT part of the query, does not include the SELECT keyword.
+	 * Internal: Creates the SELECT part of the query, does not include the SELECT keyword.
 	 * 
+	 * @internal
 	 * @param  array   The list of columns, these will later be joined with ", " between them
 	 * @param  array   A list to keep track of which column goes where, aliases are not
 	 *                 used, so therefore storing the columns integer index is important.
@@ -451,8 +455,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	abstract public function createSelectPart(&$list, &$column_mappings);
 	
 	/**
-	 * Creates the FROM and JOIN part of the query, does not includes the FROM keyword.
+	 * Internal: Creates the FROM and JOIN part of the query, does not includes the FROM keyword.
 	 * 
+	 * @internal
 	 * @param  string  The alias of the parent table, if this collection is joined onto another
 	 *                 False if this is the root Collection object
 	 * @param  array   The list of parts which is to be inserted into the space where
@@ -462,8 +467,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	abstract public function createFromPart($parent_alias, &$list);
 	
 	/**
-	 * Hydrates the result row into objects.
+	 * Internal: Hydrates the result row into objects.
 	 * 
+	 * @internal
 	 * @param  array       The result row with integer indexed columns
 	 * @param  array       The result array with primary keys as the keys
 	 * @param  array       The column map which describes which column resides in which index
@@ -475,6 +481,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	
 	/**
 	 * Creates a select query for this Collection object.
+	 * 
+	 * Can be used for debugging or dumping the SQL to see if the collection
+	 * will generate the desired SQL.
 	 * 
 	 * @return string
 	 */
@@ -509,8 +518,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	/**
 	 * Internal: Fetches a reference to the contents of this Colleciton.
 	 * 
-	 * Used to be able to directly assign subcollections' data.
+	 * This is used to be able to directly assign subcollections' data.
 	 * 
+	 * @internal
 	 * @return array
 	 */
 	public function &getContentReference()
@@ -523,6 +533,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	/**
 	 * Internal: Flags this collection as populated.
 	 * 
+	 * @internal
 	 * @return void
 	 */
 	public function setPopulated()
@@ -535,8 +546,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * Creates a new instance of the appropriate Rdm_Collection_Filter.
+	 * Internal: Creates a new instance of the appropriate Rdm_Collection_Filter.
 	 * 
+	 * @internal
 	 * @return Rdm_Collection_Filter
 	 */
 	abstract protected function createFilterInstance();
