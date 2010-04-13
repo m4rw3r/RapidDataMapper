@@ -13,7 +13,9 @@ class Rdm_Builder_Relation_ToString extends Rdm_Util_Code_MethodBuilder
 	public function __construct(Rdm_Descriptor_Relation $rel, Rdm_Descriptor $desc)
 	{
 		$this->setMethodName('__toString');
-		$this->setPhpDoc('Internal.');
+		$this->setPhpDoc('Internal: Creates the relationship condition used in the ON part of JOIN.
+
+@return string');
 		
 		$db = $desc->getAdapter();
 		list($local_keys, $foreign_keys) = $rel->getKeys();
@@ -27,13 +29,6 @@ class Rdm_Builder_Relation_ToString extends Rdm_Util_Code_MethodBuilder
 		}
 		
 		$this->addPart('return '.implode('.', $columns).';');
-	}
-	
-	// ------------------------------------------------------------------------
-	
-	public function getName()
-	{
-		return 'properties';
 	}
 }
 

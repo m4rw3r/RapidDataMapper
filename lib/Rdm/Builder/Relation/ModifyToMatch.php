@@ -14,7 +14,10 @@ class Rdm_Builder_Relation_ModifyToMatch extends Rdm_Util_Code_MethodBuilder
 	{
 		$this->setMethodName('modifyToMatch');
 		$this->setParamList('$object');
-		$this->setPhpDoc('Internal.');
+		$this->setPhpDoc('Internal: Modifies the supplied object so that it relates to the parent object.
+
+@internal
+@return void');
 		
 		list($local_keys, $foreign_keys) = $rel->getKeys();
 		$modcode = array();
@@ -26,13 +29,6 @@ class Rdm_Builder_Relation_ModifyToMatch extends Rdm_Util_Code_MethodBuilder
 		}
 		
 		$this->addPart(implode("\n\t", $modcode));
-	}
-	
-	// ------------------------------------------------------------------------
-	
-	public function getName()
-	{
-		return 'properties';
 	}
 }
 
