@@ -467,10 +467,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * @param  array       The result row with integer indexed columns
 	 * @param  array       The result array with primary keys as the keys
 	 * @param  array       The column map which describes which column resides in which index
-	 * @param  string      The parent alias, if this row is not part of the root nodes
 	 * @return void|false  False if there is no object to hydrate
 	 */
-	abstract public function hydrateObject(&$row, &$result, &$map, $parent_alias = false);
+	abstract public function hydrateObject(&$row, &$result, &$map);
 	
 	// ------------------------------------------------------------------------
 	

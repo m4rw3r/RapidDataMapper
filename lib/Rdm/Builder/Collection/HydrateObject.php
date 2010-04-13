@@ -13,14 +13,12 @@ class Rdm_Builder_Collection_HydrateObject extends Rdm_Util_Code_MethodBuilder
 	public function __construct(Rdm_Descriptor $desc)
 	{
 		$this->setMethodName('hydrateObject');
-		$this->setParamList('&$row, &$result, &$map, $parent_alias = false');
-		
-		$this->addPart('$alias = $parent_alias ? $parent_alias : \''.$desc->getSingular().'\';');
+		$this->setParamList('&$row, &$result, &$map');
 		
 		$pks = array();
 		foreach($desc->getPrimaryKeys() as $pk)
 		{
-			$pks[] = '$row[$map[$alias.\'.'.$pk->getProperty().'\']]';
+			$pks[] = '$row[$map[$this->table_alias.\'.'.$pk->getProperty().'\']]';
 		}
 		
 		$this->addPart('$id = '.implode('.', $pks).';');

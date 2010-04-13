@@ -25,13 +25,13 @@ foreach($this->with as $join_alias => $join)
 			$e->$join_alias->setPopulated();
 		}
 		
-		$join->hydrateObject($row, $e->$join_alias->getContentReference(), $map, $parent_alias ? $alias.\'_\'.$join_alias : $join_alias);
+		$join->hydrateObject($row, $e->$join_alias->getContentReference(), $map);
 	}
 	else
 	{
 		$hash = array();
 		
-		$join->hydrateObject($row, $hash, $map, $parent_alias ? $alias.\'_\'.$join_alias : $join_alias);
+		$join->hydrateObject($row, $hash, $map);
 		
 		if($hash)
 		{
