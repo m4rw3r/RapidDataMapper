@@ -14,8 +14,12 @@ class Rdm_Builder_Relation extends Rdm_Util_Code_ClassBuilder
 	{
 		$this->setClassName($rel->getRelationFilterClassName());
 		$this->setImplements('Rdm_Collection_FilterInterface');
+		$this->setPhpDoc('A class which handles relations between '.$desc->getClass().' and '.$rel->getName().': it can produce join conditions
+for '.$desc->getClass().' to '.$rel->getName().', filter '.$desc->getClass().' by '.$rel->getName().' and finally establish a relation between '.$desc->getClass().' and '.$rel->getName().'.');
 		
 		$this->addPart(new Rdm_Builder_Relation_Properties($rel, $desc));
+		
+		$this->addPart(new Rdm_Builder_Relation_Construct($rel, $desc));
 		
 		$this->addPart(new Rdm_Builder_Relation_Methods($rel, $desc));
 		

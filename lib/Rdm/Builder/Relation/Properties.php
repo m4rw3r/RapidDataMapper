@@ -17,6 +17,7 @@ class Rdm_Builder_Relation_Properties extends Rdm_Util_Code_Container
 		$this->addPart(new Rdm_Util_Code_PropertyBuilder('parent_object'));
 		$this->addPart(new Rdm_Util_Code_PropertyBuilder('alias'));
 		$this->addPart(new Rdm_Util_Code_PropertyBuilder('parent_alias'));
+		$this->addPart(new Rdm_Util_Code_PropertyBuilder('db', null, 'protected'));
 	}
 	
 	// ------------------------------------------------------------------------
