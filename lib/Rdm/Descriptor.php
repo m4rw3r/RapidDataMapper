@@ -739,6 +739,21 @@ class Rdm_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns a code fragment which fetches the correct adapter, should be placed
+	 * between = and ; .
+	 * 
+	 * @return string
+	 */
+	public function getFetchAdapterCode()
+	{
+		$name = empty($this->db_conn_name) ? '' : '\''.addcslashes($this->db_conn_name, "'").'\'';
+		
+		return 'Rdm_Adapter::getInstance('.$name.')';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the code invoking a specified hook.
 	 * 
 	 * Examples:
