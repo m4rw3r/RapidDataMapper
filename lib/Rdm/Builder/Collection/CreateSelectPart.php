@@ -20,6 +20,7 @@ class Rdm_Builder_Collection_CreateSelectPart extends Rdm_Util_Code_MethodBuilde
 		$columns = array();
 		foreach(array_merge($desc->getPrimaryKeys(), $desc->getColumns()) as $c)
 		{
+			// TODO: Move the line below to the column descriptors (to make it easily adaptable):
 			$columns[] = '$this->table_alias.\'.'.addcslashes($db->protectIdentifiers($c->getColumn()), "'");
 			$map[] = '$column_mappings[] = $this->table_alias.\'.'.$c->getProperty().'\';';
 		}
