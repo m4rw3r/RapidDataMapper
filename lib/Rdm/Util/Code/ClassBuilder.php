@@ -16,6 +16,13 @@ class Rdm_Util_Code_ClassBuilder extends Rdm_Util_Code_Container
 	
 	public $implements = '';
 	
+	/**
+	 * The PHP doc contents which should go into a PHPdoc before this method.
+	 * 
+	 * @var string
+	 */
+	public $php_doc = '';
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -56,6 +63,20 @@ class Rdm_Util_Code_ClassBuilder extends Rdm_Util_Code_Container
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Set the PHPdoc of this generated class, the comment will automatically be
+	 * formatted into a PHPdoc comment.
+	 * 
+	 * @param  string
+	 * @return void
+	 */
+	public function setPhpDoc($string)
+	{
+		$this->php_doc = "/**\n * ".implode("\n * ", explode("\n", $string))."\n */\n";
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	public function getName()
 	{
@@ -66,7 +87,7 @@ class Rdm_Util_Code_ClassBuilder extends Rdm_Util_Code_Container
 	
 	public function __toString()
 	{
-		$head = "class {$this->name}";
+		$head = $this->php_doc."class {$this->name}";
 		
 		if( ! empty($this->extends))
 		{
