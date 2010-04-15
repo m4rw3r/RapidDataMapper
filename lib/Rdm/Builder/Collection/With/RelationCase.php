@@ -19,7 +19,7 @@ class Rdm_Builder_Collection_With_RelationCase extends Rdm_Util_Code_Container
 	public function __construct(Rdm_Descriptor_Relation $rel, Rdm_Descriptor $desc, $first)
 	{
 		$this->relation_name = $rel->getName();
-		$this->relation_id   = $rel->getIntegerIdentifier();
+		$this->relation_id   = $rel->getConstantIdentifier();
 		$this->is_first      = $first;
 		
 		$this->addPart('if(isset($this->with[\''.$rel->getName().'\']))
