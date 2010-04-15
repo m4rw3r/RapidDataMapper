@@ -15,7 +15,14 @@ class Rdm_Builder_Relation_Construct extends Rdm_Util_Code_MethodBuilder
 		$this->setMethodName('__construct');
 		$this->setParamList('$object = null, $alias = \'\', Rdm_Adapter $db = null');
 		$this->setPhpDoc('Internal: Creates a new Relation filter which filters '.$desc->getClass().' by their
-related '.$rel->getName().'.
+related '.$rel->getName().', this will put it in "reverse mode", if an $object is not present, "reverse mode" won\'t be triggered.
+
+So for relating from '.$desc->getClass().' to '.$rel->getName().', ie. JOIN '.$rel->getName().' to
+the '.$desc->getClass().' query, use new '.$rel->getRelationFilterClassName().';
+
+To filter '.$desc->getClass().' by an already fetched '.$rel->getName().' object ('.$rel->getRelatedDescriptor()->getClass().'),
+ie. WHERE '.$desc->getClass().'.key = $related_object->otherkey,
+use new '.$rel->getRelationFilterClassName().'($related_object, \'alias for '.$desc->getClass().'\');
 
 @internal
 @param  '.$rel->getRelatedDescriptor()->getClass().'   The instance to filter by, if the entities to fetch
@@ -25,7 +32,12 @@ related '.$rel->getName().'.
 @param  Rdm_Adapter   The database instance used when escaping the data from the $object,
                       if omitted, then the default instance will be used.');
 		
-		$this->addPart('$this->parent_object = $object;
+		$this->addPart('if( ! is_null($object))
+{
+	$this->reverse = true;
+	$this->parent_object = $object;
+}
+
 $this->alias = $alias;
 $this->db = is_null($db) ? '.$desc->getFetchAdapterCode().' : $db;');
 	}

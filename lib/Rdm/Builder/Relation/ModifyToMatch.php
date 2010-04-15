@@ -20,15 +20,37 @@ class Rdm_Builder_Relation_ModifyToMatch extends Rdm_Util_Code_MethodBuilder
 @return void');
 		
 		list($local_keys, $foreign_keys) = $rel->getKeys();
+		
+		// $this->parent_object is the local object
 		$modcode = array();
+		
+		// $object is the local object
+		$reverse_code = array();
 		while( ! empty($local_keys))
 		{
-			list($local, $foreign) = array(array_shift($local_keys), array_shift($foreign_keys));
+			$local   = array_shift($local_keys);
+			$foreign = array_shift($foreign_keys);
 			
-			$modcode[] = $foreign->getAssignToObjectCode('$object', $local->getFetchFromObjectCode('$this->parent_object'));
+			if($rel->getType() == Rdm_Descriptor::HAS_ONE OR $rel->getType() == Rdm_Descriptor::HAS_MANY)
+			{
+				$reverse[] = $foreign->getAssignToObjectCode('$this->parent_object', $local->getFetchFromObjectCode('$object'));
+				$modcode[] = $foreign->getAssignToObjectCode('$object', $local->getFetchFromObjectCode('$this->parent_object'));
+			}
+			else
+			{
+				$reverse[] = $local->getAssignToObjectCode('$object', $foreign->getFetchFromObjectCode('$this->parent_object'));
+				$modcode[] = $local->getAssignToObjectCode('$this->parent_object', $foreign->getFetchFromObjectCode('$object'));
+			}
 		}
 		
-		$this->addPart(implode("\n\t", $modcode));
+		$this->addPart('if($this->reverse)
+{
+	'.implode("\n\t", $reverse).'
+}
+else
+{
+	'.implode("\n\t", $modcode).'
+}');
 	}
 }
 
