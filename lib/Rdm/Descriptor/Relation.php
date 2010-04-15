@@ -159,6 +159,21 @@ class Rdm_Descriptor_Relation
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the name of the relationship constant, format:
+	 * {parent_descriptor's collection class}::{ucfirst(getName())}.
+	 * 
+	 * Use when referring to this relationship.
+	 * 
+	 * @return string
+	 */
+	public function getConstantIdentifier()
+	{
+		return $this->getParentDescriptor()->getCollectionClassName().'::'.ucfirst($this->getName());
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the property to place the related data in.
 	 * 
 	 * Default:
