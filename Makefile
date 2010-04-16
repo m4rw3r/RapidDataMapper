@@ -27,6 +27,7 @@ clean:
 	rm -f rdm.zip
 	rm -f manual.zip
 	rm -f chunked.zip
+	rm -f run-tests.log
 	rm -f phpt/*.out
 	rm -f phpt/*.diff
 	rm -f phpt/*.php
