@@ -1,11 +1,12 @@
 
 # paths to binaries
-java_bin     = java
-jing_bin_jar = jing/bin/jing.jar
-xsltproc_bin = xsltproc
-phpdoc_bin   = phpdoc
-phpunit_bin  = PHPUnit
+java_bin          = java
+jing_bin_jar      = jing/bin/jing.jar
+xsltproc_bin      = xsltproc
+phpdoc_bin        = phpdoc
+phpunit_bin       = PHPUnit
 phpcompatinfo_bin = pci
+phpt_bin          = pear run-tests
 
 # docbook constants
 docbook_rng = doc/docbook.rng
@@ -26,6 +27,11 @@ clean:
 	rm -f rdm.zip
 	rm -f manual.zip
 	rm -f chunked.zip
+	rm -f phpt/*.out
+	rm -f phpt/*.diff
+	rm -f phpt/*.php
+	rm -f phpt/*.exp
+	rm -f phpt/*.log
 
 
 # Create all documentation, not including API
@@ -63,9 +69,17 @@ report-compatinfo:
 tests: empty
 	$(phpunit_bin) --coverage-html report tests
 
+phpt: empty
+	rm -f phpt/*.out
+	rm -f phpt/*.diff
+	rm -f phpt/*.php
+	rm -f phpt/*.exp
+	rm -f phpt/*.log
+	${phpt_bin} phpt
+
 
 # Package for distribution, run tests
-dist: clean tests phpdoc doc
+dist: clean tests phpt phpdoc doc
 	mkdir dist
 	git checkout-index -a -f --prefix=dist/
 	cp doc/manual.html dist/doc/manual.html
