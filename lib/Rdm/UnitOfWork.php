@@ -111,6 +111,11 @@ abstract class Rdm_UnitOfWork
 			unset($this->entities[$key]);
 		}
 		
+		if(empty($object->__id))
+		{
+			throw Rdm_UnitOfWork_Exception::alreadyDeleted($object);
+		}
+		
 		$this->deleted_entities[$key] = $object;
 	}
 	
