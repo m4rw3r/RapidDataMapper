@@ -165,35 +165,60 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 				$units[] = call_user_func($c.'::getUnitOfWork');
 			}
 			
-			try
+			// TODO: Sort the UnitOfWork instances so that inserts and updates are made in the correct order
+			
+			if($db->transactionInProgress())
 			{
-				$db->transactionStart();
+				// We already have a transaction, do not create another
 				
-				// Send database calls
-				foreach($units as $u)
-				{
-					$u->process();
-				}
-				
-				// All done, now we clean up
-				foreach($units as $u)
-				{
-					$u->cleanup();
-				}
-				
-				// Done!
-				$db->transactionCommit();
+				self::doFlushes($units);
 			}
-			catch(Exception $e)
+			else
 			{
-				// Oops, error, reset objects now
-				foreach($units as $u)
+				// Nope, create a new local transaction
+				try
 				{
-					$u->reset();
+					$db->transactionStart();
+					
+					self::doFlushes($units);
+					
+					// Done!
+					$db->transactionCommit();
 				}
-				
-				throw $e;
+				catch(Exception $e)
+				{
+					// Oops, error, reset objects now
+					foreach($units as $u)
+					{
+						$u->reset();
+					}
+					
+					throw $e;
+				}
 			}
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Flushes the contents of the unit of works in the supplied list.
+	 * 
+	 * @param  array(Rdm_UnitOfWork)
+	 * @return void
+	 */
+	public static function doFlushes(array $units)
+	{
+		// Send database calls
+		foreach($units as $u)
+		{
+			$u->process();
+		}
+		
+		// All done, now we clean up
+		foreach($units as $u)
+		{
+			$u->cleanup();
 		}
 	}
 	
