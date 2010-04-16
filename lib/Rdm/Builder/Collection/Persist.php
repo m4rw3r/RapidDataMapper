@@ -16,6 +16,11 @@ class Rdm_Builder_Collection_Persist extends Rdm_Util_Code_MethodBuilder
 		$this->setStatic(true);
 		$this->setParamList('$object');
 		
+		$this->addPart('if( ! $object instanceof '.$desc->getClass().')
+{
+	throw Rdm_Collection_Exception::expectingObjectOfClass(\''.$desc->getClass().'\');
+}');
+		
 		$this->addPart('self::$unit_of_work->addNewEntity($object);');
 	}
 }

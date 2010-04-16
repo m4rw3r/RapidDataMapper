@@ -48,6 +48,19 @@ class Rdm_Collection_Exception extends Exception implements Rdm_Exception
 	{
 		return new Rdm_Collection_Exception('Filters does not only contain fixed values, cannot apply changes to the supplied object. (This can be caused by filters like id < 34 or OR conditionals.)');
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates an exception telling the user that an object of type $class_name
+	 * was expected.
+	 * 
+	 * @return Rdm_Collection_Exception
+	 */
+	public static function expectingObjectOfClass($class_name)
+	{
+		return new Rdm_Collection_Exception('Object of type '.$class_name.' was expected.');
+	}
 }
 
 
