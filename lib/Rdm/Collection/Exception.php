@@ -55,6 +55,7 @@ class Rdm_Collection_Exception extends Exception implements Rdm_Exception
 	 * Creates an exception telling the user that an object of type $class_name
 	 * was expected.
 	 * 
+	 * @param  string
 	 * @return Rdm_Collection_Exception
 	 */
 	public static function expectingObjectOfClass($class_name)
