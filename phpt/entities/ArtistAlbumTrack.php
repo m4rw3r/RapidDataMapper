@@ -8,6 +8,7 @@ class TrackDescriptor extends Rdm_Descriptor
 		
 		$this->add($this->newColumn('name'));
 		$this->add($this->newColumn('artist_id')->setDataType('integer'));
+		$this->add($this->newColumn('album_id')->setDataType('integer'));
 		$this->add($this->newRelation('artist'));
 		$this->add($this->newRelation('album'));
 	}
