@@ -83,11 +83,31 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		{
 			// Handle errors, we cannot just let exceptions pass through,
 			// because then autoload falls back on the other autoloaders
+			// and ignores our exception
 			
-			// TODO: Handle errors in a better way
-			trigger_error(get_class($e).': '.$e->getMessage().' Trace: '.$e->getTraceAsString(), E_USER_ERROR);
+			// Call the exception handler directly instead
 			
-			throw $e;
+			// Get the exception handler, use this method as an impostor so
+			// we can convince PHP to lend us the current exception handler
+			$eh = set_exception_handler(array(__CLASS__, 'autoload'));
+			// We must kill the impostor before he is found out!
+			restore_exception_handler();
+			
+			if( ! $eh)
+			{
+				// We got a fake!
+				
+				// Now we have to try to fool the buyer...
+				self::triggerExceptionError($e);
+			}
+			else
+			{
+				// Now we execute the stolen handler!
+				call_user_func($eh, $e);
+			}
+			
+			// Let's leave before it blows up!
+			exit;
 		}
 		
 		// Do we write a compiled file?
@@ -123,6 +143,27 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		{
 			eval($builder->__toString());
 		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * This is a fake exception printer, it will raise a fatal error with the
+	 * exception formatted as the default PHP printer.
+	 * 
+	 * @param  Exception
+	 * @return void
+	 */
+	protected static function triggerExceptionError($exception)
+	{
+		$message = 'Uncaught exception \''.get_class($exception).'\' with message \''.$exception->getMessage().'\' in '.$exception->getFile().'::'.$exception->getLine().'
+Stack trace:
+'.$exception->getTraceAsString().'
+  thrown in '.$exception->getFile().' on line '.$exception->getLine().'
+  faked';
+		
+		// Trigger the error
+		trigger_error($message, E_USER_ERROR);
 	}
 	
 	// ------------------------------------------------------------------------
