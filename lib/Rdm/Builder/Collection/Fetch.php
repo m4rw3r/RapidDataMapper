@@ -14,10 +14,10 @@ class Rdm_Builder_Collection_Fetch extends Rdm_Util_Code_Container
 	{
 		$this->addPart(new Rdm_Builder_Collection_Fetch_ByPrimaryKey($desc));
 		
-		/*foreach(array_merge($desc->getColumns(), $desc->getPrimaryKeys()) as $c)
+		foreach(array_merge($desc->getColumns(), $desc->getPrimaryKeys()) as $c)
 		{
 			$this->addPart(new Rdm_Builder_Collection_Fetch_ByColumn($c, $desc));
-		}*/
+		}
 	}
 	
 	// ------------------------------------------------------------------------
