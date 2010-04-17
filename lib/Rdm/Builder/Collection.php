@@ -30,6 +30,8 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 		$this->addPart(new Rdm_Builder_Collection_Persist($desc));
 		$this->addPart(new Rdm_Builder_Collection_Delete($desc));
 		
+		$this->addPart(new Rdm_Builder_Collection_Fetch($desc));
+		
 		// Instance methods
 		$this->addPart(new Rdm_Builder_Collection_With($desc));
 		$this->addPart(new Rdm_Builder_Collection_CreateSelectPart($desc));
