@@ -20,7 +20,8 @@ class Rdm_Builder_CollectionFilter_FilterEqualMethod extends Rdm_Util_Code_Metho
 		
 		$col = addcslashes($db->protectIdentifiers($column->getColumn()), "'");
 		
-		$this->addPart("\$this->filters[] = \$this->table_alias.'.$col = '.\$this->db->escape(\$$property);");
+		$this->addPart("empty(\$this->filters) OR \$this->filters[] = 'AND';
+\$this->filters[] = \$this->table_alias.'.$col = '.\$this->db->escape(\$$property);");
 		
 		// TODO: Validation for type
 		// TODO: Set data so we can repopulate objects inserted into the collection using Rdm_Collection->add()
