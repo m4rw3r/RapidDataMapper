@@ -302,6 +302,14 @@ Stack trace:
 	public $filters = array();
 	
 	/**
+	 * Internal: A list of objects which can modify an add()ed object using
+	 * modifyToMatch().
+	 * 
+	 * @var array()
+	 */
+	protected $modifiers = array();
+	
+	/**
 	 * Internal: A list of joined relation names and their collection objects.
 	 * 
 	 * @var array(string => Rdm_Collection)
@@ -441,6 +449,7 @@ Stack trace:
 			$this->join_type = $relation->type;
 			// -1 is reserved for the relation filter
 			$this->filters[-1] = $this->relation;
+			$this->modifiers[-1] = $this->relation;
 			
 			// The alias the parent object tells us to use
 			$this->table_alias = $table_alias;
@@ -466,6 +475,7 @@ Stack trace:
 			$this->relation = clone $this->relation;
 			// We need to fix the filter too
 			$this->filters[-1] = $this->relation;
+			$this->modifiers[-1] = $this->relation;
 		}
 	}
 	
@@ -637,7 +647,10 @@ Stack trace:
 		
 		empty($this->filters) OR $this->filters[] = 'AND';
 		
-		return $this->filters[] = $this->createFilterInstance();
+		$this->modifiers[] = $o = $this->createFilterInstance();
+		$this->filters[] = $o;
+		
+		return $o;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -658,7 +671,10 @@ Stack trace:
 		
 		empty($this->filters) OR $this->filters[] = 'OR';
 		
-		return $this->filters[] = $this->createFilterInstance();
+		$this->modifiers[] = $o = $this->createFilterInstance();
+		$this->filters[] = $o;
+		
+		return $o;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -792,18 +808,18 @@ Stack trace:
 		}
 		
 		// Check that the subfilters doesn't contain anything simila
-		foreach($this->filters as $filter)
+		foreach($this->modifiers as $mod)
 		{
-			if( ! $filter->canModifyToMatch())
+			if( ! $mod->canModifyToMatch())
 			{
 				throw Rdm_Collection_Exception::filterCannotModify();
 			}
 		}
 		
 		// Modify the object
-		foreach($this->filters as $filter)
+		foreach($this->modifiers as $mod)
 		{
-			$filter->modifyToMatch($object);
+			$mod->modifyToMatch($object);
 		}
 	}
 	

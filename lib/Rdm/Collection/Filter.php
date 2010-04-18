@@ -18,6 +18,14 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 	protected $filters = array();
 	
 	/**
+	 * A list of modifying objects which will be able to modify objects
+	 * passed to modifyToMatch().
+	 * 
+	 * @var array()
+	 */
+	protected $modifiers = array();
+	
+	/**
 	 * If this object contains dynamic filters, like id < 34.
 	 * 
 	 * @var boolean
@@ -99,7 +107,11 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 		
 		empty($this->filters) OR $this->filters[] = 'AND';
 		
-		return $this->filters[] = new $c($this);
+		// Add so we later on can modify objects using modifyToMatch()
+		$this->modifiers[] = $o = new $c($this);
+		$this->filters[] = $o;
+		
+		return $o;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -124,7 +136,9 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 		
 		empty($this->filters) OR $this->filters[] = 'OR';
 		
-		return $this->filters[] = new $c($this);
+		$this->filters[] = $o = new $c($this);
+		
+		return $o;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -148,14 +162,30 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 	
 	public function canModifyToMatch()
 	{
-		return ! $this->is_dynamic;
+		if($this->is_dynamic)
+		{
+			return false;
+		}
+		
+		foreach($this->modifiers as $mod)
+		{
+			if( ! $mod->canModifyToMatch())
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	// ------------------------------------------------------------------------
 	
 	public function modifyToMatch($object)
 	{
-		// TODO: Code
+		foreach($this->modifiers as $mod)
+		{
+			$mod->modifyToMatch($object);
+		}
 	}
 	
 	// ------------------------------------------------------------------------
