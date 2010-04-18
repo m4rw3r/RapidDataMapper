@@ -295,13 +295,6 @@ Stack trace:
 	protected $table_alias = '';
 	
 	/**
-	 * The class name for the entities mapped by this class.
-	 * 
-	 * @var string
-	 */
-	protected $entity_class = '';
-	
-	/**
 	 * Internal: A list of filter objects
 	 * 
 	 * @var array(Collection_Filter)
@@ -769,11 +762,20 @@ Stack trace:
 	 */
 	public function add($object)
 	{
-		if( ! $object instanceof $this->entity_class)
-		{
-			throw Rdm_Collection_Exception::expectingObjectOfClass($this->entity_class);
-		}
-		
+		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Contains the common instructions for add(), will perform the calls to
+	 * filters and check the contents of the internal array.
+	 * 
+	 * @param  Object
+	 * @return boolean  True if the object already is in the collection
+	 */
+	protected function _add($object)
+	{
 		$this->is_locked = true;
 		
 		// OR cannot decide what side of the filters we need to modify
@@ -786,7 +788,7 @@ Stack trace:
 		if($this->is_populated && in_array($object, $this->contents, true))
 		{
 			// Yes, we're done
-			return $this;
+			return true;
 		}
 		
 		// Check that the subfilters doesn't contain anything simila
@@ -803,20 +805,6 @@ Stack trace:
 		{
 			$filter->modifyToMatch($object);
 		}
-		
-		// Add it to this collection's data
-		if( ! empty($object->__id))
-		{
-			// TODO: Replace the id concatenation scheme?
-			$this->contents[implode('', $object->__id)] = $object;
-		}
-		else
-		{
-			// TODO: Persist object
-			$this->contents[] = $object;
-		}
-		
-		return $this;
 	}
 	
 	// ------------------------------------------------------------------------
