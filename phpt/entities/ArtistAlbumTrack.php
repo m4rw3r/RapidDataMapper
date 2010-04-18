@@ -36,6 +36,7 @@ class AlbumDescriptor extends Rdm_Descriptor
 		$this->add($this->newColumn('artist_id')->setDataType('integer'));
 		
 		$this->add($this->newRelation('tracks'));
+		$this->add($this->newRelation('artist'));
 	}
 }
 
