@@ -24,7 +24,7 @@ Rdm_Collection::flush();
 var_dump($artist->id);
 var_dump($album->id);
 var_dump($album->artist_id);
-var_dump(array_search($album, $artist->albums->getContentReference()));
+var_dump(array_search($album, $artist->albums->getContentReference(), true));
 --EXPECT--
 int(1)
 int(4)
