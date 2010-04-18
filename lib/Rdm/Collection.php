@@ -295,6 +295,13 @@ Stack trace:
 	protected $table_alias = '';
 	
 	/**
+	 * The class name for the entities mapped by this class.
+	 * 
+	 * @var string
+	 */
+	protected $entity_class = '';
+	
+	/**
 	 * Internal: A list of filter objects
 	 * 
 	 * @var array(Collection_Filter)
@@ -762,6 +769,11 @@ Stack trace:
 	 */
 	public function add($object)
 	{
+		if( ! $object instanceof $this->entity_class)
+		{
+			throw Rdm_Collection_Exception::expectingObjectOfClass($this->entity_class);
+		}
+		
 		$this->is_locked = true;
 		
 		// OR cannot decide what side of the filters we need to modify
@@ -770,16 +782,20 @@ Stack trace:
 			throw Rdm_Collection_Exception::filterCannotModify();
 		}
 		
-		// Check that the subfilters doesn't contain anything similar
-		$is_possible = true;
-		foreach($this->filters as $filter)
+		// Check if we already have it
+		if($this->is_populated && in_array($object, $this->contents, true))
 		{
-			$is_possible = $is_possible && $filter->canModifyToMatch();
+			// Yes, we're done
+			return $this;
 		}
 		
-		if( ! $is_possible)
+		// Check that the subfilters doesn't contain anything simila
+		foreach($this->filters as $filter)
 		{
-			throw Rdm_Collection_Exception::filterCannotModify();
+			if( ! $filter->canModifyToMatch())
+			{
+				throw Rdm_Collection_Exception::filterCannotModify();
+			}
 		}
 		
 		// Modify the object
@@ -788,7 +804,17 @@ Stack trace:
 			$filter->modifyToMatch($object);
 		}
 		
-		// TODO: Code for adding the object to this collection
+		// Add it to this collection's data
+		if( ! empty($object->__id))
+		{
+			// TODO: Replace the id concatenation scheme?
+			$this->contents[implode('', $object->__id)] = $object;
+		}
+		else
+		{
+			// TODO: Persist object
+			$this->contents[] = $object;
+		}
 		
 		return $this;
 	}
@@ -915,9 +941,16 @@ Stack trace:
 	 */
 	public function offsetSet($offset, $value)
 	{
-		// TODO: Implement?
-		// $collection[] = value; gives a call with (null, value), can be usable as a shortcut for add()
-		throw new Exception('Not yet implemented');
+		if(is_null($offset))
+		{
+			// $collection[] = $object; syntax
+			$this->add($value);
+		}
+		else
+		{
+			// TODO: Implement?
+			throw new Exception('Not yet implemented');
+		}
 	}
 	
 	// ------------------------------------------------------------------------
