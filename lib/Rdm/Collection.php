@@ -765,7 +765,7 @@ Stack trace:
 		$this->is_locked = true;
 		
 		// OR cannot decide what side of the filters we need to modify
-		if(array_search('OR', $this->filters) !== false)
+		if(in_array('OR', $this->filters, true))
 		{
 			throw Rdm_Collection_Exception::filterCannotModify();
 		}
