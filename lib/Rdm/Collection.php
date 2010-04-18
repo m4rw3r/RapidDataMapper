@@ -362,7 +362,7 @@ Stack trace:
 	 */
 	public static function setUnitOfWork(Rdm_UnitOfWork $u)
 	{
-		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -375,7 +375,7 @@ Stack trace:
 	 */
 	public static function getUnitOfWork()
 	{
-		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -387,7 +387,7 @@ Stack trace:
 	 */
 	public static function create()
 	{
-		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -400,7 +400,7 @@ Stack trace:
 	 */
 	public static function persist($object)
 	{
-		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -413,7 +413,7 @@ Stack trace:
 	 */
 	public static function delete($object)
 	{
-		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -724,7 +724,7 @@ Stack trace:
 	 */
 	public static function entityToXML($entity)
 	{
-		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -762,7 +762,7 @@ Stack trace:
 	 */
 	public function add($object)
 	{
-		throw Rdm_Collection_Exception::missingMethod(__CLASS__.'::'.__METHOD__);
+		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
 	}
 	
 	// ------------------------------------------------------------------------
