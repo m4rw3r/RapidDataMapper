@@ -70,36 +70,54 @@ class Album
 	public $name;
 }
 
+
 $db = Rdm_Adapter::getInstance();
-var_dump($db->transactionInProgress());
+var_dump($db->transactionStart());
 
 $a = ArtistCollection::create();
 
 // Get artist with the id 1:
-$art = $a[1];
+$artist = $a[1];
 
-var_dump($art);
+var_dump($artist);
 
 // Add a track:
-ArtistTracksRelation::establish($art, $t = new Track);
+ArtistTracksRelation::establish($artist, $t = new Track);
 
 // Dump it
 var_dump($t);
 
-$art->name = 'Draconian';
+$artist->name = 'Draconian';
 
-foreach(ArtistCollection::create()
-	->with(ArtistCollection::Albums)
-		->with(AlbumCollection::Tracks)
-		->end()
-	->end() as $a)
+$c = TrackCollection::create()->has()->relatedArtist($artist)->end();
+
+print_r($c);
+
+$c->add($t = new Track);
+$t->name = 'foobar';
+
+var_dump($t);
+
+
+$artists = ArtistCollection::create()
+  ->with(ArtistCollection::Albums)
+    ->with(AlbumCollection::Tracks)
+    ->end()
+  ->end();
+
+foreach($artists as $a)
 {
-	echo "$a->name\n";
-	
-	foreach($a->albums as $t)
-	{
-		echo "    $t->name\n";
-	}
+    echo "$a->name\n";
+    
+    foreach($a->albums as $al)
+    {
+        echo "  $al->name\n";
+        
+        foreach($al->tracks as $t)
+        {
+            echo "    $t->name\n";
+        }
+    }
 }
 
 Rdm_Collection::flush();
