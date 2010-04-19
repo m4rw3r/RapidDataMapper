@@ -12,7 +12,7 @@ $a->name = 'foobar';
 
 ArtistCollection::persist($a);
 
-Rdm_Collection::flush();
+Rdm_Collection::pushChanges();
 
 var_dump($a->id);
 var_dump($a->name);

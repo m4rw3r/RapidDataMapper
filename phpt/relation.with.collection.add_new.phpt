@@ -18,7 +18,7 @@ $album = new Album();
 $album->name = 'The Burning Halo';
 
 AlbumCollection::persist($album);
-AlbumCollection::flush();
+AlbumCollection::pushChanges();
 
 var_dump($album->id);
 var_dump($album->artist_id);
