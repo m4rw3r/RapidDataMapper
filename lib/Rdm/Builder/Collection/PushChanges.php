@@ -8,17 +8,17 @@
 /**
  * 
  */
-class Rdm_Builder_Collection_Flush extends Rdm_Util_Code_MethodBuilder
+class Rdm_Builder_Collection_PushChanges extends Rdm_Util_Code_MethodBuilder
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->setMethodName('flush');
+		$this->setMethodName('pushChanges');
 		$this->setStatic(true);
-		$this->setParamList('$private_flush = false');
+		$this->setParamList('$private_push = false');
 		
-		$this->addPart('if( ! $private_flush)
+		$this->addPart('if( ! $private_push)
 {
-	return parent::flush();
+	return parent::pushChanges();
 }
 else
 {
@@ -28,5 +28,5 @@ else
 }
 
 
-/* End of file Flush.php */
+/* End of file PushChanges.php */
 /* Location: ./lib/Rdm/Builder/Collection */

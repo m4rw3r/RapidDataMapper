@@ -23,7 +23,7 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 		$this->addPart(new Rdm_Util_Code_PropertyBuilder('table_alias', $desc->getSingular()));
 		
 		// Static methods
-		$this->addPart(new Rdm_Builder_Collection_Flush($desc));
+		$this->addPart(new Rdm_Builder_Collection_PushChanges($desc));
 		$this->addPart(new Rdm_Builder_Collection_SetUnitOfWork($desc));
 		$this->addPart(new Rdm_Builder_Collection_GetUnitOfWork($desc));
 		$this->addPart(new Rdm_Builder_Collection_Create($desc));

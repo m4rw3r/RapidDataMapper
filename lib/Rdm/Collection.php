@@ -26,15 +26,15 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	/**
 	 * Initializes the RapidDataMapper ORM.
 	 * 
-	 * @param  boolean	If to register the Rdm_Collection::flush() method to run
-	 *                	on shutdown.
+	 * @param  boolean  If to register the Rdm_Collection::pushChanges() method to
+	 *                  run on shutdown.
 	 * @return void
 	 */
-	public static function init($auto_flush = true)
+	public static function init($auto_push = true)
 	{
 		spl_autoload_register('Rdm_Collection::autoload');
 		
-		$auto_flush && register_shutdown_function('Rdm_Collection::flush');
+		$auto_push && register_shutdown_function('Rdm_Collection::pushChanges');
 	}
 	
 	// ------------------------------------------------------------------------
@@ -169,8 +169,8 @@ Stack trace:
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Registers a class name as a collection object, used by flush() to get all
-	 * collections' unit of work objects.
+	 * Registers a class name as a collection object, used by pushChanges() to
+	 * get all collections' unit of work objects.
 	 * 
 	 * @param  string
 	 * @return void
@@ -183,16 +183,16 @@ Stack trace:
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Flushes all changes to the database.
+	 * Pushes all changes to the database.
 	 * 
-	 * @param  boolean  If to only flush the current collection
+	 * @param  boolean  If to only push changes for the current collection
 	 * @return void
 	 */
-	public static function flush($private_flush = false)
+	public static function pushChanges($private_push = false)
 	{
-		if($private_flush)
+		if($private_push)
 		{
-			throw new Exception('Rdm_Collection::flush() with $private_flush = true is not implemented, call a subclass instead.');
+			throw new Exception('Rdm_Collection::pushChanges() with $private_push = true is not implemented, call a subclass instead.');
 		}
 		else
 		{
@@ -212,7 +212,7 @@ Stack trace:
 			{
 				// We already have a transaction, do not create another
 				
-				self::doFlushes($units);
+				self::doPushes($units);
 			}
 			else
 			{
@@ -221,7 +221,7 @@ Stack trace:
 				{
 					$db->transactionStart();
 					
-					self::doFlushes($units);
+					self::doPushes($units);
 					
 					// Done!
 					$db->transactionCommit();
@@ -243,12 +243,12 @@ Stack trace:
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Flushes the contents of the unit of works in the supplied list.
+	 * Pushes the contents of the unit of works in the supplied list.
 	 * 
 	 * @param  array(Rdm_UnitOfWork)
 	 * @return void
 	 */
-	public static function doFlushes(array $units)
+	public static function doPushes(array $units)
 	{
 		// Send database calls
 		foreach($units as $u)
@@ -834,10 +834,23 @@ Stack trace:
 	 */
 	public function remove($object)
 	{
-		// TODO: Code
-		
+		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Contains the common instructions for remove(), will perform the calls to
+	 * filters and check the contents of the internal array.
+	 * 
+	 * @param  Object
+	 * @return void
+	 */
+	protected function _remove($object)
+	{
 		$this->is_locked = true;
-		return $this;
+		
+		// TODO: Code
 	}
 	
 	// ------------------------------------------------------------------------
