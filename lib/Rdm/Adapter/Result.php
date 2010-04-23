@@ -375,4 +375,4 @@ abstract class Rdm_Adapter_Result implements IteratorAggregate, Countable
 
 
 /* End of file Result.php */
-/* Location: ./lib/Db */
+/* Location: ./lib/Rdm/Adapter */

@@ -202,5 +202,5 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 }
 
 
-/* End of file db.php */
-/* Location: ./lib/drivers/mysql */
+/* End of file MySQL.php */
+/* Location: ./lib/Rdm/Adapter */

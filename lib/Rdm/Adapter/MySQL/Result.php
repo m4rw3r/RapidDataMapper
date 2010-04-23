@@ -83,5 +83,5 @@ class Rdm_Adapter_MySQL_Result extends Rdm_Adapter_Result
 	}
 }
 
-/* End of file result.php */
-/* Location: ./lib/drivers/mysql */
+/* End of file Result.php */
+/* Location: ./lib/Rdm/Adapter/MySQL */
