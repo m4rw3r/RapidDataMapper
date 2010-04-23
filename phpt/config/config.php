@@ -19,11 +19,8 @@ Rdm_Collection::init(false);
 
 // Configure RapidDataMapper Adapter
 Rdm_Config::setAdapterConfiguration('default', array(
-	'hostname' => 'localhost',
-	'username' => 'ci',
-	'password' => '',
-	'database' => 'rdmtest',
-	'class' => 'Rdm_Adapter_MySQL'
+	'file' => ':memory:',
+	'class' => 'Rdm_Adapter_SQLite'
 	));
 
 /* End of file config.php */
