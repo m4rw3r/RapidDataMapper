@@ -235,9 +235,11 @@ abstract class Rdm_Util_Code_Container
 	 * child2
 	 * </code>
 	 * 
+	 * @param  false|string  If to use indentation insetad of dot-notation,
+	 *                       this should in that case contain the indent string
 	 * @return array
 	 */
-	public function generateGraph()
+	public function generateGraph($indent = false)
 	{
 		$arr = array();
 		
@@ -250,13 +252,33 @@ abstract class Rdm_Util_Code_Container
 			
 			$arr[] = $c->getName();
 			
-			foreach($c->generateGraph() as $g)
+			foreach($c->generateGraph($indent) as $g)
 			{
-				$arr[] = $c->getName().'.'.$g;
+				if($indent !== false)
+				{
+					$arr[] = $indent.$g;
+				}
+				else
+				{
+					$arr[] = $c->getName().'.'.$g;
+				}
 			}
 		}
 		
 		return $arr;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates a neater structure than generateGraph(), with space indentation
+	 * instead of dot notation.
+	 * 
+	 * @return string
+	 */
+	public function dumpStructure()
+	{
+		return implode("\n", $this->generateGraph('    '));
 	}
 	
 	// ------------------------------------------------------------------------
