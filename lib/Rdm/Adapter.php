@@ -268,23 +268,23 @@ abstract class Rdm_Adapter
 	/**
 	 * Runs the query and returns the result object.
 	 * 
-	 * @see Rdm_Adapter::replaceBinds()
+	 * @see Rdm_Adapter::bindParameters()
 	 * @throws Rdm_Adapter_QueryException
 	 * 
 	 * @param  string
 	 * @param  array
 	 * @return Rdm_Adapter_Result
 	 */
-	public function query($sql, $binds = array())
+	public function query($sql, $parameters = array())
 	{
 		if(empty($sql))
 		{
 			throw new Rdm_Adapter_QueryException('Invalid query, the query is empty');
 		}
 		
-		if( ! empty($binds))
+		if( ! empty($parameters))
 		{
-			$sql = $this->replaceBinds($sql, $binds);
+			$sql = $this->bindParameters($sql, $parameters);
 		}
 		
 		$is_write = $this->isWriteQuery($sql);
@@ -516,31 +516,31 @@ abstract class Rdm_Adapter
 	 * - Only the bound data will be escaped!
 	 * - Escaping of values for LIKE condition does not escape % and _ !
 	 *
-	 * @throws Rdm_Adapter_MissingBindParameterException
+	 * @throws Rdm_Adapter_MissingBoundParameterException
 	 *
 	 * @param  string
 	 * @param  array
 	 * @return string
 	 */
-	public function replaceBinds($sql, $binds = array())
+	public function bindParameters($sql, $parameters = array())
 	{
-		$binds = (Array) $binds;
+		$parameters = (Array) $parameters;
 		
-		// named binds
+		// named parameters
 		if(preg_match_all('/:([\w]+)(?=\s|$)/', $sql, $matches))
 		{
 			$result = '';
 			
-			// replace the named binds
+			// replace the named parameters
 			foreach($matches[1] as $id)
 			{
-				if( ! isset($binds[$id]))
+				if( ! isset($parameters[$id]))
 				{
-					throw new Rdm_Adapter_MissingBindParameterException($id);
+					throw new Rdm_Adapter_MissingBoundParameterException($id);
 				}
 				
 				// add the part before the name and then the escaped data
-				$result .= strstr($sql, ':' . $id, true) . $this->escape($binds[$id]);
+				$result .= strstr($sql, ':' . $id, true) . $this->escape($parameters[$id]);
 				// make $sql contain the next to match, this to prevent matching in the previously escaped data
 				$sql = substr($sql, strpos($sql, ':' . $id) + strlen($id) + 1);
 			}
@@ -548,24 +548,24 @@ abstract class Rdm_Adapter
 			// assemble
 			$res = $result . $sql;
 		}
-		// unnamed binds
+		// unnamed bound parameters
 		else
 		{
 			// split the condition
 			$parts = explode('?', $sql);
 			$c = count($parts) - 1;
 			
-			if($c > count($binds))
+			if($c > count($parameters))
 			{
-				throw new Rdm_Adapter_MissingBindParameterException($c);
+				throw new Rdm_Adapter_MissingBoundParameterException($c);
 			}
 			
 			$res = '';
 			
-			// insert the binds
+			// insert the parameters
 			for($i = 0; $i < $c; $i++)
 			{
-				$res .= $parts[$i] . $this->escape($binds[$i]);
+				$res .= $parts[$i] . $this->escape($parameters[$i]);
 			}
 			
 			// add the last part
