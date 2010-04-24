@@ -556,6 +556,8 @@ Stack trace:
 	/**
 	 * Internal: Creates the COUNT() part for a select.
 	 * 
+	 * This query should only count the entities managed by the current collection.
+	 * 
 	 * @internal
 	 * @param  string  The SQL query, beginning at FROM (missing LIMIT part, but includes JOIN + WHERE)
 	 * @return string  The SQL query with the SELECT part
