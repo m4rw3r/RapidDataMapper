@@ -317,6 +317,20 @@ Stack trace:
 	public $with = array();
 	
 	/**
+	 * The limit which will be used in the SQL limit of the query.
+	 * 
+	 * @var false|int
+	 */
+	protected $limit = false;
+	
+	/**
+	 * The offset which will be used in the SQL OFFSET of the query.
+	 * 
+	 * @var false|int
+	 */
+	protected $offset = false;
+	
+	/**
 	 * The array of data objects.
 	 * 
 	 * @var array(Object)
@@ -603,6 +617,11 @@ Stack trace:
 			$sql .= "\nWHERE ".implode(' ', $this->filters);
 		}
 		
+		if($this->limit !== false)
+		{
+			$sql = $this->db->limitSqlQuery($sql, $this->limit, $this->offset);
+		}
+		
 		return array($sql, $column_mappings);
 	}
 	
@@ -632,6 +651,12 @@ Stack trace:
 		if( ! empty($this->filters))
 		{
 			$sql .= "\nWHERE ".implode(' ', $this->filters);
+		}
+		
+		
+		if($this->limit !== false)
+		{
+			$sql = $this->db->limitSqlQuery($sql, $this->limit, $this->offset);
 		}
 		
 		return $sql;
@@ -723,6 +748,57 @@ Stack trace:
 		$this->filters[] = $o;
 		
 		return $o;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Limits the number of rows that should be fetched from the database.
+	 * 
+	 * @param  int
+	 * @param  false|int
+	 * @return self
+	 */
+	public function limit($num, $offset = false)
+	{
+		// TODO: Have an idea for limit of related rows, but not sure about the implementation's efficiency, throw exception for now
+		if( ! is_null($this->parent))
+		{
+			throw Rdm_Collection_Exception::notRootObject(get_class($this));
+		}
+		
+		if($this->is_locked)
+		{
+			// TODO: Better exception message and proper exception class
+			throw new Exception('Object is already populated');
+		}
+		
+		if($offset != false)
+		{
+			$this->offset($offset);
+		}
+		
+		$this->limit = $num;
+		
+		// Reset the count, we have to do a recount because we will probably get less rows now
+		$this->count = null;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets the SQL offset value.
+	 * 
+	 * @param  int
+	 * @return self
+	 */
+	public function offset($num)
+	{
+		$this->offset = $num;
+		
+		return $this;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -1047,8 +1123,19 @@ Stack trace:
 				throw Rdm_Collection_Exception::notRootObject(get_class($this));
 			}
 			
+			// Do we have it cached?
 			if(is_null($this->num_rows))
 			{
+				if($this->limit !== false)
+				{
+					// TODO: Check if there is another way of doing a proper count query with LIMIT
+					// We have a limit, so we cannot use SELECT COUNT() because it is limited
+					$this->populate();
+					
+					return count($this->contents);
+				}
+				
+				// Nope
 				$this->num_rows = $this->db->query($this->createCountSelectQuery())->val();
 			}
 			

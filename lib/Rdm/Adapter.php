@@ -724,7 +724,7 @@ abstract class Rdm_Adapter
 	 * @param  int|bool
 	 * @return string
 	 */
-	abstract public function _limit($str, $limit, $offset = false);
+	abstract public function limitSqlQuery($str, $limit, $offset = false);
 	/**
 	 * Returns the SQL keyword for random ordering.
 	 * 

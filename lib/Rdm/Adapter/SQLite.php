@@ -160,7 +160,7 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 	
 	// ------------------------------------------------------------------------
 
-	public function _limit($str, $limit, $offset = false)
+	public function limitSqlQuery($str, $limit, $offset = false)
 	{
 		// TODO: Check for SQLite compliance
 		return $str . "\nLIMIT " . ($offset != false ?  $offset . ', ' : '') . $limit;
