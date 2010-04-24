@@ -608,11 +608,6 @@ Stack trace:
 		
 		$sql = 'SELECT '.implode(', ', $select)."\n".implode("\n", $from);
 		
-		if( ! empty($joins))
-		{
-			$sql .= "\n".implode("\n", $joins);
-		}
-		
 		if( ! empty($this->filters))
 		{
 			$sql .= "\nWHERE ".implode(' ', $this->filters);
@@ -643,11 +638,6 @@ Stack trace:
 		$this->createFromPart(false, $from);
 		
 		$sql = implode("\n", $from);
-		
-		if( ! empty($joins))
-		{
-			$sql .= "\n".implode("\n", $joins);
-		}
 		
 		if( ! empty($this->filters))
 		{
