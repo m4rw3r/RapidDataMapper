@@ -10,13 +10,34 @@
  */
 class Rdm_Adapter_MySQL extends Rdm_Adapter
 {
-	
 	protected $IDENT_CHAR = '`';
+	
+	protected function getDefaultOptions()
+	{
+		return array_merge(
+			parent::getDefaultOptions(),
+			array(
+				'pconnect' => false
+				)
+			);
+	}
+	
+	public function getRequiredOptionKeys()
+	{
+		return array('hostname', 'username', 'password', 'database');
+	}
 	
 	protected function connect()
 	{
 		// try to connect
-		$conn = mysql_connect($this->hostname, $this->username, $this->password, $this->pconnect);
+		if($this->options['pconnect'])
+		{
+			$conn = mysql_pconnect($this->options['hostname'], $this->options['username'], $this->options['password']);
+		}
+		else
+		{
+			$conn = mysql_connect($this->options['hostname'], $this->options['username'], $this->options['password']);
+		}
 		
 		if( ! $conn)
 		{
@@ -25,7 +46,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 		else
 		{
 			// do we have a connection and can we select the database?
-			if(mysql_select_db($this->database, $conn))
+			if(mysql_select_db($this->options['database'], $conn))
 			{
 				return $conn;
 			}
@@ -85,7 +106,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 	public function error()
 	{
 		// dbh may not be loaded
-		// if condition is very much faster than error suppression with @
+		// if condition is a lot faster than error suppression with @
 		if( ! $this->dbh)
 		{
 			return "Database connection has not been established, error cannot be retrieved.";
@@ -101,7 +122,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 	public function insertId()
 	{
 		// dbh may not be loaded
-		// if condition is very much faster than error suppression with @
+		// if condition is a lot faster than error suppression with @
 		// (about 11% when dbh exists, otherwise over 90%)
 		if( ! $this->dbh)
 		{
@@ -118,7 +139,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 	public function affectedRows()
 	{
 		// dbh may not be loaded
-		// if condition is very much faster than error suppression with @
+		// if condition is a lot faster than error suppression with @
 		if( ! $this->dbh)
 		{
 			return false;
@@ -140,20 +161,15 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 
 	public function escapeStr($str, $like = false)
 	{
-		if(function_exists('mysql_real_escape_string') && is_resource($this->dbh))
+		if(is_resource($this->dbh))
 		{
 			// escape with regard to charset
 			$str = mysql_real_escape_string($str, $this->dbh);
 		}
-		elseif(function_exists('mysql_escape_string'))
+		else
 		{
 			// escape for MySQL
 			$str = mysql_escape_string($str);
-		}
-		else
-		{
-			// generic
-			$str = addslashes($str);
 		}
 		
 		if($like)

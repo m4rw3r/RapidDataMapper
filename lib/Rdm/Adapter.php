@@ -73,34 +73,6 @@ abstract class Rdm_Adapter
 	protected $name;
 	
 	/**
-	 * The database hostname.
-	 *
-	 * @var string
-	 */
-	protected $hostname;
-	
-	/**
-	 * The database username.
-	 *
-	 * @var string
-	 */
-	protected $username;
-	
-	/**
-	 * The database password.
-	 *
-	 * @var string
-	 */
-	protected $password;
-	
-	/**
-	 * The database name.
-	 *
-	 * @var string
-	 */
-	protected $database;
-	
-	/**
 	 * The database prefix to use.
 	 *
 	 * @var string
@@ -108,46 +80,11 @@ abstract class Rdm_Adapter
 	public $dbprefix = '';
 	
 	/**
-	 * If to use persistent connections for database access.
-	 *
-	 * @var bool
-	 */
-	protected $pconnect = false;
-	
-	/**
 	 * If to use caching.
 	 *
 	 * @var bool
 	 */
 	protected $cache_on = false;
-	
-	/**
-	 * The database charset to use.
-	 *
-	 * @var string
-	 */
-	protected $cachedrv = 'file';
-	
-	/**
-	 * The cache options.
-	 *
-	 * @var array
-	 */
-	protected $cacheopt = array();
-	
-	/**
-	 * The database charset used by the connection.
-	 *
-	 * @var string
-	 */
-	protected $char_set = 'utf8';
-	
-	/**
-	 * The database collation used by the connection.
-	 *
-	 * @var string
-	 */
-	protected $dbcollat = 'utf8_unicode_ci';
 	
 	/**
 	 * If to redirect write queries and to which connection.
@@ -212,6 +149,13 @@ abstract class Rdm_Adapter
 	 */
 	protected $IDENT_CHAR = '"';
 	
+	/**
+	 * Array containing all the options for the database connection.
+	 * 
+	 * @var array(string => string)
+	 */
+	protected $options = array();
+	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -225,10 +169,18 @@ abstract class Rdm_Adapter
 	{
 		$this->name = $name;
 		
-		foreach($options as $k => $v)
+		if($req = array_diff($this->getRequiredOptionKeys(), array_keys($options)))
 		{
-			$this->$k = $v;
+			throw new Rdm_Adapter_ConfigurationException($name, 'Missing required keys: "'.implode('", "', $req).'".');
 		}
+		
+		// Merge with the default options
+		$this->options = array_merge($this->getDefaultOptions(), $options);
+		
+		// Set properties
+		$this->redirect_write = $this->options['redirect_write'];
+		$this->dbprefix       = $this->options['dbprefix'];
+		$this->cache_on       = $this->options['cache_on'];
 		
 		$this->result_object_class = get_class($this).'_Result';
 	}
@@ -305,7 +257,7 @@ abstract class Rdm_Adapter
 				throw new Rdm_Adapter_ConnectionException($this->error());
 			}
 			
-			$this->setCharset($this->char_set, $this->dbcollat);
+			$this->setCharset($this->options['char_set'], $this->options['dbcollat']);
 		}
 		
 		return true;
@@ -628,9 +580,33 @@ abstract class Rdm_Adapter
 	// --------------------------------------------------------------------
 	
 	/**
+	 * Returns a hash containing the default contents of the $this->options
+	 * array.
+	 * 
+	 * @return array(string => mixed)
+	 */
+	protected function getDefaultOptions()
+	{
+		return array(
+			'char_set'       => 'utf8',
+			'dbcollat'       => 'utf8_unicode_ci',
+			'redirect_write' => false,
+			'dbprefix'       => '',
+			'cache_class'    => '',  // TODO: Set the default cache class
+			'cache_on'       => false,
+			'cache_opts'     => array()
+			);
+	}
+	/**
+	 * Returns a list of the required keys which must go in the supplied options.
+	 * 
+	 * @return array(string)
+	 */
+	abstract protected function getRequiredOptionKeys();
+	/**
 	 * Connects to the database, using settings specified as properties in this object.
 	 *
-	 * Properties normally used:
+	 * Options normally used ($this->options):
 	 * hostname
 	 * username
 	 * password

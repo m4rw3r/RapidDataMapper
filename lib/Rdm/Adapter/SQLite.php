@@ -10,14 +10,24 @@
  */
 class Rdm_Adapter_SQLite extends Rdm_Adapter
 {
+	/**
+	 * Variable holding the last error caused by a query.
+	 * 
+	 * @var string
+	 */
 	protected $last_query_error = '';
 	
 	protected $IDENT_CHAR = '"';
 	
+	protected function getRequiredOptionKeys()
+	{
+		return array('file');
+	}
+	
 	protected function connect()
 	{
 		// try to connect
-		$conn = sqlite_open($this->file, 0666, $this->last_query_error);
+		$conn = sqlite_open($this->options['file'], 0666, $this->last_query_error);
 		
 		if( ! $conn)
 		{
