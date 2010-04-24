@@ -11,6 +11,14 @@
 class Rdm_Config
 {
 	/**
+	 * Version of the RapidDataMapper library, in x.y.z(-dev|rc-#) format,
+	 * compatible with version_compare().
+	 * 
+	 * @var string
+	 */
+	const VERSION = '0.7.0-dev';
+	
+	/**
 	 * A list of adapter configurations.
 	 * 
 	 * @var array(string => array)
