@@ -5,6 +5,9 @@
  * All rights reserved.
  */
 
+// Make sure that the browser reads the response properly, we're using UTF-8 in the DB
+header('Content-type: text/html;Charset=UTF-8');
+
 echo "<pre>";
 
 require 'config.php';
