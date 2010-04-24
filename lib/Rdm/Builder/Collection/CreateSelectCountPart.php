@@ -13,6 +13,7 @@ class Rdm_Builder_Collection_CreateSelectCountPart extends Rdm_Util_Code_MethodB
 	public function __construct(Rdm_Descriptor $desc)
 	{
 		$this->setMethodName('createSelectCountPart');
+		$this->setParamList('$from');
 		
 		$db = $desc->getAdapter();
 		
@@ -23,7 +24,15 @@ class Rdm_Builder_Collection_CreateSelectCountPart extends Rdm_Util_Code_MethodB
 			$columns[] = '$this->table_alias.\'.'.addcslashes($db->protectIdentifiers($c->getColumn()), "'");
 		}
 		
-		$this->addPart('return \'COUNT(DISTINCT \'.'.implode(' + \\\'|\\\' + \'.', $columns).')\';');
+		// TODO: Come up with a generic workaround for SQLite and the like who do not support the COUNT DISTINCT combo
+		if($db instanceof Rdm_Adapter_SQLite)
+		{
+			$this->addPart('return \'SELECT COUNT(\'.'.implode(' + \\\'|\\\' + \'.', $columns).') FROM (SELECT DISTINCT \'.'.implode(', ', $columns).'\'.$from.\') AS \'.$this->table_alias;');
+		}
+		else
+		{
+			$this->addPart('return \'SELECT COUNT(DISTINCT \'.'.implode(' + \\\'|\\\' + \'.', $columns).')\'.$from;');
+		}
 	}
 }
 

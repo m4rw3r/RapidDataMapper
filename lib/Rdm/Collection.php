@@ -557,9 +557,10 @@ Stack trace:
 	 * Internal: Creates the COUNT() part for a select.
 	 * 
 	 * @internal
-	 * @return void
+	 * @param  string  The SQL query, beginning at FROM (missing LIMIT part, but includes JOIN + WHERE)
+	 * @return string  The SQL query with the SELECT part
 	 */
-	abstract public function createSelectCountPart();
+	abstract public function createSelectCountPart($from);
 	
 	/**
 	 * Internal: Creates the FROM and JOIN part of the query, does not includes the FROM keyword.
@@ -641,7 +642,7 @@ Stack trace:
 		
 		$this->createFromPart(false, $from);
 		
-		$sql = 'SELECT '.$this->createSelectCountPart()."\n".implode("\n", $from);
+		$sql = implode("\n", $from);
 		
 		if( ! empty($joins))
 		{
@@ -653,6 +654,7 @@ Stack trace:
 			$sql .= "\nWHERE ".implode(' ', $this->filters);
 		}
 		
+		$sql = $this->createSelectCountPart($sql);
 		
 		if($this->limit !== false)
 		{
