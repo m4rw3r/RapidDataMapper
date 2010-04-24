@@ -35,6 +35,7 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 		// Instance methods
 		$this->addPart(new Rdm_Builder_Collection_With($desc));
 		$this->addPart(new Rdm_Builder_Collection_CreateSelectPart($desc));
+		$this->addPart(new Rdm_Builder_Collection_CreateSelectCountPart($desc));
 		$this->addPart(new Rdm_Builder_Collection_CreateFromPart($desc));
 		$this->addPart(new Rdm_Builder_Collection_HydrateObject($desc));
 		$this->addPart(new Rdm_Builder_Collection_CreateFilterInstance($desc));

@@ -324,6 +324,15 @@ Stack trace:
 	protected $contents = array();
 	
 	/**
+	 * Variable caching the SELECT COUNT() query.
+	 * 
+	 * NOTE: Clean it when calling limit(), offset etc.
+	 * 
+	 * @var int
+	 */
+	protected $num_rows = null;
+	
+	/**
 	 * The adapter instance used by this collection object.
 	 * 
 	 * @var Rdm_Adapter
@@ -531,6 +540,14 @@ Stack trace:
 	abstract public function createSelectPart(&$list, &$column_mappings);
 	
 	/**
+	 * Internal: Creates the COUNT() part for a select.
+	 * 
+	 * @internal
+	 * @return void
+	 */
+	abstract public function createSelectCountPart();
+	
+	/**
 	 * Internal: Creates the FROM and JOIN part of the query, does not includes the FROM keyword.
 	 * 
 	 * @internal
@@ -561,7 +578,7 @@ Stack trace:
 	 * Can be used for debugging or dumping the SQL to see if the collection
 	 * will generate the desired SQL.
 	 * 
-	 * @return string
+	 * @return array(string, array(int => string))  SQL and column mappings
 	 */
 	public function createSelectQuery()
 	{
@@ -587,6 +604,37 @@ Stack trace:
 		}
 		
 		return array($sql, $column_mappings);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates a count query which counts the data matching the filters of this
+	 * object.
+	 * 
+	 * @return string
+	 */
+	public function createCountSelectQuery()
+	{
+		$this->is_locked = true;
+		
+		$from = array();
+		
+		$this->createFromPart(false, $from);
+		
+		$sql = 'SELECT '.$this->createSelectCountPart()."\n".implode("\n", $from);
+		
+		if( ! empty($joins))
+		{
+			$sql .= "\n".implode("\n", $joins);
+		}
+		
+		if( ! empty($this->filters))
+		{
+			$sql .= "\nWHERE ".implode(' ', $this->filters);
+		}
+		
+		return $sql;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -986,16 +1034,30 @@ Stack trace:
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Counts the number of objects in this collection.
 	 * 
-	 * 
-	 * @return 
+	 * @return int
 	 */
 	public function count()
 	{
-		// TODO: COUNT() query instead of populate if we haven't loaded objects?
-		$this->is_populated OR $this->populate();
-		
-		return count($this->contents);
+		if( ! $this->is_populated)
+		{
+			if( ! is_null($this->parent))
+			{
+				throw Rdm_Collection_Exception::notRootObject(get_class($this));
+			}
+			
+			if(is_null($this->num_rows))
+			{
+				$this->num_rows = $this->db->query($this->createCountSelectQuery())->val();
+			}
+			
+			return $this->num_rows;
+		}
+		else
+		{
+			return count($this->contents);
+		}
 	}
 	
 	// ------------------------------------------------------------------------
