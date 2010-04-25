@@ -98,15 +98,6 @@ class Rdm_Descriptor
 	 */
 	const TIMESTAMP = 'TIMESTAMP';
 	
-	
-	/**
-	 * Global relation creation counter, used to create unique integer keys for relation
-	 * descriptor instances.
-	 * 
-	 * @var int
-	 */
-	static protected $relation_id = 1;
-	
 	/**
 	 * A list of the default RDM type mappings.
 	 * 
