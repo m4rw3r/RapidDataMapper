@@ -157,7 +157,7 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 		
 		empty($this->filters) OR $this->filters[] = 'AND';
 		
-		$sql = preg_replace('/:alias(?=>\b)/', $this->table_alias, $sql);
+		$sql = preg_replace('/:alias\b/', $this->table_alias, $sql);
 		
 		$this->filters[] = $this->db->bindParameters($sql, $parameters);
 		
