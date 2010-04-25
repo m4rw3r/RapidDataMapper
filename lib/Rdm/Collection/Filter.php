@@ -145,17 +145,23 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 
 	/**
 	 * Adds an SQL fragment to this filter, concatenates with an AND part to the
-	 * previous condition, if there is one.
+	 * previous condition, if there is one, use ":alias" to get the table alias.
 	 * 
 	 * @param  string	Raw SQL fragment
 	 * @param  array	A list of key => values to be escaped and inserted into the $sql
 	 * @return self
 	 */
-	public function fragment($sql, $binds = array())
+	public function sql($sql, $parameters = array())
 	{
 		$this->is_dynamic = true;
 		
-		// TODO: Code
+		empty($this->filters) OR $this->filters[] = 'AND';
+		
+		$sql = preg_replace('/:alias(?=>\b)/', $this->table_alias, $sql);
+		
+		$this->filters[] = $this->db->bindParameters($sql, $parameters);
+		
+		return $this;
 	}
 	
 	// ------------------------------------------------------------------------
