@@ -14,8 +14,9 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 	{	
 		require_once dirname(__FILE__).'/../../lib/Rdm/Config.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Adapter.php';
-		require_once dirname(__FILE__).'/../../lib/Rdm/Adapter/MySQL.php';
+		require_once dirname(__FILE__).'/../../lib/Rdm/Adapter/SQLite.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Exception.php';
+		require_once dirname(__FILE__).'/../../lib/Rdm/Adapter/ConfigurationException.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Descriptor.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Descriptor/Column.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Descriptor/Exception.php';
@@ -25,12 +26,12 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 		require_once dirname(__FILE__).'/../../lib/Rdm/Util/Decorator.php';
 		require_once dirname(__FILE__).'/../../lib/Rdm/Util/Inflector.php';
 		
-		class_exists('MockAdapter') OR eval('class MockAdapter extends Rdm_Adapter_MySQL
+		class_exists('MockAdapter') OR eval('class MockAdapter extends Rdm_Adapter_SQLite
 		{
 			// Override to allow instantiation by mock objects
 			public function __construct($name = "mock", array $options = array())
 			{
-				parent::__construct($name, $options);
+				parent::__construct($name, array(\'file\' => \':memory:\'));
 			}
 		}');
 		class_exists('Rdm_Builder_Main') OR $this->getMock('Rdm_Builder_Main');
