@@ -12,7 +12,7 @@
 	<title>Change Log</title>
 	
 	<section>
-		<title>Version :next</title>
+		<title>Version 0.6.2</title>
 		
 		<segmentedlist>
 			<?dbhtml list-presentation="list"?>
@@ -61,6 +61,14 @@
 					Added missing <literal>return</literal> statements to <classname>Db_MapperQuery_Where</classname>
 					class, which missed them on <function>bindWhere</function>, <function>whereIn</function>,
 					<function>whereNotIn</function> and <function>like</function>.
+				</para>
+			</listitem>
+			
+			<listitem>
+				<para>
+					Fixed bug with improper table name in UPDATE query for Has Many relations when
+					using dbprefix.
+					The dbprefix was missing.
 				</para>
 			</listitem>
 		</itemizedlist>
