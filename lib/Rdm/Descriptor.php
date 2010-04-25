@@ -65,6 +65,39 @@ class Rdm_Descriptor
 	 */
 	const SPECIAL_COLUMN = 32;
 	
+	/**
+	 * RDM type constant for Boolean data type.
+	 */
+	const BOOL      = 'BOOL';
+	/**
+	 * RDM type constant for Character data type.
+	 */
+	const CHAR      = 'CHAR';
+	/**
+	 * RDM type constant for Date data type.
+	 */
+	const DATE      = 'DATE';
+	/**
+	 * RDM type constant for DateTime data type.
+	 */
+	const DATETIME  = 'DATETIME';
+	/**
+	 * RDM type constant for Float data type.
+	 */
+	const FLOAT     = 'FLOAT';
+	/**
+	 * RDM type constant for Integer data type.
+	 */
+	const INT       = 'INT';
+	/**
+	 * RDM type constant for Text data type.
+	 */
+	const TEXT      = 'TEXT';
+	/**
+	 * RDM type constant for Timestamp data type.
+	 */
+	const TIMESTAMP = 'TIMESTAMP';
+	
 	
 	/**
 	 * Global relation creation counter, used to create unique integer keys for relation
@@ -73,6 +106,22 @@ class Rdm_Descriptor
 	 * @var int
 	 */
 	static protected $relation_id = 1;
+	
+	/**
+	 * A list of the default RDM type mappings.
+	 * 
+	 * @var array(string => string)
+	 */
+	static public $type_mappings = array(
+		self::BOOL      => 'Rdm_Descriptor_Type_Bool',
+		self::CHAR      => 'Rdm_Descriptor_Type_Char',
+		self::DATE      => 'Rdm_Descriptor_Type_Date',
+		self::DATETIME  => 'Rdm_Descriptor_Type_DateTime',
+		self::FLOAT     => 'Rdm_Descriptor_Type_Float',
+		self::INT       => 'Rdm_Descriptor_Type_Int',
+		self::TEXT      => 'Rdm_Descriptor_Type_Text',
+		self::TIMESTAMP => 'Rdm_Descriptor_Type_Timestamp'
+		);
 	
 	/**
 	 * The class this object describes.
