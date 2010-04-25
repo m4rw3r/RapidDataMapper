@@ -8,7 +8,7 @@
 /**
  * 
  */
-class Rdm_Builder_CollectionFilter_FilterEqualMethod extends Rdm_Util_Code_MethodBuilder
+class Rdm_Builder_CollectionFilter_Equals extends Rdm_Util_Code_MethodBuilder
 {
 	function __construct(Rdm_Descriptor_Column $column, Rdm_Descriptor $desc)
 	{
@@ -31,5 +31,5 @@ class Rdm_Builder_CollectionFilter_FilterEqualMethod extends Rdm_Util_Code_Metho
 }
 
 
-/* End of file FilterEqualMethod.php */
+/* End of file Equals.php */
 /* Location: ./lib/Rdm/Builder/CollectionFilter */
