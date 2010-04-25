@@ -14,7 +14,7 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	protected $updatable = false;
 	
 	// let the default type be unsigned int
-	protected $data_type_default = 'unsigned int';
+	protected $data_type_default = Rdm_Descriptor::INT;
 	
 	/**
 	 * Holds the type of Primary Key this is.
@@ -41,8 +41,7 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	{
 		if($this->getPkType() == Rdm_Descriptor::AUTO_INCREMENT && stripos(strtolower($this->data_type), 'int') === false)
 		{
-			// TODO: Change when we have a new system for converting values
-			return 'integer';
+			return Rdm_Descriptor::INT;
 		}
 		else
 		{

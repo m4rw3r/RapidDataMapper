@@ -11,6 +11,13 @@
 class Rdm_Descriptor_Column
 {
 	/**
+	 * Parent descriptor.
+	 * 
+	 * @var Rdm_Descriptor
+	 */
+	protected $parent_descriptor;
+	
+	/**
 	 * The name of the column this object describes.
 	 * 
 	 * @var string
@@ -27,7 +34,7 @@ class Rdm_Descriptor_Column
 	/**
 	 * The data type of the described column.
 	 * 
-	 * @var string
+	 * @var string  Rdm_type name
 	 */
 	protected $data_type;
 	
@@ -39,18 +46,11 @@ class Rdm_Descriptor_Column
 	protected $data_length;
 	
 	/**
-	 * The default data type for described columns.
+	 * The data type object.
 	 * 
-	 * @var string
+	 * @var Rdm_Descriptor_Type_Generic
 	 */
-	protected $data_type_default = 'varchar';
-	
-	/**
-	 * The default length of the data type in described columns.
-	 * 
-	 * @var int
-	 */
-	protected $data_length_default = 255;
+	protected $data_type_object; 
 	
 	/**
 	 * Tells if this column can be inserted.
@@ -73,6 +73,19 @@ class Rdm_Descriptor_Column
 	 * @var boolean
 	 */
 	protected $load_after_insert = false;
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Internal: Sets the descriptor owning this column descriptor.
+	 * 
+	 * @param  Rdm_Descriptor
+	 * @return void
+	 */
+	public function setParentDescriptor(Rdm_Descriptor $desc)
+	{
+		$this->parent_descriptor = $desc;
+	}
 	
 	// ------------------------------------------------------------------------
 
@@ -146,7 +159,7 @@ class Rdm_Descriptor_Column
 	 */
 	public function getDataType()
 	{
-		return empty($this->data_type) ? $this->data_type_default : $this->data_type;
+		return empty($this->data_type) ? Rdm_Descriptor::GENERIC : $this->data_type;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -160,8 +173,29 @@ class Rdm_Descriptor_Column
 	public function setDataType($type)
 	{
 		$this->data_type = $type;
+		$this->data_type_object = null;
 		
 		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the data type object which handles the data type conversions and
+	 * how filters works.
+	 * 
+	 * @return Rdm_Descriptor_Type_Generic
+	 */
+	public function getDataTypeObject()
+	{
+		if($this->data_type_object)
+		{
+			return $this->data_type_object;
+		}
+		else
+		{
+			return $this->data_type_object = $this->parent_descriptor->getDataTypeObject($this);
+		}
 	}
 	
 	// ------------------------------------------------------------------------
@@ -175,7 +209,7 @@ class Rdm_Descriptor_Column
 	 */
 	public function getDataLength()
 	{
-		return empty($this->data_length) ? $this->data_length_default : $this->data_length;
+		return empty($this->data_length) ? null : $this->data_length;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -353,7 +387,7 @@ class Rdm_Descriptor_Column
 	 */
 	public function getFromDataToObjectCode($object_var, $data_var, $data_prefix_var)
 	{
-		return $this->getAssignToObjectCode($object_var, $this->getCastToPhpCode($this->getFromDataCode($data_var, $data_prefix_var))).';';
+		return $this->getAssignToObjectCode($object_var, $this->getDataTypeObject()->getCastToPhpCode($this->getFromDataCode($data_var, $data_prefix_var))).';';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -399,7 +433,7 @@ class Rdm_Descriptor_Column
 	 */
 	public function getFromObjectToDataCode($object_var, $dest_var)
 	{
-		return $dest_var.'[\''.$this->getColumn().'\'] = '.$this->getCastFromPhpCode($this->getFetchFromObjectCode($object_var)).';';
+		return $dest_var.'[\''.$this->getColumn().'\'] = '.$this->getDataTypeObject()->getCastFromPhpCode($this->getFetchFromObjectCode($object_var)).';';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -411,7 +445,7 @@ class Rdm_Descriptor_Column
 	 */
 	public function getFromObjectToSetSQLValueCode($object_var)
 	{
-		return $this->getCastFromPhpCode($this->getFetchFromObjectCode($object_var));
+		return $this->getDataTypeObject()->getCastFromPhpCode($this->getFetchFromObjectCode($object_var));
 	}
 	
 	// ------------------------------------------------------------------------
@@ -479,58 +513,6 @@ class Rdm_Descriptor_Column
 	{
 		// TODO: Add the generated option
 		return '';
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the one-liner to convert the database value to a PHP value.
-	 * 
-	 * Source is a string referring to a PHP variable in the generated code.
-	 * Ie. a string like "$foo" or "$obj->foo" (no quotes).
-	 * 
-	 * The result should be able to be placed between "=" and ";".
-	 * 
-	 * @param  string
-	 * @return string
-	 */
-	public function getCastToPhpCode($source)
-	{
-		// TODO: Add datatype objects to allow easier additions?
-		
-		switch($this->getDataType())
-		{
-			case 'integer':
-				return '(Int) '.$source;
-			// TODO: Add more datatypes
-			default:
-				return $source;
-		}
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the one-liner to convert the PHP value to a database value.
-	 * 
-	 * Source is a string referring to a PHP variable in the generated code.
-	 * Ie. a string like "$foo" or "$obj->foo" (no quotes).
-	 * 
-	 * The result should be able to be placed between "=" and ";".
-	 * 
-	 * @param  string
-	 * @return string
-	 */
-	public function getCastFromPhpCode($source)
-	{
-		switch($this->getDataType())
-		{
-			case 'integer':
-				return '(Int) '.$source;
-			// TODO: Add more datatypes
-			default:
-				return $source;
-		}
 	}
 }
 

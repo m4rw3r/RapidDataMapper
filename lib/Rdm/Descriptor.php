@@ -86,6 +86,10 @@ class Rdm_Descriptor
 	 */
 	const FLOAT     = 'FLOAT';
 	/**
+	 * Rdm type constant for generic data.
+	 */
+	const GENERIC   = 'GENERIC';
+	/**
 	 * RDM type constant for Integer data type.
 	 */
 	const INT       = 'INT';
@@ -109,10 +113,19 @@ class Rdm_Descriptor
 		self::DATE      => 'Rdm_Descriptor_Type_Date',
 		self::DATETIME  => 'Rdm_Descriptor_Type_DateTime',
 		self::FLOAT     => 'Rdm_Descriptor_Type_Float',
+		self::GENERIC   => 'Rdm_Descriptor_Type_Generic',
 		self::INT       => 'Rdm_Descriptor_Type_Int',
 		self::TEXT      => 'Rdm_Descriptor_Type_Text',
 		self::TIMESTAMP => 'Rdm_Descriptor_Type_Timestamp'
 		);
+	
+	/**
+	 * A list of local type mappings overriding all the other type mappings,
+	 * only for this descriptor.
+	 * 
+	 * @var array(Rdm_type => class)
+	 */
+	public $local_type_mappings = array();
 	
 	/**
 	 * The class this object describes.
@@ -542,6 +555,7 @@ class Rdm_Descriptor
 		
 		$c = new Rdm_Descriptor_Column();
 		$c->setColumn($name);
+		$c->setParentDescriptor($this);
 		
 		return $c;
 	}
@@ -559,6 +573,7 @@ class Rdm_Descriptor
 		
 		$pk = new Rdm_Descriptor_PrimaryKey();
 		$pk->setColumn($name);
+		$pk->setParentDescriptor($this);
 		
 		return $pk;
 	}
@@ -582,6 +597,32 @@ class Rdm_Descriptor
 		$r->setIntegerIdentifier(self::calcRelationId($this, $r));
 		
 		return $r;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns a data type object which will help the supplied column descriptor
+	 * generate code specific for the data type.
+	 * 
+	 * @return Rdm_Descriptor_Type_Generic
+	 */
+	public function getDataTypeObject(Rdm_Descriptor_Column $col)
+	{
+		$types = array_merge(self::$type_mappings, $this->getAdapter()->type_mappings, $this->local_type_mappings);
+		$type = $col->getDataType();
+		
+		if(empty($types[$type]))
+		{
+			// TODO: Proper exception class
+			throw new Exception('The data type object for the type "'.$type.'" is cannot be found.');
+		}
+		else
+		{
+			$c = $types[$type];
+			
+			return new $c($col, $this->getAdapter());
+		}
 	}
 	
 	// ------------------------------------------------------------------------

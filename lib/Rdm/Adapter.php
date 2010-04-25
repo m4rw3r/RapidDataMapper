@@ -150,6 +150,15 @@ abstract class Rdm_Adapter
 	protected $IDENT_CHAR = '"';
 	
 	/**
+	 * Specific type mappings for this database adapter.
+	 * 
+	 * Overrides Rdm_Descriptor::$type_mappings if they have the same key.
+	 * 
+	 * @var array(RDM_type => classname)
+	 */
+	public $type_mappings = array();
+	
+	/**
 	 * Array containing all the options for the database connection.
 	 * 
 	 * @var array(string => string)
