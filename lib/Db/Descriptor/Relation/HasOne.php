@@ -93,7 +93,7 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().') && '.$object_var.'
 			$assignments[] = $object_var.'->'.$this->relation->getProperty().'->'.$fprop->getProperty().' = $object->'.$lprop->getProperty().';';
 		}
 		
-		$sql = '\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").' SET ' . addcslashes(implode(', ', $set), "'") . ' WHERE ' . implode('.\' AND ', $where);
+		$sql = '\'UPDATE '.addcslashes($db->protectIdentifiers($db->dbprefix.$related->getTable()), "'").' SET ' . addcslashes(implode(', ', $set), "'") . ' WHERE ' . implode('.\' AND ', $where);
 		
 		$str .= 'if(empty('.$object_var.'->'.$this->relation->getProperty().') OR '.implode(' OR ', $if_conds).')
 	{

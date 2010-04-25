@@ -520,7 +520,7 @@ if(isset('.$object_var.'->'.$this->relation->getProperty().'))
 			}
 			
 			return '$this->db->query(\'DELETE '.addcslashes($db->protectIdentifiers($db->dbprefix.$this->getLinkTable()), "'").' FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$this->getLinkTable()), "'").',
-(SELECT n.* FROM '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' AS n,
+(SELECT n.* FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$local->getTable()), "'").' AS n,
 (\'.'.$query_var.'->getSQL().\') AS o WHERE '.implode(' AND', $filter).')) AS '.addcslashes($db->protecIdentifiers($local->getTable()), "'").' WHERE ' . implode(' AND ', $cols).');';
 		}
 		else

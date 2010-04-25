@@ -297,7 +297,7 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 			$set[] = $db->protectIdentifiers($fprop->getColumn()) . ' = NULL';
 		}
 		
-		$str .= '$this->db->query(\'UPDATE ' . addcslashes($db->protectIdentifiers($related->getTable()), "'") . ' SET ' . addcslashes(implode(', ', $set), "'") . ' WHERE \'.implode(\' OR \', $where));
+		$str .= '$this->db->query(\'UPDATE ' . addcslashes($db->protectIdentifiers($db->dbprefix.$related->getTable()), "'") . ' SET ' . addcslashes(implode(', ', $set), "'") . ' WHERE \'.implode(\' OR \', $where));
 	}';
 		
 		$str .= '
@@ -370,7 +370,7 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 			$cols[] = addcslashes($db->protectIdentifiers($related->getSingular().'.'.$k).' = '.$db->escape($v), "'").'\'';
 		}
 		
-		return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode('.\' AND ', $cols). ');';
+		return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($db->dbprefix.$related->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($related->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode('.\' AND ', $cols). ');';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -425,12 +425,12 @@ if( ! empty('.$object_var.'->'.$this->relation->getProperty().'))
 				$filter[] = $db->protectIdentifiers('n.'.$key->getColumn().' = o.'.$key->getColumn());
 			}
 			
-			return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").', (SELECT n.* FROM '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' AS n, (\'.'.$query_var.'->getSQL().\') AS o WHERE '.implode(' AND', $filter).') AS  '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode(' AND ', $cols). '\');';
+			return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($db->dbprefix.$related->getTable()), "'").', (SELECT n.* FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$local->getTable()), "'").' AS n, (\'.'.$query_var.'->getSQL().\') AS o WHERE '.implode(' AND', $filter).') AS  '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode(' AND ', $cols). '\');';
 		}
 		else
 		{
 			// Primary keys are sufficient for WHERE filter
-			return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($related->getTable()), "'").', (\'.'.$query_var.'->getSQL().\') AS  '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode(' AND ', $cols). '\');';
+			return '$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($db->dbprefix.$related->getTable()), "'").', (\'.'.$query_var.'->getSQL().\') AS  '.addcslashes($db->protectIdentifiers($local->getTable()), "'").' SET '.implode(', ', $set).' WHERE '.implode(' AND ', $cols). '\');';
 		}
 	}
 	
