@@ -15,7 +15,13 @@ class Rdm_Builder_CollectionFilter extends Rdm_Util_Code_ClassBuilder
 		$this->setClassName($desc->getCollectionFilterClassName());
 		$this->setExtends('Rdm_Collection_Filter');
 		
-		$this->addPart(new Rdm_Builder_CollectionFilter_FilterEqual($desc));
+		foreach(array_merge($desc->getPrimaryKeys(), $desc->getColumns()) as $col)
+		{
+			foreach($col->getDataTypeObject()->getCollectionFilterClasses() as $class)
+			{
+				$this->addPart(new $class($col, $desc));
+			}
+		}
 		
 		$this->addPart(new Rdm_Builder_CollectionFilter_FilterRelatedObject($desc));
 	}

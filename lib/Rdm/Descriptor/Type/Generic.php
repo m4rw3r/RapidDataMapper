@@ -65,7 +65,7 @@ class Rdm_Descriptor_Type_Generic
 		// TODO: Add more filter method generators
 		return array(
 			'Rdm_Builder_CollectionFilter_LessThan',
-			'Rdm_Builder_CollectionFilter_GreatherThan',
+			'Rdm_Builder_CollectionFilter_GreaterThan',
 			'Rdm_Builder_CollectionFilter_Like',
 			'Rdm_Builder_CollectionFilter_Equals'
 			);
