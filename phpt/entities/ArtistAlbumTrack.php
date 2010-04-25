@@ -4,11 +4,11 @@ class TrackDescriptor extends Rdm_Descriptor
 {
 	public function __construct()
 	{
-		$this->add($this->newPrimaryKey('id')->setDataType('integer'));
+		$this->add($this->newPrimaryKey('id'));
 		
 		$this->add($this->newColumn('name'));
-		$this->add($this->newColumn('artist_id')->setDataType('integer'));
-		$this->add($this->newColumn('album_id')->setDataType('integer'));
+		$this->add($this->newColumn('artist_id')->setDataType(self::INT));
+		$this->add($this->newColumn('album_id')->setDataType(self::INT));
 		$this->add($this->newRelation('artist'));
 		$this->add($this->newRelation('album'));
 	}
@@ -18,7 +18,7 @@ class ArtistDescriptor extends Rdm_Descriptor
 {
 	public function __construct()
 	{
-		$this->add($this->newPrimaryKey('id')->setDataType('integer'));
+		$this->add($this->newPrimaryKey('id'));
 		
 		$this->add($this->newColumn('name'));
 		$this->add($this->newRelation('tracks'));
@@ -30,10 +30,10 @@ class AlbumDescriptor extends Rdm_Descriptor
 {
 	public function __construct()
 	{
-		$this->add($this->newPrimaryKey('id')->setDataType('integer'));
+		$this->add($this->newPrimaryKey('id'));
 		
 		$this->add($this->newColumn('name'));
-		$this->add($this->newColumn('artist_id')->setDataType('integer'));
+		$this->add($this->newColumn('artist_id')->setDataType(self::INT));
 		
 		$this->add($this->newRelation('tracks'));
 		$this->add($this->newRelation('artist'));
