@@ -13,7 +13,7 @@ require 'lib/Rdm/Util/Autoloader.php';
 Rdm_Util_Autoloader::init();
 
 
-// Initialize <Class>Collection autoloaders, do not auto call Rdm_Collection::flush()
+// Initialize <Class>Collection autoloaders, do not auto call Rdm_Collection::pushChanges()
 Rdm_Collection::init(false);
 
 

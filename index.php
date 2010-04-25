@@ -123,7 +123,7 @@ foreach($artists as $a)
     }
 }
 
-Rdm_Collection::flush();
+Rdm_Collection::pushChanges();
 
 $db->transactionRollback();
 
