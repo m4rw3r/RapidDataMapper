@@ -20,7 +20,8 @@ Rdm_Collection::init(false);
 // Configure RapidDataMapper Adapter
 Rdm_Config::setAdapterConfiguration('default', array(
 	'file' => ':memory:',
-	'class' => 'Rdm_Adapter_SQLite'
+	'class' => 'Rdm_Adapter_SQLite',
+	'dbprefix' => 'tbl_'
 	));
 
 /* End of file config.php */
