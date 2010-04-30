@@ -43,11 +43,9 @@ class Rdm_Builder_UnitOfWork_ProcessSingleChanges extends Rdm_Util_Code_MethodBu
 	
 	if( ! empty($data))
 	{
-		$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($desc->getTable()), "'").' SET \'.implode(\', \', $data).\' WHERE '.implode('.\' AND ', $pks).');
+		$this->db->query(\'UPDATE '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), "'").' SET \'.implode(\', \', $data).\' WHERE '.implode('.\' AND ', $pks).');
 	}
 }');
-		
-		// TODO: Call queries instead of dumping them
 	}
 }
 

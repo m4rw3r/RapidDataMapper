@@ -34,7 +34,7 @@ class Rdm_Builder_UnitOfWork_ProcessSingleDeletions extends Rdm_Util_Code_Method
 
 if( ! empty($ids))
 {
-	$this->db->query(\'DELETE FROM '.addcslashes($db->protectIdentifiers($desc->getTable()), "'").' WHERE ('.addcslashes(implode(', ', $pks), "'").') IN (\'.implode(\', \', $ids).\')\');
+	$this->db->query(\'DELETE FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), "'").' WHERE ('.addcslashes(implode(', ', $pks), "'").') IN (\'.implode(\', \', $ids).\')\');
 }');
 	}
 }
