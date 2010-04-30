@@ -16,7 +16,12 @@ class Rdm_Builder_Collection_Delete extends Rdm_Util_Code_MethodBuilder
 		$this->setStatic(true);
 		$this->setParamList('$object');
 		
-		// TODO: Code
+		$this->addPart('if( ! $object instanceof '.$desc->getClass().')
+{
+	Rdm_Collection_Exception::expectingObjectOfType(\''.$desc->getClass().'\');
+}');
+		
+		$this->addPart('self::$unit_of_work->addForDelete($object, implode($object->__id));');
 	}
 }
 
