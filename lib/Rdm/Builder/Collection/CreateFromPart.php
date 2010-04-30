@@ -20,7 +20,7 @@ class Rdm_Builder_Collection_CreateFromPart extends Rdm_Util_Code_MethodBuilder
 		$this->addPart('if( ! $parent_alias)
 {
 	// We\'re the root node, use FROM
-	$list[] = \'FROM '.addcslashes($db->protectIdentifiers($desc->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($desc->getSingular()), "'").'\';
+	$list[] = \'FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($desc->getSingular()), "'").'\';
 }
 else
 {
@@ -30,7 +30,7 @@ else
 	// Set the aliases for the relation filter
 	$this->relation->setAliases($this->table_alias, $parent_alias);
 	
-	$list[] = $type.\'JOIN '.addcslashes($db->protectIdentifiers($desc->getTable()), "'").' AS \'.$this->table_alias.\' ON \'.implode(\' \', $this->filters);
+	$list[] = $type.\'JOIN '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), "'").' AS \'.$this->table_alias.\' ON \'.implode(\' \', $this->filters);
 }');
 		
 		$this->addPart('foreach($this->with as $join_alias => $join)
