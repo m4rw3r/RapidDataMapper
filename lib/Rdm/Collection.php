@@ -1180,6 +1180,34 @@ Stack trace:
 		
 		return new ArrayIterator($this->contents);
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the first element of this collection.
+	 * 
+	 * @return object|false
+	 */
+	public function first()
+	{
+		$this->is_populated OR $this->populate();
+		
+		return reset($this->contents);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the last element of this collection.
+	 * 
+	 * @return object|false
+	 */
+	public function last()
+	{
+		$this->is_populated OR $this->populate();
+		
+		return end($this->contents);
+	}
 }
 
 
