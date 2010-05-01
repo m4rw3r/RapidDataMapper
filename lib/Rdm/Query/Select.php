@@ -502,7 +502,7 @@ class Rdm_Query_Select extends Rdm_Query_Abstract
 
 		if($this->limit !== false)
 		{
-			$str = $this->_instance->_limit($str, $this->limit, $this->offset);
+			$str = $this->_instance->limitSqlQuery($str, $this->limit, $this->offset);
 		}
 		
 		return $str;

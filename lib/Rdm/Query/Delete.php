@@ -275,7 +275,7 @@ class Rdm_Query_Delete extends Rdm_Query_Abstract
         
 			if($this->limit !== false)
 			{
-				$str = $this->_instance->_limit($str, $this->limit, 0);
+				$str = $this->_instance->limitSqlQuery($str, $this->limit, 0);
 			}
 		}
 		
