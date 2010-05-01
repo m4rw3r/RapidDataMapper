@@ -1,5 +1,5 @@
 --TEST--
-Fetch an Artist (id: 1) and its albums, then add another album with $l->add($o) syntax, and finally flush to DB
+Fetch an Artist (id: 1) and its albums, then add a new album with $l->add($o) syntax, and finally flush to DB
 --FILE--
 <?php
 

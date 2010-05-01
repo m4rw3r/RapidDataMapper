@@ -1,5 +1,5 @@
 --TEST--
-Fetch an artist (id: 1) and its albums, then add another album with $l[] = $o; syntax
+Fetch an artist (id: 1) and its albums, then add a new album with $l[] = $o; syntax
 --FILE--
 <?php
 

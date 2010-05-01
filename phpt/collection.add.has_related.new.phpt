@@ -1,5 +1,5 @@
 --TEST--
-Fetch a list of Albums by an already fetched artist and then add an album to the list
+Fetch an Artist (id: 1) and its albums, then add() a newly created album to the list
 --FILE--
 <?php
 
