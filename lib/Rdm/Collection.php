@@ -1019,10 +1019,7 @@ Stack trace:
 	 */
 	public function isEmpty()
 	{
-		// TODO: Use a COUNT() query instead of populate the object when it is empty
-		$this->is_populated OR $this->populate();
-		
-		return empty($this->contents);
+		return $this->is_populated ? empty($this->contents) : $this->count() == 0;
 	}
 	
 	// ------------------------------------------------------------------------
