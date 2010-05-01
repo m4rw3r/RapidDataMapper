@@ -156,7 +156,11 @@ abstract class Rdm_UnitOfWork
 	{
 		try
 		{
-			$this->process();
+			isset($this->db) OR $this->db = Rdm_Adapter::getInstance($this->adapter_name);
+			
+			$this->doInserts();
+			$this->doUpdates();
+			$this->doDeletes();
 			
 			$this->cleanup();
 		}
@@ -172,16 +176,42 @@ abstract class Rdm_UnitOfWork
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Processes all the changes registered in this unit of work.
+	 * Executes all INSERT queries stored in this Unit of Work.
 	 * 
 	 * @return void
 	 */
-	public function process()
+	public function doInserts()
 	{
 		isset($this->db) OR $this->db = Rdm_Adapter::getInstance($this->adapter_name);
 		
 		$this->processSingleInsertions();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Executes all UPDATE queries stored in this Unit of Work.
+	 * 
+	 * @return 
+	 */
+	public function doUpdates()
+	{
+		isset($this->db) OR $this->db = Rdm_Adapter::getInstance($this->adapter_name);
+		
 		$this->processSingleChanges();
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Executes all DELETE queries stored in this Unit of Work.
+	 * 
+	 * @return void
+	 */
+	public function doDeletes()
+	{
+		isset($this->db) OR $this->db = Rdm_Adapter::getInstance($this->adapter_name);
+		
 		$this->processSingleDeletions();
 	}
 	
@@ -189,7 +219,7 @@ abstract class Rdm_UnitOfWork
 
 	/**
 	 * Cleans the data and updates the objects of this unit of work after
-	 * process() has been run.
+	 * doInsert(), doUpdate() and doDelete() has been run.
 	 * 
 	 * @return void
 	 */

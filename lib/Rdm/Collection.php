@@ -15,11 +15,19 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * A list containing loaded collection class names.
+	 * A list of collection names and their dependencies.
 	 * 
-	 * @var array(string)
+	 * @var array(string => string)
 	 */
-	static protected $loaded_collection_classes = array();
+	static protected $dependencies = array();
+	
+	/**
+	 * The object determining the order in which unit of works should run their
+	 * operations.
+	 * 
+	 * @var Rdm_UnitOfWork_CommitOrderCalculator
+	 */
+	static protected $commit_order_calculator = null;
 	
 	// ------------------------------------------------------------------------
 	
@@ -173,11 +181,12 @@ Stack trace:
 	 * get all collections' unit of work objects.
 	 * 
 	 * @param  string
+	 * @param  array   A list of entity class names which $class_name depends on
 	 * @return void
 	 */
-	public static function registerCollectionClassName($class_name)
+	public static function registerCollectionClassName($class_name, array $dependencies = array())
 	{
-		self::$loaded_collection_classes[] = $class_name;
+		self::$dependencies[$class_name] = $dependencies;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -200,13 +209,21 @@ Stack trace:
 			$db = Rdm_Adapter::getInstance();
 			$units = array();
 			
+			if(empty(self::$commit_order_calculator))
+			{
+				self::$commit_order_calculator = new Rdm_UnitOfWork_CommitOrderCalculator(self::$dependencies);
+			}
+			else
+			{
+				// Update the dependencies
+				self::$commit_order_calculator->dependencies = self::$dependencies;
+			}
+			
 			// Get the unit of works from the loaded collections
-			foreach(self::$loaded_collection_classes as $c)
+			foreach(self::$commit_order_calculator->calculate() as $c)
 			{
 				$units[] = call_user_func($c.'::getUnitOfWork');
 			}
-			
-			// TODO: Sort the UnitOfWork instances so that inserts and updates are made in the correct order
 			
 			if($db->transactionInProgress())
 			{
@@ -234,6 +251,7 @@ Stack trace:
 						$u->reset();
 					}
 					
+					// Rethrow
 					throw $e;
 				}
 			}
@@ -250,10 +268,21 @@ Stack trace:
 	 */
 	public static function doPushes(array $units)
 	{
-		// Send database calls
 		foreach($units as $u)
 		{
-			$u->process();
+			$u->doInserts();
+		}
+		
+		foreach($units as $u)
+		{
+			$u->doUpdates();
+		}
+		
+		// DELETE queries must be reversed because we need to remove the children
+		// before the parent
+		foreach(array_reverse($units) as $u)
+		{
+			$u->doDeletes();
 		}
 		
 		// All done, now we clean up
@@ -1141,9 +1170,9 @@ Stack trace:
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the iterator for iteration of this collection.
 	 * 
-	 * 
-	 * @return 
+	 * @return Iterator
 	 */
 	public function getIterator()
 	{

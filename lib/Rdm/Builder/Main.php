@@ -10,19 +10,30 @@
  */
 class Rdm_Builder_Main extends Rdm_Util_Code_Container
 {
-	public function __construct(Rdm_Descriptor $descriptor)
+	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->addPart(new Rdm_Builder_Collection($descriptor));
-		$this->addPart(new Rdm_Builder_CollectionFilter($descriptor));
-		$this->addPart(new Rdm_Builder_UnitOfWork($descriptor));
+		$this->addPart(new Rdm_Builder_Collection($desc));
+		$this->addPart(new Rdm_Builder_CollectionFilter($desc));
+		$this->addPart(new Rdm_Builder_UnitOfWork($desc));
 		
-		foreach($descriptor->getRelations() as $rel)
+		foreach($desc->getRelations() as $rel)
 		{
-			$this->addPart(new Rdm_Builder_Relation($rel, $descriptor));
+			$this->addPart(new Rdm_Builder_Relation($rel, $desc));
 		}
 		
-		$this->addPart($descriptor->getCollectionClassName().'::setUnitOfWork(new '.$descriptor->getUnitOfWorkClassName().');');
-		$this->addPart('Rdm_Collection::registerCollectionClassName(\''.$descriptor->getCollectionClassName().'\');');
+		$this->addPart($desc->getCollectionClassName().'::setUnitOfWork(new '.$desc->getUnitOfWorkClassName().');');
+		
+		$dependencies = array();
+		foreach($desc->getRelations() as $rel)
+		{
+			// Only belongs to relations depend on something
+			if($rel->getType() === Rdm_Descriptor::BELONGS_TO)
+			{
+				$dependencies[] = var_export($rel->getRelatedDescriptor()->getCollectionClassName(), true);
+			}
+		}
+		
+		$this->addPart('Rdm_Collection::registerCollectionClassName(\''.$desc->getCollectionClassName().'\', array('.implode(', ', $dependencies).'));');
 	}
 	
 	// ------------------------------------------------------------------------
