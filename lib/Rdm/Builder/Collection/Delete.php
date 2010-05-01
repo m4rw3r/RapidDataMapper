@@ -15,6 +15,10 @@ class Rdm_Builder_Collection_Delete extends Rdm_Util_Code_MethodBuilder
 		$this->setMethodName('delete');
 		$this->setStatic(true);
 		$this->setParamList('$object');
+		$this->setPhpDoc('Deletes an object of type '.$desc->getClass().' from the database.
+
+@param  '.$desc->getClass().'
+@return void');
 		
 		$this->addPart('if( ! $object instanceof '.$desc->getClass().')
 {

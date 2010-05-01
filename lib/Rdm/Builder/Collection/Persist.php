@@ -15,6 +15,10 @@ class Rdm_Builder_Collection_Persist extends Rdm_Util_Code_MethodBuilder
 		$this->setMethodName('persist');
 		$this->setStatic(true);
 		$this->setParamList('$object');
+		$this->setPhpDoc('Persists a newly created '.$desc->getClass().' object in the database.
+
+@param  '.$desc->getClass().'
+@return void');
 		
 		$this->addPart('if( ! $object instanceof '.$desc->getClass().')
 {

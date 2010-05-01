@@ -15,6 +15,10 @@ class Rdm_Builder_Collection_PushChanges extends Rdm_Util_Code_MethodBuilder
 		$this->setMethodName('pushChanges');
 		$this->setStatic(true);
 		$this->setParamList('$private_push = false');
+		$this->setPhpDoc('Pushes all changes to the database.
+
+@param  boolean  If to only push changes for the '.$desc->getCollectionClassName().'
+@return void');
 		
 		$this->addPart('if( ! $private_push)
 {
