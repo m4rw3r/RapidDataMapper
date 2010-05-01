@@ -21,7 +21,7 @@ class Rdm_Builder_Collection_HydrateObject extends Rdm_Util_Code_MethodBuilder
 			$pks[] = '$row[$map[$this->table_alias.\'.'.$pk->getProperty().'\']]';
 		}
 		
-		$this->addPart('$id = '.implode('.', $pks).';');
+		$this->addPart('$id = '.implode('.\'|\'.', $pks).';');
 		
 		$this->addPart('if(empty($id))
 {

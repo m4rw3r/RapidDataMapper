@@ -21,7 +21,7 @@ class Rdm_Builder_Collection_Delete extends Rdm_Util_Code_MethodBuilder
 	Rdm_Collection_Exception::expectingObjectOfType(\''.$desc->getClass().'\');
 }');
 		
-		$this->addPart('self::$unit_of_work->addForDelete($object, implode($object->__id));');
+		$this->addPart('self::$unit_of_work->addForDelete($object, implode(\'|\', $object->__id));');
 	}
 }
 
