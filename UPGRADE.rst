@@ -13,41 +13,43 @@ of the major changes and a guideline, not a thorough upgrade guide.
 Class Naming
 ------------
 
-The class prefix has been changed from "Db_" to "Rdm_"
+The class prefix has been changed from ``Db_`` to ``Rdm_``
 
 Loading of the library
 ----------------------
 
 The loading of the library is different in several ways:
 
-* The Db class has been removed, its configuration capabilities
-  has been moved into Rdm_Config
-* The "dbdriver" configuration item has been replaced with "class",
-  which contains the class name of the driver (eg. Rdm_Adapter_MySQL)
-* The bundled Autoloader is now located in lib/Rdm/Util/Autoloader.php
+* The ``Db`` class has been removed, its configuration capabilities
+  has been moved into ``Rdm_Config``
+* The ``dbdriver`` configuration item has been replaced with ``class``,
+  which contains the class name of the driver (eg. ``Rdm_Adapter_MySQL``)
+* The bundled Autoloader is now located in ``lib/Rdm/Util/Autoloader.php``
   and is loaded like this::
+  
+    require 'lib/Rdm/Util/Autoloader.php';
+    Rdm_Util_Autoloader::init();
 
-  require 'lib/Rdm/Util/Autoloader.php';
-  Rdm_Util_Autoloader::init();
-
-* To use the ORM, you also have to call Rdm_Collection::init() to
+* To use the ORM, you also have to call ``Rdm_Collection::init()`` to
   register the autoloader which generates the Collection classes
 
 Descriptors
 -----------
 
-* Descriptors should now inherit Rdm_Descriptor instead of
-  Db_Descriptor
-* Types are now constants of Rdm_Descriptors instead of strings
+* Descriptors should now inherit ``Rdm_Descriptor`` instead of
+  ``Db_Descriptor``
+* Types are now constants of ``Rdm_Descriptors`` instead of strings
   with the type names
-* setConnectionName() and setConnection() has been replaced with
-  setAdapterName() and setAdapter()
+* ``setConnectionName()`` and ``setConnection()`` has been replaced with
+  ``setAdapterName()`` and ``setAdapter()``
 
 Connections
 -----------
 
-* Class renamed to Rdm_Adapter
-* To get a connection: $c = Rdm_Adapter::getInstance($name = 'default')
+* Class renamed to ``Rdm_Adapter``
+* To get a connection::
+
+  $c = Rdm_Adapter::getInstance($name = 'default')
 
 Performing ORM queries
 ----------------------
@@ -60,8 +62,8 @@ Saving objects
 
 Objects doesn't have to be explicitly saved, instead everything that has
 been changed on objects which has been fetched from the database is
-UPDATE:d when Rdm_Collection::pushChanges() or <Class>Collection::pushChanges()
-is called::
+UPDATE:d when ``Rdm_Collection::pushChanges()`` or
+``<Class>Collection::pushChanges()`` is called::
 
   $o = UserCollection::fetchByPrimaryKey(32);
   
@@ -73,7 +75,16 @@ is called::
 Create new objects
 ------------------
 
-Use <Class>Collection::persist($object) to tell the Unit of Work that
-$object is a new instance that should be persisted in the database.
-This is then inserted when pushChanges() is called.
+Use ``<Class>Collection::persist($object)`` to tell the Unit of Work that
+``$object`` is a new instance that should be persisted in the database.
+This is then inserted when ``Rdm_Collection::pushChanges()`` is called::
+
+  $u = new User();
+  
+  $u->name = 'John Doe';
+  
+  UserCollection::persist($u);
+  
+  // Insert the user
+  Rdm_Collection::pushChanges();
 
