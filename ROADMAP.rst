@@ -66,14 +66,14 @@ Finished
 - Establishing a relationship between a child object and a parent by adding it
   to an already fetched collection (the greedy fetch with has many relations)
 - Transaction support
+- Commit orderer for the unit of work (to specify order of business so that the
+  query types are made in the correct order so that we don't invalidate any
+  constraints)
 
 Todo
 ----
 
 - More column types and type-related filters
-- Commit orderer for the unit of work (to specify order of business so that the
-  query types are made in the correct order so that we don't invalidate any
-  constraints)
 - Multi entity operations
 - Limit related rows
 - ON DELETE (?:DO NOTHING|CASCADE|RESTRICT|SET NULL)
