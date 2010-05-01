@@ -438,6 +438,122 @@ abstract class Rdm_Adapter
 	}
 	
 	// --------------------------------------------------------------------
+	// --  SQL-BUILDER INTERFACING METHODS                               --
+	// --------------------------------------------------------------------
+	
+	/**
+	 * Creates a SELECT query object.
+	 *
+	 * @see Rdm_Query_Select 
+	 *
+	 * @param  string|array
+	 * @return Rdm_Query_Select
+	 */
+	public function select($columns = false)
+	{
+		$q = new Rdm_Query_Select($this, false);
+		
+		if($columns)
+		{
+			$q->column($columns);
+		}
+		
+		return $q;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Inserts data into the database, returns a query object if no data is supplied.
+	 * 
+	 * @see Ot_query_Insert
+	 * @see Ot_query_Insert::set()
+	 * 
+	 * @param  string
+	 * @param  array   Associative array with column => value, executes the query if present
+	 * @return Rdm_Query_Insert|int|false
+	 */
+	public function insert($table, $data = false)
+	{
+		$ret = new Rdm_Query_Insert($this, $table);
+		
+		// if we have data, perform the insert
+		if($data)
+		{
+			$ret->set($data);
+			
+			return $ret->execute();
+		}
+		else
+		{
+			return $ret;
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Updates data in the database, returns a query object if no conditions are supplied.
+	 *
+	 * @see Rdm_Query_Update
+	 * @see Rdm_Query_Update::set()
+	 * @see Rdm_Query_Abstract::where()
+	 *
+	 * @param  string|array 	Multiple tables can be updated with the same query
+	 * @param  array    		Associative array with new data (sent to set())
+	 * @param  mixed			Sent to Rdm_Query_Abstract::where()
+	 * @return Rdm_Query_Update|int|false
+	 */
+	public function update($table, $data = false, $conditions = false)
+	{
+		$ret = new Rdm_Query_Update($this, $table);
+		
+		if($data)
+		{
+			$ret->set($data);
+		}
+		
+		if($conditions)
+		{
+			$ret->where($conditions);
+			
+			return $ret->execute();
+		}
+		else
+		{
+			return $ret;
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Deletes data in the database, returns a query object if no conditions are supplied.
+	 *
+	 * @see Rdm_Query_Delete
+	 * @see Rdm_Query_Abstract::where()
+	 * 
+	 * @param  string|array
+	 * @param  mixed		Sent to Rdm_Query_Abstract::where()
+	 * @return Rdm_Query_Delete|int|false
+	 */
+	public function delete($table, $conditions = false)
+	{
+		$ret = new Rdm_Query_Delete($this, $table);
+		
+		if($conditions)
+		{
+			$ret->where($conditions);
+			
+			return $ret->execute();
+		}
+		else
+		{
+			return $ret;
+		}
+	}
+	
+	// --------------------------------------------------------------------
 	// --  SQL UTILITY METHODS                                           --
 	// --------------------------------------------------------------------
 
