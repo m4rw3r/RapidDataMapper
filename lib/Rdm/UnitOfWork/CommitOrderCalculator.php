@@ -43,7 +43,8 @@ class Rdm_UnitOfWork_CommitOrderCalculator
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Registers that $a depends on $b.
+	 * Registers that $a depends on $b running before $a, if $b is not loaded,
+	 * then $a will run anyway.
 	 * 
 	 * @param  string
 	 * @param  string
@@ -110,13 +111,19 @@ class Rdm_UnitOfWork_CommitOrderCalculator
 		$this->visited[$n] = true;
 		$visited[] = $n;
 		
+		
 		foreach($this->dependencies[$n] as $dependency)
 		{
-			// Recurse:
-			if( ! $this->visit($dependency, $list, $root, $visited) && $n != $root)
+			// Check if we have it loaded, because otherwise we can just continue
+			// as $dependency is only is required to run earlier IF PRESENT
+			if( ! empty($this->dependencies[$dependency]))
 			{
-				// We've visited it in this stack, cycle detected
-				throw new Exception('Cycle detected from '.$n.' to '.$dependency);
+				// Recurse:
+				if( ! $this->visit($dependency, $list, $root, $visited) && $n != $root)
+				{
+					// We've visited it in this stack, cycle detected
+					throw new Exception('Cycle detected from '.$n.' to '.$dependency);
+				}
 			}
 		}
 		
