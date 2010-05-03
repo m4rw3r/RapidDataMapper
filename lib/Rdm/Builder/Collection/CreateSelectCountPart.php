@@ -31,7 +31,7 @@ class Rdm_Builder_Collection_CreateSelectCountPart extends Rdm_Util_Code_MethodB
 		}
 		else
 		{
-			$this->addPart('return \'SELECT COUNT(DISTINCT \'.'.implode(' + \\\'|\\\' + \'.', $columns).')\'.$from;');
+			$this->addPart('return \'SELECT COUNT(DISTINCT \'.'.implode(' + \\\'|\\\' + \'.', $columns).') \'.$from;');
 		}
 	}
 }
