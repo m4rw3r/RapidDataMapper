@@ -29,6 +29,9 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 	
 	protected function connect()
 	{
+		// Prevent MySQL from printing connection errors
+		$er = error_reporting(0);
+		
 		// try to connect
 		if($this->options['pconnect'])
 		{
@@ -39,9 +42,12 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 			$conn = mysql_connect($this->options['hostname'], $this->options['username'], $this->options['password']);
 		}
 		
+		// Reenable error reporting
+		error_reporting($er);
+		
 		if( ! $conn)
 		{
-			throw new Rdm_Adapter_ConnectionException($this->error());
+			throw new Rdm_Adapter_ConnectionException(mysql_error());
 		}
 		else
 		{
@@ -52,7 +58,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 			}
 			else
 			{
-				throw new Rdm_Adapter_ConnectionException('Cannot select database "'.$this->database.'".');
+				throw new Rdm_Adapter_ConnectionException('Cannot select database "'.$this->database.'":'.mysql_error());
 			}
 		}
 	}
