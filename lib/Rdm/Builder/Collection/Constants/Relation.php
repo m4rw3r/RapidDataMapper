@@ -12,10 +12,20 @@ class Rdm_Builder_Collection_Constants_Relation extends Rdm_Util_Code_Container
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->addPart('// Relation id constants');
+		if( ! count($desc->getRelations()))
+		{
+			// Nothing to do
+			return;
+		}
+		
+		$this->addPart('// Relation id constants
+');
 		
 		foreach($desc->getRelations() as $r)
 		{
+			$this->addPart('/**
+ * Constant representing the relation '.$r->getName().' between '.$desc->getClass().' and '.$r->getRelatedDescriptor()->getClass().'.
+ */');
 			$this->addPart('const '.ucfirst($r->getName()).' = '.$r->getIntegerIdentifier().';');
 		}
 	}
@@ -24,7 +34,7 @@ class Rdm_Builder_Collection_Constants_Relation extends Rdm_Util_Code_Container
 	
 	public function getName()
 	{
-		return 'constants';
+		return 'constants_relation';
 	}
 	
 	// ------------------------------------------------------------------------
