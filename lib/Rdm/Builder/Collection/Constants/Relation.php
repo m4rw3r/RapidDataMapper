@@ -8,7 +8,7 @@
 /**
  * 
  */
-class Rdm_Builder_Collection_RelationConstants extends Rdm_Util_Code_Container
+class Rdm_Builder_Collection_Constants_Relation extends Rdm_Util_Code_Container
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
@@ -36,5 +36,5 @@ class Rdm_Builder_Collection_RelationConstants extends Rdm_Util_Code_Container
 }
 
 
-/* End of file RelationConstants.php */
-/* Location: ./lib/Rdm/Builder/Collection */
+/* End of file Relation.php */
+/* Location: ./lib/Rdm/Builder/Collection/Constants */
