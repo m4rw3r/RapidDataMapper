@@ -373,6 +373,12 @@ abstract class Rdm_Adapter
 	 */
 	public function transactionStart()
 	{
+		// Redirect transaction start to the write instance
+		if($this->redirect_write)
+		{
+			return self::getInstance($this->redirect_write)->transactionStart();
+		}
+		
 		if($this->transaction)
 		{
 			throw new Rdm_Adapter_TransactionNestingException();
@@ -402,6 +408,12 @@ abstract class Rdm_Adapter
 	 */
 	public function transactionCommit()
 	{
+		// Redirect transaction commit to the write instance
+		if($this->redirect_write)
+		{
+			return self::getInstance($this->redirect_write)->transactionCommit();
+		}
+		
 		is_null($this->dbh) && $this->initDbh();
 		
 		$this->transaction = false;
@@ -418,6 +430,12 @@ abstract class Rdm_Adapter
 	 */
 	public function transactionRollback()
 	{
+		// Redirect transaction rollback to the write instance
+		if($this->redirect_write)
+		{
+			return self::getInstance($this->redirect_write)->transactionRollback();
+		}
+		
 		is_null($this->dbh) && $this->initDbh();
 		
 		$this->transaction = false;
@@ -434,6 +452,12 @@ abstract class Rdm_Adapter
 	 */
 	public function transactionInProgress()
 	{
+		// Redirect transaction check to the write instance
+		if($this->redirect_write)
+		{
+			return self::getInstance($this->redirect_write)->transactionInProgress();
+		}
+		
 		return $this->transaction;
 	}
 	
