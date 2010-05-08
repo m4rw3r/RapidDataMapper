@@ -35,8 +35,7 @@ if($this->_add($object))
 		$this->addPart('// Add it to this collection\'s data
 if( ! empty($object->__id))
 {
-	// TODO: Replace the id concatenation scheme?
-	$this->contents[implode(\'\', $object->__id)] = $object;
+	$this->contents[implode(\'|\', $object->__id)] = $object;
 }
 else
 {
