@@ -9,7 +9,7 @@
 error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
 
 // Register RapidDataMapper's default autoloader implementation
-require 'lib/Rdm/Util/Autoloader.php';
+require dirname(__FILE__).'/../../lib/Rdm/Util/Autoloader.php';
 Rdm_Util_Autoloader::init();
 
 
