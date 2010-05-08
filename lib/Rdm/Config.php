@@ -229,12 +229,12 @@ class Rdm_Config
 	 */
 	public static function addDescriptorLoader($callback)
 	{
-		if( ! is_callable($callable, true))
+		if( ! is_callable($callback, true))
 		{
 			throw new InvalidArgumentException('Faulty syntax in supplied callable.');
 		}
 		
-		self::$descriptor_loaders[] = $callable;
+		self::$descriptor_loaders[] = $callback;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -252,20 +252,6 @@ class Rdm_Config
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Sets the path to the directory in which RapidDataMapper should look for
-	 * descriptors if it cannot find them anywhere else.
-	 * 
-	 * @param  string
-	 * @return void
-	 */
-	public static function setDescriptorDir($path)
-	{
-		self::$descriptor_dir = $path;
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Returns the descriptor for a certain class.
 	 * 
 	 * - First checks if there already is a loaded descriptor
@@ -274,8 +260,6 @@ class Rdm_Config
 	 *   loader, which would return a descriptor instance describing the class.
 	 * - Then it checks if ClassNameDescriptor.php exists
 	 *   (it uses the autoloader(s), so Record_UserDescriptor will be placed in Record/UserDescriptor.php).
-	 * - Finally it tries the descriptor directory for any files with the name
-	 *   ClassName.php, which will contain a ClassNameDescriptor class (no autoloader).
 	 * 
 	 * @param  string
 	 * @throws Rdm_Descriptor_MissingException
@@ -308,17 +292,7 @@ class Rdm_Config
 		// do we have a descriptor class? (it also tries to autoload it with class_exists())
 		if( ! class_exists($klass))
 		{
-			// do we have a certain descriptor file?
-			if(file_exists(self::$descriptor_dir.'/'.$class.'.php'))
-			{
-				require self::$descriptor_dir.'/'.$class.'.php';
-			}
-			
-			// check if any class was loaded, do not use autoload this time
-			if( ! class_exists($klass, false))
-			{
-				throw new Rdm_Descriptor_MissingException($class, 'Descriptor is missing.');
-			}
+			throw new Rdm_Descriptor_MissingException($class);
 		}
 		
 		// Create instance
