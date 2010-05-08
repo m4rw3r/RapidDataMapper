@@ -30,7 +30,7 @@ $c = new '.$desc->getCollectionClassName().';');
 		
 		$this->addPart('$c->populate();');
 		
-		$this->addPart('return current($c->getContentReference());');
+		$this->addPart('return current($c->contents);');
 	}
 }
 

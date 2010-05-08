@@ -25,7 +25,7 @@ foreach($this->with as $join_alias => $join)
 			$e->$join_alias->setPopulated();
 		}
 		
-		$join->hydrateObject($row, $e->$join_alias->getContentReference(), $map);
+		$join->hydrateObject($row, $e->$join_alias->contents, $map);
 	}
 	else
 	{

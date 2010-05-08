@@ -364,7 +364,7 @@ Stack trace:
 	 * 
 	 * @var array(Object)
 	 */
-	protected $contents = array();
+	public $contents = array();
 	
 	/**
 	 * Variable caching the SELECT COUNT() query.
@@ -714,21 +714,6 @@ Stack trace:
 		}
 		
 		return $sql;
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Internal: Fetches a reference to the contents of this Colleciton.
-	 * 
-	 * This is used to be able to directly assign subcollections' data.
-	 * 
-	 * @internal
-	 * @return array
-	 */
-	public function &getContentReference()
-	{
-		return $this->contents;
 	}
 	
 	// ------------------------------------------------------------------------
