@@ -9,13 +9,21 @@
  * Utility class which handles the default RapidDataMapper class autoloading,
  * use if you do not have a compatible autoloader, see manual.
  */
-class Rdm_Util_Autoloader
+final class Rdm_Util_Autoloader
 {
+	/**
+	 * The directory containing the RapidDataMapper library files.
+	 * 
+	 * @var string
+	 */
 	private static $library_dir;
 	
-	public final function __construct()
+	/**
+	 * Private constructor to prevent instantiation.
+	 */
+	private final function __construct()
 	{
-		throw new Exception('This class is not allowed to be instantiated.');
+		// Empty
 	}
 	
 	// ------------------------------------------------------------------------
@@ -29,7 +37,7 @@ class Rdm_Util_Autoloader
 	{
 		spl_autoload_register(__CLASS__.'::autoload');
 		
-		self::$library_dir = realpath(dirname(__FILE__).'/../..').DIRECTORY_SEPARATOR;
+		self::$library_dir = realpath(dirname(__FILE__).DIRECTORY_SEPARATOR.'..').DIRECTORY_SEPARATOR;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -47,7 +55,7 @@ class Rdm_Util_Autoloader
 			return false;
 		}
 		
-		$file = self::$library_dir.strtr($class, '_', DIRECTORY_SEPARATOR).'.php';
+		$file = self::$library_dir.strtr(substr($class, 4), '_', DIRECTORY_SEPARATOR).'.php';
 		
 		if(file_exists($file))
 		{
