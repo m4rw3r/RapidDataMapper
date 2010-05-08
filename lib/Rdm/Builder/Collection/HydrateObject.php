@@ -31,18 +31,13 @@ class Rdm_Builder_Collection_HydrateObject extends Rdm_Util_Code_MethodBuilder
 		$this->addPart(
 'if( ! isset($result[$id]))
 {
-	if(isset(self::$unit_of_work->entities[$id]))
-	{
-		$result[$id] = $e = self::$unit_of_work->entities[$id];
-	}
-	else
-	{
-		// Create a new instance');
+	$refresh = self::$refresh;');
+		
+		$this->addPart(new Rdm_Builder_Collection_HydrateObject_CreateInstance($desc));
 		
 		$this->addPart(new Rdm_Builder_Collection_HydrateObject_FillObject($desc));
 		
-		$this->addPart('		$result[$id] = self::$unit_of_work->entities[$id] = $e;
-	}
+		$this->addPart('	$result[$id] = $e;
 }
 else
 {

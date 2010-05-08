@@ -12,8 +12,6 @@ class Rdm_Builder_Collection_HydrateObject_FillObject extends Rdm_Util_Code_Cont
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->addPart('$e = '.$desc->getFactory().';');
-		
 		$shadow_id = array();
 		$properties = array();
 		foreach($desc->getPrimaryKeys() as $pk)
@@ -49,7 +47,7 @@ class Rdm_Builder_Collection_HydrateObject_FillObject extends Rdm_Util_Code_Cont
 	
 	public function __toString()
 	{
-		return self::indentCode(self::indentCode("\n".implode("\n\n", $this->content)));
+		return "\tif(\$refresh)\n\t{".self::indentCode(self::indentCode("\n".implode("\n\n", $this->content)))."\n\t}";
 	}
 }
 
