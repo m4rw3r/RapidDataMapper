@@ -19,7 +19,7 @@ $albums->add($album);
 var_dump($artist->id);
 var_dump($album->id);
 var_dump($album->artist_id);
-var_dump(array_search($album, $albums->getContentReference(), true));
+var_dump(array_search($album, $albums->contents, true));
 --EXPECT--
 int(1)
 NULL

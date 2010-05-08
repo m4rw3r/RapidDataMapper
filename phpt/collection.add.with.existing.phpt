@@ -16,14 +16,14 @@ $artist = $artists[1];
 
 $album = AlbumCollection::fetchByPrimaryKey(2);
 
-var_dump(array_search($album, $artist->albums->getContentReference(), true));
+var_dump(array_search($album, $artist->albums->contents, true));
 
 $artist->albums->add($album);
 
 var_dump($artist->id);
 var_dump($album->id);
 var_dump($album->artist_id);
-var_dump(array_search($album, $artist->albums->getContentReference(), true));
+var_dump(array_search($album, $artist->albums->contents, true));
 --EXPECT--
 int(2)
 int(1)
