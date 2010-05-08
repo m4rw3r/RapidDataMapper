@@ -321,7 +321,7 @@ Stack trace:
 	 * 
 	 * @var string
 	 */
-	protected $table_alias = '';
+	public $table_alias = '';
 	
 	/**
 	 * Internal: A list of filter objects
@@ -660,7 +660,7 @@ Stack trace:
 	 * 
 	 * @return string
 	 */
-	public function createCountSelectQuery()
+	public function createSelectCountQuery()
 	{
 		$this->is_locked = true;
 		
@@ -676,6 +676,37 @@ Stack trace:
 		}
 		
 		$sql = $this->createSelectCountPart($sql);
+		
+		if($this->limit !== false)
+		{
+			$sql = $this->db->limitSqlQuery($sql, $this->limit, $this->offset);
+		}
+		
+		return $sql;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates a query which returns a list of all the specified columns of this collection.
+	 * 
+	 * @param  string   The select part of the query, no escaping will take place!
+	 * @return string
+	 */
+	public function createSelectColumnsQuery($select)
+	{
+		$from = array();
+		
+		$this->createFromPart(false, $from);
+		
+		$sql = "\n".implode("\n", $from);
+		
+		if( ! empty($this->filters))
+		{
+			$sql .= "\nWHERE ".implode(' ', $this->filters);
+		}
+		
+		$sql = 'SELECT '.$select.$sql;
 		
 		if($this->limit !== false)
 		{
@@ -793,7 +824,7 @@ Stack trace:
 		if($this->is_locked)
 		{
 			// TODO: Better exception message and proper exception class
-			throw new Exception('Object is already populated');
+			throw new Exception('Object is already locked');
 		}
 		
 		if($offset != false)
@@ -819,6 +850,11 @@ Stack trace:
 	 */
 	public function offset($num)
 	{
+		if( ! is_null($this->parent))
+		{
+			throw Rdm_Collection_Exception::notRootObject(get_class($this));
+		}
+		
 		$this->offset = $num;
 		
 		return $this;
@@ -1156,7 +1192,7 @@ Stack trace:
 				}
 				
 				// Nope
-				$this->num_rows = $this->db->query($this->createCountSelectQuery())->val();
+				$this->num_rows = $this->db->query($this->createSelectCountQuery())->val();
 			}
 			
 			return $this->num_rows;

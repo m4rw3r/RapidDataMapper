@@ -15,6 +15,7 @@ class Rdm_Builder_CollectionFilter_FilterRelatedObject extends Rdm_Util_Code_Con
 		foreach($desc->getRelations() as $r)
 		{
 			$this->addPart(new Rdm_Builder_CollectionFilter_FilterRelatedObjectMethod($r, $desc));
+			$this->addPart(new Rdm_Builder_CollectionFilter_FilterRelatedCollectionMethod($r, $desc));
 		}
 	}
 	
