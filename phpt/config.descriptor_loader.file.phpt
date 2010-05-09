@@ -26,13 +26,6 @@ Rdm_Config::addDescriptorLoader(array(new Rdm_Util_DescriptorLoader_File(dirname
 
 class User
 {
-	public static function setUp(Rdm_Descriptor $desc)
-	{
-		$desc->setClass(__CLASS__);
-		$desc->add($desc->newPrimaryKey('id'));
-		$desc->add($desc->newColumn('name'));
-	}
-	
 	public $id;
 	public $name;
 }
