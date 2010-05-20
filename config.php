@@ -13,7 +13,7 @@ error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
 $mapper_cache_dir = dirname(__FILE__).DIRECTORY_SEPARATOR.'cache';
 
 
-// Remove all the cached mappers
+// Remove all the cached mappers, this to make sure that we always get "fresh" files
 foreach(glob($mapper_cache_dir.DIRECTORY_SEPARATOR.'*.php') as $f)
 {
 	@unlink($f);
