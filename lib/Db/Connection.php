@@ -358,6 +358,12 @@ abstract class Db_Connection
 	 */
 	public function transactionStart()
 	{
+		// Redirect transaction start to the write instance
+		if($this->redirect_write)
+		{
+			return Db::getConnection($this->redirect_write)->transactionStart();
+		}
+		
 		if($this->transaction)
 		{
 			throw new Db_Connection_TransactionNestingException();
@@ -387,6 +393,12 @@ abstract class Db_Connection
 	 */
 	public function transactionCommit()
 	{
+		// Redirect transaction commit to the write instance
+		if($this->redirect_write)
+		{
+			return Db::getConnection($this->redirect_write)->transactionCommit();
+		}
+		
 		is_null($this->dbh) && $this->initDbh();
 		
 		$this->transaction = false;
@@ -403,6 +415,12 @@ abstract class Db_Connection
 	 */
 	public function transactionRollback()
 	{
+		// Redirect transaction rollback to the write instance
+		if($this->redirect_write)
+		{
+			return Db::getConnection($this->redirect_write)->transactionRollback();
+		}
+		
 		is_null($this->dbh) && $this->initDbh();
 		
 		$this->transaction = false;
