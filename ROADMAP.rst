@@ -23,7 +23,9 @@ Will move stuff from 1.0 to here
 1.0
 ===
 
-- Getter and setter support, so the properties of the entities can be protected
+- ReflectionProperty support, so the private properties of the entities can
+  be protected without having to go through setters/getters
+  (ReflectionProperty is faster provided it is cached during the run)
 - Proper PHPdoc comments for return types, so that IDEs will autocomplete
   the generated code properly
 - toXML() and toJSON() utilities, for both collections and single entities
@@ -33,6 +35,7 @@ Will move stuff from 1.0 to here
 - Supported frameworks (compatibility files and manual section): Zend Framework,
   CodeIgniter, Symfony (both 1 and 2)
 - DescriptorLoaders for XML (and maybe YAML)
+- DescriptorLoader for annotations?
 - Table builder from descriptors
 - Descriptor and entity creator which reads the database
 - Proper cache driver and cache system for caching query results locally
@@ -59,27 +62,44 @@ Finished
 - Usage of bound parameters in custom SQL
 - Built in Unit of Work
 - Delete persisted object from database
-- Greedy explicit fetch of related records, with possibilities to filter them too
-- Filter by an already fetched related entity
-- Establishing a relationship between two objects without having to assign
-  them to a collection
-- Establishing a relationship between a child object and a parent by adding it
-  to an already fetched collection (the greedy fetch with has many relations)
 - Transaction support
 - Commit orderer for the unit of work (to specify order of business so that the
   query types are made in the correct order so that we don't invalidate any
   constraints)
+
+Relations:
+  - Possibility to create subqueries with related collections
+  - Establishing a relationship between a child object and a parent by adding it
+    to an already fetched collection (the greedy fetch with has many relations,
+    using with(relation-constant))
+  - Establishing a relationship between two objects without having to assign
+    them to a collection
+  - Filter by an already fetched related entity
+  - Greedy explicit fetch of related records, with possibilities to filter them
+    too, using with(relation-constant)
 
 Todo
 ----
 
 - More column types and type-related filters
 - Multi entity operations
-- Limit related rows
-- ON DELETE (?:DO NOTHING|CASCADE|RESTRICT|SET NULL)
-- Removal of a related row from a collection
 - Possibilities to use collections to create subqueries for use in filters or
   elsewhere (eg. as a union of two collections or something)
 - Order by, also for related rows
-- Utility methods for dealing with the collection contents (more like a normal
-  array, eg. first(), last(), map() etc.)
+- Modify code builders so that they use the redirect_write adapter when
+  creating write queries, as that will be the adapter used by the ORM for
+  querying writes?
+
+Collection object:
+  - Utility methods for dealing with the collection contents (more like a normal
+    array, eg. first(), last(), map() etc.)
+  - Proper (un)serialization()
+
+Relations:
+  - Establishing relations between two objects before they have been saved
+  - Destroying relationships
+  - ON DELETE (?:DO NOTHING|CASCADE|RESTRICT|SET NULL)
+  - Limit related rows in with()
+  - Check for Has One and Belongs To relations if the related objects
+    on the property has been changed (ie. the whole object) on single changes
+  - Removal of a related row from a collection
