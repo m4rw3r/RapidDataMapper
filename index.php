@@ -19,7 +19,8 @@ class TrackDescriptor extends Rdm_Descriptor
 		$this->add($this->newPrimaryKey('id'));
 		
 		$this->add($this->newColumn('name'));
-		$this->add($this->newColumn('artist_id')->setDataType('integer'));
+		$this->add($this->newColumn('artist_id')->setDataType(self::INT));
+		$this->add($this->newColumn('album_id')->setDataType(self::INT));
 		$this->add($this->newRelation('artist'));
 		$this->add($this->newRelation('album'));
 	}
@@ -44,7 +45,9 @@ class AlbumDescriptor extends Rdm_Descriptor
 		$this->add($this->newPrimaryKey('id'));
 		
 		$this->add($this->newColumn('name'));
+		$this->add($this->newColumn('artist_id'));
 		$this->add($this->newRelation('tracks'));
+		$this->add($this->newRelation('artist'));
 	}
 }
 
@@ -71,36 +74,20 @@ class Album
 {
 	public $id;
 	public $name;
+	public $artist_id;
 }
-
 
 $db = Rdm_Adapter::getInstance();
 var_dump($db->transactionStart());
 
-$a = ArtistCollection::create();
+$a = new Artist;
 
-// Get artist with the id 1:
-$artist = $a[1];
+new ArtistCollection;
 
-var_dump($artist);
+ArtistTracksRelation::establish($a, $t = new Track);
 
-// Add a track:
-ArtistTracksRelation::establish($artist, $t = new Track);
-
-// Dump it
+var_dump($a);
 var_dump($t);
-
-$artist->name = 'Draconian';
-
-$c = TrackCollection::create()->has()->relatedArtist($artist)->end();
-
-print_r($c);
-
-$c->add($t = new Track);
-$t->name = 'foobar';
-
-var_dump($t);
-
 
 $artists = ArtistCollection::create()
   ->with(ArtistCollection::Albums)
@@ -110,17 +97,17 @@ $artists = ArtistCollection::create()
 
 foreach($artists as $a)
 {
-    echo "$a->name\n";
-    
-    foreach($a->albums as $al)
-    {
-        echo "  $al->name\n";
-        
-        foreach($al->tracks as $t)
-        {
-            echo "    $t->name\n";
-        }
-    }
+	echo "$a->name\n";
+	
+	foreach($a->albums as $al)
+	{
+		echo "	$al->name\n";
+		
+		foreach($al->tracks as $t)
+		{
+			echo "		$t->name\n";
+		}
+	}
 }
 
 Rdm_Collection::pushChanges();
