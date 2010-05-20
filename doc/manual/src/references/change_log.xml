@@ -40,6 +40,15 @@
 					to <varname>Db_Descriptor::NOTHING</varname>.
 				</para>
 			</listitem>
+			
+			<listitem>
+				<para>
+					Made the transaction methods
+					(see <link linkend="chapter.database_connection_objects.transactions">Transactions</link>)
+					pass the call on to the write connection if the <varname>redirect_write</varname>
+					setting is enabled.
+				</para>
+			</listitem>
 		</itemizedlist>
 		
 		<para>
