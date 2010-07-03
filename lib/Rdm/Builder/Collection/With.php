@@ -19,7 +19,7 @@ class Rdm_Builder_Collection_With extends Rdm_Util_Code_MethodBuilder
 		$collection_classes = array();
 		foreach($desc->getRelations() as $rel)
 		{
-			$collection_classes[] = $rel->getRelatedDescriptor()->getCollectionClassName();
+			$collection_classes[] = $rel->getRelatedDescriptor()->getNamespace(true, true).$rel->getRelatedDescriptor()->getCollectionClassName();
 			$constants[] = ucfirst($rel->getName());
 		}
 		
@@ -27,7 +27,7 @@ class Rdm_Builder_Collection_With extends Rdm_Util_Code_MethodBuilder
 relations.
 
 @param  int  A relation constant'.(empty($constants) ? '' : ', one of the following: '.implode(', ', $constants)).'
-@return '.(empty($collection_classes) ? 'void' :implode('|', $collection_classes)));
+@return '.(empty($collection_classes) ? 'void' : implode('|', $collection_classes)));
 		
 		if(count($desc->getRelations()))
 		{

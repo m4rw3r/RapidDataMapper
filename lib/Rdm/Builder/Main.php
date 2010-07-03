@@ -12,6 +12,11 @@ class Rdm_Builder_Main extends Rdm_Util_Code_Container
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
+		if($desc->getNamespace() != null)
+		{
+			$this->addPart('namespace '.$desc->getNamespace().';');
+		}
+		
 		$this->addPart(new Rdm_Builder_CollectionBase($desc));
 		
 		$this->addPart(new Rdm_Builder_Collection($desc));
@@ -36,7 +41,7 @@ class Rdm_Builder_Main extends Rdm_Util_Code_Container
 			}
 		}
 		
-		$this->addPart('Rdm_Collection::registerCollectionClassName(\''.$desc->getCollectionClassName().'\', array('.implode(', ', $dependencies).'));');
+		$this->addPart(($desc->isNamespaced() ? '\\' : '').'Rdm_Collection::registerCollectionClassName(\''.$desc->getCollectionClassName().'\', array('.implode(', ', $dependencies).'));');
 	}
 	
 	// ------------------------------------------------------------------------

@@ -14,7 +14,7 @@ class Rdm_Builder_Collection_SetUnitOfWork extends Rdm_Util_Code_MethodBuilder
 	{
 		$this->setMethodName('setUnitOfWork');
 		$this->setStatic(true);
-		$this->setParamList('Rdm_UnitOfWork $u');
+		$this->setParamList(($desc->isNamespaced() ? '\\' : '').'Rdm_UnitOfWork $u');
 		
 		$this->addPart('self::$unit_of_work = $u;');
 	}

@@ -217,7 +217,7 @@ class Rdm_Descriptor_Relation
 	 */
 	public function getRelatedClass()
 	{
-		return empty($this->related_class) ? ucfirst(Rdm_Util_Inflector::singularize($this->getProperty())) : $this->related_class;
+		return empty($this->related_class) ? $this->getParentDescriptor()->getNamespace(true).ucfirst(Rdm_Util_Inflector::singularize($this->getProperty())) : $this->related_class;
 	}
 	
 	// ------------------------------------------------------------------------

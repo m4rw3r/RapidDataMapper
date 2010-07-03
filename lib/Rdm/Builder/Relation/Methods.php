@@ -38,14 +38,14 @@ public function canModifyToMatch()
 }
 
 /**
- * Establishes a relation between object '.$rel->getParentDescriptor()->getClass().' object
- * and a '.$rel->getRelatedDescriptor()->getClass().' object.
+ * Establishes a relation between object '.$rel->getParentDescriptor()->getNamespace(true, true).$rel->getParentDescriptor()->getClass().' object
+ * and a '.$rel->getRelatedDescriptor()->getNamespace(true, true).$rel->getRelatedDescriptor()->getClass().' object.
  * 
- * @param  '.$rel->getParentDescriptor()->getClass().'
- * @param  '.$rel->getRelatedDescriptor()->getClass().'
+ * @param  '.$rel->getParentDescriptor()->getNamespace(true, true).$rel->getParentDescriptor()->getClass().'
+ * @param  '.$rel->getRelatedDescriptor()->getNamespace(true, true).$rel->getRelatedDescriptor()->getClass().'
  * @return void
  */
-public static function establish('.$rel->getParentDescriptor()->getClass().' $parent, '.$rel->getRelatedDescriptor()->getClass().' $child)
+public static function establish('.$rel->getParentDescriptor()->getClass().' $parent, '.$rel->getRelatedDescriptor()->getNamespace(true, true).$rel->getRelatedDescriptor()->getClass().' $child)
 {
 	$c = new '.$rel->getRelationFilterClassName().';
 	$c->parent_object = $parent;

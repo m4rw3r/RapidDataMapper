@@ -20,13 +20,13 @@ related '.$rel->getName().', this will put it in "reverse mode", if an $object i
 So for relating from '.$desc->getClass().' to '.$rel->getName().', ie. JOIN '.$rel->getName().' to
 the '.$desc->getClass().' query, use new '.$rel->getRelationFilterClassName().';
 
-To filter '.$desc->getClass().' by an already fetched '.$rel->getName().' object ('.$rel->getRelatedDescriptor()->getClass().'),
+To filter '.$desc->getClass().' by an already fetched '.$rel->getName().' object ('.$rel->getRelatedDescriptor()->getNamespace(true, true).$rel->getRelatedDescriptor()->getClass().'),
 ie. WHERE '.$desc->getClass().'.key = $related_object->otherkey,
 use new '.$rel->getRelationFilterClassName().'($related_object, \'alias for '.$desc->getClass().'\');
 
 @internal
-@param  '.$rel->getRelatedDescriptor()->getClass().'   The instance to filter by, if the entities to fetch
-        '.str_repeat(' ', strlen($rel->getRelatedDescriptor()->getClass())).'   should relate to this specific instance, optional.
+@param  '.$rel->getRelatedDescriptor()->getNamespace(true, true).$rel->getRelatedDescriptor()->getClass().'   The instance to filter by, if the entities to fetch
+        '.str_repeat(' ', strlen($rel->getRelatedDescriptor()->getNamespace(true, true).$rel->getRelatedDescriptor()->getClass())).'   should relate to this specific instance, optional.
 @param  string        The alias of the table containing '.$desc->getClass().' which should be filtered by
                       $object.
 @param  Rdm_Adapter   The database instance used when escaping the data from the $object,

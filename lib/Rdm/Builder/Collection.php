@@ -10,8 +10,16 @@
  */
 class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 {
+	/**
+	 * The class name, including namespace, to check for.
+	 * 
+	 * @var string
+	 */
+	protected $class_check = '';
+	
 	public function __construct(Rdm_Descriptor $desc)
 	{
+		$this->class_check = $desc->getNamespace(true).$desc->getCollectionClassName();
 		$this->setClassName($desc->getCollectionClassName());
 		$this->setExtends($desc->getBaseCollectionClassName());
 		
@@ -22,7 +30,7 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 	
 	public function __toString()
 	{
-		return 'if( ! class_exists(\''.$this->getClassName().'\'))
+		return 'if( ! class_exists(\''.$this->class_check.'\'))
 {
 	'.self::indentCode(parent::__toString()).'
 }';

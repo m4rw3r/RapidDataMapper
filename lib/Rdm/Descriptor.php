@@ -135,6 +135,13 @@ class Rdm_Descriptor
 	protected $class;
 	
 	/**
+	 * The namespace of the described entity.
+	 * 
+	 * @var string
+	 */
+	protected $namespace;
+	
+	/**
 	 * The table the described class maps to.
 	 * 
 	 * @var string
@@ -225,7 +232,7 @@ class Rdm_Descriptor
 		{
 			$c = get_class($this);
 			
-			if($c != 'Rdm_Descriptor' && preg_match('/^([A-Za-z0-9]+)Descriptor$/i', $c, $r))
+			if($c != 'Rdm_Descriptor' && preg_match('/^([A-Za-z0-9\\\\]+)Descriptor$/i', $c, $r))
 			{
 				$this->setClass($r[1]);
 			}
@@ -241,6 +248,43 @@ class Rdm_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the namespace part of the class name, no slashes at the ends.
+	 * 
+	 * @param  boolean  If to append a backslash if there is a namespace
+	 * @param  boolean  If to prepend a backslash, even if there isn't a namespace
+	 * @return string
+	 */
+	public function getNamespace($append_backslash = false, $prepend_backslash = false)
+	{
+		if(version_compare(PHP_VERSION, '5.3.0', '<'))
+		{
+			return '';
+		}
+		elseif(empty($this->namespace))
+		{
+			return $prepend_backslash ? '\\' : '';
+		}
+		else
+		{
+			return ($prepend_backslash ? '\\' : '').$this->namespace.($append_backslash ? '\\' : '');
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns true if the described entity is located in a namespace.
+	 * 
+	 * @return boolean
+	 */
+	public function isNamespaced()
+	{
+		return ! empty($this->namespace);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Sets the class to describe.
 	 * 
 	 * @param  string
@@ -248,7 +292,10 @@ class Rdm_Descriptor
 	 */
 	public function setClass($class)
 	{
-		$this->class = $class;
+		// split into namespace and class
+		$ns = explode('\\', $class);
+		$this->class = array_pop($ns);
+		$this->namespace = trim(implode('\\', $ns), '\\');
 		
 		return $this;
 	}
@@ -842,7 +889,7 @@ class Rdm_Descriptor
 	{
 		$name = empty($this->db_conn_name) ? '' : '\''.addcslashes($this->db_conn_name, "'").'\'';
 		
-		return 'Rdm_Adapter::getInstance('.$name.')';
+		return (version_compare(PHP_VERSION, '5.3.0', '>=') ? '\\' : '').'Rdm_Adapter::getInstance('.$name.')';
 	}
 	
 	// ------------------------------------------------------------------------

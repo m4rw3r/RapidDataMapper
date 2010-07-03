@@ -22,7 +22,7 @@ the entity will assume data which matches the filters of this collection.
 		
 		$this->addPart('if( ! $object instanceof '.$desc->getClass().')
 {
-	throw Rdm_Collection_Exception::expectingObjectOfClass(\''.addcslashes($desc->getClass(), "'").'\');
+	throw '.($desc->isNamespaced() ? '\\' : '') .'Rdm_Collection_Exception::expectingObjectOfClass(\''.addcslashes($desc->getClass(), "'").'\');
 }');
 		
 		$this->addPart('// Modify the object
