@@ -368,6 +368,19 @@ class Rdm_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the name of the <Class>BaseCollection class which is created by the
+	 * Rdm_Builder_Collection class.
+	 * 
+	 * @return string
+	 */
+	public function getBaseCollectionClassName()
+	{
+		return $this->getClass().'CollectionBase';
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the name of the <Class>CollectionFilter class which is created
 	 * by the Rdm_Builder_CollectionFilter class.
 	 * 

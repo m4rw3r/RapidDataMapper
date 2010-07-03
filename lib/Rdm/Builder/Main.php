@@ -12,7 +12,10 @@ class Rdm_Builder_Main extends Rdm_Util_Code_Container
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
+		$this->addPart(new Rdm_Builder_CollectionBase($desc));
+		
 		$this->addPart(new Rdm_Builder_Collection($desc));
+		
 		$this->addPart(new Rdm_Builder_CollectionFilter($desc));
 		$this->addPart(new Rdm_Builder_UnitOfWork($desc));
 		

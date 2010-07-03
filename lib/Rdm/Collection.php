@@ -56,9 +56,15 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public static function autoload($class)
 	{
-		if(substr($class, -10) !== 'Collection')
+		if(substr($class, -10) !== 'Collection' && substr($class, -14) !== 'CollectionBase')
 		{
 			return false;
+		}
+		
+		// Remove "Base" if present
+		if(substr($class, -4) === 'Base')
+		{
+			$class = substr($class, 0, -4);
 		}
 		
 		// Check for a cached file
