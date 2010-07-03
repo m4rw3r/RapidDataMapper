@@ -42,6 +42,18 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the method name of the generated method.
+	 * 
+	 * @return string
+	 */
+	public function getMethodName()
+	{
+		return $this->name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Sets the parameter list of the generated method.
 	 * 
 	 * @param  string
@@ -50,6 +62,18 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	public function setParamList($parameter_list)
 	{
 		$this->param_list = $parameter_list;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the parameter list of the generated method.
+	 * 
+	 * @return string
+	 */
+	public function getParamList()
+	{
+		return $this->param_list;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -69,6 +93,18 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns true if the generated method is public, false if it is protected.
+	 * 
+	 * @return boolean
+	 */
+	public function isPublic()
+	{
+		return $this->is_public;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Sets if the generated method is static or not, default = false.
 	 * 
 	 * @param  boolean
@@ -77,6 +113,19 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	public function setStatic($value = true)
 	{
 		$this->is_static = $value;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns true if the generated method is static, false if it is an instance
+	 * method.
+	 * 
+	 * @return boolean
+	 */
+	public function isStatic()
+	{
+		return $this->is_static;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -91,6 +140,18 @@ class Rdm_Util_Code_MethodBuilder extends Rdm_Util_Code_Container
 	public function setPhpDoc($string)
 	{
 		$this->php_doc = "/**\n * ".implode("\n * ", explode("\n", $string))."\n */\n";
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the formatted PHPdoc of the generated class.
+	 * 
+	 * @return string
+	 */
+	public function getPhpDoc()
+	{
+		return $this->php_doc;
 	}
 	
 	// ------------------------------------------------------------------------

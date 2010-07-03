@@ -39,6 +39,18 @@ class Rdm_Util_Code_ClassBuilder extends Rdm_Util_Code_Container
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the class name of the generated class.
+	 * 
+	 * @return string
+	 */
+	public function getClassName()
+	{
+		return $this->name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Sets a class name which the generated class shall extend.
 	 * 
 	 * @param  string
@@ -47,6 +59,18 @@ class Rdm_Util_Code_ClassBuilder extends Rdm_Util_Code_Container
 	public function setExtends($extends)
 	{
 		$this->extends = $extends;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the class name of the class the generated class extends.
+	 * 
+	 * @return string
+	 */
+	public function getExtends()
+	{
+		return $this->extends;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -65,6 +89,19 @@ class Rdm_Util_Code_ClassBuilder extends Rdm_Util_Code_Container
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the list of interfaces (separated by ", ") which the generated
+	 * class will implement.
+	 * 
+	 * @return string
+	 */
+	public function getImplements()
+	{
+		return $this->implements;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Set the PHPdoc of this generated class, the comment will automatically be
 	 * formatted into a PHPdoc comment.
 	 * 
@@ -74,6 +111,18 @@ class Rdm_Util_Code_ClassBuilder extends Rdm_Util_Code_Container
 	public function setPhpDoc($string)
 	{
 		$this->php_doc = "/**\n * ".implode("\n * ", explode("\n", $string))."\n */\n";
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the formatted PHPdoc of the generated class.
+	 * 
+	 * @return string
+	 */
+	public function getPhpDoc()
+	{
+		return $this->php_doc;
 	}
 	
 	// ------------------------------------------------------------------------

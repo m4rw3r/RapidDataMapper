@@ -12,7 +12,7 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->setClassName($desc->getCollectionClassName());
+		$this->setClassName($desc->getBaseCollectionClassName());
 		$this->setExtends('Rdm_Collection');
 		
 		$this->addPart(new Rdm_Builder_Collection_Constants_Relation($desc));

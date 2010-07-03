@@ -22,6 +22,44 @@ class Rdm_Util_Code_PropertyBuilder extends Rdm_Util_Code_Container
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the name of the generated property.
+	 * 
+	 * @return string
+	 */
+	public function getPropertyName()
+	{
+		return $this->name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the data which will be converted to PHP and assigned as the
+	 * default value of the generated property.
+	 * 
+	 * @return mixed
+	 */
+	public function getData()
+	{
+		return $this->data;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the visibility string for this property ("public", "public static",
+	 * "private", "protected" etc.).
+	 * 
+	 * @return string
+	 */
+	public function getVisibility()
+	{
+		return $this->visibility;
+	}
+	
+	// ------------------------------------------------------------------------
 	
 	public function getName()
 	{
@@ -38,7 +76,7 @@ class Rdm_Util_Code_PropertyBuilder extends Rdm_Util_Code_Container
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * Dumps the content of a variable into correct PHP.
+	 * Dumps the content of a variable into correct PHP and also nicely indented.
 	 * 
 	 * Attention!
 	 * Cannot handle objects!
