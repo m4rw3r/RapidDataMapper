@@ -12,6 +12,20 @@ class Rdm_Adapter_MySQL_Result extends Rdm_Adapter_Result
 		return isset($this->num_rows) ? $this->num_rows : $this->num_rows = @mysql_num_rows($this->resource);
 	}
 	
+	public function affectedRows()
+	{
+		// dbh may not be loaded
+		// if condition is a lot faster than error suppression with @
+		if( ! $this->dbh)
+		{
+			return false;
+		}
+		else
+		{
+			return mysql_affected_rows($this->dbh);
+		}
+	}
+	
 	public function seek($n)
 	{
 		return ($n >= $this->count()) ? false : mysql_data_seek($this->resource, $n);

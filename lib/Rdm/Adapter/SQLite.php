@@ -111,22 +111,6 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 			return sqlite_last_insert_rowid($this->dbh);
 		}
 	}
-    
-	// ------------------------------------------------------------------------
-    
-	public function affectedRows()
-	{
-		// dbh may not be loaded
-		// if condition is very much faster than error suppression with @
-		if( ! $this->dbh)
-		{
-			return false;
-		}
-		else
-		{
-			return sqlite_changes($this->dbh);
-		}
-	}
 	
 	// ------------------------------------------------------------------------
 	

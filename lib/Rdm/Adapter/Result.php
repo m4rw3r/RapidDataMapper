@@ -305,6 +305,14 @@ abstract class Rdm_Adapter_Result implements IteratorAggregate, Countable
 	 */
 	public function count() { throw new Exception('Not Implemented!'); }
 	/**
+	 * Returns the number of rows affected by the last query.
+	 *
+	 * $this->dbh may not be loaded.
+	 * 
+	 * @return int
+	 */
+	abstract public function affectedRows();
+	/**
 	 * Moves the result set pointer to the supplied position.
 	 * 
 	 * Returns false if it fails ($n < 0 OR $n >= num_rows()).

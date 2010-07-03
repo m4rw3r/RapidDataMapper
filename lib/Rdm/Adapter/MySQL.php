@@ -139,22 +139,6 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 			return mysql_insert_id($this->dbh);
 		}
 	}
-    
-	// ------------------------------------------------------------------------
-    
-	public function affectedRows()
-	{
-		// dbh may not be loaded
-		// if condition is a lot faster than error suppression with @
-		if( ! $this->dbh)
-		{
-			return false;
-		}
-		else
-		{
-			return mysql_affected_rows($this->dbh);
-		}
-	}
 	
 	// ------------------------------------------------------------------------
 	

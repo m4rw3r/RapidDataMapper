@@ -343,15 +343,15 @@ abstract class Rdm_Adapter
 		
 		$this->query_times[] = microtime(true) - $start;
 		
-		// is it a write query?
-		if($is_write)
-		{
-			return $this->affectedRows();
-		}
-		
 		// create result to return
 		$class = $this->result_object_class;
 		$result = new $class($this->dbh, $resource);
+		
+		// is it a write query?
+		if($is_write)
+		{
+			return $result->affectedRows();
+		}
 		
 		if($this->cache_on && ! $is_write)
 		{
@@ -838,14 +838,6 @@ abstract class Rdm_Adapter
 	 * @return int
 	 */
 	abstract public function insertId();
-	/**
-	 * Returns the number of rows affected by the last query.
-	 *
-	 * $this->dbh may not be loaded.
-	 * 
-	 * @return int
-	 */
-	abstract public function affectedRows();
 	/**
 	 * Escapes a string for value usage in SQL.
 	 * 

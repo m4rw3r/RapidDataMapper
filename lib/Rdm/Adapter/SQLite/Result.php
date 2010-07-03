@@ -12,6 +12,20 @@ class Rdm_Adapter_SQLite_Result extends Rdm_Adapter_Result
 		return isset($this->num_rows) ? $this->num_rows : $this->num_rows = @sqlite_num_rows($this->resource);
 	}
 	
+	public function affectedRows()
+	{
+		// dbh may not be loaded
+		// if condition is very much faster than error suppression with @
+		if( ! $this->dbh)
+		{
+			return false;
+		}
+		else
+		{
+			return sqlite_changes($this->dbh);
+		}
+	}
+	
 	public function seek($n)
 	{
 		return ($n >= $this->count()) ? false : sqlite_seek($this->resource, $n);
