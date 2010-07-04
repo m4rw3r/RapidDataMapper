@@ -248,7 +248,8 @@ class Rdm_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the namespace part of the class name, no slashes at the ends.
+	 * Returns the namespace part of the class name, no slashes at the ends unless
+	 * parameters specify so, returns an empty string on PHP < 5.3.
 	 * 
 	 * @param  boolean  If to append a backslash if there is a namespace
 	 * @param  boolean  If to prepend a backslash, even if there isn't a namespace
