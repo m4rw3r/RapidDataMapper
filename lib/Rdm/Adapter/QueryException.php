@@ -8,32 +8,103 @@
 /**
  * Exception for the event that a database query error occurs.
  */
-class Rdm_Adapter_QueryException extends Exception implements Rdm_Exception
+class Rdm_Adapter_QueryException extends RuntimeException implements Rdm_Exception
 {
 	/**
-	 * The error message.
+	 * The SQL which resulted in the error.
 	 * 
 	 * @var string
 	 */
-	protected $error_message;
+	protected $err_sql = null;
 	
-	function __construct($error_message)
+	/**
+	 * The error message from the server.
+	 * 
+	 * @var string
+	 */
+	protected $err_message = null;
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets the SQL which was used.
+	 * 
+	 * @param  string
+	 * @return void
+	 */
+	public function setSQL($sql)
 	{
-		parent::__construct($error_message);
-		
-		$this->error_message = $error_message;
+		$this->err_sql = $sql;
 	}
 	
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the query error message.
+	 * Returns the SQL which resulted in the database error.
+	 * 
+	 * @return string
+	 */
+	public function getSQL()
+	{
+		return $this->err_sql;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Internal: Sets the error message from the server.
+	 * 
+	 * @param  string
+	 * @return void
+	 */
+	public function setErrorMessage($msg)
+	{
+		$this->err_message = $msg;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the database error message.
 	 * 
 	 * @return string
 	 */
 	public function getErrorMessage()
 	{
-		return $this->error_message;
+		return $this->err_message;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates an exception telling the user that an empty query was passed to
+	 * Rdm_Adapter->query().
+	 * 
+	 * @return Rdm_Adapter_QueryException
+	 */
+	public static function emptyQuery()
+	{
+		return new Rdm_Adapter_QueryException('Invalid query, the query is empty.', 0);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates an exception telling the user that a query failed.
+	 * 
+	 * @param  string
+	 * @param  string
+	 * @param  int
+	 * @return Rdm_Adapter_QueryException
+	 */
+	public static function queryError($sql, $error_message, $error_code)
+	{
+		$e = new Rdm_Adapter_QueryException(sprintf('Query error: %d, %s, SQL: "%s"', $error_code, $error_message, $sql), $error_code);
+		
+		$e->setSQL($sql);
+		$e->setErrorMessage($error_message);
+		
+		return $e;
 	}
 }
 

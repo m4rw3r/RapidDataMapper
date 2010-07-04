@@ -42,7 +42,7 @@ abstract class Rdm_Adapter
 			
 			if( ! self::$instances[$name] instanceof Rdm_Adapter)
 			{
-				throw new Rdm_Adapter_ConfigurationException($name, 'The class "'.$config['class'].'" does not extend Rdm_Adapter.');
+				throw Rdm_Adapter_ConfigurationException::notUsingBaseClass($name, $config['class']);
 			}
 		}
 		
@@ -170,7 +170,7 @@ abstract class Rdm_Adapter
 		
 		if($req = array_diff($this->getRequiredOptionKeys(), array_keys($options)))
 		{
-			throw new Rdm_Adapter_ConfigurationException($name, 'Missing required keys: "'.implode('", "', $req).'".');
+			throw Rdm_Adapter_ConfigurationException::missingOptions($name, $req);
 		}
 		
 		// Merge with the default options
@@ -249,13 +249,6 @@ abstract class Rdm_Adapter
 			// Not set, connect
 			$this->dbh = $this->connect();
 			
-			// Just in case
-			if( ! $this->dbh)
-			{
-				// Failed connection, report
-				throw new Rdm_Adapter_ConnectionException($this->error());
-			}
-			
 			$this->setCharset($this->options['char_set'], $this->options['dbcollat']);
 		}
 		
@@ -278,7 +271,7 @@ abstract class Rdm_Adapter
 	{
 		if(empty($sql))
 		{
-			throw new Rdm_Adapter_QueryException('Invalid query, the query is empty');
+			throw Rdm_Adapter_QueryException::emptyQuery();
 		}
 		
 		if( ! empty($parameters))
@@ -322,7 +315,7 @@ abstract class Rdm_Adapter
 			// Failed query, log
 			$this->queries[] = array('sql' => $sql, 'time' => false);
 			
-			throw new Rdm_Adapter_QueryException('ERROR: '.$this->error().', SQL: "'.$sql.'"');
+			throw Rdm_Adapter_QueryException::queryError($sql, $this->errorMsg(), $this->errorNo());
 		}
 		
 		if($this->cache_on && $is_write)
@@ -806,16 +799,21 @@ abstract class Rdm_Adapter
 	 */
 	abstract protected function rollbackTransaction();
 	/**
-	 * Returns the error number and error message from the latest error.
-	 *
+	 * Returns the error message from the server.
+	 * 
 	 * $this->dbh may not be loaded.
 	 *
-	 * FORMAT:
-	 * err_num: message
-	 * 
 	 * @return string
 	 */
-	abstract public function error();
+	abstract function errorMsg();
+	/**
+	 * Returns the error number from the server.
+	 * 
+	 * $this->dbh may not be loaded.
+	 * 
+	 * @return int
+	 */
+	abstract function errorNo();
 	/**
 	 * Returns the id created by the Auto Increment column.
 	 *

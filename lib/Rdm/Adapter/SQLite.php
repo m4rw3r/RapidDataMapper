@@ -31,7 +31,7 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 		
 		if( ! $conn)
 		{
-			throw new Rdm_Adapter_ConnectionException($error());
+			throw Rdm_Adapter_ConnectionException::couldNotConnect($this->name, ($e = sqlite_last_error($this->dbh)), sqlite_error_string($e).$this->last_query_error);
 		}
 		else
 		{
@@ -80,7 +80,23 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 	
 	// ------------------------------------------------------------------------
 
-	public function error()
+	public function errorNo()
+	{
+		// $this->dbh may not be loaded
+		// If condition is very much faster than error suppression with @
+		if( ! $this->dbh)
+		{
+			return -1;
+		}
+		else
+		{
+			return sqlite_last_error();
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	public function errorMsg()
 	{
 		// $this->dbh may not be loaded
 		// If condition is very much faster than error suppression with @
@@ -90,8 +106,8 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 		}
 		else
 		{
-			// TODO: Check error messages, they seem to be lacking sometimes
-			return ($e = sqlite_last_error($this->dbh)) . ": " . sqlite_error_string($e).$this->last_query_error;
+			$e = sqlite_last_error($this->dbh);
+			return sqlite_error_string($e).$this->last_query_error;
 		}
 	}
 	

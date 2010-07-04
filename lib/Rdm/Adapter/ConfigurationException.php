@@ -8,32 +8,34 @@
 /**
  * Exception for the event that a connection configuration is malformed.
  */
-class Rdm_Adapter_ConfigurationException extends Exception implements Rdm_Exception
+class Rdm_Adapter_ConfigurationException extends DomainException implements Rdm_Exception
 {
 	/**
-	 * The name of the malformed configuration.
+	 * Creates an exception which tells the user that the requested adapter does
+	 * not extend the required base class.
 	 * 
-	 * @var string
+	 * @param  string
+	 * @param  string
+	 * @return Rdm_Adapter_ConfigurationException
 	 */
-	protected $config_name;
-	
-	function __construct($config_name, $message)
+	public static function notUsingBaseClass($config_name, $adapter_class)
 	{
-		parent::__construct('Rdm_Adapter configuration with name "'.$config_name.'": '.$message);
-		
-		$this->config_name = $config_name;
+		return new Rdm_Adapter_ConfigurationException(sprintf('The configuration "%s" tries to use an adapter class (%s) which does not extend the base class Rdm_Adapter.', $config_name, $adapter_class));
 	}
 	
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the name of the configuration that is malformed.
+	 * Creates an exception which tells the user that the options supplied to the
+	 * adapter is missing required keys.
 	 * 
-	 * @return string
+	 * @param  string
+	 * @param  array(string)
+	 * @return Rdm_Adapter_ConfigurationException
 	 */
-	public function getConfigurationName()
+	public static function missingOptions($config_name, array $req_keys)
 	{
-		return $this->config_name;
+		return new Rdm_Adapter_ConfigurationException(sprintf('The configuration "%s" is missing required keys: "%s"', $config_name, implode('", "', $req_keys)));
 	}
 }
 

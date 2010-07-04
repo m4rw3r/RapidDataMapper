@@ -47,7 +47,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 		
 		if( ! $conn)
 		{
-			throw new Rdm_Adapter_ConnectionException(mysql_error());
+			throw Rdm_Adapter_ConnectionException::couldNotConnect($this->name, mysql_error(), mysql_errno());
 		}
 		else
 		{
@@ -58,7 +58,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 			}
 			else
 			{
-				throw new Rdm_Adapter_ConnectionException('Cannot select database "'.$this->database.'":'.mysql_error());
+				throw Rdm_Adapter_ConnectionException::couldNotSelect($this->name, mysql_error(), mysql_errno());
 			}
 		}
 	}
@@ -109,17 +109,33 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 	
 	// ------------------------------------------------------------------------
 
-	public function error()
+	public function errorMsg()
 	{
 		// $this->dbh may not be loaded
 		// If condition is a lot faster than error suppression with @
 		if( ! $this->dbh)
 		{
-			return "Database connection has not been established, error cannot be retrieved.";
+			return mysql_error();
 		}
 		else
 		{
-			return mysql_errno($this->dbh) . ": " . mysql_error($this->dbh);
+			return mysql_error($this->dbh);
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	public function errorNo()
+	{
+		// $this->dbh may not be loaded
+		// If condition is a lot faster than error suppression with @
+		if( ! $this->dbh)
+		{
+			return mysql_errno();
+		}
+		else
+		{
+			return mysql_errno($this->dbh);
 		}
 	}
 	
