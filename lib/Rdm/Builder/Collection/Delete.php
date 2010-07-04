@@ -22,7 +22,7 @@ class Rdm_Builder_Collection_Delete extends Rdm_Util_Code_MethodBuilder
 		
 		$this->addPart('if( ! $object instanceof '.$desc->getClass().')
 {
-	'.($desc->isNamespaced() ? '\\' : '') .'Rdm_Collection_Exception::expectingObjectOfType(\''.$desc->getClass().'\');
+	throw '.($desc->isNamespaced() ? '\\' : '') .'Rdm_Collection_Exception::expectingObjectOfType(\''.$desc->getClass().'\');
 }');
 		
 		$this->addPart('self::$unit_of_work->addForDelete($object, implode(\'|\', $object->__id));');
