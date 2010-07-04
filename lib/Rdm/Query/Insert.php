@@ -165,7 +165,7 @@ class Rdm_Query_Insert
 	{
 		if(empty($this->columns))
 		{
-			throw new Rdm_Query_BuilderException('Columns missing in INSERT statement');
+			throw Rdm_Query_BuilderException::missingInsertColumns();
 		}
 		
 		$columns = $this->_instance->protectIdentifiers(implode(', ', array_keys($this->columns)));

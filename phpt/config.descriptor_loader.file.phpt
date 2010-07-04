@@ -34,8 +34,7 @@ try
 {
 	Rdm_Config::getDescriptor('Foobar');
 }
-// TODO: Change exception class
-catch(Exception $e)
+catch(Rdm_Exception $e)
 {
 	var_dump($e->getMessage());
 }
@@ -73,11 +72,11 @@ foreach(glob(dirname(__FILE__).'/tmp/*.php') as $f)
 	unlink($f);
 }
 
-rmdir(dirname(__FILE__).'/tmp');
+@rmdir(dirname(__FILE__).'/tmp');
 
 --EXPECT--
 foobar
-string(129) "The descriptor class for the class "Foobar" cannot be found in the descriptor file "/Users/m4rw3r/Sites/RDM/phpt/tmp/Foobar.php"."
+string(148) "The descriptor class (FoobarDescriptor) for the class "Foobar" cannot be found in the descriptor file "/Users/m4rw3r/Sites/RDM/phpt/tmp/Foobar.php"."
 string(49) "Descriptor for class "Baz": Descriptor is missing"
 class: string(4) "User"
 pks: string(2) "id"

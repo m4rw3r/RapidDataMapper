@@ -128,7 +128,7 @@ class Rdm_Query_Update extends Rdm_Query_Abstract
 	{
 		if(empty($this->data))
 		{
-			throw new Rdm_Query_BuilderException('Missing data for update');
+			throw Rdm_Query_BuilderException::missingData('UPDATE');
 		}
 		
 		$str = 'UPDATE ' . $this->_instance->protectIdentifiers(implode(', ', array_map(array($this->_instance, 'prefix'), (Array)$this->table))) . "\nSET ";

@@ -45,7 +45,7 @@ abstract class Rdm_Util_Code_Container
 	{
 		if( ! is_string($part) && ! $part instanceof self)
 		{
-			throw new InvalidArgumentException(is_object($part) ? get_class($part) : gettype($part));
+			throw new InvalidArgumentException(sprintf('Expected string or %s, got %s', __CLASS__, is_object($part) ? get_class($part) : gettype($part)));
 		}
 		
 		if(empty($part))

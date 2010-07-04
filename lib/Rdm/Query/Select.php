@@ -470,7 +470,7 @@ class Rdm_Query_Select extends Rdm_Query_Abstract
 	{
 		if(empty($this->from))
 		{
-			throw new Rdm_Query_BuilderException('Missing FROM part');
+			throw Rdm_Query_BuilderException::missingFrom('SELECT');
 		}
 		
 		$str = 'SELECT ' . ($this->distinct ? 'DISTINCT ' : '') . implode(', ', $this->columns) . "\nFROM " . implode(', ', $this->from);

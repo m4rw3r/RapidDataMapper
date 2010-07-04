@@ -64,20 +64,19 @@ class Rdm_Util_DescriptorLoader_File
 	public function load($class)
 	{
 		$file = $this->getFileName($class);
-		$klass = $this->getDescriptorClassName($class);
+		$desc_class = $this->getDescriptorClassName($class);
 		
 		if(file_exists($this->folder.DIRECTORY_SEPARATOR.$file))
 		{
 			require $this->folder.DIRECTORY_SEPARATOR.$file;
 			
 			// Check if the class is really loaded
-			if( ! class_exists($klass, false))
+			if( ! class_exists($desc_class, false))
 			{
-				// TODO: Proper exception class
-				throw new Exception(sprintf('The descriptor class for the class "%s" cannot be found in the descriptor file "%s".', $class, $this->folder.DIRECTORY_SEPARATOR.$file));
+				throw Rdm_Util_DescriptorLoader_Exception::fileMissingClass($this->folder.DIRECTORY_SEPARATOR.$file, $class, $desc_class);
 			}
 			
-			return new $klass;
+			return new $desc_class;
 		}
 		
 		return false;
