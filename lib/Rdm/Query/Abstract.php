@@ -155,7 +155,7 @@ class Rdm_Query_Abstract
 	{
 		$pre = self::getLogicalOperator($condition, $this->where);
 		
-		$this->where[] = $pre . $this->_instance->replaceBinds($condition, $binds);
+		$this->where[] = $pre . $this->_instance->bindParamters($condition, $binds);
 		
 		return $this;
 	}
