@@ -122,7 +122,7 @@ class Rdm_UnitOfWork_CommitOrderCalculator
 				if( ! $this->visit($dependency, $list, $root, $visited) && $n != $root)
 				{
 					// We've visited it in this stack, cycle detected
-					throw new Exception('Cycle detected from '.$n.' to '.$dependency);
+					throw Rdm_UnitOfWork_Exception::cycleDetected($n, $dependency);
 				}
 			}
 		}
