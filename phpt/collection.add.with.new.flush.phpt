@@ -19,7 +19,7 @@ $album->name = 'Arcane Rain Fell';
 
 $artist->albums->add($album);
 
-Rdm_Collection::pushChanges();
+Rdm_CollectionManager::pushChanges();
 
 var_dump($artist->id);
 var_dump($album->id);

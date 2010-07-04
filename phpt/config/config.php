@@ -13,8 +13,8 @@ require dirname(__FILE__).'/../../lib/Rdm/Util/Autoloader.php';
 Rdm_Util_Autoloader::init();
 
 
-// Initialize <Class>Collection autoloaders, do not auto call Rdm_Collection::pushChanges()
-Rdm_Collection::init(false);
+// Initialize <Class>Collection autoloaders, do not auto call Rdm_CollectionManager::pushChanges()
+Rdm_CollectionManager::init(false);
 
 
 // Configure RapidDataMapper Adapter

@@ -12,7 +12,7 @@ $a->name = 'foobar';
 
 ArtistCollection::persist($a);
 
-Rdm_Collection::pushChanges();
+Rdm_CollectionManager::pushChanges();
 
 ArtistCollection::persist($a);
 --EXPECTREGEX--
