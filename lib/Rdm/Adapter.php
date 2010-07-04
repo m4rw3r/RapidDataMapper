@@ -109,20 +109,10 @@ abstract class Rdm_Adapter
 	 * @var bool
 	 */
 	protected $transaction = false;
-	
-	/**
-	 * Stores the time for each query.
-	 * 
-	 * Links with the key to the queries array.
-	 * 
-	 * @var array
-	 */
-	public $query_times = array();
-	
 	/**
 	 * Stores all the queries which has been run.
 	 *
-	 * @var array
+	 * @var array('sql' => SQL, 'time' => time in seconds)
 	 */
 	public $queries = array();
 	
@@ -256,13 +246,13 @@ abstract class Rdm_Adapter
 	{
 		if(is_null($this->dbh))
 		{
-			// not set, connect
+			// Not set, connect
 			$this->dbh = $this->connect();
 			
-			// just in case
+			// Just in case
 			if( ! $this->dbh)
 			{
-				// failed connection, report
+				// Failed connection, report
 				throw new Rdm_Adapter_ConnectionException($this->error());
 			}
 			
@@ -298,16 +288,16 @@ abstract class Rdm_Adapter
 		
 		$is_write = $this->isWriteQuery($sql);
 		
-		// write query redirection
+		// Write query redirection
 		if($this->redirect_write && $is_write)
 		{
 			return self::getInstance($this->redirect_write)->query($sql);
 		}
 		
-		// is cache on, and is it a read query?
+		// Is cache on, and is it a read query?
 		if($this->cache_on && ! $is_write)
 		{
-			// start cache
+			// Start cache
 			$c = $this->getCache();
 			
 			try // ...getting data from cache
@@ -318,20 +308,19 @@ abstract class Rdm_Adapter
 			}
 			catch(Rdm_Cache_NoValueException $e)
 			{
-				// just continue
+				// Just continue
 			}
 		}
 		
 		is_null($this->dbh) && $this->initDbh();
 		
-		// log
-		$this->queries[] = $sql;
+		// Get query start time
 		$start = microtime(true);
 		
 		if( ! $resource = $this->executeSql($sql))
 		{
-			// failed query, log
-			$query_times[] = false;
+			// Failed query, log
+			$this->queries[] = array('sql' => $sql, 'time' => false);
 			
 			throw new Rdm_Adapter_QueryException('ERROR: '.$this->error().', SQL: "'.$sql.'"');
 		}
@@ -341,21 +330,23 @@ abstract class Rdm_Adapter
 			// TODO: push changes to the cache
 		}
 		
-		$this->query_times[] = microtime(true) - $start;
+		// Log the query
+		$this->queries[] = array('sql' => $sql, 'time' => microtime(true) - $start);
 		
-		// create result to return
+		// Create result to return
 		$class = $this->result_object_class;
 		$result = new $class($this->dbh, $resource);
 		
-		// is it a write query?
+		// Is it a write query?
 		if($is_write)
 		{
+			// Yes, only return the number of affected rows
 			return $result->affectedRows();
 		}
 		
 		if($this->cache_on && ! $is_write)
 		{
-			// write to the cache
+			// Write to the cache
 			$this->getCache()->store($sql, $result->dump());
 		}
 		
@@ -501,7 +492,7 @@ abstract class Rdm_Adapter
 	{
 		$ret = new Rdm_Query_Insert($this, $table);
 		
-		// if we have data, perform the insert
+		// If we have data, perform the insert
 		if($data)
 		{
 			$ret->set($data);
@@ -523,9 +514,9 @@ abstract class Rdm_Adapter
 	 * @see Rdm_Query_Update::set()
 	 * @see Rdm_Query_Abstract::where()
 	 *
-	 * @param  string|array 	Multiple tables can be updated with the same query
-	 * @param  array    		Associative array with new data (sent to set())
-	 * @param  mixed			Sent to Rdm_Query_Abstract::where()
+	 * @param  string|array     Multiple tables can be updated with the same query
+	 * @param  array            Associative array with new data (sent to set())
+	 * @param  mixed            Sent to Rdm_Query_Abstract::where()
 	 * @return Rdm_Query_Update|int|false
 	 */
 	public function update($table, $data = false, $conditions = false)
@@ -558,7 +549,7 @@ abstract class Rdm_Adapter
 	 * @see Rdm_Query_Abstract::where()
 	 * 
 	 * @param  string|array
-	 * @param  mixed		Sent to Rdm_Query_Abstract::where()
+	 * @param  mixed        Sent to Rdm_Query_Abstract::where()
 	 * @return Rdm_Query_Delete|int|false
 	 */
 	public function delete($table, $conditions = false)
@@ -647,12 +638,7 @@ abstract class Rdm_Adapter
 	 */
 	public function isWriteQuery($sql)
 	{
-		if( ! preg_match('/^\s*"?(INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD DATA|SET|COPY|ALTER|GRANT|REVOKE|LOCK|UNLOCK)\s+/i', $sql))
-		{
-			return false;
-		}
-		
-		return true;
+		return (bool) preg_match('/^\s*"?(INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD DATA|SET|COPY|ALTER|GRANT|REVOKE|LOCK|UNLOCK)\s+/i', $sql);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -675,12 +661,12 @@ abstract class Rdm_Adapter
 	{
 		$parameters = (Array) $parameters;
 		
-		// named parameters
+		// Named parameters
 		if(preg_match_all('/:([\w]+)(?=\s|$)/', $sql, $matches))
 		{
 			$result = '';
 			
-			// replace the named parameters
+			// Replace the named parameters
 			foreach($matches[1] as $id)
 			{
 				if( ! isset($parameters[$id]))
@@ -688,19 +674,19 @@ abstract class Rdm_Adapter
 					throw new Rdm_Adapter_MissingBoundParameterException($id);
 				}
 				
-				// add the part before the name and then the escaped data
+				// Add the part before the name and then the escaped data
 				$result .= strstr($sql, ':' . $id, true) . $this->escape($parameters[$id]);
-				// make $sql contain the next to match, this to prevent matching in the previously escaped data
+				// Make $sql contain the next to match, this to prevent matching in the previously escaped data
 				$sql = substr($sql, strpos($sql, ':' . $id) + strlen($id) + 1);
 			}
 			
-			// assemble
+			// Assemble
 			$res = $result . $sql;
 		}
-		// unnamed bound parameters
+		// Unnamed bound parameters
 		else
 		{
-			// split the condition
+			// Split the condition
 			$parts = explode('?', $sql);
 			$c = count($parts) - 1;
 			
@@ -711,13 +697,13 @@ abstract class Rdm_Adapter
 			
 			$res = '';
 			
-			// insert the parameters
+			// Insert the parameters
 			for($i = 0; $i < $c; $i++)
 			{
 				$res .= $parts[$i] . $this->escape($parameters[$i]);
 			}
 			
-			// add the last part
+			// Add the last part
 			$res .= $parts[$i];
 		}
 		

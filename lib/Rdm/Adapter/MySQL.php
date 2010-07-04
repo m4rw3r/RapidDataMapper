@@ -51,7 +51,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 		}
 		else
 		{
-			// do we have a connection and can we select the database?
+			// Do we have a connection and can we select the database?
 			if(mysql_select_db($this->options['database'], $conn))
 			{
 				return $conn;
@@ -67,13 +67,13 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 
 	protected function setCharset($charset, $collation)
 	{
-		// only raises warning if connection isn't connected, init_dbh() makes sure of that
+		// Only raises warning if connection isn't connected, init_dbh() makes sure of that
 		// and because execute_sql() is protected, we can ignore the checking for dbh here
 		
-		// set charset on client side
+		// Set charset on client side
 		mysql_set_charset($charset, $this->dbh);
 		
-		// set charset server side
+		// Set charset server side
 		return mysql_query("SET NAMES '".$this->escapeStr($charset)."' COLLATE '".$this->escapeStr($collation)."'", $this->dbh);
 	}
 	
@@ -81,7 +81,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 
 	protected function executeSql($sql)
 	{
-		// only raises warning if connection isn't connected, init_dbh() makes sure of that
+		// Only raises warning if connection isn't connected, init_dbh() makes sure of that
 		// and because execute_sql() is protected, we can ignore the checking for dbh here
 		return mysql_query($sql, $this->dbh);
 	}
@@ -111,8 +111,8 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 
 	public function error()
 	{
-		// dbh may not be loaded
-		// if condition is a lot faster than error suppression with @
+		// $this->dbh may not be loaded
+		// If condition is a lot faster than error suppression with @
 		if( ! $this->dbh)
 		{
 			return "Database connection has not been established, error cannot be retrieved.";
@@ -127,8 +127,8 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 
 	public function insertId()
 	{
-		// dbh may not be loaded
-		// if condition is a lot faster than error suppression with @
+		// $this->dbh may not be loaded
+		// If condition is a lot faster than error suppression with @
 		// (about 11% when dbh exists, otherwise over 90%)
 		if( ! $this->dbh)
 		{
@@ -153,18 +153,18 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 	{
 		if(is_resource($this->dbh))
 		{
-			// escape with regard to charset
+			// Escape with regard to charset
 			$str = mysql_real_escape_string($str, $this->dbh);
 		}
 		else
 		{
-			// escape for MySQL
+			// Escape for MySQL
 			$str = mysql_escape_string($str);
 		}
 		
 		if($like)
 		{
-			// replace LIKE-wildcards
+			// Replace LIKE-wildcards
 			$str = str_replace(array('%', '_'), array('\\%', '\\_'), $str);
 		}
 		

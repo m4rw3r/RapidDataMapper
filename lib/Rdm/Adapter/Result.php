@@ -113,7 +113,7 @@ abstract class Rdm_Adapter_Result implements IteratorAggregate, Countable
 			
 			$row = $this->nextArray();
 			
-			// create custom object
+			// Create custom object
 			$ret = new $type($param);
 			
 			foreach($row as $key => $value)
@@ -180,11 +180,11 @@ abstract class Rdm_Adapter_Result implements IteratorAggregate, Countable
 		}
 		else
 		{
-			// custom object
+			// Custom object
 			
 			while($row = $this->nextArray())
 			{
-				// create custom object
+				// Create custom object
 				$obj = new $type($param);
 				
 				foreach($row as $key => $value)

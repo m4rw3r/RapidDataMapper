@@ -26,7 +26,7 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 	
 	protected function connect()
 	{
-		// try to connect
+		// Try to connect
 		$conn = sqlite_open($this->options['file'], 0666, $this->last_query_error);
 		
 		if( ! $conn)
@@ -52,7 +52,7 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 
 	protected function executeSql($sql)
 	{
-		// only raises warning if connection isn't connected, init_dbh() makes sure of that
+		// Only raises warning if connection isn't connected, init_dbh() makes sure of that
 		// and because execute_sql() is protected, we can ignore the checking for dbh here
 		return sqlite_query($sql, $this->dbh, SQLITE_BOTH, $this->last_query_error);
 	}
@@ -82,8 +82,8 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 
 	public function error()
 	{
-		// dbh may not be loaded
-		// if condition is very much faster than error suppression with @
+		// $this->dbh may not be loaded
+		// If condition is very much faster than error suppression with @
 		if( ! $this->dbh)
 		{
 			return "Database connection has not been established, error cannot be retrieved.";
@@ -99,8 +99,8 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 
 	public function insertId()
 	{
-		// dbh may not be loaded
-		// if condition is very much faster than error suppression with @
+		// $this->dbh may not be loaded
+		// If condition is very much faster than error suppression with @
 		// (about 11% when dbh exists, otherwise over 90%)
 		if( ! $this->dbh)
 		{
@@ -127,7 +127,7 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 		
 		if($like)
 		{
-			// replace LIKE-wildcards
+			// Replace LIKE-wildcards
 			$str = str_replace(array('%', '_'), array('\\%', '\\_'), $str);
 		}
 		

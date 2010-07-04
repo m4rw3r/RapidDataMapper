@@ -14,8 +14,8 @@ class Rdm_Adapter_MySQL_Result extends Rdm_Adapter_Result
 	
 	public function affectedRows()
 	{
-		// dbh may not be loaded
-		// if condition is a lot faster than error suppression with @
+		// $this->dbh may not be loaded
+		// If condition is a lot faster than error suppression with @
 		if( ! $this->dbh)
 		{
 			return false;
@@ -58,7 +58,7 @@ class Rdm_Adapter_MySQL_Result extends Rdm_Adapter_Result
 	public function metadata()
 	{
 		$ret = array();
-		// get encoding, so we can see if we need to correct for utf8
+		// Get encoding, so we can see if we need to correct for utf8
 		$charset = mysql_client_encoding($this->dbh);
 		$i = 0;
 		
@@ -70,21 +70,21 @@ class Rdm_Adapter_MySQL_Result extends Rdm_Adapter_Result
 			$d->type = $field->type;
 			$d->default = $field->def;
 			
-			// get real length (eg. 45 for VARCHAR(45))
+			// Get real length (eg. 45 for VARCHAR(45))
 			$d->length = mysql_field_len($this->resource, $i);
 			
-			// convert to boolean
+			// Convert to boolean
 			$d->unsigned = $field->unsigned ? true : false;
 			$d->primary_key = $field->primary_key ? true : false;
 			
-			// correct for utf8, mysql returns the number of bytes - not characters as it should
+			// Correct for utf8, mysql returns the number of bytes - not characters as it should
 			if($charset == 'utf8' && in_array($d->type, array('string', 'blob')))
 			{
-				// mysql's utf8 blocks are 3 bytes in length
+				// MySQL's utf8 blocks are 3 bytes in length
 				$d->length = $d->length / 3;
 			}
 			
-			// get auto_increment status:
+			// Get auto_increment status:
 			$t = mysql_field_flags($this->resource, $i);
 			$d->auto_inc = strpos($t, 'auto_increment') !== false ? true : false;
 			

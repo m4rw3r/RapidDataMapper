@@ -14,8 +14,8 @@ class Rdm_Adapter_SQLite_Result extends Rdm_Adapter_Result
 	
 	public function affectedRows()
 	{
-		// dbh may not be loaded
-		// if condition is very much faster than error suppression with @
+		// $this->dbh may not be loaded
+		// If condition is very much faster than error suppression with @
 		if( ! $this->dbh)
 		{
 			return false;
