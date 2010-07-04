@@ -24,7 +24,7 @@ class Rdm_Builder_Collection_Constants_Relation extends Rdm_Util_Code_Container
 		foreach($desc->getRelations() as $r)
 		{
 			$this->addPart('/**
- * Constant representing the relation '.$r->getName().' between '.$desc->getClass().' and '.$r->getRelatedDescriptor()->getNamespace(true, true).$r->getRelatedDescriptor()->getClass().'.
+ * Constant representing the relation '.$r->getName().' between '.$desc->getClass().' and '.$r->getRelatedDescriptor()->getClass(true, true).'.
  */');
 			$this->addPart('const '.ucfirst($r->getName()).' = '.$r->getIntegerIdentifier().';');
 		}

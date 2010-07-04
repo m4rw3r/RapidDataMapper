@@ -15,7 +15,7 @@ class Rdm_Builder_Collection_HydrateObject_GotoRelated extends Rdm_Util_Code_Con
 		$this->addPart('
 foreach($this->with as $join_alias => $join)
 {
-	if($join->join_type == Rdm_Descriptor::HAS_MANY OR $join->join_type == Rdm_Descriptor::MANY_TO_MANY)
+	if($join->join_type == '.($desc->isNamespaced() ? '\\' : '').'Rdm_Descriptor::HAS_MANY OR $join->join_type == '.($desc->isNamespaced() ? '\\' : '').'Rdm_Descriptor::MANY_TO_MANY)
 	{
 		if(empty($e->$join_alias))
 		{

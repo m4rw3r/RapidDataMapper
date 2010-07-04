@@ -13,7 +13,7 @@ class Rdm_Builder_CollectionFilter_FilterRelatedCollectionMethod extends Rdm_Uti
 	function __construct(Rdm_Descriptor_Relation $rel, Rdm_Descriptor $desc)
 	{
 		$this->setMethodName('related'.ucfirst($rel->getName()).'Collection');
-		$this->setParamList($rel->getRelatedDescriptor()->getNamespace(true, true).$rel->getRelatedDescriptor()->getCollectionClassName().' $object');
+		$this->setParamList($rel->getRelatedDescriptor()->getCollectionClassName(true, true).' $object');
 		
 		$db = $desc->getAdapter();
 		list($local_keys, $foreign_keys) = $rel->getKeys();

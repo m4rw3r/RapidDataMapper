@@ -19,7 +19,7 @@ class Rdm_Builder_Collection extends Rdm_Util_Code_ClassBuilder
 	
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->class_check = $desc->getNamespace(true).$desc->getCollectionClassName();
+		$this->class_check = $desc->getCollectionClassName(true);
 		$this->setClassName($desc->getCollectionClassName());
 		$this->setExtends($desc->getBaseCollectionClassName());
 		

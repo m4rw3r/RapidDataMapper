@@ -37,11 +37,11 @@ class Rdm_Builder_Main extends Rdm_Util_Code_Container
 			// Only belongs to relations depend on something
 			if($rel->getType() === Rdm_Descriptor::BELONGS_TO)
 			{
-				$dependencies[] = var_export($rel->getRelatedDescriptor()->getCollectionClassName(), true);
+				$dependencies[] = var_export($rel->getRelatedDescriptor()->getCollectionClassName(true), true);
 			}
 		}
 		
-		$this->addPart(($desc->isNamespaced() ? '\\' : '').'Rdm_CollectionManager::registerCollectionClassName(\''.$desc->getCollectionClassName().'\', array('.implode(', ', $dependencies).'));');
+		$this->addPart(($desc->isNamespaced() ? '\\' : '').'Rdm_CollectionManager::registerCollectionClassName(\''.$desc->getCollectionClassName(true).'\', array('.implode(', ', $dependencies).'));');
 	}
 	
 	// ------------------------------------------------------------------------

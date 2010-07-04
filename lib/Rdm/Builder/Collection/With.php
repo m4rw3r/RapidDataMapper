@@ -19,7 +19,7 @@ class Rdm_Builder_Collection_With extends Rdm_Util_Code_MethodBuilder
 		$collection_classes = array();
 		foreach($desc->getRelations() as $rel)
 		{
-			$collection_classes[] = $rel->getRelatedDescriptor()->getNamespace(true, true).$rel->getRelatedDescriptor()->getCollectionClassName();
+			$collection_classes[] = $rel->getRelatedDescriptor()->getCollectionClassName(true, true);
 			$constants[] = ucfirst($rel->getName());
 		}
 		

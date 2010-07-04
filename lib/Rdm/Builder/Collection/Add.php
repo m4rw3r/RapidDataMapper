@@ -14,15 +14,15 @@ class Rdm_Builder_Collection_Add extends Rdm_Util_Code_MethodBuilder
 	{
 		$this->setMethodName('add');
 		$this->setParamList('$object');
-		$this->setPhpDoc('Adds a'.(in_array(strtolower(substr($desc->getClass(), 0, 1)), array('a', 'o', 'u', 'e', 'i', 'y')) ? 'n' : '').' '.$desc->getClass().' entity to this collection, this collection will be locked and
+		$this->setPhpDoc('Adds a'.(in_array(strtolower(substr($desc->getClass(), 0, 1)), array('a', 'o', 'u', 'e', 'i', 'y')) ? 'n' : '').' '.$desc->getClass(true, true).' entity to this collection, this collection will be locked and
 the entity will assume data which matches the filters of this collection.
 
-@param  '.$desc->getClass().'
+@param  '.$desc->getClass(true, true).'
 @return self');
 		
 		$this->addPart('if( ! $object instanceof '.$desc->getClass().')
 {
-	throw '.($desc->isNamespaced() ? '\\' : '') .'Rdm_Collection_Exception::expectingObjectOfClass(\''.addcslashes($desc->getClass(), "'").'\');
+	throw '.($desc->isNamespaced() ? '\\' : '') .'Rdm_Collection_Exception::expectingObjectOfClass(\''.addcslashes($desc->getClass(true, true), "'").'\');
 }');
 		
 		$this->addPart('// Modify the object

@@ -515,7 +515,7 @@ class Rdm_Descriptor_Relation
 		}
 		else
 		{
-			$cls = new ReflectionClass($this->getParentDescriptor()->getClass());
+			$cls = new ReflectionClass($this->getParentDescriptor()->getClass(true));
 			
 			try
 			{
