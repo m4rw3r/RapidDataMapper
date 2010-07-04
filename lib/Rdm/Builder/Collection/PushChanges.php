@@ -22,7 +22,7 @@ class Rdm_Builder_Collection_PushChanges extends Rdm_Util_Code_MethodBuilder
 		
 		$this->addPart('if( ! $private_push)
 {
-	return parent::pushChanges();
+	return '.($desc->isNamespaced() ? '\\' : '').'Rdm_CollectionManager::pushChanges();
 }
 else
 {

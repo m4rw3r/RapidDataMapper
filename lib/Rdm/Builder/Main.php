@@ -41,7 +41,7 @@ class Rdm_Builder_Main extends Rdm_Util_Code_Container
 			}
 		}
 		
-		$this->addPart(($desc->isNamespaced() ? '\\' : '').'Rdm_Collection::registerCollectionClassName(\''.$desc->getCollectionClassName().'\', array('.implode(', ', $dependencies).'));');
+		$this->addPart(($desc->isNamespaced() ? '\\' : '').'Rdm_CollectionManager::registerCollectionClassName(\''.$desc->getCollectionClassName().'\', array('.implode(', ', $dependencies).'));');
 	}
 	
 	// ------------------------------------------------------------------------
