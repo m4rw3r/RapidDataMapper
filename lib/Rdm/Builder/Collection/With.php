@@ -40,11 +40,13 @@ relations.
 				$first = false;
 			}
 			
-			$this->addPart('throw new Exception(\'No matching relation can be found for the class "'.$desc->getClass().'"\');');
+			// TODO: Replace with a proper exception class
+			$this->addPart('throw new '.($desc->isNamespaced() ? '\\' : '').'Exception(\'No matching relation can be found for the class "'.$desc->getClass().'"\');');
 		}
 		else
 		{
-			$this->addPart('throw new Exception(\'No relations can be found for the class "'.$desc->getClass().'"\');');
+			// TODO: Replace with a proper exception class
+			$this->addPart('throw new '.($desc->isNamespaced() ? '\\' : '').'Exception(\'No relations can be found for the class "'.$desc->getClass().'"\');');
 		}
 	}
 	
