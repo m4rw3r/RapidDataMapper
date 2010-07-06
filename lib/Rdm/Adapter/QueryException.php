@@ -106,6 +106,19 @@ class Rdm_Adapter_QueryException extends RuntimeException implements Rdm_Excepti
 		
 		return $e;
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates an exception telling the user that OFFSET is not supported when
+	 * not using LIMIT.
+	 * 
+	 * @return Rdm_Adapter_QueryException
+	 */
+	public static function offsetWithoutLimit()
+	{
+		return new Rdm_Adapter_QueryException('OFFSET without LIMIT is not supported by the SQL standard.');
+	}
 }
 
 

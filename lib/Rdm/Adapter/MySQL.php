@@ -198,6 +198,17 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 
 	public function limitSqlQuery($str, $limit, $offset = false)
 	{
+		// If we have no limit, return the unmodified string
+		if(empty($limit))
+		{
+			if( ! empty($offset))
+			{
+				throw Rdm_Adapter_QueryException::offsetWithoutLimit();
+			}
+			
+			return $str;
+		}
+		
 		return $str . "\nLIMIT " . ($offset != false ?  $offset . ', ' : '') . $limit;
 	}
 	
