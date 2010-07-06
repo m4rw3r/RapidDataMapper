@@ -356,7 +356,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			$sql .= "\nWHERE ".implode(' ', $this->filters);
 		}
 		
-		if($this->limit !== false)
+		if($this->limit !== false OR $this->offset !== false)
 		{
 			$sql = $this->db->limitSqlQuery($sql, $this->limit, $this->offset);
 		}
@@ -388,11 +388,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		}
 		
 		$sql = $this->createSelectCountPart($sql);
-		
-		if($this->limit !== false)
-		{
-			$sql = $this->db->limitSqlQuery($sql, $this->limit, $this->offset);
-		}
 		
 		return $sql;
 	}
@@ -522,6 +517,8 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			throw Rdm_Collection_Exception::objectAlreadyPopulated();
 		}
 		
+		// TODO: Check the datatype of the $num variable, to make sure that it is an int
+		
 		if($offset != false)
 		{
 			$this->offset($offset);
@@ -530,7 +527,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		$this->limit = $num;
 		
 		// Reset the count, we have to do a recount because we will probably get less rows now
-		$this->count = null;
+		$this->num_rows = null;
 		
 		return $this;
 	}
@@ -556,7 +553,12 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			throw Rdm_Collection_Exception::objectAlreadyPopulated();
 		}
 		
+		// TODO: Check the datatype of the $offset variable, to make sure that it is an int
+		
 		$this->offset = $num;
+		
+		// Reset the count, we have to do a recount because we will probably get less rows now
+		$this->num_rows = null;
 		
 		return $this;
 	}
@@ -883,17 +885,27 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			// Do we have it cached?
 			if(is_null($this->num_rows))
 			{
+				// Nope
+				$c = $this->db->query($this->createSelectCountQuery())->val();
+				
 				if($this->limit !== false)
 				{
-					// TODO: Check if there is another way of doing a proper count query with LIMIT
-					// We have a limit, so we cannot use SELECT COUNT() because it is limited
-					$this->populate();
-					
-					return count($this->contents);
+					// We have a limit, get the total count, then return the limit if the count is greater
+					// also compensate for the offset
+					$this->num_rows = ($c - $this->offset) > $this->limit ? $this->limit : $c - $this->offset;
+					$this->num_rows < 0 && $this->num_rows = 0;
 				}
-				
-				// Nope
-				$this->num_rows = $this->db->query($this->createSelectCountQuery())->val();
+				elseif($this->offset !== false)
+				{
+					// We have offset, but no limit of the rows, it will result in an SQL error if we fetch it
+					// like that, show the error now to make sure the user seees it
+					throw Rdm_Adapter_QueryException::offsetWithoutLimit();
+				}
+				else
+				{
+					// No limit, just get the raw query value
+					$this->num_rows = $c;
+				}
 			}
 			
 			return $this->num_rows;
