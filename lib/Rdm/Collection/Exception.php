@@ -85,7 +85,7 @@ class Rdm_Collection_Exception extends RuntimeException implements Rdm_Exception
 	 * 
 	 * @return Rdm_Collection_Exception
 	 */
-	public function objectAlreadyPopulated()
+	public static function objectAlreadyPopulated()
 	{
 		return new Rdm_Collection_Exception('The collection object has already been populated.');
 	}
