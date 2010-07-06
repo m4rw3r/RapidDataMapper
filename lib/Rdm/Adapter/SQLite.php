@@ -90,7 +90,7 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 		}
 		else
 		{
-			return sqlite_last_error();
+			return sqlite_last_error($this->dbh);
 		}
 	}
 	
