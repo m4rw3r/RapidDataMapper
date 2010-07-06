@@ -8,7 +8,7 @@
 /**
  * 
  */
-class Rdm_Collection_Exception extends Exception implements Rdm_Exception
+class Rdm_Collection_Exception extends RuntimeException implements Rdm_Exception
 {
 	/**
 	 * Creates an exception telling the user that the called method should be
@@ -61,6 +61,33 @@ class Rdm_Collection_Exception extends Exception implements Rdm_Exception
 	public static function expectingObjectOfClass($class_name)
 	{
 		return new Rdm_Collection_Exception('Object of type '.$class_name.' was expected.');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates an exception telling the user that the object is locked and its
+	 * filters couldn't be modified.
+	 * 
+	 * @return Rdm_Collection_Exception
+	 */
+	 public static function objectLocked()
+	{
+		return new Rdm_Collection_Exception('Object is locked because queries has already been issued to the database'.
+			'(Examples can be for additions to the collection, fetching of its contents or removals).');
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates an exception telling the user that the object already has been
+	 * populated with data.
+	 * 
+	 * @return Rdm_Collection_Exception
+	 */
+	public function objectAlreadyPopulated()
+	{
+		return new Rdm_Collection_Exception('The collection object has already been populated.');
 	}
 }
 

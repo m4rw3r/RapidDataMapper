@@ -14,8 +14,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * If this flag is true, this object has already been used with entity objects,
 	 * therefore it can no longer use filters.
 	 * 
-	 * TODO: HOW TO CHANGE THIS FROM NESTED FILTERS/FILTER BY COLLECTIONS ?!?!?!
-	 * 
 	 * Needs to be public because the filter objects needs to be able to create a reference
 	 * to this variable.
 	 * 
@@ -467,8 +465,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	{
 		if($this->is_locked)
 		{
-			// TODO: Better exception message and proper exception class
-			throw new Exception('Object is locked');
+			throw Rdm_Collection_Exception::objectLocked();
 		}
 		
 		empty($this->filters) OR $this->filters[] = 'AND';
@@ -491,8 +488,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	{
 		if($this->is_locked)
 		{
-			// TODO: Better exception message and proper exception class
-			throw new Exception('Object is locked');
+			throw Rdm_Collection_Exception::objectLocked();
 		}
 		
 		empty($this->filters) OR $this->filters[] = 'OR';
@@ -520,10 +516,10 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			throw Rdm_Collection_Exception::notRootObject(get_class($this));
 		}
 		
-		if($this->is_locked)
+		// Cannot limit number of fetched objects if they already have been fetched
+		if($this->is_populated)
 		{
-			// TODO: Better exception message and proper exception class
-			throw new Exception('Object is already locked');
+			throw Rdm_Collection_Exception::objectAlreadyPopulated();
 		}
 		
 		if($offset != false)
@@ -552,6 +548,12 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		if( ! is_null($this->parent))
 		{
 			throw Rdm_Collection_Exception::notRootObject(get_class($this));
+		}
+		
+		// Cannot set offset of fetched objects if they already have been fetched
+		if($this->is_populated)
+		{
+			throw Rdm_Collection_Exception::objectAlreadyPopulated();
 		}
 		
 		$this->offset = $num;

@@ -99,8 +99,7 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 	{
 		if($this->is_locked)
 		{
-			// TODO: Better exception message and proper exception class
-			throw new Exception('Object is locked');
+			throw Rdm_Collection_Exception::objectLocked();
 		}
 		
 		$c = get_class($this);
@@ -126,8 +125,7 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 	{
 		if($this->is_locked)
 		{
-			// TODO: Better exception message and proper exception class
-			throw new Exception('Object is locked');
+			throw Rdm_Collection_Exception::objectLocked();
 		}
 		
 		$this->is_dynamic = true;
