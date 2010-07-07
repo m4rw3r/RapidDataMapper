@@ -67,11 +67,11 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 	 * 
 	 * @return 
 	 */
-	public function __construct($parent = null, $parent_alias = '')
+	public function __construct($parent, Rdm_Adapter $db, $parent_alias = '')
 	{
 		$this->parent = $parent;
-		$this->db = $parent->db;
 		$this->is_locked =& $parent->is_locked;
+		$this->db = $db;
 		$this->table_alias = $parent_alias;
 	}
 	
