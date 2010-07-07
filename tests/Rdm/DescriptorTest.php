@@ -1113,7 +1113,7 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 	{
 		$desc = new Rdm_Descriptor();
 		
-		eval('class Some_foo
+		class_exists('Some_foo') OR eval('class Some_foo
 		{
 			public function __call($m, $p){}
 		}');
@@ -1129,7 +1129,7 @@ class Rdm_DescriptorTest extends PHPUnit_Framework_TestCase
 	{
 		$desc = new Rdm_Descriptor();
 		
-		eval('class Some_fooS
+		class_exists('Some_foo') OR eval('class Some_fooS
 		{
 			public static function __callStatic($m, $p){}
 		}');
