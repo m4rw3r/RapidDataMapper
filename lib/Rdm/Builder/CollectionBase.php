@@ -22,9 +22,19 @@ class Rdm_Builder_CollectionBase extends Rdm_Util_Code_ClassBuilder
 		
 		$this->addPart('protected static $refresh = false;');
 		
+		$this->addPart('protected static $config;');
+		
+		$this->addPart('/**
+ * Internal: The database connection.
+ * 
+ * @var Rdm_Adapter
+ */
+public static $db;');
+		
 		$this->addPart(new Rdm_Util_Code_PropertyBuilder('table_alias', $desc->getSingular()));
 		
 		// Static methods
+		$this->addPart(new Rdm_Builder_Collection_SetCollectionManager($desc));
 		$this->addPart(new Rdm_Builder_Collection_PushChanges($desc));
 		$this->addPart(new Rdm_Builder_Collection_SetUnitOfWork($desc));
 		$this->addPart(new Rdm_Builder_Collection_GetUnitOfWork($desc));
@@ -35,6 +45,7 @@ class Rdm_Builder_CollectionBase extends Rdm_Util_Code_ClassBuilder
 		$this->addPart(new Rdm_Builder_Collection_Fetch($desc));
 		
 		// Instance methods
+		$this->addPart(new Rdm_Builder_Collection_GetAdapter($desc));
 		$this->addPart(new Rdm_Builder_Collection_With($desc));
 		$this->addPart(new Rdm_Builder_Collection_CreateSelectPart($desc));
 		$this->addPart(new Rdm_Builder_Collection_CreateSelectCountPart($desc));

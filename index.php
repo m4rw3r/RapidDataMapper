@@ -81,7 +81,7 @@ class Album
 	public $artist_id;
 }
 
-$db = Rdm_Adapter::getInstance();
+$db = $adapter;
 var_dump($db->transactionStart());
 
 new ArtistCollection;
@@ -114,18 +114,13 @@ foreach($artists as $a)
 	}
 }
 
-Rdm_CollectionManager::pushChanges();
+$manager->pushChanges();
 
 $db->transactionRollback();
 
-foreach(Rdm_Adapter::getAllInstances() as $i)
+foreach($db->queries as $q)
 {
-	echo "\n\nQueries from adapter with name {$i->getName()}:\n\n";
-	
-	foreach($i->queries as $q)
-	{
-		echo $q['time']."\n".$q['sql']."\n\n";
-	}
+	echo $q['time']."\n".$q['sql']."\n\n";
 }
 
 echo count(get_included_files());

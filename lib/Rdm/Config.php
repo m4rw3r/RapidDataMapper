@@ -19,121 +19,64 @@ class Rdm_Config
 	const VERSION = '0.7.0-dev';
 	
 	/**
-	 * A list of adapter configurations.
+	 * The database adapter to use for this configuration.
 	 * 
-	 * @var array(string => array)
+	 * @var Rdm_Adapter
 	 */
-	protected static $adapter_configs = array();
-	
-	/**
-	 * The name for the default adapter configuration.
-	 * 
-	 * @var string
-	 */
-	protected static $adapter_default_name = 'default';
+	protected $adapter = null;
 	
 	/**
 	 * Value containing setting for mapper caching.
 	 * 
 	 * @var boolean
 	 */
-	protected static $mappers_cache = false;
+	protected $mappers_cache = false;
 	
 	/**
 	 * The directory in which the cached mappers will be stored.
 	 * 
 	 * @var string
 	 */
-	protected static $mappers_cache_dir = '.';
+	protected $mappers_cache_dir = '.';
 	
 	/**
 	 * A list of descriptors describing mappings of entities to the database.
 	 * 
 	 * @var array(string => Rdm_Descriptor)
 	 */
-	protected static $descriptors = array();
+	protected $descriptors = array();
 	
 	/**
 	 * A cascade of descriptor loaders.
 	 * 
 	 * @var array(callback)
 	 */
-	protected static $descriptor_loaders = array();
+	protected $descriptor_loaders = array();
 	
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Sets the adapter configuration for a certain database connection.
+	 * Sets the database adapter instance to be used by this configuration.
 	 * 
-	 * @throws Rdm_Adapter_ConfigurationException
-	 * @param  string|array
-	 * @param  array
+	 * @param  Rdm_Adapter
 	 * @return void
 	 */
-	public static function setAdapterConfiguration($name, $configuration = false)
+	public function setAdapter(Rdm_Adapter $db)
 	{
-		if(is_array($name))
-		{
-			self::$adapter_configs = array_merge(self::$adapter_configs, $name);
-		}
-		elseif(empty($configuration))
-		{
-			throw new Rdm_Adapter_ConfigurationException($name, 'Invalid configuration.');
-		}
-		else
-		{
-			self::$adapter_configs[$name] = $configuration;
-		}
+		$this->adapter = $db;
 	}
 	
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the adapter configuration for the supplied name.
+	 * Returns the db adapter instance used by this configuration.
 	 * 
-	 * @throws Rdm_Adapter_ConfigurationException
-	 * @param  string
-	 * @return array(string => string)
+	 * @return Rdm_Adapter
 	 */
-	public static function getAdapterConfiguration($name)
+	public function getAdapter()
 	{
-		if(empty(self::$adapter_configs[$name]))
-		{
-			throw new Rdm_Adapter_ConfigurationException($name, 'Missing configuration.');
-		}
-		elseif(empty(self::$adapter_configs[$name]['class']))
-		{
-			throw new Rdm_Adapter_ConfigurationException($name, 'Missing "class" key in configuration.');
-		}
-		else
-		{
-			return self::$adapter_configs[$name];
-		}
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Sets the default adapter configuration, default: "default".
-	 * 
-	 * @param  string
-	 * @return void
-	 */
-	public static function setDefaultAdapterName($name)
-	{
-		self::$adapter_default_name = $name;
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the name of the default Rdm_Adapter instance.
-	 * 
-	 * @return string
-	 */
-	public static function getDefaultAdapterName()
-	{
-		return self::$adapter_default_name;
+		// TODO: Check if we have an adapter?
+		return $this->adapter;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -144,9 +87,9 @@ class Rdm_Config
 	 * @param  boolean
 	 * @return void
 	 */
-	public static function setCacheMappers($value = true)
+	public function setCacheMappers($value = true)
 	{
-		self::$mappers_cache = $value;
+		$this->mappers_cache = $value;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -156,9 +99,9 @@ class Rdm_Config
 	 * 
 	 * @return boolean
 	 */
-	public static function getCacheMappers()
+	public function getCacheMappers()
 	{
-		return self::$mappers_cache;
+		return $this->mappers_cache;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -169,9 +112,9 @@ class Rdm_Config
 	 * @param  string
 	 * @return void
 	 */
-	public static function setMapperCacheDir($path)
+	public function setMapperCacheDir($path)
 	{
-		self::$mappers_cache_dir = $path;
+		$this->mappers_cache_dir = $path;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -181,9 +124,9 @@ class Rdm_Config
 	 * 
 	 * @return string
 	 */
-	public static function getMapperCacheDir()
+	public function getMapperCacheDir()
 	{
-		return self::$mappers_cache_dir;
+		return $this->mappers_cache_dir;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -195,14 +138,16 @@ class Rdm_Config
 	 * @param  Rdm_Descriptor
 	 * @return void
 	 */
-	public static function addDescriptor(Rdm_Descriptor $descriptor)
+	public function addDescriptor(Rdm_Descriptor $descriptor)
 	{
-		if(isset(self::$descriptors[strtolower($descriptor->getClass())]))
+		if(isset($this->descriptors[strtolower($descriptor->getClass())]))
 		{
 			throw new RuntimeException('RapidDataMapper: The descriptor for the class "'.$descriptor->getClass().'" has already been loaded.');
 		}
 		
-		self::$descriptors[strtolower($descriptor->getClass())] = $descriptor;
+		$this->descriptors[strtolower($descriptor->getClass())] = $descriptor;
+		
+		$descriptor->setConfig($this);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -227,14 +172,14 @@ class Rdm_Config
 	 * @param  callback
 	 * @return void
 	 */
-	public static function addDescriptorLoader($callback)
+	public function addDescriptorLoader($callback)
 	{
 		if( ! is_callable($callback, true))
 		{
 			throw new InvalidArgumentException('Faulty syntax in supplied callable.');
 		}
 		
-		self::$descriptor_loaders[] = $callback;
+		$this->descriptor_loaders[] = $callback;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -244,9 +189,9 @@ class Rdm_Config
 	 * 
 	 * @return array(callback)
 	 */
-	public static function getDescriptorLoaders()
+	public function getDescriptorLoaders()
 	{
-		return self::$descriptor_loaders;
+		return $this->descriptor_loaders;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -265,24 +210,24 @@ class Rdm_Config
 	 * @throws Rdm_Descriptor_MissingException
 	 * @return Rdm_Descriptor
 	 */
-	public static function getDescriptor($class)
+	public function getDescriptor($class)
 	{
 		// Strtolower so we're sure that we don't load it twice
 		$c = strtolower($class);
 		
-		if(isset(self::$descriptors[$c]))
+		if(isset($this->descriptors[$c]))
 		{
-			return self::$descriptors[$c];
+			return $this->descriptors[$c];
 		}
 		
 		// check if we can call a mapper descriptor loader (also autoload it, and see if it can be called)
-		foreach(self::$descriptor_loaders as $loader)
+		foreach($this->descriptor_loaders as $loader)
 		{
 			// check that we get a Rdm_Descriptor object
 			if(is_callable($loader) && ($d = call_user_func($loader, $class)) instanceof Rdm_Descriptor)
 			{
 				// We've got a working instance, save and return
-				return self::$descriptors[$c] = $d;
+				return $this->descriptors[$c] = $d;
 			}
 		}
 		
@@ -296,7 +241,11 @@ class Rdm_Config
 		}
 		
 		// Create instance
-		return self::$descriptors[$c] = new $klass();
+		$this->descriptors[$c] = $desc = new $klass();
+		
+		$desc->setConfig($this);
+		
+		return $desc;
 	}
 }
 

@@ -156,8 +156,6 @@ abstract class Rdm_UnitOfWork
 	{
 		try
 		{
-			isset($this->db) OR $this->db = Rdm_Adapter::getInstance($this->adapter_name);
-			
 			$this->doInserts();
 			$this->doUpdates();
 			$this->doDeletes();
@@ -182,8 +180,6 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function doInserts()
 	{
-		isset($this->db) OR $this->db = Rdm_Adapter::getInstance($this->adapter_name);
-		
 		$this->processSingleInsertions();
 	}
 	
@@ -196,8 +192,6 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function doUpdates()
 	{
-		isset($this->db) OR $this->db = Rdm_Adapter::getInstance($this->adapter_name);
-		
 		$this->processSingleChanges();
 	}
 	
@@ -210,8 +204,6 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function doDeletes()
 	{
-		isset($this->db) OR $this->db = Rdm_Adapter::getInstance($this->adapter_name);
-		
 		$this->processSingleDeletions();
 	}
 	

@@ -11,7 +11,7 @@
  * 
  * Usage:
  * <code>
- * Rdm_Config::addDescriptorLoader(array(new Rdm_Util_DescriptorLoader_File('./descriptor/folder'), 'load));
+ * $config->addDescriptorLoader(array(new Rdm_Util_DescriptorLoader_File('./descriptor/folder'), 'load));
  * </code>
  * 
  * Default naming conventions:
@@ -114,7 +114,7 @@ class Rdm_Util_DescriptorLoader_File
 
 	/**
 	 * Magic method for PHP 5.3 so it is possible to pass the object directly
-	 * to the Rdm_Config::addDescriptorLoader() method.
+	 * to the Rdm_Config->addDescriptorLoader() method.
 	 * 
 	 * @param  string
 	 * @return Rdm_Descriptor|false

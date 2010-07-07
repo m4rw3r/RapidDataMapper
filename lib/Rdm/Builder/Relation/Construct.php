@@ -39,7 +39,7 @@ use new '.$rel->getRelationFilterClassName().'($related_object, \'alias for '.$d
 }
 
 $this->alias = $alias;
-$this->db = is_null($db) ? '.$desc->getFetchAdapterCode().' : $db;');
+$this->db = is_null($db) ? '.$desc->getCollectionClassName().'::$db : $db;');
 	}
 }
 

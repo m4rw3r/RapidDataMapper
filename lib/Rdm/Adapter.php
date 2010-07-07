@@ -12,60 +12,6 @@
 abstract class Rdm_Adapter
 {
 	/**
-	 * A list of loaded Rdm_Adapter instances.
-	 * 
-	 * @var array(Rdm_Adapter)
-	 */
-	protected static $instances = array();
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the Rdm_Adapter instance, a name can be specified for fetching a
-	 * specific Rdm_Adapter instance.
-	 * 
-	 * @throws Rdm_Adapter_ConfigurationException
-	 * @param  string		Adapter configuration name
-	 * @return Rdm_Adapter
-	 */
-	public static function getInstance($name = false)
-	{
-		$name = $name ? $name : Rdm_Config::getDefaultAdapterName();
-		
-		if( ! isset(self::$instances[$name]))
-		{
-			$config = Rdm_Config::getAdapterConfiguration($name);
-			
-			$c = $config['class'];
-			
-			self::$instances[$name] = new $c($name, $config);
-			
-			if( ! self::$instances[$name] instanceof Rdm_Adapter)
-			{
-				throw Rdm_Adapter_ConfigurationException::notUsingBaseClass($name, $config['class']);
-			}
-		}
-		
-		return self::$instances[$name];
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns all loaded Rdm_Adapter instances.
-	 * 
-	 * @return array(Rdm_Adapter)
-	 */
-	public static function getAllInstances()
-	{
-		return self::$instances;
-	}
-	
-	// --------------------------------------------------------------------
-	// --  INSTANCE METHODS                                              --
-	// --------------------------------------------------------------------
-	
-	/**
 	 * The name of this database connection configuration.
 	 * 
 	 * @var string
@@ -158,14 +104,14 @@ abstract class Rdm_Adapter
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Constructor, protected to prevent other objects from instantiating adapter
-	 * instances.
+	 * Constructor, validates the configuration options passed to the adapter instance.
 	 * 
 	 * @param  string
 	 * @param  array(string => string)
 	 */
-	protected function __construct($name, array $options)
+	public function __construct($name, array $options)
 	{
+		// TODO: Check if we really need this
 		$this->name = $name;
 		
 		if($req = array_diff($this->getRequiredOptionKeys(), array_keys($options)))
@@ -180,6 +126,11 @@ abstract class Rdm_Adapter
 		$this->redirect_write = $this->options['redirect_write'];
 		$this->dbprefix       = $this->options['dbprefix'];
 		$this->cache_on       = $this->options['cache_on'];
+		
+		if(is_string($this->redirect_write) OR is_object($this->redirect_write) && ! $this->redirect_write instanceof self)
+		{
+			throw Rdm_Adapter_ConfigurationException::redirectWriteFaultyParameter($this->name, $this->redirect_write);
+		}
 		
 		$this->result_object_class = get_class($this).'_Result';
 	}
@@ -284,7 +235,8 @@ abstract class Rdm_Adapter
 		// Write query redirection
 		if($this->redirect_write && $is_write)
 		{
-			return self::getInstance($this->redirect_write)->query($sql);
+			// $this->redirect_write is the database instance
+			return $this->redirect_write->query($sql);
 		}
 		
 		// Is cache on, and is it a read query?
@@ -360,7 +312,7 @@ abstract class Rdm_Adapter
 		// Redirect transaction start to the write instance
 		if($this->redirect_write)
 		{
-			return self::getInstance($this->redirect_write)->transactionStart();
+			return $this->redirect_write->transactionStart();
 		}
 		
 		if($this->transaction)
@@ -395,7 +347,7 @@ abstract class Rdm_Adapter
 		// Redirect transaction commit to the write instance
 		if($this->redirect_write)
 		{
-			return self::getInstance($this->redirect_write)->transactionCommit();
+			return $this->redirect_write->transactionCommit();
 		}
 		
 		is_null($this->dbh) && $this->initDbh();
@@ -417,7 +369,7 @@ abstract class Rdm_Adapter
 		// Redirect transaction rollback to the write instance
 		if($this->redirect_write)
 		{
-			return self::getInstance($this->redirect_write)->transactionRollback();
+			return $this->redirect_write->transactionRollback();
 		}
 		
 		is_null($this->dbh) && $this->initDbh();
@@ -439,7 +391,7 @@ abstract class Rdm_Adapter
 		// Redirect transaction check to the write instance
 		if($this->redirect_write)
 		{
-			return self::getInstance($this->redirect_write)->transactionInProgress();
+			return $this->redirect_write->transactionInProgress();
 		}
 		
 		return $this->transaction;

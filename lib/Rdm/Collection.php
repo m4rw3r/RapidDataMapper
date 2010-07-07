@@ -88,13 +88,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	protected $num_rows = null;
 	
 	/**
-	 * The adapter instance used by this collection object.
-	 * 
-	 * @var Rdm_Adapter
-	 */
-	public $db = null;
-	
-	/**
 	 * Parent collection when they are joined.
 	 * 
 	 * @var Rdm_Collection
@@ -204,7 +197,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		if($parent)
 		{
 			$this->parent = $parent;
-			$this->db = $parent->db;
 			$this->is_locked =& $parent->is_locked;
 			
 			// The relationship type
@@ -217,11 +209,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			
 			// The alias the parent object tells us to use
 			$this->table_alias = $table_alias;
-		}
-		else
-		{
-			// TODO: Move load of the adapter
-			$this->db = Rdm_Adapter::getInstance();
 		}
 	}
 	
@@ -358,7 +345,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		
 		if($this->limit !== false OR $this->offset !== false)
 		{
-			$sql = $this->db->limitSqlQuery($sql, $this->limit, $this->offset);
+			$sql = $this->getAdapter()->limitSqlQuery($sql, $this->limit, $this->offset);
 		}
 		
 		return array($sql, $column_mappings);
@@ -417,7 +404,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		
 		if($this->limit !== false)
 		{
-			$sql = $this->db->limitSqlQuery($sql, $this->limit, $this->offset);
+			$sql = $this->getAdapter()->limitSqlQuery($sql, $this->limit, $this->offset);
 		}
 		
 		return $sql;
@@ -599,7 +586,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		// Flip so that the columns becomes the keys, faster column index lookup
 		$map = array_flip($map);
 		
-		$result = $this->db->query($sql);
+		$result = $this->getAdapter()->query($sql);
 		
 		while($row = $result->nextArray())
 		{
@@ -886,7 +873,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			if(is_null($this->num_rows))
 			{
 				// Nope
-				$c = $this->db->query($this->createSelectCountQuery())->val();
+				$c = $this->getAdapter()->query($this->createSelectCountQuery())->val();
 				
 				if($this->limit !== false)
 				{

@@ -128,6 +128,14 @@ class Rdm_Descriptor
 	public $local_type_mappings = array();
 	
 	/**
+	 * Internal: The configuration instance used to create the
+	 * configuration specific code.
+	 * 
+	 * @var Rdm_Config
+	 */
+	protected $config = null;
+	
+	/**
 	 * The class this object describes.
 	 * 
 	 * @var string
@@ -161,20 +169,6 @@ class Rdm_Descriptor
 	 * @var string
 	 */
 	protected $factory;
-	
-	/**
-	 * The name of the database connection instance the described class maps to.
-	 * 
-	 * @var string|false
-	 */
-	protected $db_conn_name = false;
-	
-	/**
-	 * The database connection instance the described class maps to.
-	 * 
-	 * @var Rdm_Adapter
-	 */
-	protected $db_conn;
 	
 	/**
 	 * A list of the registered hooks.
@@ -217,6 +211,44 @@ class Rdm_Descriptor
 	 * @var array
 	 */
 	protected $relations = array();
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Internal: Sets the configuration object used by this descriptor.
+	 * 
+	 * @param  Rdm_Config
+	 * @return void
+	 */
+	public function setConfig(Rdm_Config $config)
+	{
+		$this->config = $config;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the configuration instance used by this descriptor.
+	 * 
+	 * @return Rdm_Config
+	 */
+	public function getConfig()
+	{
+		return $this->config;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Internal: Returns the adapter used to create the database specific
+	 * mapper code.
+	 * 
+	 * @return Rdm_Adapter
+	 */
+	public function getAdapter()
+	{
+		return $this->config->getAdapter();
+	}
 	
 	// ------------------------------------------------------------------------
 
@@ -509,60 +541,6 @@ class Rdm_Descriptor
 		{
 			return $c;
 		}
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the name of the database connection which this object's described class maps to.
-	 * 
-	 * @return string
-	 */
-	public function getAdapterName()
-	{
-		return empty($this->db_conn) ? $this->db_conn_name : $this->db_conn->getName();
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Sets the name of the database connection this which object's described class maps to.
-	 * 
-	 * @param  string
-	 * @return self
-	 */
-	public function setAdapterName($name)
-	{
-		$this->db_conn_name = $name;
-		
-		return $this;
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the database connection object which the described object maps to.
-	 * 
-	 * @return Rdm_Adapter
-	 */
-	public function getAdapter()
-	{
-		return empty($this->db_conn) ? Rdm_Adapter::getInstance($this->getAdapterName()) : $this->db_conn;
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Sets the database connection object which the described object maps to.
-	 * 
-	 * @param  Rdm_Adapter
-	 * @return self
-	 */
-	public function setAdapter(Rdm_Adapter $conn)
-	{
-		$this->db_conn = $conn;
-		
-		return $this;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -935,21 +913,6 @@ class Rdm_Descriptor
 		}
 		
 		return $b;
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns a code fragment which fetches the correct adapter, should be placed
-	 * between = and ; .
-	 * 
-	 * @return string
-	 */
-	public function getFetchAdapterCode()
-	{
-		$name = empty($this->db_conn_name) ? '' : '\''.addcslashes($this->db_conn_name, "'").'\'';
-		
-		return (version_compare(PHP_VERSION, '5.3.0', '>=') ? '\\' : '').'Rdm_Adapter::getInstance('.$name.')';
 	}
 	
 	// ------------------------------------------------------------------------

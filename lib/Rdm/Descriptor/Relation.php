@@ -60,6 +60,13 @@ class Rdm_Descriptor_Relation
 	protected $desc_parent;
 	
 	/**
+	 * The related descriptor.
+	 * 
+	 * @var Rdm_Descriptor
+	 */
+	protected $desc_related;
+	
+	/**
 	 * The object handling the relation-unique things.
 	 * 
 	 * @var Rdm_Descriptor_RelationInterface
@@ -217,7 +224,13 @@ class Rdm_Descriptor_Relation
 	 */
 	public function getRelatedClass()
 	{
-		return empty($this->related_class) ? $this->getParentDescriptor()->getNamespace(true).ucfirst(Rdm_Util_Inflector::singularize($this->getProperty())) : $this->related_class;
+		if(empty($this->related_class))
+		{
+			$this->related_class = $this->getParentDescriptor()->getNamespace(true).
+				ucfirst(Rdm_Util_Inflector::singularize($this->getProperty()));
+		}
+		
+		return $this->related_class;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -244,7 +257,12 @@ class Rdm_Descriptor_Relation
 	 */
 	public function getRelatedDescriptor()
 	{
-		return Rdm_Config::getDescriptor($this->getRelatedClass());
+		if(empty($this->related))
+		{
+			$this->desc_related = $this->getParentDescriptor()->getConfig()->getDescriptor($this->getRelatedClass());
+		}
+		
+		return $this->desc_related;
 	}
 	
 	// ------------------------------------------------------------------------

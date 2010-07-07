@@ -23,10 +23,9 @@ class Rdm_Builder_Collection_Fetch_ByColumn extends Rdm_Util_Code_MethodBuilder
 @param  string  '.$col->getProperty().'
 @return '.$desc->getClass().'|false');
 		
-		$this->addPart('$db = '.$desc->getFetchAdapterCode().';
-$c = new '.$desc->getCollectionClassName().';');
+		$this->addPart('$c = new '.$desc->getCollectionClassName().';');
 		
-		$this->addPart('$c->filters[] = \''.addcslashes($db->protectIdentifiers($col->getColumn()), "'").' = \'.$db->escape($'.$col->getProperty().');');
+		$this->addPart('$c->filters[] = \''.addcslashes($db->protectIdentifiers($col->getColumn()), "'").' = \'.self::$db->escape($'.$col->getProperty().');');
 		
 		$this->addPart('$c->populate();');
 		

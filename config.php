@@ -25,8 +25,25 @@ require 'lib/Rdm/Util/Autoloader.php';
 Rdm_Util_Autoloader::init();
 
 
+// Configure RapidDataMapper Adapter
+$adapter = new Rdm_Adapter_MySQL('default', array(
+	'hostname' => 'localhost',
+	'username' => 'ci',
+	'password' => '',
+	'database' => 'test'
+	));
+
+
+// Configure the mapper configuration
+$config = new Rdm_Config();
+$config->setAdapter($adapter);
+$config->setCacheMappers(true);
+$config->setMapperCacheDir($mapper_cache_dir);
+
+
 // Initialize <Class>Collection autoloaders
-Rdm_CollectionManager::init();
+$manager = new Rdm_CollectionManager($config);
+$manager->registerCollectionAutoloader(false);
 
 
 // Register the example loader which loads files using a normal autoloader
@@ -35,21 +52,6 @@ function exampleloader($class)
 {
 	require ltrim(strtr($class, '\\_', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR).'.php', DIRECTORY_SEPARATOR);
 }
-
-
-// Configure RapidDataMapper Adapter
-Rdm_Config::setAdapterConfiguration('default', array(
-	'hostname' => 'localhost',
-	'username' => 'ci',
-	'password' => '',
-	'database' => 'test',
-	'class' => 'Rdm_Adapter_MySQL'
-	));
-
-
-// Generated file storage configuration
-Rdm_Config::setCacheMappers(true);
-Rdm_Config::setMapperCacheDir($mapper_cache_dir);
 
 /* End of file config.php */
 /* Location: . */

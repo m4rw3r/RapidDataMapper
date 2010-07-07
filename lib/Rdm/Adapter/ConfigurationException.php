@@ -37,6 +37,19 @@ class Rdm_Adapter_ConfigurationException extends DomainException implements Rdm_
 	{
 		return new Rdm_Adapter_ConfigurationException(sprintf('The configuration "%s" is missing required keys: "%s"', $config_name, implode('", "', $req_keys)));
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates an exception telling the user that the redirect_write option requires
+	 * an Rdm_Adapter instance as parameter.
+	 * 
+	 * @return Rdm_Adapter_ConfigurationException
+	 */
+	public static function redirectWriteFaultyParameter($config_name, $faulty_data)
+	{
+		return new Rdm_Adapter_ConfigurationException(sprintf('The redirect_write key of the configuration for the adapter "%s" is of the wrong type (%s) instead of an Rdm_Adapter instance.', $config_name, $faulty_data));
+	}
 }
 
 

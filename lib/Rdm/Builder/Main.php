@@ -28,20 +28,6 @@ class Rdm_Builder_Main extends Rdm_Util_Code_Container
 		{
 			$this->addPart(new Rdm_Builder_Relation($rel, $desc));
 		}
-		
-		$this->addPart($desc->getCollectionClassName().'::setUnitOfWork(new '.$desc->getUnitOfWorkClassName().');');
-		
-		$dependencies = array();
-		foreach($desc->getRelations() as $rel)
-		{
-			// Only belongs to relations depend on something
-			if($rel->getType() === Rdm_Descriptor::BELONGS_TO)
-			{
-				$dependencies[] = var_export($rel->getRelatedDescriptor()->getCollectionClassName(true), true);
-			}
-		}
-		
-		$this->addPart(($desc->isNamespaced() ? '\\' : '').'Rdm_CollectionManager::registerCollectionClassName(\''.$desc->getCollectionClassName(true).'\', array('.implode(', ', $dependencies).'));');
 	}
 	
 	// ------------------------------------------------------------------------

@@ -24,7 +24,7 @@ class Rdm_Builder_Collection_Fetch_ByPrimaryKey extends Rdm_Util_Code_MethodBuil
 		{
 			$params[] = '$'.$pk->getProperty();
 			$php_doc_params[] = '@param  string  '.$pk->getProperty();
-			$filter[] = addcslashes($db->protectIdentifiers($pk->getColumn()), "'").' = \'.$db->escape($'.$pk->getProperty().')';
+			$filter[] = addcslashes($db->protectIdentifiers($pk->getColumn()), "'").' = \'.self::$db->escape($'.$pk->getProperty().')';
 		}
 		
 		$this->setParamList(implode(', ', $params));
@@ -33,8 +33,7 @@ class Rdm_Builder_Collection_Fetch_ByPrimaryKey extends Rdm_Util_Code_MethodBuil
 '.implode("\n", $php_doc_params).'
 @return '.$desc->getClass().'|false');
 		
-		$this->addPart('$db = '.$desc->getFetchAdapterCode().';
-$c = new '.$desc->getCollectionClassName().';');
+		$this->addPart('$c = new '.$desc->getCollectionClassName().';');
 		
 		$this->addPart('$c->filters[] = \''.implode('.\'', $filter).';');
 		
