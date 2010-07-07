@@ -26,7 +26,7 @@ Rdm_Util_Autoloader::init();
 
 
 // Configure RapidDataMapper Adapter
-$adapter = new Rdm_Adapter_MySQL('default', array(
+$adapter = new Rdm_Adapter_MySQL(array(
 	'hostname' => 'localhost',
 	'username' => 'ci',
 	'password' => '',

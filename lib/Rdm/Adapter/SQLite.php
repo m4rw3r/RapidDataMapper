@@ -31,7 +31,7 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 		
 		if( ! $conn)
 		{
-			throw Rdm_Adapter_ConnectionException::couldNotConnect($this->name, ($e = sqlite_last_error($this->dbh)), sqlite_error_string($e).$this->last_query_error);
+			throw Rdm_Adapter_ConnectionException::couldNotConnect($this->options['file'], ($e = sqlite_last_error($this->dbh)), sqlite_error_string($e).$this->last_query_error);
 		}
 		else
 		{

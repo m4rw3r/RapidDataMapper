@@ -12,13 +12,6 @@
 abstract class Rdm_Adapter
 {
 	/**
-	 * The name of this database connection configuration.
-	 * 
-	 * @var string
-	 */
-	protected $name;
-	
-	/**
 	 * The database prefix to use.
 	 *
 	 * @var string
@@ -33,12 +26,9 @@ abstract class Rdm_Adapter
 	protected $cache_on = false;
 	
 	/**
-	 * If to redirect write queries and to which connection.
+	 * If to redirect write queries and to which connection instance.
 	 * 
-	 * If this variable is not false, it will be treated as the
-	 * name of the connection to redirect to.
-	 * 
-	 * @var false|string
+	 * @var Rdm_Adapter|false
 	 */
 	protected $redirect_write = false;
 	
@@ -106,17 +96,13 @@ abstract class Rdm_Adapter
 	/**
 	 * Constructor, validates the configuration options passed to the adapter instance.
 	 * 
-	 * @param  string
 	 * @param  array(string => string)
 	 */
-	public function __construct($name, array $options)
+	public function __construct(array $options)
 	{
-		// TODO: Check if we really need this
-		$this->name = $name;
-		
 		if($req = array_diff($this->getRequiredOptionKeys(), array_keys($options)))
 		{
-			throw Rdm_Adapter_ConfigurationException::missingOptions($name, $req);
+			throw Rdm_Adapter_ConfigurationException::missingOptions($req);
 		}
 		
 		// Merge with the default options
@@ -129,7 +115,7 @@ abstract class Rdm_Adapter
 		
 		if(is_string($this->redirect_write) OR is_object($this->redirect_write) && ! $this->redirect_write instanceof self)
 		{
-			throw Rdm_Adapter_ConfigurationException::redirectWriteFaultyParameter($this->name, $this->redirect_write);
+			throw Rdm_Adapter_ConfigurationException::redirectWriteFaultyParameter($this->redirect_write);
 		}
 		
 		$this->result_object_class = get_class($this).'_Result';
@@ -171,18 +157,6 @@ abstract class Rdm_Adapter
 	public final function __wakeup()
 	{
 		throw new Exception('Unserialization of Rdm_Adapter objects are not allowed.');
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns the name of this database connection's configuration.
-	 * 
-	 * @return string
-	 */
-	public function getName()
-	{
-		return $this->name;
 	}
 	
 	// ------------------------------------------------------------------------

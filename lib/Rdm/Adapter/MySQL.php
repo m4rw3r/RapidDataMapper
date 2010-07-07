@@ -47,7 +47,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 		
 		if( ! $conn)
 		{
-			throw Rdm_Adapter_ConnectionException::couldNotConnect($this->name, mysql_error(), mysql_errno());
+			throw Rdm_Adapter_ConnectionException::couldNotConnect($this->options['hostname'], mysql_error(), mysql_errno());
 		}
 		else
 		{
@@ -58,7 +58,7 @@ class Rdm_Adapter_MySQL extends Rdm_Adapter
 			}
 			else
 			{
-				throw Rdm_Adapter_ConnectionException::couldNotSelect($this->name, mysql_error(), mysql_errno());
+				throw Rdm_Adapter_ConnectionException::couldNotSelect($this->options['hostname'].'::'.$this->options['database'], mysql_error(), mysql_errno());
 			}
 		}
 	}

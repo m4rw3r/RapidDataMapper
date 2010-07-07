@@ -52,9 +52,9 @@ class Rdm_Adapter_ConnectionException extends RuntimeException implements Rdm_Ex
 	 * @param  int
 	 * @return Rdm_Adapter_ConnectionException
 	 */
-	public static function couldNotConnect($config_name, $error_message, $error_no)
+	public static function couldNotConnect($hostname, $error_message, $error_no)
 	{
-		$e = new Rdm_Adapter_ConnectionException(sprintf('Could not connect to database "%s": %d, %s', $config_name, $error_no, $error_message), $error_no);
+		$e = new Rdm_Adapter_ConnectionException(sprintf('Could not connect to host "%s": %d, %s', $hostname, $error_no, $error_message), $error_no);
 		
 		$e->setErrorMessage($error_message);
 		
@@ -72,9 +72,9 @@ class Rdm_Adapter_ConnectionException extends RuntimeException implements Rdm_Ex
 	 * @param  int
 	 * @return Rdm_Adapter_ConnectionException
 	 */
-	public static function couldNotSelect($config_name, $error_message, $error_no)
+	public static function couldNotSelect($database, $error_message, $error_no)
 	{
-		$e = new Rdm_Adapter_ConnectionException(sprintf('Could not select requested database for connection "%s": %d, %s', $config_name, $error_no, $error_message), $error_no);
+		$e = new Rdm_Adapter_ConnectionException(sprintf('Could not select requested database for connection "%s": %d, %s', $database, $error_no, $error_message), $error_no);
 		
 		$e->setErrorMessage($error_message);
 		
