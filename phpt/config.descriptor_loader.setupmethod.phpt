@@ -5,7 +5,9 @@ Test of the Rdm_Util_DescriptorLoader_SetUpMethod class
 
 include 'config/config.php';
 
-Rdm_Config::addDescriptorLoader(array(new Rdm_Util_DescriptorLoader_SetUpMethod(), 'load'));
+$c = Config::getConfig();
+
+$c->addDescriptorLoader(array(new Rdm_Util_DescriptorLoader_SetUpMethod(), 'load'));
 
 class User
 {
@@ -22,14 +24,14 @@ class User
 
 try
 {
-	Rdm_Config::getDescriptor('Foobar');
+	$c->getDescriptor('Foobar');
 }
 catch(Rdm_Exception $e)
 {
 	var_dump($e->getMessage());
 }
 
-$desc = Rdm_Config::getDescriptor('User');
+$desc = $c->getDescriptor('User');
 
 echo 'class: ';
 var_dump($desc->getClass());

@@ -13,6 +13,6 @@ $a->name = 'Foobar';
 
 ArtistCollection::pushChanges();
 
-var_dump(Rdm_Adapter::getInstance()->query('SELECT name FROM tbl_artists WHERE id = 1')->val());
+var_dump(Config::getAdapter()->query('SELECT name FROM tbl_artists WHERE id = 1')->val());
 --EXPECT--
 string(6) "Foobar"

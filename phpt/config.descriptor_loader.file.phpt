@@ -22,7 +22,9 @@ mkdir(dirname(__FILE__).'/tmp');
 file_put_contents(dirname(__FILE__).'/tmp/User.php', $contents_user);
 file_put_contents(dirname(__FILE__).'/tmp/Foobar.php', $contents_fake);
 
-Rdm_Config::addDescriptorLoader(array(new Rdm_Util_DescriptorLoader_File(dirname(__FILE__).'/tmp'), 'load'));
+$c = Config::getConfig();
+
+$c->addDescriptorLoader(array(new Rdm_Util_DescriptorLoader_File(dirname(__FILE__).'/tmp'), 'load'));
 
 class User
 {
@@ -32,7 +34,7 @@ class User
 
 try
 {
-	Rdm_Config::getDescriptor('Foobar');
+	$c->getDescriptor('Foobar');
 }
 catch(Rdm_Exception $e)
 {
@@ -41,14 +43,14 @@ catch(Rdm_Exception $e)
 
 try
 {
-	Rdm_Config::getDescriptor('Baz');
+	$c->getDescriptor('Baz');
 }
 catch(Rdm_Exception $e)
 {
 	var_dump($e->getMessage());
 }
 
-$desc = Rdm_Config::getDescriptor('User');
+$desc = $c->getDescriptor('User');
 
 echo 'class: ';
 var_dump($desc->getClass());

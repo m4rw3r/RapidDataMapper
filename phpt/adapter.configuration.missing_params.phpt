@@ -5,8 +5,7 @@ Try to configure an adapter with missing required options
 
 include 'config/config.php';
 
-Rdm_Config::setAdapterConfiguration('default', array('class' => 'Rdm_Adapter_MySQL'));
+$db = new Rdm_Adapter_MySQL(array());
 
-var_dump(Rdm_Adapter::getInstance()->query('SELECT name FROM tbl_artists WHERE id = 1')->val());
 --EXPECTREGEX--
-Fatal error: Uncaught exception 'Rdm_Adapter_ConfigurationException' with message 'The configuration "default" is missing required keys: "hostname", "username", "password", "database"'.*
+Fatal error: Uncaught exception 'Rdm_Adapter_ConfigurationException' with message 'The supplied adapter configuration is missing required keys: "hostname", "username", "password", "database"'.*

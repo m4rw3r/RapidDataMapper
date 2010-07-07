@@ -7,7 +7,7 @@ include 'config/config.php';
 include 'entities/ArtistAlbumTrack.php';
 include 'fixtures/ArtistAlbumTrack.php';
 
-$a = Rdm_Adapter::getInstance();
+$a = Config::getAdapter();
 
 var_dump($a->select()->from('artists', 'name')->limit(1)->get()->val());
 --EXPECT--

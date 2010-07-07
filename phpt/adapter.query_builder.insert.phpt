@@ -7,7 +7,7 @@ include 'config/config.php';
 include 'entities/ArtistAlbumTrack.php';
 include 'fixtures/ArtistAlbumTrack.php';
 
-$a = Rdm_Adapter::getInstance();
+$a = Config::getAdapter();
 
 var_dump($a->insert('artists')->set('name', 'foobar')->execute());
 var_dump($a->query('SELECT name FROM tbl_artists WHERE id = 3')->val());

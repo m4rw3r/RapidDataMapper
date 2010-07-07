@@ -1,6 +1,6 @@
 <?php
 
-$db = Rdm_Adapter::getInstance();
+$db = Config::getAdapter();
 
 $queries = file_get_contents(__FILE__,null,null,__COMPILER_HALT_OFFSET__);
 
