@@ -5,6 +5,10 @@
  * All rights reserved.
  */
 
+namespace Foo;
+
+use \Rdm_Descriptor, \Rdm_Adapter, \Rdm_CollectionManager;
+
 // Make sure that the browser reads the response properly, we're using UTF-8 in the DB
 header('Content-type: text/html;Charset=UTF-8');
 
@@ -80,9 +84,9 @@ class Album
 $db = Rdm_Adapter::getInstance();
 var_dump($db->transactionStart());
 
-$a = new Artist;
-
 new ArtistCollection;
+
+$a = new Artist;
 
 ArtistTracksRelation::establish($a, $t = new Track);
 
@@ -101,16 +105,16 @@ foreach($artists as $a)
 	
 	foreach($a->albums as $al)
 	{
-		echo "	$al->name\n";
+		echo "  $al->name\n";
 		
 		foreach($al->tracks as $t)
 		{
-			echo "		$t->name\n";
+			echo "    $t->name\n";
 		}
 	}
 }
 
-Rdm_Collection::pushChanges();
+Rdm_CollectionManager::pushChanges();
 
 $db->transactionRollback();
 
@@ -118,11 +122,16 @@ foreach(Rdm_Adapter::getAllInstances() as $i)
 {
 	echo "\n\nQueries from adapter with name {$i->getName()}:\n\n";
 	
-	foreach($i->queries as $time_id => $query)
+	foreach($i->queries as $q)
 	{
-		echo $i->query_times[$time_id]."\n".$query."\n\n";
+		echo $q['time']."\n".$q['sql']."\n\n";
 	}
 }
+
+echo count(get_included_files());
+
+print_r(get_included_files());
+
 
 /*
 foreach(TrackCollection::create()

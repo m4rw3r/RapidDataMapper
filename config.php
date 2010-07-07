@@ -26,7 +26,7 @@ Rdm_Util_Autoloader::init();
 
 
 // Initialize <Class>Collection autoloaders
-Rdm_Collection::init();
+Rdm_CollectionManager::init();
 
 
 // Register the example loader which loads files using a normal autoloader
