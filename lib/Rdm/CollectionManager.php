@@ -7,6 +7,16 @@
 
 /**
  * Class which manages the Rdm_Collection classes and their code.
+ * 
+ * Example:
+ * <code>
+ * $config = new Rdm_Config();
+ * // Configure...
+ * 
+ * // Map all classes in the Foo namespace using $manager:
+ * $manager = new Rdm_Collection($config, 'Foo\\');
+ * $manager->registerCollectionAutoloader();
+ * </code>
  */
 class Rdm_CollectionManager
 {
@@ -32,17 +42,30 @@ class Rdm_CollectionManager
 	 */
 	protected $commit_order_calculator = null;
 	
+	/**
+	 * The prefix of the classes to be mapped by this CollectionManager.
+	 * 
+	 * @var false|string
+	 */
+	protected $class_prefix = false;
+	
 	// ------------------------------------------------------------------------
 
 	/**
 	 * Creates a new CollectionManager instance.
 	 * 
 	 * @param  Rdm_Config
+	 * @param  string      A prefix of the classes which are to use this
+	 *                     CollectionManager to map to the database,
+	 *                     to map a namespace, just pass the name of the
+	 *                     namespace minus preceding backslash, but with
+	 *                     succeeding backslash (Foo\)
 	 * @return Rdm_CollectionManager
 	 */
-	public function __construct(Rdm_Config $config)
+	public function __construct(Rdm_Config $config, $class_prefix = false)
 	{
 		$this->config = $config;
+		$this->class_prefix = $class_prefix;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -86,6 +109,12 @@ class Rdm_CollectionManager
 	public function createCollectionClass($class)
 	{
 		if(substr($class, -10) !== 'Collection' && substr($class, -14) !== 'CollectionBase')
+		{
+			return false;
+		}
+		
+		// Check for the prefix, so we don't try to map classes in the wrong namespace
+		if( ! empty($this->class_prefix) && strstr($class, $this->class_prefix) === false)
 		{
 			return false;
 		}
