@@ -12,7 +12,6 @@ class Rdm_Builder_Collection_PushChanges extends Rdm_Util_Code_MethodBuilder
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		// TODO: This should not be static, or moved to another name
 		$this->setMethodName('pushChanges');
 		$this->setStatic(true);
 		$this->setParamList('$private_push = false');
@@ -23,7 +22,7 @@ class Rdm_Builder_Collection_PushChanges extends Rdm_Util_Code_MethodBuilder
 		
 		$this->addPart('if( ! $private_push)
 {
-	return '.($desc->isNamespaced() ? '\\' : '').'Rdm_CollectionManager::pushChanges();
+	return self::$manager->pushChanges();
 }
 else
 {

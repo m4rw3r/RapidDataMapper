@@ -20,7 +20,7 @@ class Rdm_Builder_Collection_SetCollectionManager extends Rdm_Util_Code_MethodBu
 @param  Rdm_CollectionManager
 @return void');
 		
-		$this->addPart('self::$config = $manager->getConfig();
+		$this->addPart('self::$manager = $manager;
 self::$db = $manager->getConfig()->getAdapter();');
 		
 		$dependencies = array();

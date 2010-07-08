@@ -35,9 +35,10 @@ class Rdm_CollectionManager
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Creates a new CollectionManager instance.
 	 * 
-	 * 
-	 * @return 
+	 * @param  Rdm_Config
+	 * @return Rdm_CollectionManager
 	 */
 	public function __construct(Rdm_Config $config)
 	{

@@ -182,6 +182,19 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Pushes all changes to entities to the database.
+	 * 
+	 * @param  boolean  If to only push changes for this collection class's entities
+	 * @return void
+	 */
+	public static function pushChanges($private_push = false)
+	{
+		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
+	}
+	
+	// ------------------------------------------------------------------------
 	// --  FETCH RELATED METHODS                                             --
 	// ------------------------------------------------------------------------
 	
@@ -649,10 +662,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * @param  Object
 	 * @return self
 	 */
-	public function add($object)
-	{
-		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
-	}
+	abstract public function add($object);
 	
 	// ------------------------------------------------------------------------
 

@@ -22,7 +22,12 @@ class Rdm_Builder_CollectionBase extends Rdm_Util_Code_ClassBuilder
 		
 		$this->addPart('protected static $refresh = false;');
 		
-		$this->addPart('protected static $config;');
+		$this->addPart('/**
+ * Internal: The object which manages this collection class.
+ * 
+ * @var Rdm_CollectionManager
+ */
+public static $manager;');
 		
 		$this->addPart('/**
  * Internal: The database connection.
