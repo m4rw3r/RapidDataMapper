@@ -15,7 +15,6 @@ class Rdm_Builder_UnitOfWork extends Rdm_Util_Code_ClassBuilder
 		$this->setClassName($desc->getUnitOfWorkClassName());
 		$this->setExtends(($desc->isNamespaced() ? '\\' : '').'Rdm_UnitOfWork');
 		
-		$this->addPart(new Rdm_Builder_UnitOfWork_Constructor($desc));
 		$this->addPart(new Rdm_Builder_UnitOfWork_ProcessSingleInsertions($desc));
 		$this->addPart(new Rdm_Builder_UnitOfWork_ProcessSingleChanges($desc));
 		$this->addPart(new Rdm_Builder_UnitOfWork_ProcessSingleDeletions($desc));

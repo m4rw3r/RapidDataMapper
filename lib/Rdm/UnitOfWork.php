@@ -62,6 +62,20 @@ abstract class Rdm_UnitOfWork
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Sets the database adapter which this UnitOfWork will use for database
+	 * interactions.
+	 * 
+	 * @param  Rdm_Adapter
+	 * @return void
+	 */
+	public function setAdapter(Rdm_Adapter $adapter)
+	{
+		$this->db = $adapter;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Adds an entity to this Unit of work, only used for objects which already
 	 * exist in the database.
 	 * 
