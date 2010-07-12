@@ -8,15 +8,23 @@
 /**
  * 
  */
-class Rdm_Builder_Collection_Create extends Rdm_Util_Code_MethodBuilder
+class Rdm_Builder_Collection_Create extends Rdm_Util_Code_Container
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->setMethodName('create');
-		$this->setStatic(true);
-		$this->setPhpDoc('@return '.$desc->getCollectionClassName());
+		$this->addPart(new Rdm_Builder_Collection_Create_Plain($desc));
 		
-		$this->addPart('return new '.$desc->getCollectionClassName().';');
+		foreach($desc->getRelations() as $rel)
+		{
+			$this->addPart(new Rdm_Builder_Collection_Create_FromRelatedEntity($rel, $desc));
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function getName()
+	{
+		return 'create';
 	}
 }
 

@@ -17,7 +17,7 @@ class Rdm_Builder_CollectionFilter_FilterRelatedObjectMethod extends Rdm_Util_Co
 		$this->setMethodName('related'.ucfirst($rel->getName()));
 		$this->setParamList($rel->getRelatedDescriptor()->getClass(true, true).' $object');
 		
-		$this->addPart('$this->modifiers[] = $o = new '.$rel->getRelationFilterClassName().'($object, $this->table_alias);
+		$this->addPart('$this->modifiers[] = $o = new '.$rel->getRelationFilterClassName().'('.$desc->getCollectionClassName().'::$db, $object, $this->table_alias);
 $this->filters[] = $o;');
 		
 		$this->addPart('return $this;');

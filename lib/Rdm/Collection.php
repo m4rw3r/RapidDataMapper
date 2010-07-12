@@ -599,6 +599,10 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		// Flip so that the columns becomes the keys, faster column index lookup
 		$map = array_flip($map);
 		
+		// Empty the contents, to prevent newly added objects from appearing first
+		// no matter how it was sorted
+		$this->contents = array();
+		
 		$result = $this->getAdapter()->query($sql);
 		
 		while($row = $result->nextArray())

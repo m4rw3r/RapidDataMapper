@@ -35,21 +35,6 @@ public function setAliases($alias, $parent_alias)
 public function canModifyToMatch()
 {
 	return ! empty($this->parent_object);
-}
-
-/**
- * Establishes a relation between object '.$rel->getParentDescriptor()->getClass(true, true).' object
- * and a '.$rel->getRelatedDescriptor()->getClass(true, true).' object.
- * 
- * @param  '.$rel->getParentDescriptor()->getClass(true, true).'
- * @param  '.$rel->getRelatedDescriptor()->getClass(true, true).'
- * @return void
- */
-public static function establish('.$rel->getParentDescriptor()->getClass().' $parent, '.$rel->getRelatedDescriptor()->getClass(true, true).' $child)
-{
-	$c = new '.$rel->getRelationFilterClassName().';
-	$c->parent_object = $parent;
-	$c->modifyToMatch($child);
 }');
 	}
 	
