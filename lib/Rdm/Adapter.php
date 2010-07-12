@@ -162,6 +162,20 @@ abstract class Rdm_Adapter
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Sets the adapter which should be used to redirect all the write queries to,
+	 * works like the option redirect_write.
+	 * 
+	 * @param  Rdm_Adapter|null  Null to remove the write redirection
+	 * @return void
+	 */
+	public function setWriteAdapter(Rdm_Adapter $adapter = null)
+	{
+		$this->redirect_write = $adapter;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Initializes the database handle.
 	 * 
 	 * @throws Rdm_Adapter_ConnectionException
