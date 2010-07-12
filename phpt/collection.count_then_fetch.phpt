@@ -9,6 +9,7 @@ include 'fixtures/ArtistAlbumTrack.php';
 
 $tracks = TrackCollection::create();
 
+echo 'count: ';
 var_dump(count($tracks));
 
 foreach($tracks as $t)
@@ -16,7 +17,7 @@ foreach($tracks as $t)
 	echo "$t->id  $t->name\n";
 }
 --EXPECT--
-int(27)
+count: int(27)
 1  Seasons Apart
 2  When I Wake
 3  Earthbound

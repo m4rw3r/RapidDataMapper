@@ -9,6 +9,7 @@ include 'fixtures/ArtistAlbumTrack.php';
 
 $tracks = TrackCollection::create();
 
+echo 'count: ';
 var_dump(count($tracks));
 --EXPECT--
-int(27)
+count: int(27)

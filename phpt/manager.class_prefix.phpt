@@ -25,9 +25,11 @@ include 'entities/NamespacedArtistAlbumTrack.php';
 include 'entities/ArtistAlbumTrack.php';
 
 // Try to create the classes, the non-namespaced variant should fail
+echo 'No-namespace: ';
 var_dump(class_exists('ArtistCollection'));
+echo 'Namespace: ';
 var_dump(class_exists('Model\\ArtistCollection'));
 
 --EXPECT--
-bool(false)
-bool(true)
+No-namespace: bool(false)
+Namespace: bool(true)

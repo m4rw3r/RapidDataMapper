@@ -11,6 +11,7 @@ $a = ArtistCollection::fetchByPrimaryKey(1);
 
 $tracks = TrackCollection::createFromArtist($a);
 
+echo 'count: ';
 var_dump(count($tracks));
 --EXPECT--
-int(17)
+count: int(17)

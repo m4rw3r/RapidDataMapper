@@ -9,11 +9,13 @@ include 'fixtures/ArtistAlbumTrack.php';
 
 $tracks = TrackCollection::create()->limit(10);
 
+echo 'before: ';
 var_dump(count($tracks));
 
 $tracks->offset(20);
 
+echo 'with offset: ';
 var_dump(count($tracks));
 --EXPECT--
-int(10)
-int(7)
+before: int(10)
+with offset: int(7)

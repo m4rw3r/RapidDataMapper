@@ -17,16 +17,33 @@ $artist = $artists[1];
 $album = new Album();
 $album->name = 'Arcane Rain Fell';
 
+echo 'album->id: ';
+var_dump($album->id);
+echo 'album->artist_id: ';
+var_dump($album->artist_id);
+echo 'array search: ';
+var_dump(array_search($album, $artist->albums->contents, true));
+
 $artist->albums->add($album);
 
 Config::getManager()->pushChanges();
 
+echo "===\n";
+
+echo 'artist->id: ';
 var_dump($artist->id);
+echo 'album->id: ';
 var_dump($album->id);
+echo 'album->artist_id: ';
 var_dump($album->artist_id);
+echo 'array search: ';
 var_dump(array_search($album, $artist->albums->contents, true));
 --EXPECT--
-int(1)
-int(4)
-int(1)
-int(3)
+album->id: NULL
+album->artist_id: NULL
+array search: bool(false)
+===
+artist->id: int(1)
+album->id: int(4)
+album->artist_id: int(1)
+array search: int(3)

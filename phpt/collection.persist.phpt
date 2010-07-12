@@ -10,14 +10,30 @@ include 'fixtures/ArtistAlbumTrack.php';
 $a = new Artist();
 $a->name = 'foobar';
 
+echo 'a->id: ';
+var_dump($a->id);
+echo 'a->name: ';
+var_dump($a->name);
+echo 'db check: ';
+var_dump(Config::getAdapter()->query('SELECT id FROM tbl_artists WHERE id = 3')->val());
+
 ArtistCollection::persist($a);
 
 Config::getManager()->pushChanges();
 
+echo "===\n";
+
+echo 'a->id: ';
 var_dump($a->id);
+echo 'a->name: ';
 var_dump($a->name);
+echo 'db check: ';
 var_dump(Config::getAdapter()->query('SELECT id FROM tbl_artists WHERE id = 3')->val());
 --EXPECT--
-int(3)
-string(6) "foobar"
-string(1) "3"
+a->id: NULL
+a->name: string(6) "foobar"
+db check: bool(false)
+===
+a->id: int(3)
+a->name: string(6) "foobar"
+db check: string(1) "3"

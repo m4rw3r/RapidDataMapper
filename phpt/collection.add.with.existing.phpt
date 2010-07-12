@@ -16,17 +16,32 @@ $artist = $artists[1];
 
 $album = AlbumCollection::fetchByPrimaryKey(2);
 
+echo 'album->id: ';
+var_dump($album->id);
+echo 'album->artist_id: ';
+var_dump($album->artist_id);
+echo 'array search: ';
 var_dump(array_search($album, $artist->albums->contents, true));
 
 $artist->albums->add($album);
 
+echo "===\n";
+
+echo 'artist->id: ';
 var_dump($artist->id);
+echo 'album->id: ';
 var_dump($album->id);
+echo 'album->artist_id: ';
 var_dump($album->artist_id);
+echo 'array search: ';
 var_dump(array_search($album, $artist->albums->contents, true));
+// Should not be changed at all, as it is only assigned from its own collection
 --EXPECT--
-int(2)
-int(1)
-int(2)
-int(1)
-int(2)
+album->id: int(2)
+album->artist_id: int(1)
+array search: int(2)
+===
+artist->id: int(1)
+album->id: int(2)
+album->artist_id: int(1)
+array search: int(2)

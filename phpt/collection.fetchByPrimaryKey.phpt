@@ -9,12 +9,15 @@ include 'fixtures/ArtistAlbumTrack.php';
 
 $a = ArtistCollection::fetchByPrimaryKey(1);
 
-echo "$a->id\n";
-echo "$a->name\n";
+echo 'a->id: ';
+var_dump($a->id);
+echo 'a->name: ';
+var_dump($a->name);
 
 $a = ArtistCollection::fetchByPrimaryKey(12345);
+echo 'non_existing: ';
 var_dump($a);
 --EXPECT--
-1
-Draconian
-bool(false)
+a->id: int(1)
+a->name: string(9) "Draconian"
+non_existing: bool(false)
