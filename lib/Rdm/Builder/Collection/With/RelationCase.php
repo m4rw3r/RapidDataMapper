@@ -28,7 +28,7 @@ class Rdm_Builder_Collection_With_RelationCase extends Rdm_Util_Code_Container
 }');
 		
 		$this->addPart('// Create the nested collection, and nested alias is the relation name if it isn\'t a nested join
-$c = new '.$rel->getRelatedDescriptor()->getCollectionClassName(true, true).'($this, new '.$rel->getRelationFilterClassName().'(self::$db), empty($this->parent) ? \''.$rel->getName().'\' : $this->table_alias.\'_'.$rel->getName().'\');');
+$c = new '.$rel->getRelatedDescriptor()->getCollectionClassName(true, true).'($this, new '.$rel->getRelationFilterClassName().'(), empty($this->parent) ? \''.$rel->getName().'\' : $this->table_alias.\'_'.$rel->getName().'\');');
 		
 		$this->addPart('$this->with[\''.$rel->getName().'\'] = $c;');
 		

@@ -28,7 +28,7 @@ no $parent_object is present, otherwise it filters '.$desc->getClass().' by '.$r
 			list($local, $foreign) = array(array_shift($local_keys), array_shift($foreign_keys));
 			
 			$columns[] = '$this->parent_alias.\'.'.addcslashes($db->protectIdentifiers($local->getColumn()), "'").' = \'.$this->alias.\'.'.addcslashes($db->protectIdentifiers($foreign->getColumn()), "'").'\'';
-			$object_filter[] = '$this->alias.\'.'.addcslashes($db->protectIdentifiers($local->getColumn()), "'").' = \'.$this->db->escape('.$foreign->getFetchFromObjectCode('$this->parent_object').')';
+			$object_filter[] = '$this->alias.\'.'.addcslashes($db->protectIdentifiers($local->getColumn()), "'").' = \'.'.$desc->getCollectionClassName().'::$db->escape('.$foreign->getFetchFromObjectCode('$this->parent_object').')';
 		}
 		
 		$this->addPart('if($this->parent_object)
