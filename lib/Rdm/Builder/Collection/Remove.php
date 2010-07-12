@@ -26,11 +26,7 @@ the entity will TODO
 }');
 		
 		$this->addPart('// Modify the object
-if($this->_remove($object))
-{
-	// Already in this collection
-	return $this;
-}');
+$this->_remove($object);');
 		
 		$this->addPart('return $this;');
 	}
