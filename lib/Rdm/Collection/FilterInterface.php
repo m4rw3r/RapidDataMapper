@@ -24,9 +24,19 @@ interface Rdm_Collection_FilterInterface
 	 * Modifies the supplied object so that it matches the filter values in this
 	 * filter.
 	 * 
-	 * @return 
+	 * @return void
 	 */
 	public function modifyToMatch($object);
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Modifies the supplied object so that it contains null, not all filters
+	 * should implement logic in this, mainly only relation handling filters.
+	 * 
+	 * @return void
+	 */
+	public function modifyToNotMatch($object);
 	
 	// ------------------------------------------------------------------------
 

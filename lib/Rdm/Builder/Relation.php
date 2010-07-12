@@ -24,6 +24,7 @@ for '.$desc->getClass().' to '.$rel->getName().', filter '.$desc->getClass().' b
 		$this->addPart(new Rdm_Builder_Relation_Methods($rel, $desc));
 		
 		$this->addPart(new Rdm_Builder_Relation_ModifyToMatch($rel, $desc));
+		$this->addPart(new Rdm_Builder_Relation_ModifyToNotMatch($rel, $desc));
 		
 		$this->addPart(new Rdm_Builder_Relation_ToString($rel, $desc));
 	}

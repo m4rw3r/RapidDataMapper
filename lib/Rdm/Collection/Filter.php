@@ -193,6 +193,16 @@ class Rdm_Collection_Filter implements Rdm_Collection_FilterInterface
 	}
 	
 	// ------------------------------------------------------------------------
+	
+	public function modifyToNotMatch($object)
+	{
+		foreach($this->modifiers as $mod)
+		{
+			$mod->modifyToNotMatch($object);
+		}
+	}
+	
+	// ------------------------------------------------------------------------
 
 	/**
 	 * 

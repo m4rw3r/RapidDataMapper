@@ -719,10 +719,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * @param  Object
 	 * @return self
 	 */
-	public function remove($object)
-	{
-		throw Rdm_Collection_Exception::missingMethod(__METHOD__);
-	}
+	abstract public function remove($object);
 	
 	// ------------------------------------------------------------------------
 
@@ -735,9 +732,32 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	protected function _remove($object)
 	{
-		$this->is_locked = true;
+		$this->is_populated OR $this->populate();
 		
-		// TODO: Code
+		if( ! in_array($object, $this->contents, true))
+		{
+			// Yes, we're done
+			return true;
+		}
+		
+		// Check that the subfilters doesn't contain anything simila
+		foreach($this->modifiers as $mod)
+		{
+			if( ! $mod->canModifyToMatch())
+			{
+				throw Rdm_Collection_Exception::filterCannotModify();
+			}
+		}
+		
+		// Modify the object
+		foreach($this->modifiers as $mod)
+		{
+			$mod->modifyToNotMatch($object);
+		}
+		
+		unset($this->contents[array_search($object, $this->contents, true)]);
+		
+		return true;
 	}
 	
 	// ------------------------------------------------------------------------

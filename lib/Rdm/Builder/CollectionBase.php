@@ -60,6 +60,7 @@ public static $db;');
 		$this->addPart(new Rdm_Builder_Collection_EntityToXML($desc));
 		
 		$this->addPart(new Rdm_Builder_Collection_Add($desc));
+		$this->addPart(new Rdm_Builder_Collection_Remove($desc));
 	}
 }
 
