@@ -11,11 +11,39 @@
 abstract class Rdm_UnitOfWork
 {
 	/**
-	 * Registered entities which have been fetched from the database.
+	 * Default value for the entity change policy; means that all entities
+	 * will be searched for changes.
+	 */
+	const IMPLICIT = 1;
+	
+	/**
+	 * Value telling us that objects has to be explicitly marked as changed
+	 * to make the UnitOfWork search them for changes.
+	 */
+	const EXPLICIT = 2;
+	
+	/**
+	 * Registered entities which have been fetched from the database,
+	 * works as an Identity Map.
 	 * 
 	 * @var array(string => Object)
 	 */
 	public $entities = array();
+	
+	/**
+	 * Modified entities, if objects has to be flagged as changed, this
+	 * array will be filled with them using the method markChanged().
+	 * 
+	 * @var array(Object)
+	 */
+	public $modified = array();
+	
+	/**
+	 * The value of the change policy.
+	 * 
+	 * @var int
+	 */
+	protected $change_tracking_policy = self::IMPLICIT;
 	
 	/**
 	 * Entities which are to be inserted into the database.
@@ -52,13 +80,6 @@ abstract class Rdm_UnitOfWork
 	 */
 	protected $db;
 	
-	/**
-	 * The name of the database adapter to use.
-	 * 
-	 * @var string
-	 */
-	protected $adapter_name = false;
-	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -71,6 +92,20 @@ abstract class Rdm_UnitOfWork
 	public function setAdapter(Rdm_Adapter $adapter)
 	{
 		$this->db = $adapter;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets the change calculation policy of this unit of work.
+	 * 
+	 * @param  int  Constant from this class
+	 * @return void
+	 */
+	public function setChangeTrackingPolicy($value)
+	{
+		// TODO: Validate domain of passed $value
+		$this->change_tracking_policy = $value;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -123,6 +158,7 @@ abstract class Rdm_UnitOfWork
 		if(isset($this->entities[$key]))
 		{
 			unset($this->entities[$key]);
+			unset($this->modified[$key]);
 		}
 		
 		if(empty($object->__id))
@@ -162,6 +198,20 @@ abstract class Rdm_UnitOfWork
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Marks the supplied object as changed.
+	 * 
+	 * @param  Object
+	 * @param  string  The unique ID of the Object
+	 * @return void
+	 */
+	public function markEntityAsChanged($object, $key)
+	{
+		$this->modified[$key] = $object;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Commits the changes stored in this unit of work.
 	 * 
 	 * @return boolean
@@ -170,6 +220,8 @@ abstract class Rdm_UnitOfWork
 	{
 		try
 		{
+			$this->prepare();
+			
 			$this->doInserts();
 			$this->doUpdates();
 			$this->doDeletes();
@@ -182,6 +234,21 @@ abstract class Rdm_UnitOfWork
 			
 			// Rethrow
 			throw $e;
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Prepares the objects for commit.
+	 * 
+	 * @return void
+	 */
+	public function prepare()
+	{
+		if($this->change_tracking_policy === self::IMPLICIT)
+		{
+			$this->modified = $this->entities;
 		}
 	}
 	
@@ -251,7 +318,8 @@ abstract class Rdm_UnitOfWork
 		$this->new_entities =
 			$this->deleted_entities =
 			$this->multi_delete =
-			$this->multi_update = array();
+			$this->multi_update =
+			$this->modified = array();
 	}
 	
 	// ------------------------------------------------------------------------

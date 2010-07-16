@@ -64,6 +64,15 @@ class Rdm_Descriptor
 	 * after an insert and/or delete has been performed.
 	 */
 	const SPECIAL_COLUMN = 32;
+	/**
+	 * Constant telling Rdm_UnitOfWork to search all fetched objects for changes.
+	 */
+	const IMPLICIT = 33;
+	/**
+	 * Constant telling Rdm_UnitOfWork to only search a specific set of objects,
+	 * supplied by a user, for changes.
+	 */
+	const EXPLICIT = 34;
 	
 	/**
 	 * RDM type constant for Boolean data type.
@@ -169,6 +178,13 @@ class Rdm_Descriptor
 	 * @var string
 	 */
 	protected $factory;
+	
+	/**
+	 * The change-tracking policy, currently IMPLICIT (default) or EXPLICIT.
+	 * 
+	 * @var int
+	 */
+	protected $change_tracking_policy = self::IMPLICIT;
 	
 	/**
 	 * A list of the registered hooks.
@@ -441,6 +457,52 @@ class Rdm_Descriptor
 		$this->factory = $factory;
 		
 		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Sets the policy for detecting changed objects.
+	 * 
+	 * Options:
+	 *  * IMPLICIT: All fetched objects are automatically searched for changes
+	 *  * EXPLICIT: Only objects specified by user are searched for changes
+	 * 
+	 * @param  int  Constant from Rdm_Descriptor
+	 * @return self
+	 */
+	public function setChangeTrackingPolicy($value)
+	{
+		// TODO: Check the value of $value
+		$this->change_tracking_policy = $value;
+		
+		return $this;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the policy for detecting changed objects.
+	 * 
+	 * @param  bool  If to return it as the name of a Rdm_UnitOfWork constant
+	 * @return int|string
+	 */
+	public function getChangeTrackingPolicy($as_string = false)
+	{
+		if($as_string)
+		{
+			switch($this->change_tracking_policy)
+			{
+				case self::IMPLICIT:
+					return 'IMPLICIT';
+				case self::EXPLICIT:
+					return 'EXPLICIT';
+			}
+		}
+		else
+		{
+			return $this->change_tracking_policy;
+		}
 	}
 	
 	// ------------------------------------------------------------------------

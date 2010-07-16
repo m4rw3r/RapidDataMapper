@@ -35,7 +35,7 @@ class Rdm_Builder_UnitOfWork_ProcessSingleChanges extends Rdm_Util_Code_MethodBu
 			$pks[] = addcslashes($db->protectIdentifiers($k->getColumn()), "'").' = \'.$this->db->escape($e->__id[\''.$k->getColumn().'\'])';
 		}
 		
-		$this->addPart('foreach($this->entities as $e)
+		$this->addPart('foreach($this->modified as $e)
 {
 	$data = array();
 	

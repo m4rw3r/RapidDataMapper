@@ -35,7 +35,11 @@ self::$db = $manager->getConfig()->getAdapter();');
 		
 		$this->addPart('$manager->registerCollectionClassName(\''.$desc->getCollectionClassName(true).'\', array('.implode(', ', $dependencies).'));');
 		
-		$this->addPart($desc->getCollectionClassName().'::setUnitOfWork(new '.$desc->getUnitOfWorkClassName().');');
+		$this->addPart('$u = new '.$desc->getUnitOfWorkClassName().';
+$u->setAdapter(self::$db);
+$u->setChangeTrackingPolicy('.($desc->isNamespaced() ? '\\' : '').'Rdm_UnitOfWork::'.$desc->getChangeTrackingPolicy(true).');
+
+self::$unit_of_work = $u;');
 	}
 }
 

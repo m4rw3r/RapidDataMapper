@@ -344,6 +344,11 @@ Stack trace:
 	{
 		foreach($units as $u)
 		{
+			$u->prepare();
+		}
+		
+		foreach($units as $u)
+		{
 			$u->doInserts();
 		}
 		
