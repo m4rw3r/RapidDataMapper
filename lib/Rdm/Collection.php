@@ -517,14 +517,12 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			throw Rdm_Collection_Exception::objectAlreadyPopulated();
 		}
 		
-		// TODO: Check the datatype of the $num variable, to make sure that it is an int
-		
 		if($offset != false)
 		{
 			$this->offset($offset);
 		}
 		
-		$this->limit = $num;
+		$this->limit = (Int) $num;
 		
 		// Reset the count, we have to do a recount because we will probably get less rows now
 		$this->num_rows = null;
@@ -553,9 +551,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			throw Rdm_Collection_Exception::objectAlreadyPopulated();
 		}
 		
-		// TODO: Check the datatype of the $offset variable, to make sure that it is an int
-		
-		$this->offset = $num;
+		$this->offset = (Int) $num;
 		
 		// Reset the count, we have to do a recount because we will probably get less rows now
 		$this->num_rows = null;
