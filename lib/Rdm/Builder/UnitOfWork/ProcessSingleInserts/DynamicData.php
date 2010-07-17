@@ -9,7 +9,7 @@
  * Variant of the insertion code which performs one insert per new row and then
  * fetches database generated data to populate the objects.
  */
-class Rdm_Builder_UnitOfWork_ProcessSingleInsertions_DynamicData extends Rdm_Util_Code_Container
+class Rdm_Builder_UnitOfWork_ProcessSingleInserts_DynamicData extends Rdm_Util_Code_Container
 {
 	function __construct(Rdm_Descriptor $desc)
 	{
@@ -109,4 +109,4 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInsertions_DynamicData extends Rdm_Uti
 
 
 /* End of file DynamicData.php */
-/* Location: ./lib/Rdm/Builder/UnitOfWork/ProcessSingleInsertions */
+/* Location: ./lib/Rdm/Builder/UnitOfWork/ProcessSingleInserts */

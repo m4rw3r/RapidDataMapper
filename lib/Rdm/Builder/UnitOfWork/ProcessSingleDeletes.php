@@ -8,11 +8,11 @@
 /**
  * 
  */
-class Rdm_Builder_UnitOfWork_ProcessSingleDeletions extends Rdm_Util_Code_MethodBuilder
+class Rdm_Builder_UnitOfWork_ProcessSingleDeletes extends Rdm_Util_Code_MethodBuilder
 {
 	public function __construct(Rdm_Descriptor $desc)
 	{
-		$this->setMethodName('processSingleDeletions');
+		$this->setMethodName('processSingleDeletes');
 		$this->setPublic(false);
 		
 		// TODO: Implement support for ON DELETE
@@ -40,5 +40,5 @@ if( ! empty($ids))
 }
 
 
-/* End of file ProcessSingleDeletions.php */
+/* End of file ProcessSingleDeletes.php */
 /* Location: ./lib/Rdm/Builder/UnitOfWork */

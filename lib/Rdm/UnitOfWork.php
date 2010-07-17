@@ -226,7 +226,7 @@ abstract class Rdm_UnitOfWork
 			$this->doUpdates();
 			$this->doDeletes();
 			
-			$this->cleanup();
+			$this->cleanUp();
 		}
 		catch(Exception $e)
 		{
@@ -261,7 +261,7 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function doInserts()
 	{
-		$this->processSingleInsertions();
+		$this->processSingleInserts();
 	}
 	
 	// ------------------------------------------------------------------------
@@ -285,7 +285,7 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function doDeletes()
 	{
-		$this->processSingleDeletions();
+		$this->processSingleDeletes();
 	}
 	
 	// ------------------------------------------------------------------------
@@ -296,7 +296,7 @@ abstract class Rdm_UnitOfWork
 	 * 
 	 * @return void
 	 */
-	public function cleanup()
+	public function cleanUp()
 	{
 		$this->moveInserted();
 		$this->removeDeletedIds();
@@ -344,7 +344,7 @@ abstract class Rdm_UnitOfWork
 	 * 
 	 * @return void
 	 */
-	public function removeDeletedIds()
+	protected function removeDeletedIds()
 	{
 		foreach($this->deleted_entities as $entity)
 		{
@@ -360,7 +360,7 @@ abstract class Rdm_UnitOfWork
 	 * 
 	 * @return void
 	 */
-	abstract protected function processSingleInsertions();
+	abstract protected function processSingleInserts();
 	
 	// ------------------------------------------------------------------------
 
@@ -384,7 +384,7 @@ abstract class Rdm_UnitOfWork
 	 * 
 	 * @return void
 	 */
-	abstract protected function processSingleDeletions();
+	abstract protected function processSingleDeletes();
 	
 	// ------------------------------------------------------------------------
 

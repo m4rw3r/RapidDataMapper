@@ -367,7 +367,7 @@ Stack trace:
 		// All done, now we clean up
 		foreach($units as $u)
 		{
-			$u->cleanup();
+			$u->cleanUp();
 		}
 	}
 }
