@@ -786,15 +786,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 * 
 	 * @return int	Number of objects removed
 	 */
-	public function deleteAll()
-	{
-		$num = 0;
-		
-		// TODO: Code
-		
-		$this->is_locked = false;
-		return $num;
-	}
+	abstract public function deleteAll();
 	
 	// ------------------------------------------------------------------------
 

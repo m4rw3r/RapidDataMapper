@@ -60,18 +60,25 @@ abstract class Rdm_UnitOfWork
 	protected $deleted_entities = array();
 	
 	/**
-	 * A list of multi delete operations to be performed.
+	 * A list of custom insert operations to be performed.
 	 * 
-	 * @var array(Rdm_UnitOfWork_MultiDelete)
+	 * @var array(Rdm_UnitOfWork_CustomInsertInterface)
 	 */
-	protected $multi_delete = array();
+	protected $custom_insert = array();
 	
 	/**
-	 * A list of multi update operations to be performed.
+	 * A list of custom delete operations to be performed.
 	 * 
-	 * @var array(Rdm_UnitOfWork_MultiUpdate)
+	 * @var array(Rdm_UnitOfWork_CustomDeleteInterface)
 	 */
-	protected $multi_update = array();
+	protected $custom_delete = array();
+	
+	/**
+	 * A list of custom update operations to be performed.
+	 * 
+	 * @var array(Rdm_UnitOfWork_CustomUpdateInterface)
+	 */
+	protected $custom_update = array();
 	
 	/**
 	 * The database adapter to use when sending calls to the database.
@@ -212,6 +219,42 @@ abstract class Rdm_UnitOfWork
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Adds a custom insert operation to be performed by the UnitOfWork on commit().
+	 * 
+	 * @return void
+	 */
+	public function addCustomInsert(Rdm_UnitOfWork_CustomOperationInterface $op)
+	{
+		$this->custom_insert[] = $op;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Adds a custom delete operation to be performed by the UnitOfWork on commit().
+	 * 
+	 * @return void
+	 */
+	public function addCustomUpdate(Rdm_UnitOfWork_CustomOperationInterface $op)
+	{
+		$this->custom_update[] = $op;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Adds a custom delete operation to be performed by the UnitOfWork on commit().
+	 * 
+	 * @return void
+	 */
+	public function addCustomDelete(Rdm_UnitOfWork_CustomOperationInterface $op)
+	{
+		$this->custom_delete[] = $op;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Commits the changes stored in this unit of work.
 	 * 
 	 * @return boolean
@@ -261,6 +304,7 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function doInserts()
 	{
+		$this->processCustomInserts();
 		$this->processSingleInserts();
 	}
 	
@@ -273,6 +317,7 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function doUpdates()
 	{
+		$this->processCustomUpdates();
 		$this->processSingleChanges();
 	}
 	
@@ -285,6 +330,7 @@ abstract class Rdm_UnitOfWork
 	 */
 	public function doDeletes()
 	{
+		$this->processCustomDeletes();
 		$this->processSingleDeletes();
 	}
 	
@@ -317,8 +363,9 @@ abstract class Rdm_UnitOfWork
 		// Reset this Unit of Work
 		$this->new_entities =
 			$this->deleted_entities =
-			$this->multi_delete =
-			$this->multi_update =
+			$this->custom_delete =
+			$this->custom_update =
+			$this->custom_insert =
 			$this->modified = array();
 	}
 	
@@ -349,6 +396,60 @@ abstract class Rdm_UnitOfWork
 		foreach($this->deleted_entities as $entity)
 		{
 			$entity->__id = array();
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Processes the custom insert operations registered by addCustomInsert().
+	 * 
+	 * @return void
+	 */
+	protected function processCustomInserts()
+	{
+		foreach($this->custom_insert as $op)
+		{
+			if($op->isValid())
+			{
+				$op->performOperation($this->db);
+			}
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Processes the custom update operations registered by addCustomUpdate().
+	 * 
+	 * @return void
+	 */
+	protected function processCustomUpdates()
+	{
+		foreach($this->custom_update as $op)
+		{
+			if($op->isValid())
+			{
+				$op->performOperation($this->db);
+			}
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Processes the custom delete operations registered by addCustomDelete().
+	 * 
+	 * @return void
+	 */
+	protected function processCustomDeletes()
+	{
+		foreach($this->custom_delete as $op)
+		{
+			if($op->isValid())
+			{
+				$op->performOperation($this->db);
+			}
 		}
 	}
 	
