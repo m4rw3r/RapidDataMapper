@@ -42,6 +42,7 @@ public static $db;');
 		$this->addPart(new Rdm_Builder_Collection_SetCollectionManager($desc));
 		$this->addPart(new Rdm_Builder_Collection_PushChanges($desc));
 		$this->addPart(new Rdm_Builder_Collection_GetUnitOfWork($desc));
+		$this->addPart(new Rdm_Builder_Collection_GetUnitOfWorkInstance($desc));
 		$this->addPart(new Rdm_Builder_Collection_Create($desc));
 		$this->addPart(new Rdm_Builder_Collection_Persist($desc));
 		$this->addPart(new Rdm_Builder_Collection_Delete($desc));

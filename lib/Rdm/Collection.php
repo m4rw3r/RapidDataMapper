@@ -257,6 +257,25 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	}
 	
 	// ------------------------------------------------------------------------
+
+	/**
+	 * Internal: Returns the adapter instance for this Collection instance.
+	 * 
+	 * @return Rdm_Adapter
+	 */
+	public abstract function getAdapter();
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Internal: Returns the UnitOfWork instance for this Collection instance,
+	 * PHP 5.2 compatibility.
+	 * 
+	 * @return Rdm_UnitOfWork
+	 */
+	public abstract function getUnitOfWorkInstance();
+	
+	// ------------------------------------------------------------------------
 	// --  SELECT QUERY RELATED METHODS                                      --
 	// ------------------------------------------------------------------------
 
