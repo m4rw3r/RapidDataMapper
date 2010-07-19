@@ -11,14 +11,6 @@
 class Rdm_Config
 {
 	/**
-	 * Version of the RapidDataMapper library, in x.y.z(-dev|rc-#) format,
-	 * compatible with version_compare().
-	 * 
-	 * @var string
-	 */
-	const VERSION = '0.7.0-dev';
-	
-	/**
 	 * The database adapter to use for this configuration.
 	 * 
 	 * @var Rdm_Adapter
@@ -95,7 +87,7 @@ class Rdm_Config
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns the value determining if 
+	 * Returns the value determining if mappers should be cached or not.
 	 * 
 	 * @return boolean
 	 */
@@ -176,7 +168,7 @@ class Rdm_Config
 	{
 		if( ! is_callable($callback, true))
 		{
-			throw new InvalidArgumentException('Faulty syntax in supplied callable.');
+			throw new InvalidArgumentException('Faulty syntax in supplied callback.');
 		}
 		
 		$this->descriptor_loaders[] = $callback;
