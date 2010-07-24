@@ -205,6 +205,20 @@ abstract class Rdm_UnitOfWork
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns true if the supplied object is tracked by the unit of work or if
+	 * it will be inserted at the next commit.
+	 * 
+	 * @param  Object
+	 * @return boolean
+	 */
+	public function containsObject($entity)
+	{
+		return in_array($entity, $this->entities, true) OR in_array($entity, $this->new_entities, true);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Marks the supplied object as changed.
 	 * 
 	 * @param  Object
