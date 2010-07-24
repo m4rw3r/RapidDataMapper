@@ -8,7 +8,7 @@
 /**
  * 
  */
-abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggregate
+abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggregate, Serializable
 {
 	/**
 	 * Internal: If this flag is true, this object has already been used with entity objects,
@@ -230,6 +230,37 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			$this->filters[-1] = $this->relation;
 			$this->modifiers[-1] = $this->relation;
 		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Serializes this collection, populates it before serializing, useful for caching.
+	 * 
+	 * @return string
+	 */
+	public function serialize()
+	{
+		$this->is_populated OR $this->populate();
+		
+		return serialize($this->contents);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Unserializes this collection, but does NOT establish links to the database
+	 * from the objects in this collection.
+	 * 
+	 * @param  string
+	 * @return void
+	 */
+	public function unserialize($string)
+	{
+		$this->is_locked =
+			$this->is_populated = true;
+		
+		$this->contents = unserialize($string);
 	}
 	
 	// ------------------------------------------------------------------------
