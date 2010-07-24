@@ -248,19 +248,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Internal: Returns the relationship type which this collection has been joined with.
-	 * 
-	 * @internal
-	 * @return int
-	 */
-	public function getJoinType()
-	{
-		return $this->join_type;
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Internal: Returns the adapter instance for this Collection instance.
 	 * 
 	 * @return Rdm_Adapter
@@ -565,19 +552,6 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 		$this->num_rows = null;
 		
 		return $this;
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * 
-	 * 
-	 * @return 
-	 */
-	public function __toString()
-	{
-		// TODO: Replace or remove, this is currently for debug
-		return $this->createSelectQuery();
 	}
 	
 	// ------------------------------------------------------------------------
