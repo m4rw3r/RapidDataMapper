@@ -822,9 +822,10 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns true if an entity with the id $offset exists.
 	 * 
-	 * 
-	 * @return 
+	 * @param  mixed
+	 * @return boolean
 	 */
 	public function offsetExists($offset)
 	{
@@ -836,9 +837,10 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Returns the entity located at the supplied offset.
 	 * 
-	 * 
-	 * @return 
+	 * @param  mixed
+	 * @return Object|null
 	 */
 	public function offsetGet($offset)
 	{
@@ -850,9 +852,13 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
+	 * $c[] = $e; is an alias for $c->add($e);
 	 * 
+	 * TODO: Implement support for $c[something] = $e; ?
 	 * 
-	 * @return 
+	 * @param  null
+	 * @param  Object
+	 * @return void
 	 */
 	public function offsetSet($offset, $value)
 	{
@@ -871,14 +877,21 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Shortcut for $c->remove($c[$offset]).
 	 * 
-	 * 
-	 * @return 
+	 * @param  mixed
+	 * @return void
 	 */
 	public function offsetUnset($offset)
 	{
-		// TODO: Implement? Usable as a shortcut for remove()
-		throw new Exception('Not yet implemented');
+		$this->is_populated OR $this->populate();
+		
+		if(isset($this->contents[$offset]))
+		{
+			$this->remove($this->contents[$offset]);
+		}
+		
+		// unset() is quiet if the offset isn't set
 	}
 	
 	// ------------------------------------------------------------------------
