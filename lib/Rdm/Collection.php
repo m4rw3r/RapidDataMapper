@@ -11,7 +11,7 @@
 abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggregate
 {
 	/**
-	 * If this flag is true, this object has already been used with entity objects,
+	 * Internal: If this flag is true, this object has already been used with entity objects,
 	 * therefore it can no longer use filters.
 	 * 
 	 * Needs to be public because the filter objects needs to be able to create a reference
@@ -29,8 +29,9 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	protected $is_populated = false;
 	
 	/**
-	 * The alias of the current table.
+	 * Internal: The alias of the current table.
 	 * 
+	 * @internal
 	 * @var string
 	 */
 	public $table_alias = '';
@@ -38,6 +39,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	/**
 	 * Internal: A list of filter objects
 	 * 
+	 * @internal
 	 * @var array(Collection_Filter)
 	 */
 	public $filters = array();
@@ -72,7 +74,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	protected $offset = false;
 	
 	/**
-	 * The array of data objects.
+	 * Internal: The array of data objects.
 	 * 
 	 * @var array(Object)
 	 */
@@ -337,7 +339,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 	
 	/**
-	 * Creates a select query for this Collection object.
+	 * Internal: Creates a select query for this Collection object.
 	 * 
 	 * Can be used for debugging or dumping the SQL to see if the collection
 	 * will generate the desired SQL.
@@ -373,7 +375,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Creates a count query which counts the data matching the filters of this
+	 * Internal: Creates a count query which counts the data matching the filters of this
 	 * object.
 	 * 
 	 * @return string
@@ -401,7 +403,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Creates a query which returns a list of all the specified columns of this collection.
+	 * Internal: Creates a query which returns a list of all the specified columns of this collection.
 	 * 
 	 * @param  string   The select part of the query, no escaping will take place!
 	 * @return string
@@ -673,7 +675,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Contains the common instructions for add(), will perform the calls to
+	 * Internal: Contains the common instructions for add(), will perform the calls to
 	 * filters and check the contents of the internal array.
 	 * 
 	 * @param  Object
@@ -726,7 +728,7 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Contains the common instructions for remove(), will perform the calls to
+	 * Internal: Contains the common instructions for remove(), will perform the calls to
 	 * filters and check the contents of the internal array.
 	 * 
 	 * @param  Object
