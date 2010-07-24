@@ -888,11 +888,11 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 			if(is_null($this->num_rows))
 			{
 				// Nope
-				$c = $this->getAdapter()->query($this->createSelectCountQuery())->val();
+				$c = (Int) $this->getAdapter()->query($this->createSelectCountQuery())->val();
 				
 				if($this->limit !== false)
 				{
-					// We have a limit, get the total count, then return the limit if the count is greater
+					// We have a limit, get the total count, then return the limit if the count is greater,
 					// also compensate for the offset
 					$this->num_rows = ($c - $this->offset) > $this->limit ? $this->limit : $c - $this->offset;
 					$this->num_rows < 0 && $this->num_rows = 0;
