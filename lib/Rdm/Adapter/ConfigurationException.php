@@ -29,11 +29,12 @@ class Rdm_Adapter_ConfigurationException extends DomainException implements Rdm_
 	 * an Rdm_Adapter instance as parameter.
 	 * 
 	 * @param  mixed
+	 * @param  string
 	 * @return Rdm_Adapter_ConfigurationException
 	 */
-	public static function redirectWriteFaultyParameter($faulty_data)
+	public static function redirectWriteFaultyParameter($faulty_data, $expected_class)
 	{
-		return new Rdm_Adapter_ConfigurationException(sprintf('The redirect_write key of the configuration is of the wrong type (%s) instead of an Rdm_Adapter instance.', is_object($faulty_data) ? get_class($faulty_data) : gettype($faulty_data)));
+		return new Rdm_Adapter_ConfigurationException(sprintf('The redirect_write key of the configuration is of the wrong type (%s) instead of an %s instance.', is_object($faulty_data) ? get_class($faulty_data) : gettype($faulty_data), $expected_class));
 	}
 }
 

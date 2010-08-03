@@ -51,7 +51,7 @@ abstract class Rdm_Adapter_Result implements IteratorAggregate, Countable
 	 */
 	public final function __clone()
 	{
-		throw new Exception('Cloning of Rdm_Adapter_Result instances are not allowed.');
+		throw Rdm_Adapter_Exception::cloneNotAllowed(__CLASS__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -63,7 +63,7 @@ abstract class Rdm_Adapter_Result implements IteratorAggregate, Countable
 	 */
 	public final function __sleep()
 	{
-		throw new Exception('Serialization of Rdm_Adapter_Result objects are not allowed.');
+		throw Rdm_Adapter_Exception::serializeNotAllowed(__CLASS__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -75,7 +75,7 @@ abstract class Rdm_Adapter_Result implements IteratorAggregate, Countable
 	 */
 	public final function __wakeup()
 	{
-		throw new Exception('Unserialization of Rdm_Adapter_Result objects are not allowed.');
+		throw Rdm_Adapter_Exception::unserializeNotAllowed(__CLASS__);
 	}
 	
 	// --------------------------------------------------------------------

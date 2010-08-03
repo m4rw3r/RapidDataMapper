@@ -113,9 +113,11 @@ abstract class Rdm_Adapter
 		$this->dbprefix       = $this->options['dbprefix'];
 		$this->cache_on       = $this->options['cache_on'];
 		
-		if(is_string($this->redirect_write) OR is_object($this->redirect_write) && ! $this->redirect_write instanceof self)
+		$class = get_class($this);
+		
+		if($this->redirect_write && ! (is_object($this->redirect_write) && $this->redirect_write instanceof $class))
 		{
-			throw Rdm_Adapter_ConfigurationException::redirectWriteFaultyParameter($this->redirect_write);
+			throw Rdm_Adapter_ConfigurationException::redirectWriteFaultyParameter($this->redirect_write, $class);
 		}
 		
 		$this->result_object_class = get_class($this).'_Result';
@@ -132,7 +134,7 @@ abstract class Rdm_Adapter
 	 */
 	public final function __clone()
 	{
-		throw new Exception('Cloning of Rdm_Adapter instances are not allowed.');
+		throw Rdm_Adapter_Exception::cloneNotAllowed(__CLASS__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -144,7 +146,7 @@ abstract class Rdm_Adapter
 	 */
 	public final function __sleep()
 	{
-		throw new Exception('Serialization of Rdm_Adapter objects are not allowed.');
+		throw Rdm_Adapter_Exception::serializeNotAllowed(__CLASS__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -156,7 +158,7 @@ abstract class Rdm_Adapter
 	 */
 	public final function __wakeup()
 	{
-		throw new Exception('Unserialization of Rdm_Adapter objects are not allowed.');
+		throw Rdm_Adapter_Exception::unserializeNotAllowed(__CLASS__);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -170,6 +172,16 @@ abstract class Rdm_Adapter
 	 */
 	public function setWriteAdapter(Rdm_Adapter $adapter = null)
 	{
+		if(! is_null($adapter))
+		{
+			$class = get_class($this);
+			
+			if($adapter && ! (is_object($adapter) && $adapter instanceof $class))
+			{
+				throw Rdm_Adapter_ConfigurationException::redirectWriteFaultyParameter($adapter, $class);
+			}
+		}
+		
 		$this->redirect_write = $adapter;
 	}
 	

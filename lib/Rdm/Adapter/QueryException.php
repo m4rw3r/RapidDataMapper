@@ -8,7 +8,7 @@
 /**
  * Exception for the event that a database query error occurs.
  */
-class Rdm_Adapter_QueryException extends RuntimeException implements Rdm_Exception
+class Rdm_Adapter_QueryException extends Rdm_Adapter_Exception
 {
 	/**
 	 * The SQL which resulted in the error.
