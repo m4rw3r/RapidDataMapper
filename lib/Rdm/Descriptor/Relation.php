@@ -34,7 +34,7 @@ class Rdm_Descriptor_Relation
 	/**
 	 * The relationship type.
 	 * 
-	 * @var int
+	 * @var string  Rdm_Descriptor constant
 	 */
 	protected $type;
 	
@@ -48,9 +48,9 @@ class Rdm_Descriptor_Relation
 	/**
 	 * What to do ON DELETE.
 	 * 
-	 * @var int
+	 * @var string  Rdm_Descriptor constant
 	 */
-	protected $on_delete;
+	protected $on_delete = Rdm_Descriptor::NOTHING;
 	
 	/**
 	 * The parent descriptor.
@@ -143,7 +143,7 @@ class Rdm_Descriptor_Relation
 	/**
 	 * Returns the name of this relation.
 	 * 
-	 * @return strin
+	 * @return string
 	 */
 	public function getName()
 	{
@@ -301,7 +301,7 @@ class Rdm_Descriptor_Relation
 	/**
 	 * Returns the relationship type.
 	 * 
-	 * @return int
+	 * @return string  Value of Rdm_Descriptor constant
 	 */
 	public function getType()
 	{
@@ -315,7 +315,7 @@ class Rdm_Descriptor_Relation
 	 * 
 	 * This uses constants from the Rdm_Descriptor class.
 	 * 
-	 * @param  int
+	 * @param  string  Value of Rdm_Descriptor constant
 	 * @return self
 	 */
 	public function setType($type)
@@ -358,7 +358,7 @@ class Rdm_Descriptor_Relation
 	/**
 	 * Returns the action to perform ON DELETE.
 	 * 
-	 * @return int
+	 * @return string  Rdm_Descriptor constant
 	 */
 	public function getOnDeleteAction()
 	{
@@ -374,7 +374,7 @@ class Rdm_Descriptor_Relation
 	 *
 	 * Default: Rdm_Descriptor::SET_NULL
 	 * 
-	 * @param  int
+	 * @param  string  Rdm_Descriptor constant
 	 * @return self
 	 */
 	public function setOnDeleteAction($action)
@@ -550,7 +550,7 @@ class Rdm_Descriptor_Relation
 	/**
 	 * Guesses the relationship type based on the property name and if a foreign key exists in the local object.
 	 * 
-	 * @return int
+	 * @return string  Rdm_Descriptor constant
 	 */
 	protected function guessType()
 	{
