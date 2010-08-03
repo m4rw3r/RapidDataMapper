@@ -107,7 +107,7 @@ class Rdm_Adapter_SQLite extends Rdm_Adapter
 		else
 		{
 			$e = sqlite_last_error($this->dbh);
-			return sqlite_error_string($e).$this->last_query_error;
+			return sqlite_error_string($e).': '.$this->last_query_error;
 		}
 	}
 	
