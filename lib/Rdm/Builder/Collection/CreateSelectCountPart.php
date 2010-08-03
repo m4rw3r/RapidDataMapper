@@ -21,7 +21,7 @@ class Rdm_Builder_Collection_CreateSelectCountPart extends Rdm_Util_Code_MethodB
 		$columns = array();
 		foreach($desc->getPrimaryKeys() as $c)
 		{
-			$columns[] = '$this->table_alias.\'.'.addcslashes($db->protectIdentifiers($c->getColumn()), "'");
+			$columns[] = $c->getDataType()->getSelectCode('$this->table_alias', "'");
 		}
 		
 		// TODO: Come up with a generic workaround for SQLite and the like who do not support the COUNT DISTINCT combo

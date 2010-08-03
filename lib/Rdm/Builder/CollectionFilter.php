@@ -17,7 +17,7 @@ class Rdm_Builder_CollectionFilter extends Rdm_Util_Code_ClassBuilder
 		
 		foreach(array_merge($desc->getPrimaryKeys(), $desc->getColumns()) as $col)
 		{
-			foreach($col->getDataTypeObject()->getCollectionFilterClasses() as $class)
+			foreach($col->getDataType()->getCollectionFilterClasses() as $class)
 			{
 				$this->addPart(new $class($col, $desc));
 			}

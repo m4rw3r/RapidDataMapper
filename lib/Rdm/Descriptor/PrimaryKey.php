@@ -13,9 +13,6 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	// Do not allow the primary key(s) to be updatable by default
 	protected $updatable = false;
 	
-	// let the default type be unsigned int
-	protected $data_type_default = Rdm_Descriptor::INT;
-	
 	/**
 	 * Holds the type of Primary Key this is.
 	 * 
@@ -66,14 +63,12 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	
 	public function getDataType()
 	{
-		if($this->getPkType() == Rdm_Descriptor::AUTO_INCREMENT && stripos(strtolower($this->data_type), 'int') === false)
+		if($this->getPkType() == Rdm_Descriptor::AUTO_INCREMENT && stripos(strtolower(is_object($this->data_type) ? $this->data_type->getSchemaDeclaration() : $this->data_type), 'int') === false)
 		{
-			return Rdm_Descriptor::INT;
+			$this->data_type = Rdm_Descriptor::INT;
 		}
-		else
-		{
-			return parent::getDataType();
-		}
+		
+		return parent::getDataType();
 	}
 	
 	// ------------------------------------------------------------------------

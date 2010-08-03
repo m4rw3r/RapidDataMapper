@@ -785,26 +785,25 @@ class Rdm_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns a data type object which will help the supplied column descriptor
-	 * generate code specific for the data type.
+	 * Creates a data type object which will generate the correct code for
+	 * SQL queries and PHP.
 	 * 
-	 * @return Rdm_Descriptor_Type_Generic
+	 * @return string  The data type name
 	 */
-	public function getDataTypeObject(Rdm_Descriptor_Column $col)
+	public function dataType($type_name)
 	{
 		$types = array_merge(self::$type_mappings, $this->getAdapter()->type_mappings, $this->local_type_mappings);
-		$type = $col->getDataType();
 		
-		if(empty($types[$type]))
+		if(empty($types[$type_name]))
 		{
 			// TODO: Proper exception class
 			throw new Exception('The data type object for the type "'.$type.'" is cannot be found.');
 		}
 		else
 		{
-			$c = $types[$type];
+			$c = $types[$type_name];
 			
-			return new $c($col, $this->getAdapter());
+			return new $c();
 		}
 	}
 	
@@ -1198,43 +1197,6 @@ class Rdm_Descriptor
 		}
 		
 		return implode(' OR ', $arr);
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns a string which will select all the columns belonging to the
-	 * described object.
-	 * 
-	 * Example return:
-	 * <code>
-	 * $table.$column AS $alias.$property, ...
-	 * // real example:
-	 * artist-track.name AS artist-track_name, ...
-	 * </code>
-	 * 
-	 * @param  string	Name of table which contains the columns
-	 * @param  string	Alias to prefix the columns with
-	 * @return string
-	 */
-	public function getSelectCode($table, $alias)
-	{
-		$col_arr = array();
-		
-		foreach(array_merge($this->getColumns(), $this->getPrimaryKeys()) as $col)
-		{
-			// get select code, trim() to get rid of unnecessary spaces
-			$code = $col->getSelectCode($table, $alias, $this->getAdapter());
-			$code = trim($code, ' ');
-			
-			// do we have some code to add? (to prevent repeated commas)
-			if( ! empty($code))
-			{
-				$col_arr[] = $code;
-			}
-		}
-		
-		return implode(', ', $col_arr);
 	}
 	
 	// ------------------------------------------------------------------------

@@ -17,7 +17,7 @@ class Rdm_Builder_Collection_HydrateObject_FillObject extends Rdm_Util_Code_Cont
 		foreach($desc->getPrimaryKeys() as $pk)
 		{
 			$value = '$row[$map[$this->table_alias.\'.'.$pk->getProperty().'\']]';
-			$shadow_id[] = '\''.$pk->getColumn().'\' => '.$pk->getDataTypeObject()->getCastToPhpCode($value);
+			$shadow_id[] = '\''.$pk->getColumn().'\' => '.$pk->getDataType()->getCastToPhpCode($value);
 			$properties[] = $pk->getAssignToObjectCode('$e', '$e->__id[\''.$pk->getColumn().'\']');
 		}
 		
@@ -28,7 +28,7 @@ class Rdm_Builder_Collection_HydrateObject_FillObject extends Rdm_Util_Code_Cont
 		$shadow_data = array();
 		foreach($desc->getColumns() as $c)
 		{
-			$properties[] = $c->getAssignToObjectCode('$e', $c->getDataTypeObject()->getCastToPhpCode('$row[$map[$this->table_alias.\'.'.$c->getProperty().'\']]'));
+			$properties[] = $c->getAssignToObjectCode('$e', $c->getDataType()->getCastToPhpCode('$row[$map[$this->table_alias.\'.'.$c->getProperty().'\']]'));
 			$shadow_data[] = '\''.$c->getColumn().'\' => '.$c->getFetchFromObjectCode('$e');
 		}
 		

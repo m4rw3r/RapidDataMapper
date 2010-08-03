@@ -1,37 +1,50 @@
 <?php
 /*
- * Created by Martin Wernståhl on 2010-04-25.
+ * Created by Martin Wernståhl on 2010-08-02.
  * Copyright (c) 2010 Martin Wernståhl.
  * All rights reserved.
  */
 
 /**
- * Describes the basic data type which just passes PHP data directly.
+ * Interface for type declaring classes.
  */
-class Rdm_Descriptor_Type_Generic implements Rdm_Descriptor_TypeInterface
+interface Rdm_Descriptor_TypeInterface
 {
-	protected $col;
+	/**
+	 * Sets the column object which this type object will generate code for.
+	 * 
+	 * NOTE:
+	 * This method will be called each time the type object is invoked,
+	 * so it is recommended to just store the $col object inside a property
+	 * to be able to use it in the other methods.
+	 * 
+	 * @param  Rdm_Descriptor_Column
+	 * @return void
+	 */
+	public function setColumn(Rdm_Descriptor_Column $col);
 	
 	// ------------------------------------------------------------------------
-	
-	public function setColumn(Rdm_Descriptor_Column $col)
-	{
-		$this->col = $col;
-	}
-	
-	// ------------------------------------------------------------------------
-	
-	public function setLength($value)
-	{
-		// Purposedly left empty
-	}
+
+	/**
+	 * Sets the datatype length of this data type.
+	 * 
+	 * @param  int|false  False equals default
+	 * @return void
+	 */
+	public function setLength($value);
 	
 	// ------------------------------------------------------------------------
-	
-	public function getShemaDeclaration()
-	{
-		return false;
-	}
+
+	/**
+	 * Returns the schema declaration for this type, including column name,
+	 * length and assorted flags.
+	 * 
+	 * Using the object set using setColumn() to get the name etc.
+	 * 
+	 * @return string|false  The SQL row declaring the parent column set by
+	 *                       setColumn(), false if no code is specified
+	 */
+	public function getShemaDeclaration();
 	
 	// ------------------------------------------------------------------------
 
@@ -48,35 +61,22 @@ class Rdm_Descriptor_Type_Generic implements Rdm_Descriptor_TypeInterface
 	 *                 Can be inserted in a string using $string_separator
 	 *                 for end of the string
 	 */
-	public function getSelectCode($table_variable, $string_separator)
-	{
-		$db = $this->col->getParentDescriptor()->getAdapter();
-		
-		// $table.'.
-		$str1 = $table_variable.'.'.$string_separator.'.';
-		// `foo`
-		$str2 = $db->protectIdentifiers($this->col->getColumn());
-		
-		// Prevent faulty PHP code
-		return $str1.addcslashes($str2, $string_separator);
-	}
+	public function getSelectCode($table_variable, $string_separator);
 	
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Creates a PHP fragment for generating the "column = value" SQL.
+	 * Creates a PHP fragment for generating the value part of "column = value" SQL.
 	 * 
 	 * The code must be able to be placed between a "=" and a ";",
-	 * and it is already in string context at the start.
+	 * and it is already in string context at the start and should end with a
+	 * closing $string_separator or a non-string part.
 	 * 
 	 * @param  string  The php code which fetches the data from the object
 	 * @param  string  The string separator, " or '
 	 * @return string
 	 */
-	public function getSqlValueCode($source_code, $string_separator)
-	{
-		return $string_separator.'.$this->db->escape('.$this->getCastFromPhpCode($source_code).')';
-	}
+	public function getSqlValueCode($source_code, $string_separator);
 	
 	// ------------------------------------------------------------------------
 	
@@ -88,10 +88,7 @@ class Rdm_Descriptor_Type_Generic implements Rdm_Descriptor_TypeInterface
 	 * @return string  Code which fetches the data from the db field and then
 	 *                 converts it into a PHP type
 	 */
-	public function getCastToPhpCode($source)
-	{
-		return $source;
-	}
+	public function getCastToPhpCode($source);
 	
 	// ------------------------------------------------------------------------
 
@@ -103,10 +100,7 @@ class Rdm_Descriptor_Type_Generic implements Rdm_Descriptor_TypeInterface
 	 * @return string  Code which fetches the data from the PHP object and
 	 *                 converts it to the database representation
 	 */
-	public function getCastFromPhpCode($source)
-	{
-		return $source;
-	}
+	public function getCastFromPhpCode($source);
 	
 	// ------------------------------------------------------------------------
 
@@ -116,18 +110,8 @@ class Rdm_Descriptor_Type_Generic implements Rdm_Descriptor_TypeInterface
 	 * 
 	 * @return array(string)
 	 */
-	public function getCollectionFilterClasses()
-	{
-		// TODO: Add more filter method generators
-		return array(
-			'Rdm_Builder_CollectionFilter_LessThan',
-			'Rdm_Builder_CollectionFilter_GreaterThan',
-			'Rdm_Builder_CollectionFilter_Like',
-			'Rdm_Builder_CollectionFilter_Equals'
-			);
-	}
+	public function getCollectionFilterClasses();
 }
 
-
-/* End of file Generic.php */
-/* Location: ./lib/Rdm/Descriptor/Type */
+/* End of file TypeInterface.php */
+/* Location: ./lib/Rdm/Descriptor */

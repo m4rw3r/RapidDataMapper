@@ -16,7 +16,8 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInserts_DynamicData extends Rdm_Util_C
 		$db = $desc->getAdapter();
 		
 		$pre = array();
-		$assignments = array();
+		$columns = array();
+		$values = array();
 		$loaded_column_selects = array();
 		$loaded_column_assignments = array();
 		$post = array();
@@ -33,15 +34,15 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInserts_DynamicData extends Rdm_Util_C
 			// If we can insert stuff, add the code
 			if($c->isInsertable())
 			{
-				$columns[] = $db->protectIdentifiers($c->getColumn());
-				$assignments[] = $c->getFromObjectToDataCode('$entity', '$data');
+				$columns[] = addcslashes($db->protectIdentifiers($c->getColumn()), "'");
+				$values[] = $c->getDataType()->getSqlValueCode($c->getFetchFromObjectCode('$entity'), "'");
 			}
 			
 			// Shall we load data from the database after we've inserted this?
 			if($c->getLoadAfterInsert() === Rdm_Descriptor::PLAIN_COLUMN)
 			{
 				// Plain column to fetch from the database
-				$loaded_column_selects[] = $c->getSelectCode($desc->getSingular(), $desc->getSingular(), $db);
+				$loaded_column_selects[] = $c->getDataType()->getSelectCode($desc->getSingular()."'", "'");
 				$loaded_column_assignments[] = $c->getFromDataToObjectCode('$event', '$udata', '$prefix');
 			}
 			
@@ -64,21 +65,17 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInserts_DynamicData extends Rdm_Util_C
 		
 		// Foreach loop for all new entities
 		$str = 'foreach($this->new_entities as $entity)
-{
-	$data = array();
-	
-	'.implode("\n\t", $assignments);
+{';
 		
 		// Add pre insert code for columns, so they can do stuff with their data
 		if( ! empty($pre))
 		{
-			$str .= "\n\n\t".implode("\n\t", $pre);
+			$str .= "\n\t".implode("\n\t", $pre);
 		}
 		
 		// Add Insert query
 		$str .= '
-	
-	$this->db->query(\'INSERT INTO '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), '\'').' ('.addcslashes(implode(', ', $columns), "'").') VALUES (\'.implode(\', \', array_map(array($this->db, \'escape\'), $data)).\')\');';
+	$this->db->query(\'INSERT INTO '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), '\'').' ('.implode(', ', $columns).') VALUES ('.implode('.\', ', $values).'.\')\');';
 		
 		
 		// Add post insert code for columns (eg. primary keys and other more fancy stuff)
@@ -90,7 +87,7 @@ class Rdm_Builder_UnitOfWork_ProcessSingleInserts_DynamicData extends Rdm_Util_C
 		// Load database generated columns, if we have any
 		if( ! empty($loaded_column_selects))
 		{
-			$str .= "\n\n\t".'$this->db->query(\'SELECT '.addcslashes(implode(', ', $loaded_column_selects), "'").' FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($desc->getSingular()), "'").' WHERE '.implode('.\' AND ', $pks).');
+			$str .= "\n\n\t".'$this->db->query(\'SELECT '.implode(', ', $loaded_column_selects).' FROM '.addcslashes($db->protectIdentifiers($db->dbprefix.$desc->getTable()), "'").' AS '.addcslashes($db->protectIdentifiers($desc->getSingular()), "'").' WHERE '.implode('.\' AND ', $pks).');
 	
 	$prefix = \''.$desc->getSingular().'\';';
 		}
