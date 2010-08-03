@@ -37,7 +37,7 @@ self::$db = $manager->getConfig()->getAdapter();');
 		
 		$this->addPart('$u = new '.$desc->getUnitOfWorkClassName().';
 $u->setAdapter(self::$db);
-$u->setChangeTrackingPolicy('.($desc->isNamespaced() ? '\\' : '').'Rdm_UnitOfWork::'.$desc->getChangeTrackingPolicy(true).');
+$u->setChangeTrackingPolicy('.$desc->getChangeTrackingPolicy(true).');
 
 self::$unit_of_work = $u;');
 	}

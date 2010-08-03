@@ -491,12 +491,15 @@ class Rdm_Descriptor
 	{
 		if($as_string)
 		{
+			$cls = $this->isNamespaced() ? '\\' : '';
+			$cls .= 'Rdm_UnitOfWork::';
+			
 			switch($this->change_tracking_policy)
 			{
 				case self::IMPLICIT:
-					return 'IMPLICIT';
+					return $cls.'IMPLICIT';
 				case self::EXPLICIT:
-					return 'EXPLICIT';
+					return $cls.'EXPLICIT';
 			}
 		}
 		else
