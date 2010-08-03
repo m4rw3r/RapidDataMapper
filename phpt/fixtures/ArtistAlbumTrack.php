@@ -1,16 +1,17 @@
 <?php
 
-$db = Config::getAdapter();
-
-$queries = file_get_contents(__FILE__,null,null,__COMPILER_HALT_OFFSET__);
-
-foreach(explode(';', $queries) as $q)
+function createArtistAlbumTrackFixture(Rdm_Adapter $db)
 {
-	$q = trim($q);
-	empty($q) OR $db->query($q);
+	$queries = file_get_contents(__FILE__,null,null,__COMPILER_HALT_OFFSET__);
+	
+	foreach(explode(';', $queries) as $q)
+	{
+		$q = trim($q);
+		empty($q) OR $db->query($q);
+	}
 }
 
-unset($db);
+createArtistAlbumTrackFixture(Config::getAdapter());
 
 // SQL goes below this:
 __halt_compiler();
