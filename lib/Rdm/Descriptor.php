@@ -650,23 +650,34 @@ class Rdm_Descriptor
 			return $this;
 		}
 		
-		// is it of allowed type?
-		foreach(array(
-				'relations' => 'Rdm_Descriptor_Relation',
-				'primary_keys' => 'Rdm_Descriptor_PrimaryKey',
-				'properties' => 'Rdm_Descriptor_Column'
-				) as $k => $cls)
+		// Is it of the correct type?
+		if( ! ($object instanceof Rdm_Descriptor_Relation OR
+		       $object instanceof Rdm_Descriptor_PrimaryKey OR
+		       $object instanceof Rdm_Descriptor_Column))
 		{
-			if($object instanceof $cls)
-			{
-				// assign it to the proper property
-				$this->{$k}[$object->getProperty()] = $object;
-				
-				return $this;
-			}
+			// Nope
+			throw new InvalidArgumentException(is_object($object) ? get_class($object) : gettype($object));
 		}
 		
-		throw new InvalidArgumentException(is_object($object) ? get_class($object) : gettype($object));
+		$object->setParentDescriptor($this);
+		
+		if($object instanceof Rdm_Descriptor_Relation)
+		{
+			// Add the unique relation id to the created relation
+			$object->setIntegerIdentifier(self::calcRelationId($this, $object));
+			
+			$this->relations[$object->getProperty()] = $object;
+		}
+		elseif($object instanceof Rdm_Descriptor_PrimaryKey)
+		{
+			$this->primary_keys[$object->getProperty()] = $object;
+		}
+		else
+		{
+			$this->properties[$object->getProperty()] = $object;
+		}
+		
+		return $this;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -710,17 +721,18 @@ class Rdm_Descriptor
 	/**
 	 * Creates a new column descriptor to be used by this descriptor.
 	 * 
+	 * @param  string  The column name
+	 * @param  string|Rdm_Descriptor_TypeInterface The data type
+	 * @param  int|false  The data type length
+	 * @param  string  The property name of this column, defaults to $name
 	 * @return Rdm_Descriptor_Column
 	 */
-	public function newColumn($name)
+	public function newColumn($name,
+	                          $type = Rdm_Descriptor::GENERIC,
+	                          $type_length = false,
+	                          $property = false)
 	{
-		// TODO: More options directly in this method
-		
-		$c = new Rdm_Descriptor_Column();
-		$c->setColumn($name);
-		$c->setParentDescriptor($this);
-		
-		return $c;
+		return new Rdm_Descriptor_Column($name, $type, $type_length, $property);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -728,17 +740,21 @@ class Rdm_Descriptor
 	/**
 	 * Creates a new primary key descriptor to be used by this descriptor.
 	 * 
+	 * @param  string  The column name
+	 * @param  string|Rdm_Descriptor_TypeInterface The data type, object or
+	 *                                             Rdm_Descriptor constant
+	 * @param  int|false  The data type length
+	 * @param  string  The property name of this column, defaults to $name
+	 * @param  int     The primary key type, constant from Rdm_Descriptor
 	 * @return Rdm_Descriptor_PrimaryKey
 	 */
-	public function newPrimaryKey($name)
+	public function newPrimaryKey($name,
+	                              $type = Rdm_Descriptor::GENERIC,
+	                              $type_length = false,
+	                              $property = false,
+	                              $primary_key_type = Rdm_Descriptor::AUTO_INCREMENT)
 	{
-		// TODO: More options directly in this method
-		
-		$pk = new Rdm_Descriptor_PrimaryKey();
-		$pk->setColumn($name);
-		$pk->setParentDescriptor($this);
-		
-		return $pk;
+		return new Rdm_Descriptor_PrimaryKey($name, $type, $type_length, $property, $primary_key_type);
 	}
 	
 	// ------------------------------------------------------------------------
@@ -746,20 +762,24 @@ class Rdm_Descriptor
 	/**
 	 * Creates a new relation descriptor to be used by this descriptor.
 	 * 
+	 * @param  string  The relationship name
+	 * @param  string  The relationship type constant from Rdm_Descriptor class
+	 * @param  string  The name of the related class
+	 * @param  string  The property name where the entities should be stored on
+	 *                 the parent entities
+	 * @param  string  The ON DELETE action constant from the Rdm_Descriptor class
+	 * @param  array   A list of parameters to be sent to the
+	 *                 Rdm_Descriptor_RelationInterface::setForeignKeys
 	 * @return Rdm_Descriptor_Relation
 	 */
-	public function newRelation($name)
+	public function newRelation($name,
+	                            $type = null,
+	                            $related_class = null,
+	                            $property = null,
+	                            $on_delete = Rdm_Descriptor::NOTHING,
+	                            $foreign_keys = null)
 	{
-		// TODO: More options directly in this method
-		
-		$r = new Rdm_Descriptor_Relation($this);
-		$r->setName($name);
-		$r->setParentDescriptor($this);
-		
-		// Add the unique relation id to the created relation
-		$r->setIntegerIdentifier(self::calcRelationId($this, $r));
-		
-		return $r;
+		return new Rdm_Descriptor_Relation($name, $type, $related_class, $property, $on_delete, $foreign_keys);
 	}
 	
 	// ------------------------------------------------------------------------

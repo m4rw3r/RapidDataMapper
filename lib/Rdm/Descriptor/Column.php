@@ -77,6 +77,29 @@ class Rdm_Descriptor_Column
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Creates a new Column object.
+	 * 
+	 * @param  string  The column name
+	 * @param  string|Rdm_Descriptor_TypeInterface The data type
+	 * @param  int|false  The data type length
+	 * @param  string  The property name of this column, defaults to $name
+	 * @return Rdm_Column
+	 */
+	public function __construct($name,
+	                            $type = Rdm_Descriptor::GENERIC,
+	                            $type_length = false,
+	                            $property = false)
+	{
+		// TODO: Filter input
+		$this->column = $name;
+		$this->data_type = $type;
+		$this->data_type_length = $type_length;
+		$this->property = $property ? $property : $name;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Internal: Sets the descriptor owning this column descriptor.
 	 * 
 	 * @param  Rdm_Descriptor

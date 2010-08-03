@@ -76,6 +76,37 @@ class Rdm_Descriptor_Relation
 	// ------------------------------------------------------------------------
 
 	/**
+	 * Creates a new object describing a relationship.
+	 * 
+	 * @param  string  The relationship name
+	 * @param  string  The relationship type constant from Rdm_Descriptor class
+	 * @param  string  The name of the related class
+	 * @param  string  The property name where the entities should be stored on
+	 *                 the parent entities
+	 * @param  string  The ON DELETE action constant from the Rdm_Descriptor class
+	 * @param  array   A list of parameters to be sent to the
+	 *                 Rdm_Descriptor_RelationInterface::setForeignKeys
+	 * @return Rdm_Descriptor_Relation
+	 */
+	public function __construct($name,
+	                            $type = null,
+	                            $related_class = null,
+	                            $property = null,
+	                            $on_delete = Rdm_Descriptor::NOTHING,
+	                            $foreign_keys = null)
+	{
+		$this->name = $name;
+		$this->type = $type;
+		$this->related_class = $related_class;
+		$this->property = $property;
+		$this->on_delete = $on_delete;
+		
+		empty($foreign_keys) OR call_user_func_array(array($this->getRelationHandler(), 'setForeignKeys'), $foreign_keys);
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
 	 * Returns the parent descriptor.
 	 * 
 	 * @throws Rdm_Descriptor_Exception

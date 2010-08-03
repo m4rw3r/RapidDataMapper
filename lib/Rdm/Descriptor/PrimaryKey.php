@@ -21,12 +21,39 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	 * 
 	 * @var int
 	 */
-	protected $pk_type;
+	protected $pk_type = Rdm_Descriptor::AUTO_INCREMENT;
 	
 	/**
 	 * The callable for the id
 	 */
 	protected $gen_callable;
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Creates a new PrimaryKey object.
+	 * 
+	 * @param  string  The column name
+	 * @param  string|Rdm_Descriptor_TypeInterface The data type, object or
+	 *                                             Rdm_Descriptor constant
+	 * @param  int|false  The data type length
+	 * @param  string  The property name of this column, defaults to $name
+	 * @param  int     The primary key type, constant from Rdm_Descriptor
+	 * @return Rdm_Column
+	 */
+	public function __construct($name,
+	                            $type = Rdm_Descriptor::GENERIC,
+	                            $type_length = false,
+	                            $property = false,
+	                            $primary_key_type = Rdm_Descriptor::AUTO_INCREMENT)
+	{
+		// TODO: Filter input
+		$this->column = $name;
+		$this->data_type = empty($type) ? $type : Rdm_Descriptor::INT;
+		$this->data_type_length = $type_length;
+		$this->property = $property ? $property : $name;
+		$this->pk_type = $primary_key_type;
+	}
 	
 	// ------------------------------------------------------------------------
 	
@@ -58,7 +85,7 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	 */
 	public function getPkType()
 	{
-		return empty($this->pk_type) ? Rdm_Descriptor::AUTO_INCREMENT : $this->pk_type;
+		return $this->pk_type;
 	}
 	
 	// ------------------------------------------------------------------------
