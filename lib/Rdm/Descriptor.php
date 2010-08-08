@@ -110,6 +110,10 @@ class Rdm_Descriptor
 	 * RDM type constant for Timestamp data type.
 	 */
 	const TIMESTAMP = 'type.TIMESTAMP';
+	/**
+	 * RDM type constant for Serialize data type.
+	 */
+	const SERIALIZE = 'type.SERIALIZE';
 	
 	/**
 	 * A list of the default RDM type mappings.
@@ -125,7 +129,8 @@ class Rdm_Descriptor
 		self::GENERIC   => 'Rdm_Descriptor_Type_Generic',
 		self::INT       => 'Rdm_Descriptor_Type_Int',
 		self::TEXT      => 'Rdm_Descriptor_Type_Text',
-		self::TIMESTAMP => 'Rdm_Descriptor_Type_Timestamp'
+		self::TIMESTAMP => 'Rdm_Descriptor_Type_Timestamp',
+		self::SERIALIZE => 'Rdm_Descriptor_Type_Serialize'
 		);
 	
 	/**
