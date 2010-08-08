@@ -219,7 +219,11 @@ class Rdm_Config
 			if(is_callable($loader) && ($d = call_user_func($loader, $class)) instanceof Rdm_Descriptor)
 			{
 				// We've got a working instance, save and return
-				return $this->descriptors[$c] = $d;
+				$this->descriptors[$c] = $d;
+				
+				$d->setConfig($this);
+				
+				return $d;
 			}
 		}
 		
