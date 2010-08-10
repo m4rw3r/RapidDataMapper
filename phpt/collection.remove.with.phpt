@@ -53,4 +53,4 @@ album->id: int(1)
 album->artist_id: NULL
 array search: bool(false)
 ===
-db check: string(1) "0"
+db check: NULL

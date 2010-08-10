@@ -21,13 +21,6 @@ class Rdm_Descriptor_Type_Generic implements Rdm_Descriptor_TypeInterface
 	
 	// ------------------------------------------------------------------------
 	
-	public function setLength($value)
-	{
-		// Purposedly left empty
-	}
-	
-	// ------------------------------------------------------------------------
-	
 	public function getShemaDeclaration()
 	{
 		return false;

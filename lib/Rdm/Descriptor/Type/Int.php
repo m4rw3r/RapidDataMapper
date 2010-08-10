@@ -12,16 +12,28 @@ class Rdm_Descriptor_Type_Int extends Rdm_Descriptor_Type_Generic
 {
 	protected $length = 10;
 	
-	public function setLength($value)
+	protected $allow_null = true;
+	
+	public function __construct($length = 10, $allow_null = true)
 	{
-		$this->length = empty($value) ? 10 : $value;
+		$this->length = $length;
+		$this->allow_null = $allow_null;
 	}
 	public function getSchemaDeclaration()
 	{
 		$db = $this->col->getParentDescriptor()->getAdapter();
 		
-		// TODO: default value and NOT NULL
-		return $db->protectIdentifiers($this->col->getColumn()).' INT('.$this->length.')';
+		// TODO: default value
+		if($this->allow_null)
+		{
+			$default = '';
+		}
+		else
+		{
+			$default = ' NOT NULL';
+		}
+		
+		return $db->protectIdentifiers($this->col->getColumn()).' INT('.$this->length.')'.$default;
 	}
 	/**
 	 * No need to escape an INT.
@@ -32,11 +44,25 @@ class Rdm_Descriptor_Type_Int extends Rdm_Descriptor_Type_Generic
 	}
 	public function getCastToPhpCode($source)
 	{
-		return '(Int)'.$source;
+		if($this->allow_null)
+		{
+			return '(is_null('.$source.') ? null : (Int)'.$source.')';
+		}
+		else
+		{
+			return '(Int)'.$source;
+		}
 	}
 	public function getCastFromPhpCode($source)
 	{
-		return '(Int)'.$source;
+		if($this->allow_null)
+		{
+			return '(is_null('.$source.') ? \'NULL\' : (Int)'.$source.')';
+		}
+		else
+		{
+			return '(Int)'.$source;
+		}
 	}
 	public function getCollectionFilterClasses()
 	{
