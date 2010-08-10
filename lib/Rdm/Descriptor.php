@@ -790,26 +790,31 @@ class Rdm_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Creates a data type object which will generate the correct code for
-	 * SQL queries and PHP.
+	 * Returns the class name of the class responsible for the supplied data type.
 	 * 
-	 * @return string  The data type name
+	 * @internal
+	 * @param  string  The Rdm_Descriptor constant identifying the data type
+	 * @return string  The class name of the class responsible
 	 */
-	public function dataType($type_name)
+	public function getDataTypeClass($type_const)
 	{
-		$types = array_merge(self::$type_mappings, $this->getAdapter()->type_mappings, $this->local_type_mappings);
+		if($this->getAdapter())
+		{
+			// Use a more precise data tyepe when available
+			$types = array_merge(self::$type_mappings, $this->getAdapter()->type_mappings, $this->local_type_mappings);
+		}
+		else
+		{
+			$types = array_merge(self::$type_mappings, $this->local_type_mappings);
+		}
 		
-		if(empty($types[$type_name]))
+		if(empty($types[$type_const]))
 		{
 			// TODO: Proper exception class
 			throw new Exception('The data type object for the type "'.$type.'" is cannot be found.');
 		}
-		else
-		{
-			$c = $types[$type_name];
-			
-			return new $c();
-		}
+		
+		return $types[$type_const];
 	}
 	
 	// ------------------------------------------------------------------------

@@ -39,11 +39,11 @@ class Rdm_Descriptor_Column
 	protected $data_type;
 	
 	/**
-	 * The length of the data type.
+	 * The data type parameters which are to be sent to the data type.
 	 * 
-	 * @var int|false
+	 * @var array(mixed)
 	 */
-	protected $data_type_length = false;
+	protected $data_type_args = array();
 	
 	/**
 	 * Tells if this column can be inserted.
@@ -189,15 +189,28 @@ class Rdm_Descriptor_Column
 	{
 		if(empty($this->data_type))
 		{
+			// Default:
 			$this->data_type = new Rdm_Descriptor_Type_Generic();
 		}
 		elseif( ! is_object($this->data_type))
 		{
-			$this->data_type = $this->parent_descriptor->dataType($this->data_type);
+			// Not object, then it is a class name, which needs to be instantiated:
+			$c = $this->parent_descriptor->getDataTypeClass($this->data_type);
+			
+			$ref = new ReflectionClass($c);
+			
+			// newInstanceArgs() cannot be called unless the class has a constructor
+			if($ref->getConstructor())
+			{
+				$this->data_type = $ref->newInstanceArgs($this->data_type_args);
+			}
+			else
+			{
+				$this->data_type = $ref->newInstance();
+			}
 		}
 		
 		$this->data_type->setColumn($this);
-		$this->data_type->setLength($this->data_type_length);
 		
 		return $this->data_type;
 	}
@@ -208,13 +221,15 @@ class Rdm_Descriptor_Column
 	 * Sets the database column type of the column this object describes.
 	 * 
 	 * @param  Rdm_Descriptor_TypeInterface|string  Object or constant from Rdm_Descriptor
-	 * @param  int|false  The data type length
+	 * @param  mixed  other parameters for when creating the object,
+	 *                provided object is not supplied as the first parameter, optional
+	 * @param  mixed  ...
 	 * @return self
 	 */
-	public function setDataType($type, $length = false)
+	public function setDataType($type)
 	{
 		$this->data_type = $type;
-		$this->data_type_length = $length;
+		$this->data_type_args = array_slice(func_get_args(), 1);
 		
 		return $this;
 	}

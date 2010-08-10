@@ -7,6 +7,10 @@
 
 /**
  * Interface for type declaring classes.
+ * 
+ * NOTE:
+ * Extra arguments passed to Rdm_Descriptor_Column->setDataType() will
+ * be passed to the type constructor.
  */
 interface Rdm_Descriptor_TypeInterface
 {
@@ -22,16 +26,6 @@ interface Rdm_Descriptor_TypeInterface
 	 * @return void
 	 */
 	public function setColumn(Rdm_Descriptor_Column $col);
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Sets the datatype length of this data type.
-	 * 
-	 * @param  int|false  False equals default
-	 * @return void
-	 */
-	public function setLength($value);
 	
 	// ------------------------------------------------------------------------
 
