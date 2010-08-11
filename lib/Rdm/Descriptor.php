@@ -1158,60 +1158,6 @@ class Rdm_Descriptor
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Returns a piece of a statement which creates an unique identifier for a row.
-	 * 
-	 * Example of generated code:
-	 * <code>
-	 * // params: $data_var = '$row', $data_prefix_var = '$alias' (two pks)
-	 * $row->{$alias.'__id'}.'*'.$row->{$alias.'__lang'}
-	 * </code>
-	 * 
-	 * @param  string	The name of the variable holding an instance of StdClass, containing the row data.
-	 * @param  string	The name of the variable holding a prefix for the column name
-	 * @return string
-	 */
-	public function getUidCode($data_var, $data_prefix_var)
-	{
-		$arr = array();
-		
-		foreach($this->getPrimaryKeys() as $key)
-		{
-			$arr[] = $key->getFromDataCode($data_var, $data_prefix_var);
-		}
-		
-		return implode('.\'*\'.', $arr);
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
-	 * Returns a piece of a statement which creates a check if an object DOESN'T exists in a result row.
-	 * 
-	 * Example of generated code:
-	 * <code>
-	 * // params: $data_var = '$row', $data_prefix_var = '$alias' (two pks)
-	 * is_null($row->{$alias.'__id'}) OR is_null($row->{$alias.'__lang'})
-	 * </code>
-	 * 
-	 * @param  string	The name of the variable holding an instance of StdClass, containing the row data.
-	 * @param  string	The name of the variable holding a prefix for the column name
-	 * @return string
-	 */
-	public function getNotContainsObjectCode($data_var, $data_prefix_var)
-	{
-		$arr = array();
-		
-		foreach($this->getPrimaryKeys() as $key)
-		{
-			$arr[] = 'is_null('.$key->getFromDataCode($data_var, $data_prefix_var).')';
-		}
-		
-		return implode(' OR ', $arr);
-	}
-	
-	// ------------------------------------------------------------------------
-
-	/**
 	 * Returns code/data from a plugin hook.
 	 * 
 	 * @param  string
