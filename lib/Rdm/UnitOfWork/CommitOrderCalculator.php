@@ -76,7 +76,7 @@ class Rdm_UnitOfWork_CommitOrderCalculator
 	/**
 	 * Depth first implementation of topological sorting, with visited stack.
 	 * 
-	 * @return array
+	 * @return array  Dependencies ordered in an order which is safe to execute
 	 */
 	public function calculate()
 	{
@@ -111,12 +111,11 @@ class Rdm_UnitOfWork_CommitOrderCalculator
 		$this->visited[$n] = true;
 		$visited[] = $n;
 		
-		
 		foreach($this->dependencies[$n] as $dependency)
 		{
 			// Check if we have it loaded, because otherwise we can just continue
 			// as $dependency is only is required to run earlier IF PRESENT
-			if( ! empty($this->dependencies[$dependency]))
+			if(array_key_exists($dependency, $this->dependencies))
 			{
 				// Recurse:
 				if( ! $this->visit($dependency, $list, $root, $visited) && $n != $root)
