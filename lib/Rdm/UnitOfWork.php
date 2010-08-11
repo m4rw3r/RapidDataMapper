@@ -312,12 +312,15 @@ abstract class Rdm_UnitOfWork
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Executes all INSERT queries stored in this Unit of Work.
+	 * Executes all INSERT queries stored in this Unit of Work,
+	 * also establishes any FK relations which haven't already been established.
 	 * 
 	 * @return void
 	 */
 	public function doInserts()
 	{
+		// Establish links here, because this is called when we already know all
+		$this->establishRelationLinks();
 		$this->processCustomInserts();
 		$this->processSingleInserts();
 	}
@@ -466,6 +469,16 @@ abstract class Rdm_UnitOfWork
 			}
 		}
 	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Should iterate the objects to be inserted, edited and deleted and check
+	 * if they have a changed related object, if that is so, link them.
+	 * 
+	 * @return void
+	 */
+	abstract protected function establishRelationLinks();
 	
 	// ------------------------------------------------------------------------
 

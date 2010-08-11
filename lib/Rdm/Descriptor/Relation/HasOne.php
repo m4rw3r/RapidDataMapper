@@ -14,6 +14,11 @@ class Rdm_Descriptor_Relation_HasOne extends Rdm_Descriptor_Relation_HasMany
 	{
 		return false;
 	}
+	
+	public function getEstablishCodeParts()
+	{
+		return array(new Rdm_Builder_UnitOfWork_EstablishRelationLinks_HasOne($this->relation));
+	}
 }
 
 

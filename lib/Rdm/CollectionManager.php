@@ -347,13 +347,10 @@ Stack trace:
 			$u->prepare();
 		}
 		
+		// Insert and update parents before children
 		foreach($units as $u)
 		{
 			$u->doInserts();
-		}
-		
-		foreach($units as $u)
-		{
 			$u->doUpdates();
 		}
 		

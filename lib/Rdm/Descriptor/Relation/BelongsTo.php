@@ -27,6 +27,16 @@ class Rdm_Descriptor_Relation_BelongsTo extends Rdm_Descriptor_Relation_HasOne
 		
 		return array(array_values($local_keys), array_values($related_keys));
 	}
+	
+	public function getEstablishCodeParts()
+	{
+		return array(new Rdm_Builder_UnitOfWork_EstablishRelationLinks_BelongsTo($this->relation));
+	}
+	
+	public function getModifyToMatchCode()
+	{
+		return new Rdm_Builder_Relation_ModifyToMatch_BelongsTo($this->relation);
+	}
 }
 
 

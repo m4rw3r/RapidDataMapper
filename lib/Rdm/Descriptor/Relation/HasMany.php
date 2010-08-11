@@ -8,7 +8,7 @@
 /**
  * Contains specific logic for the Has Many relationship type.
  */
-class Rdm_Descriptor_Relation_HasMany
+class Rdm_Descriptor_Relation_HasMany implements Rdm_Descriptor_RelationInterface
 {
 	/**
 	 * A list of properties which will be used to restrict the related records.
@@ -120,6 +120,22 @@ class Rdm_Descriptor_Relation_HasMany
 		$related_keys = $this->relation->getKeyObjects(array_values($this->foreign_keys), $related);
 		
 		return array(array_values($local_keys), array_values($related_keys));
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function getEstablishCodeParts()
+	{
+		// No extra parts needed for has many, as everything is managed by the
+		// collection objects.
+		return array();
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	public function getModifyToMatchCode()
+	{
+		return new Rdm_Builder_Relation_ModifyToMatch_HasOne($this->relation);
 	}
 }
 
