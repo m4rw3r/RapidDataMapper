@@ -158,13 +158,14 @@ class Rdm_CollectionManager
 		{
 			// Handle errors, we cannot just let exceptions pass through,
 			// because then autoload falls back on the other autoloaders
-			// and ignores our exception
+			// and ignores our exception, ultimately resulting in a missing
+			// class error
 			
 			// Call the exception handler directly instead
 			
-			// Get the exception handler, use this method as an impostor so
+			// Get the exception handler, use the dummy as an impostor so
 			// we can convince PHP to lend us the current exception handler
-			$eh = set_exception_handler(array(__CLASS__, 'autoload'));
+			$eh = set_exception_handler(array($this, 'dummy'));
 			// We must kill the impostor before he is found out!
 			restore_exception_handler();
 			
@@ -366,6 +367,18 @@ Stack trace:
 		{
 			$u->cleanUp();
 		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Dummy method meant as a replacement for the current exception handler.
+	 * 
+	 * @return void
+	 */
+	public static function dummy()
+	{
+		// Intentionally left empty
 	}
 }
 
