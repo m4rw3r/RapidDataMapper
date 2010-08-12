@@ -63,9 +63,13 @@ class Rdm_Descriptor_PrimaryKey extends Rdm_Descriptor_Column
 	
 	public function getDataType()
 	{
-		if($this->getPkType() == Rdm_Descriptor::AUTO_INCREMENT && stripos(strtolower(is_object($this->data_type) ? $this->data_type->getSchemaDeclaration() : $this->data_type), 'int') === false)
+		if($this->getPkType() == Rdm_Descriptor::AUTO_INCREMENT)
 		{
+			// TODO: Are there any other types for AUTO INCREMENT
+			
+			// INT(10) NOT NULL
 			$this->data_type = Rdm_Descriptor::INT;
+			$this->data_type_args = array(10, false);
 		}
 		
 		return parent::getDataType();
