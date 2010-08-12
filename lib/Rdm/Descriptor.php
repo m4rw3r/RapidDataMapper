@@ -321,6 +321,9 @@ class Rdm_Descriptor
 	 */
 	public function getNamespace($append_backslash = false, $qualified = false)
 	{
+		// Make sure that the class name is loaded
+		$this->getClass();
+		
 		if(version_compare(PHP_VERSION, '5.3.0', '<'))
 		{
 			return '';
@@ -344,6 +347,9 @@ class Rdm_Descriptor
 	 */
 	public function isNamespaced()
 	{
+		// Make sure that the class name is loaded
+		$this->getClass();
+		
 		return ! empty($this->namespace);
 	}
 	
