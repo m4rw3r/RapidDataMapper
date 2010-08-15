@@ -7,7 +7,7 @@
 
 interface Rdm_Exception
 {
-	
+	// Purposedly left empty
 }
 
 /* End of file Exception.php */

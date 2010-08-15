@@ -31,6 +31,7 @@ class Rdm_Builder_UnitOfWork_EstablishRelationLinks_HasOne extends Rdm_Util_Code
 {
 	if(isset($entity->'.$rel->getProperty().') && ! ('.implode(' && ', $conditions).'))
 	{
+		// TODO: Issue query which will set NULL or delete all other related rows
 		'.self::indentCode(self::indentCode(implode("\n", $sets))).'
 	}
 }');

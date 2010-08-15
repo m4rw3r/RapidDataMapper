@@ -60,10 +60,10 @@ final class Rdm_Version
 	public static function testRequiredDependencies()
 	{
 		return array(
-			'PHP Version > 5.2' => version_compare(PHP_VERSION, '5.2', '>='),
+			'PHP Version > 5.2'          => version_compare(PHP_VERSION, '5.2', '>='),
 			'Standard PHP Library (SPL)' => extension_loaded('SPL'),
 			'Regular Expressions (PCRE)' => extension_loaded('pcre'),
-			'Reflection Extension' => extension_loaded('Reflection')
+			'Reflection Extension'       => extension_loaded('Reflection')
 			);
 	}
 	
@@ -79,7 +79,7 @@ final class Rdm_Version
 	{
 		return array(
 			'Namespace Support (PHP 5.3)' => version_compare(PHP_VERSION, '5.3', '>='),
-			'APC (Caching)' => extension_loaded('apc'),
+			'APC (Query Cache Driver)'    => extension_loaded('apc'),
 			'SimpleXML (XML Descriptors)' => extension_loaded('SimpleXML')
 			);
 	}
@@ -95,12 +95,12 @@ final class Rdm_Version
 	public static function testDatabaseExtensions()
 	{
 		return array(
-			'MySQL' => extension_loaded('mysql'),
-			'MySQL Improved' => extension_loaded('mysqli'),
+			'MySQL'               => extension_loaded('mysql'),
+			'MySQL Improved'      => extension_loaded('mysqli'),
 			'MySQL Native Driver' => extension_loaded('mysqlnd'),
-			'SQLite' => extension_loaded('SQLite'),
-			'SQLite3' => extension_loaded('sqlite3'),
-			'PostgreSQL' => extension_loaded('pgsql')
+			'SQLite'              => extension_loaded('SQLite'),
+			'SQLite3'             => extension_loaded('sqlite3'),
+			'PostgreSQL'          => extension_loaded('pgsql')
 			);
 	}
 }

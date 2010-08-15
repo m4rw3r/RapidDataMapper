@@ -23,6 +23,7 @@ class Rdm_Builder_Collection_HydrateObject extends Rdm_Util_Code_MethodBuilder
 		
 		$this->addPart('$id = '.implode('.\'|\'.', $pks).';');
 		
+		// TODO: What happens with empty($id) if we have "|" if we have two primary keys?
 		$this->addPart('if(empty($id))
 {
 	return false;
