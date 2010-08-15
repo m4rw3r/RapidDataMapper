@@ -15,20 +15,21 @@ class Rdm_Builder_UnitOfWork_UpdateShadowData extends Rdm_Util_Code_MethodBuilde
 		$this->setMethodName('updateShadowData');
 		$this->setPublic(false);
 		
-		$arr = array('foreach($this->modified as $e)
-{
-	$e->__data = array();
-	');
+		$arr = array();
 		
 		foreach($desc->getColumns() as $p)
 		{
 			if($p->isUpdatable())
 			{
-				$arr[] = '$e->__data[\''.$p->getColumn().'\'] = '.$p->getFetchFromObjectCode('$e').';';
+				$arr[] = '\''.$p->getColumn().'\' => '.$p->getFetchFromObjectCode('$e');
 			}
 		}
 		
-		count($arr) > 1 && $this->addPart(implode("\n\t", $arr).'
+		count($arr) && $this->addPart('foreach(array_merge($this->modified, $this->new_entities) as $e)
+{
+	$e->__data = array(
+		'.implode(",\n\t\t", $arr).'
+		);
 }');
 	}
 }
