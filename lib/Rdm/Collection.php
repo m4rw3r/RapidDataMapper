@@ -118,6 +118,14 @@ abstract class Rdm_Collection implements ArrayAccess, Countable, IteratorAggrega
 	 */
 	public $join_type = null;
 	
+	/**
+	 * Internal: Flag telling the hydrator if this collection has been created
+	 * by it, and is not to be replaced.
+	 * 
+	 * @var bollean
+	 */
+	public $created_by_hydrate = false;
+	
 	
 	// ------------------------------------------------------------------------
 
