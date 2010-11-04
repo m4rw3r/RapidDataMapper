@@ -57,15 +57,24 @@ class Rdm_Util_Annotation_Reader
 	
 	/**
 	 * Contains the file name which is currently being parsed.
+	 * 
+	 * @var string
 	 */
 	protected $current_file = "";
 	
 	/**
 	 * Data which already has been scanned.
 	 * 
-	 * @var array
+	 * @var array(string => array(string))
 	 */
 	protected $scanned_data = array();
+	
+	/**
+	 * Cache for the already generated annotations.
+	 * 
+	 * @var array(string => mixed)
+	 */
+	protected $annotation_cache = array();
 	
 	// ------------------------------------------------------------------------
 
@@ -79,7 +88,6 @@ class Rdm_Util_Annotation_Reader
 		$this->factory = $factory;
 	}
 	
-	
 	// ------------------------------------------------------------------------
 
 	/**
@@ -90,13 +98,17 @@ class Rdm_Util_Annotation_Reader
 	 */
 	public function readAnnotations(Reflector $ref)
 	{
-		// Check so it is a type of object we can find an annotation for
-		if( ! ($ref instanceof ReflectionClass OR $ref instanceof ReflectionFunction OR $ref instanceof ReflectionMethod OR $ref instanceof ReflectionProperty))
+		// Create the key for the appropriate type, and perform type validation
+		$data_key = $this->getDataKey($ref);
+		
+		// Reuse already generated annotations
+		if(array_key_exists($data_key, $this->annotation_cache))
 		{
-			throw new Rdm_Util_Annotation_Exception(sprintf('Annotation: Unsupported reflector of type "%s"', get_class($ref)));
+			return $this->annotation_cache[$data_key];
 		}
 		
-		$file = ($ref instanceof ReflectionClass OR $ref instanceof ReflectionFunction) ? $ref->getFileName() : $ref->getDeclaringClass()->getFileName();
+		// Get file name
+		$file = $this->getCodeFile($ref);
 		
 		// Have we scanned the file earlier?
 		if( ! array_key_exists($file, $this->scanned_data))
@@ -104,36 +116,17 @@ class Rdm_Util_Annotation_Reader
 			$this->scanFile($file);
 		}
 		
-		$data_key = '';
-		
-		// Create the key for the appropriate type
-		if($ref instanceof ReflectionClass)
-		{
-			$data_key = $ref->getName();
-		}
-		elseif($ref instanceof ReflectionFunction)
-		{
-			$data_key = '>'.$ref->getName();
-		}
-		elseif($ref instanceof ReflectionMethod)
-		{
-			$data_key = $ref->getDeclaringClass()->getName().'>'.$ref->getName();
-		}
-		elseif($ref instanceof ReflectionProperty)
-		{
-			$data_key = $ref->getDeclaringClass()->getName().'$'.$ref->getName();
-		}
-		
 		if(empty($this->scanned_data[$file][$data_key]))
 		{
+			// Cache
+			$this->annotation_cache[$data_key] = array();
+			
 			return array();
 		}
 		else
 		{
 			// Parse the annotations we found
-			$arr = array();
 			$annot = array();
-			
 			$this->current_file = $file;
 			
 			// Scan and parse
@@ -152,6 +145,9 @@ class Rdm_Util_Annotation_Reader
 			// Reset
 			$this->current_line = 0;
 			$this->current_file = '';
+			
+			// Cache
+			$this->annotation_cache[$data_key] = $annot;
 			
 			return $annot;
 		}
@@ -458,6 +454,59 @@ class Rdm_Util_Annotation_Reader
 	{
 		// TODO: Code
 		return $value;
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Validates the supplied Reflector to prevent types which cannot have annotations,
+	 * returns the data key for those passing the validation, otherwise it throws an exception.
+	 * 
+	 * @param  Reflector
+	 * @return string
+	 */
+	protected function getDataKey(Reflector $ref)
+	{
+		if($ref instanceof ReflectionClass)
+		{
+			return $ref->getName();
+		}
+		elseif($ref instanceof ReflectionFunction)
+		{
+			return '>'.$ref->getName();
+		}
+		elseif($ref instanceof ReflectionMethod)
+		{
+			return $ref->getDeclaringClass()->getName().'>'.$ref->getName();
+		}
+		elseif($ref instanceof ReflectionProperty)
+		{
+			return $ref->getDeclaringClass()->getName().'$'.$ref->getName();
+		}
+		else
+		{
+			throw new Rdm_Util_Annotation_Exception(sprintf('Annotation: Unsupported reflector of type "%s"', get_class($ref)));
+		}
+	}
+	
+	// ------------------------------------------------------------------------
+
+	/**
+	 * Returns the file name containing the file to be parsed.
+	 * 
+	 * @param  Reflector
+	 * @return string
+	 */
+	public function getCodeFile(Reflector $ref)
+	{
+		if($ref instanceof ReflectionClass OR $ref instanceof ReflectionFunction)
+		{
+			return $ref->getFileName();
+		}
+		else
+		{
+			return $ref->getDeclaringClass()->getFileName();
+		}
 	}
 }
 
